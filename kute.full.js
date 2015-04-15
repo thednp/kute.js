@@ -1,4 +1,4 @@
-// kute.js - The Light Tweening Engine | License - MIT
+// kute.full.js - The Light Tweening Engine | License - MIT
 // by dnp_theme / http://themeforest.net/user/dnp_theme
  
 // KUTE MAIN OBJECT
