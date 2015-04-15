@@ -47,7 +47,7 @@ $('selector'). Kute({
 );
 </pre>
 
-# Full distribution
+# Full distribution (12Kb min)
 It does most of the animation work you need.
 * size: width and height
 * colors: text color and background-color (values )
@@ -57,13 +57,16 @@ It does most of the animation work you need.
 * backgroundPosition
 * window scroll
 
-# Base Distribution
+# Base Distribution (9Kb min)
 This distribution is much lighter and more suitable for most projects:
 * size: width and height
 * transform: translate3D, scale, rotateX, rotateY, rotateZ
 * position: top, left (ideal for IE9- translate3D(left,top,0) fallback)
 * zoom: for scale on IE8 fallback
 * window scroll
+
+#jQuery Plugin
+That's right, there you have it, just a few bits of code to bridge the awesome kute.js to your jQuery projects.
 
 # What else it does
 * computes option values properly according to their measurement unit (px,%,deg,etc)
