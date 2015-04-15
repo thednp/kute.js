@@ -26,9 +26,9 @@ new KUTE.Animate(el, {
     duration: 500,
     delay	: 0,
     easing	: 'exponentialInOut',
-		start			: functionOne, // run function when tween starts 
-		finish			: functionTwo, // run function when tween finishes
-		special			: functionThree // run function while tween runing    
+    start			: functionOne, // run function when tween starts 
+    finish			: functionTwo, // run function when tween finishes
+    special			: functionThree // run function while tween runing    
   }
 );
 
@@ -40,9 +40,9 @@ $('selector'). Kute({
     duration: 500,
     delay	: 0,
     easing	: 'exponentialInOut',
-		start			: functionOne, // run function when tween starts 
-		finish			: functionTwo, // run function when tween finishes
-		special			: functionThree // run function while tween runing    
+    start			: functionOne, // run function when tween starts 
+    finish			: functionTwo, // run function when tween finishes
+    special			: functionThree // run function while tween runing    
   }
 );
 </pre>
