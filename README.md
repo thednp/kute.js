@@ -64,6 +64,7 @@ This distribution is much lighter and more suitable for most projects:
 
 # What else it does
 * computes option values properly according to their measurement unit (px,%,deg,etc)
+* properly handles IE10+ 3D transforms when elements have a perspective
 * it converts RGBA & HEX colors to RGB and tweens the inner values, then ALWAYS updates color via HEX
 * properly replaces top, centered or any other background position with proper value to be able to tween 
 * for most supported properties it reads the current element property values as initial values (via currentStyle || getComputedStyle)
@@ -71,6 +72,9 @@ This distribution is much lighter and more suitable for most projects:
 * since translate3D is best for performance, kute.js always uses it
 * accepts "nice & easy string" easing functions, like 'linear' or 'exponentialOut' (removes the use of the evil <code>eval</code>, making development easier and closer to fast development standards :)
 * uses 31 easing functions, all Robert Penner's easing equations
+
+# Browser Support
+Since most modern browsers can handle pretty much everything, legacy browsers need some help, so give them <a href="https://cdn.polyfill.io/v1/docs/">polyfills.io</a>.
 
 # Demo 
 coming soon..
