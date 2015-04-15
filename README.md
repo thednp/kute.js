@@ -16,7 +16,7 @@ $('selector').Kute(options);
 
 
 # Advanced Usage
-At a glance, you can write more lines and you're making the earth go round.
+Quite easily, you can write 'bit more lines and you're making the earth go round.
 <pre>
 //vanilla js
 new KUTE.Animate(el, {
