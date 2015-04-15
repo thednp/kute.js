@@ -52,8 +52,8 @@ It does most of the animation work you need.
 * size: width and height
 * colors: text color and background-color (values )
 * transform: translate3D, scale, rotateX, rotateY, rotateZ
-* position: top, right, bottom, left (ideal for IE9- fallback)
-* zoom: for IE8 fallback
+* position: top, left (ideal for IE9- translate3D(left,top,0) fallback)
+* zoom: for scale on IE8 fallback
 * backgroundPosition
 * window scroll
 
@@ -61,8 +61,8 @@ It does most of the animation work you need.
 This distribution is much lighter and more suitable for most projects:
 * size: width and height
 * transform: translate3D, scale, rotateX, rotateY, rotateZ
-* position: top, left (ideal for IE9- fallback)
-* zoom: for IE8 fallback
+* position: top, left (ideal for IE9- translate3D(left,top,0) fallback)
+* zoom: for scale on IE8 fallback
 * window scroll
 
 # What else it does
@@ -70,11 +70,12 @@ This distribution is much lighter and more suitable for most projects:
 * properly handles IE10+ 3D transforms when elements have a perspective
 * it converts RGBA & HEX colors to RGB and tweens the inner values, then ALWAYS updates color via HEX
 * properly replaces top, centered or any other background position with proper value to be able to tween 
-* for most supported properties it reads the current element property values as initial values (via currentStyle || getComputedStyle)
+* for most supported properties it reads the current element style property value as initial value (via currentStyle || getComputedStyle)
 * allows you to add 3 different callbacks: start, update, finish, and they can be set as tween options (so no more nested functions needed)
-* since translate3D is best for performance, kute.js always uses it
+* since <code>translate3D</code> is best for performance, kute.js will always uses it
 * accepts "nice & easy string" easing functions, like 'linear' or 'exponentialOut' (removes the use of the evil <code>eval</code>, making development easier and closer to fast development standards :)
 * uses 31 easing functions, all Robert Penner's easing equations
+* like mentioned above, for IE8 <code>zoom</code> is used for <code>transform: scale(0.5)</code>, it's not perfect as the object moves from it's floating point to the middle, and some left & top adjustments can be done, but to keep it simple and performance driven, I leave it as is, it's better than nothing. 
 
 # Browser Support
 Since most modern browsers can handle pretty much everything, legacy browsers need some help, so give them <a href="https://cdn.polyfill.io/v1/docs/">polyfills.io</a>.
