@@ -81,7 +81,7 @@ That's right, there you have it, just a few bits of code to bridge the awesome k
 * like mentioned above, for IE8 <code>zoom</code> is used for <code>transform: scale(0.5)</code>, it's not perfect as the object moves from it's floating point to the middle, and some left & top adjustments can be done, but to keep it simple and performance driven, I leave it as is, it's better than nothing. 
 
 # Browser Support
-Since most modern browsers can handle pretty much everything, legacy browsers need some help, so give them <a href="https://cdn.polyfill.io/v1/docs/">polyfills.io</a>.
+Since most modern browsers can handle pretty much everything, legacy browsers need some help, so give them <a href="https://cdn.polyfill.io/v1/docs/">polyfills.io</a>. Also kute.js needs to know when doing stuff for IE9- like my other scripts here, I highy recommend <a href="http://www.paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/">Paul Irish's conditional stylesheets</a> guides.
 
 # Demo 
 coming soon..
