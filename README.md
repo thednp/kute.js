@@ -8,7 +8,7 @@ Thanks to jsdelivr, we have CDN link <a href="http://www.jsdelivr.com/#!kute.js"
 At a glance, you can write one line and you're done.
 <pre>
 //vanilla js
-new Kute.Animate(el,options);
+new KUTE.Animate(el,options);
 
 //with jQuery plugin
 $('selector').Kute(options);
