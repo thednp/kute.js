@@ -3,6 +3,8 @@
 
 (function($) {
 	$.fn.Kute = function( options ) {
-		new KUTE.Animate( this[0], options );
+		return this.each(function(){
+			new KUTE.Animate( this, options );
+		});
 	};	
 })(jQuery);
