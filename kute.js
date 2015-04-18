@@ -1,5 +1,6 @@
-// kute.js - The Light Tweening Engine | License - MIT
-// @author dnp_theme / http://themeforest.net/user/dnp_theme
+// kute.js - The Light Tweening Engine | by dnp_theme
+// http://themeforest.net/user/dnp_theme
+// License - MIT
  
 // KUTE MAIN OBJECT
 var KUTE = KUTE || ( function () {
@@ -36,14 +37,16 @@ var KUTE = KUTE || ( function () {
 	};
 } )();
 
-//animate object
 KUTE.Animate = function( object, options ) {
 	
 	//element to animate
 	var el = typeof object === 'object' ? object : document.querySelector(object);
-		
-	//get true scroll container
-	var bd = document.body, htm = document.documentElement, sct = bd.scrollHeight === htm.scrollHeight ? htm : bd;
+	
+	//get true scroll container and current scroll
+	var bd = document.body, 
+		htm = document.getElementsByTagName('HTML')[0],
+		sct = /webkit/i.test(navigator.userAgent) || document.compatMode == 'BackCompat' ? bd : htm,		
+		crs = window.pageYOffset || sct.scrollTop;
 	
 	//determine if we're on IE or IE8
 	var isIE = document.documentElement.classList.contains('ie');
@@ -58,11 +61,11 @@ KUTE.Animate = function( object, options ) {
 			opacity		: 1, // integer
 			width		: '', // integer/px/%
 			height		: '', // integer/px/%		
-			position	: {top:'',left:''}, // integer/%
+			position	: {top:'', left:''}, // integer/%
 			translate	: {x:0, y:0, z:0}, // integer only
 			rotate		: {x:0, y:0, z:0}, // integer only
 			scale		: 1, // integer only
-			scroll		: sct.scrollTop, // integer only		
+			scroll		: crs, // integer only		
 		},
 		to : {
 			opacity		: '',
@@ -92,7 +95,7 @@ KUTE.Animate = function( object, options ) {
 		  ops[x] = options[x];
 	  }
 	}
-		
+
 	//create shorthand for all properties
 	var ofo = ops.from.opacity;
 	var ofw = ops.from.width;
@@ -121,7 +124,8 @@ KUTE.Animate = function( object, options ) {
 	var otrz = ops.to.rotate.z;
 	var ots = ops.to.scale;
 	var otsc = ops.to.scroll;		
-		
+	
+	
 	//process easing
 	var pes = typeof ops.easing === 'string' ? pe(ops.easing) : ops.easing;
 	
@@ -131,7 +135,7 @@ KUTE.Animate = function( object, options ) {
 	
 	var ito = cv(oft) ? truD(oft)[0] : ''; // move
 	var ile	= cv(ofl) ? truD(ofl)[0] : '';
-		
+	
 	var tr3d,tx,ty,tz,itx,ity,itz; // translate
 	if ( cv( ottx ) || cv( otty ) || cv( ottz ) ) {
 		itx	= cv(oftx) ? truD(oftx)[0] : 0;
@@ -208,7 +212,7 @@ KUTE.Animate = function( object, options ) {
 				var rozt = cv(rz) ? ' rotateZ(' + this.roZ + 'deg)' : '';
 
 				//scale
-				var sca = cv(sa) ? 'scale(' + this.scale + ') ' : '';
+				var sca = cv(sa) ? ' scale(' + this.scale + ')' : '';
 				
 				//do a zoom for IE8
 				if (isIE8 && cv(sa)) {
@@ -217,8 +221,7 @@ KUTE.Animate = function( object, options ) {
 				
 				//sum all transform
 				var transform = sca + tr3d + roxt + royt + rozt;
-				var perspective = parseInt(css.perspective)||'';
-				if ( cv(transform) ) { tr(transform,perspective) }
+				if ( cv(transform) ) { tr(transform) }
 				
 
 				//dimensions width / height
@@ -228,7 +231,7 @@ KUTE.Animate = function( object, options ) {
 				//position
 				if ( cv(top) ) { el.style.top = this.t + tou; }					
 				if ( cv(le ) ) { el.style.left = this.l + leu; }
-				
+
 				// scrolling
 				if ( cv(sc) ) { sct.scrollTop = this.scroll; }
 
@@ -333,15 +336,14 @@ KUTE.Animate = function( object, options ) {
 	}
 
 	// process transform
-	function tr(p,pp) {	
+	function tr(p) {	
 		el.style.webkitTransform = p;
 		el.style.MozTransform = p;
-		el.style.msTransform = (cv(pp)?'perspective('+pp+'px)':'') + p;
+		el.style.msTransform = p;
 		el.style.Transform = p;			
-	}	
+	}
 };
 
-//tween object
 KUTE.Tween = function ( object ) {
 
 	var _object = object;
@@ -419,6 +421,7 @@ KUTE.Tween = function ( object ) {
 		}
 
 		return this;
+
 	};
 
 	this.delay = function ( amount ) {
@@ -500,7 +503,6 @@ KUTE.Tween = function ( object ) {
 	};
 };
 
-//easing functions
 KUTE.Easing = {
 	Linear: {
 		None: function ( k ) {
