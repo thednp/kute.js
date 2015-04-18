@@ -1,6 +1,7 @@
 // kute.full.js - The Light Tweening Engine | by dnp_theme
 // http://themeforest.net/user/dnp_theme
 // License - MIT
+
  
 // KUTE MAIN OBJECT
 var KUTE = KUTE || ( function () {
@@ -147,14 +148,14 @@ KUTE.Animate = function( object, options ) {
 	var pes = typeof ops.easing === 'string' ? pe(ops.easing) : ops.easing;
 	
 	//from/initial values
-	var icor = cv(ofc) || cv(otc) ? parseInt(pc(ofc)[0]) || parseInt(truC(css.color).match(/\d+/g)[0]) : '';
-	var icog = cv(ofc) || cv(otc) ? parseInt(pc(ofc)[1]) || parseInt(truC(css.color).match(/\d+/g)[1]) : '';
-	var icob = cv(ofc) || cv(otc) ? parseInt(pc(ofc)[2]) || parseInt(truC(css.color).match(/\d+/g)[2]) : '';
+	var icor = (cv(ofc) ? parseInt(pc(ofc)[0]) : '') || parseInt(pc(truC(css.color))[0]);
+	var icog = (cv(ofc) ? parseInt(pc(ofc)[1]) : '') || parseInt(pc(truC(css.color))[1]);
+	var icob = (cv(ofc) ? parseInt(pc(ofc)[2]) : '') || parseInt(pc(truC(css.color))[2]);
 	
-	var ibcr = cv(ofbc) || cv(otbc) ? parseInt(pc(ofbc)[0]) || parseInt(truC(css.backgroundColor).match(/\d+/g)[0]) : '';
-	var ibcg = cv(ofbc) || cv(otbc) ? parseInt(pc(ofbc)[1]) || parseInt(truC(css.backgroundColor).match(/\d+/g)[1]) : '';
-	var ibcb = cv(ofbc) || cv(otbc) ? parseInt(pc(ofbc)[2]) || parseInt(truC(css.backgroundColor).match(/\d+/g)[2]) : '';
-	
+	var ibcr = (cv(ofbc) ? parseInt(pc(ofbc)[0]) : '') || parseInt(pc(truC(css.backgroundColor))[0]);
+	var ibcg = (cv(ofbc) ? parseInt(pc(ofbc)[1]) : '') || parseInt(pc(truC(css.backgroundColor))[1]);
+	var ibcb = (cv(ofbc) ? parseInt(pc(ofbc)[2]) : '') || parseInt(pc(truC(css.backgroundColor))[2]);
+		
 	var iwi	= cv(ofw) ? truD(ofw)[0] : truD( css.width )[0];
 	var ihe	= cv(ofh) ? truD(ofh)[0] : truD( css.height )[0];
 	
@@ -474,7 +475,7 @@ KUTE.Animate = function( object, options ) {
 	function tr(p,pp) {	
 		el.style.webkitTransform = p;
 		el.style.MozTransform = p;
-		el.style.msTransform = (cv(pp)?'perspective('+pp+'px)':'') + p;
+		el.style.msTransform = (cv(pp)?'perspective('+pp+'px) ':'') + p;
 		el.style.Transform = p;			
 	}		
 };
