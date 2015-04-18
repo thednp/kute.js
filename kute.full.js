@@ -1,5 +1,6 @@
-// kute.full.js - The Light Tweening Engine | License - MIT
-// by dnp_theme / http://themeforest.net/user/dnp_theme
+// kute.full.js - The Light Tweening Engine | by dnp_theme
+// http://themeforest.net/user/dnp_theme
+// License - MIT
  
 // KUTE MAIN OBJECT
 var KUTE = KUTE || ( function () {
@@ -40,9 +41,12 @@ KUTE.Animate = function( object, options ) {
 	
 	//element to animate
 	var el = typeof object === 'object' ? object : document.querySelector(object);
-		
-	//get true scroll container
-	var bd = document.body, htm = document.documentElement, sct = bd.scrollHeight === htm.scrollHeight ? htm : bd;
+	
+	//get true scroll container and current scroll
+	var bd = document.body, 
+		htm = document.getElementsByTagName('HTML')[0],
+		sct = /webkit/i.test(navigator.userAgent) || document.compatMode == 'BackCompat' ? bd : htm,		
+		crs = window.pageYOffset || sct.scrollTop;
 	
 	//determine if we're on IE or IE8
 	var isIE = document.documentElement.classList.contains('ie');
@@ -64,7 +68,7 @@ KUTE.Animate = function( object, options ) {
 			translate	: {x:0, y:0, z:0}, // integer only
 			rotate		: {x:0, y:0, z:0}, // integer only
 			scale		: 1, // integer only
-			scroll		: sct.scrollTop, // integer only		
+			scroll		: crs, // integer only		
 		},
 		to : {
 			opacity		: '',
@@ -143,13 +147,13 @@ KUTE.Animate = function( object, options ) {
 	var pes = typeof ops.easing === 'string' ? pe(ops.easing) : ops.easing;
 	
 	//from/initial values
-	var icor = cv(ofc) ? parseInt(pc(ofc)[0]) : parseInt(truC(css.color).match(/\d+/g)[0]);
-	var icog = cv(ofc) ? parseInt(pc(ofc)[1]) : parseInt(truC(css.color).match(/\d+/g)[1]);
-	var icob = cv(ofc) ? parseInt(pc(ofc)[2]) : parseInt(truC(css.color).match(/\d+/g)[2]);
+	var icor = cv(ofc) || cv(otc) ? parseInt(pc(ofc)[0]) || parseInt(truC(css.color).match(/\d+/g)[0]) : '';
+	var icog = cv(ofc) || cv(otc) ? parseInt(pc(ofc)[1]) || parseInt(truC(css.color).match(/\d+/g)[1]) : '';
+	var icob = cv(ofc) || cv(otc) ? parseInt(pc(ofc)[2]) || parseInt(truC(css.color).match(/\d+/g)[2]) : '';
 	
-	var ibcr = cv(ofbc) ? parseInt(pc(ofbc)[0]) : parseInt(truC(css.backgroundColor).match(/\d+/g)[0]);
-	var ibcg = cv(ofbc) ? parseInt(pc(ofbc)[1]) : parseInt(truC(css.backgroundColor).match(/\d+/g)[1]);
-	var ibcb = cv(ofbc) ? parseInt(pc(ofbc)[2]) : parseInt(truC(css.backgroundColor).match(/\d+/g)[2]);
+	var ibcr = cv(ofbc) || cv(otbc) ? parseInt(pc(ofbc)[0]) || parseInt(truC(css.backgroundColor).match(/\d+/g)[0]) : '';
+	var ibcg = cv(ofbc) || cv(otbc) ? parseInt(pc(ofbc)[1]) || parseInt(truC(css.backgroundColor).match(/\d+/g)[1]) : '';
+	var ibcb = cv(ofbc) || cv(otbc) ? parseInt(pc(ofbc)[2]) || parseInt(truC(css.backgroundColor).match(/\d+/g)[2]) : '';
 	
 	var iwi	= cv(ofw) ? truD(ofw)[0] : truD( css.width )[0];
 	var ihe	= cv(ofh) ? truD(ofh)[0] : truD( css.height )[0];
