@@ -50,7 +50,7 @@ $('selector'). Kute({
 # Full distribution (12Kb min)
 It does most of the animation work you need.
 * size: width and height
-* colors: text color and background-color (values )
+* colors: text color and background-color (accepts values as HEX, RGB, RGBA, but the color is always HEX )
 * transform: translate3D, scale, rotateX, rotateY, rotateZ
 * position: top, left (ideal for IE9- translate3D(left,top,0) fallback)
 * zoom: for scale on IE8 fallback
