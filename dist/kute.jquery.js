@@ -14,4 +14,4 @@
 	}
 		return $.queue ? this.queue(fn) : this.each(fn);
 	};	
-})(jQuery);
+})(Zepto || jQuery);
