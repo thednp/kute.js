@@ -33,7 +33,7 @@ new KUTE.Animate(el, {
 );
 
 //with jQuery plugin
-$('selector'). Kute({
+$('selector').Kute({
   //options
     from	: {},
     to	: {}, 
