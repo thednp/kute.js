@@ -338,11 +338,11 @@ KUTE.Animate = function( object, options ) {
 
 	// process transform
 	function tr(p,pp) {	
-		el.style.webkitTransform = p;
-		el.style.MozTransform = p;
+		el.style.transform = p;			
 		el.style.msTransform = (cv(pp)?'perspective('+pp+'px) ':'') + p;
-		el.style.Transform = p;			
-	}	
+		el.style.MozTransform = p;
+		el.style.webkitTransform = p;
+	}
 };
 
 KUTE.Tween = function ( object ) {
