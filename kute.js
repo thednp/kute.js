@@ -33,6 +33,10 @@ var KUTE = KUTE || ( function () {
 				}
 			}
 			return true;
+		},
+		process : function ( time ) {
+			requestAnimationFrame(KUTE.process);
+			KUTE.update( time );
 		}
 	};
 } )();
@@ -503,6 +507,8 @@ KUTE.Tween = function ( object ) {
 		return true;
 	};
 };
+
+KUTE.process(0);
 
 KUTE.Easing = {
 	Linear: {
