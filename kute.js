@@ -33,6 +33,10 @@ var KUTE = KUTE || ( function () {
 				}
 			}
 			return true;
+		},
+		process : function ( time ) {
+			requestAnimationFrame(KUTE.process);
+			KUTE.update( time );
 		}
 	};
 } )();
@@ -188,8 +192,6 @@ KUTE.Animate = function( object, options ) {
 	var tyu	= cv( ty ) ? truD(otty)[1] : '';
 	var tzu	= cv( tz ) ? truD(ottz)[1] : '';
 	
-	animateTween();
-	
 	var from = { w: iwi, h: ihe, t: ito, l: ile, scale: isa, trX: itx, trY: ity, trZ: itz, roX: irx, roY: iry, roZ: irz, opacity: iop, scroll: isc };
 	var target = { w: wi, h: he, t: top, l: le, scale: sa, trX: tx, trY: ty, trZ: tz, roX: rx, roY: ry, roZ: rz, opacity: op, scroll: sc };
 	
@@ -250,11 +252,6 @@ KUTE.Animate = function( object, options ) {
 		)
 		.onComplete( runFinished )
 		.start();
-	
-	function animateTween(time) {
-		requestAnimationFrame( animateTween );
-		KUTE.update(time);
-	}
 	
 	//callback when tween is finished
 	function runFinished() {
@@ -503,6 +500,8 @@ KUTE.Tween = function ( object ) {
 		return true;
 	};
 };
+
+KUTE.process(0);
 
 KUTE.Easing = {
 	Linear: {
