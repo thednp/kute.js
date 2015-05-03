@@ -247,9 +247,7 @@ KUTE.Animate = function( object, options ) {
 	
 	var txu	= cv( tx ) ? truD(ottx)[1] : '';
 	var tyu	= cv( ty ) ? truD(otty)[1] : '';
-	var tzu	= cv( tz ) ? truD(ottz)[1] : '';					
-					
-	animateTween();
+	var tzu	= cv( tz ) ? truD(ottz)[1] : '';	
 	
 	var from = { w: iwi, h: ihe, t: ito, r: iri, b: ibo, l: ile, colr: icor, colg: icog, colb: icob, bgr: ibcr, bgg: ibcg, bgb: ibcb, bgX: ibx, bgY: iby, scale: isa, trX: itx, trY: ity, trZ: itz, roX: irx, roY: iry, roZ: irz, opacity: iop, scroll: isc };
 	var target = { w: wi, h: he, t: top, r: ri, b: bo, l: le, colr: cor, colg: cog, colb: cob, bgr: bcr, bgg: bcg, bgb: bcb, bgX: bx, bgY: by, scale: sa, trX: tx, trY: ty, trZ: tz, roX: rx, roY: ry, roZ: rz, opacity: op, scroll: sc };
@@ -319,11 +317,6 @@ KUTE.Animate = function( object, options ) {
 		)
 		.onComplete( runFinished )
 		.start();
-	
-	function animateTween(time) {
-		requestAnimationFrame( animateTween );
-		KUTE.update(time);
-	}
 	
 	//callback when tween is finished
 	function runFinished() {
