@@ -1,6 +1,8 @@
 # kute.js
-A minimal <b>native Javascript</b> tweening engine with <b>jQuery</b> plugin, forked from <a href="https://github.com/tweenjs/tween.js">tween.js</a>. Since most of web developers don't actually use `yoyo`, `repeat`, `play`/`pause`/`resume`/`timeline`/whatever or tweening array values (processed with array interpolation functions), I've removed them, for simplicity and performance. 
+A minimal <b>native Javascript</b> tweening engine with <b>jQuery</b> plugin, forked from <a href="https://github.com/tweenjs/tween.js">tween.js</a>. Since most of web developers don't actually use `yoyo`, `repeat`, `play`/`pause`/`resume`/`timeline`/whatever or tweening array values (processed with array interpolation functions), I've removed them, for simplicity and performance.
+
 <b>kute.js</b> is like a merge of my own <a href="https://github.com/thednp/jQueryTween">jQueryTween</a> with tween.js, but generally it's a much more smarter build. You link the script at your ending <code>&lt;/body&gt;</code> tag and write one line to do just about any animation you can think of.
+
 Also worth noting that the script does it's job without any dependency like plugins or other functionality.
 
 # CDN
