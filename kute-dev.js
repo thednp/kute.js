@@ -829,7 +829,7 @@
 		}
 	};
 		
-	K.Ease = {}; K.Easing = {};  K.Physics = {}; // we build nice ease objects here
+	K.Ease = {}; /*K.Easing = {};  K.Physics = {};*/ // we build nice ease objects here
 		
 	//high performance for accuracy (smoothness) trade
 	K.Easing.linear = function (t) { return t; };
