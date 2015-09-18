@@ -15,7 +15,6 @@
 		root.KUTE = root.KUTE || factory(root.KUTE);
     }
 }(this, function () {
-	'use strict';	
 	var K = K || {}, _tws = [], _t, _stk = false, // _stoppedTick // _tweens // KUTE, _tween, _tick,			
 		_pf = _pf || getPrefix(), // prefix
 		_rafR = _rafR || ((!('requestAnimationFrame' in window)) ? true : false), // is prefix required for requestAnimationFrame
@@ -28,7 +27,6 @@
 		_sct = _sct || (/webkit/i.test(navigator.userAgent) || document.compatMode == 'BackCompat' ? _bd : _htm),
 
 		_isIE = _isIE || document.documentElement.classList.contains('ie'),
-		_isIE8 = _isIE8 || document.documentElement.classList.contains('ie8'),
 
 		//assign preffix to DOM properties
 		_pfp = _pfp || _pfT ? _pf + 'Perspective' : 'perspective',
@@ -47,14 +45,16 @@
 		_sc  = ['scrollTop', 'scroll'], //scroll, it has no default value, it's calculated on tween start
 		_clp = ['clip'], // clip
 		_op  = ['opacity'], // opacity
-		_rd  = ['borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'], // border radius px/%
-		_dm  = ['width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight'], // dimensions / box model
-		_po  = ['top', 'left', 'right', 'bottom'], // position
-		_bg  = ['backgroundPosition'], // background position TO DO
+		_rd  = ['borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'], // border radius px/any
+		_bm  = ['top', 'left', 'right', 'bottom', 
+				'width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 
+				'padding', 'margin', 'paddingTop','paddingBottom', 'paddingLeft', 'paddingRight', 'marginTop','marginBottom', 'marginLeft', 'marginRight', 
+				'borderWidth', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth'], // dimensions / box model
+		_tp  = ['fontSize','lineHeight','letterSpacing'], // text properties
+		_bg  = ['backgroundPosition'], // background position
 		_3d  = ['rotateX', 'rotateY','translateZ'], // transform properties that require perspective
 		_tf  = ['matrix', 'matrix3d', 'rotateX', 'rotateY', 'rotateZ', 'translate3d', 'translateX', 'translateY', 'translateZ', 'skewX', 'skewY', 'scale'], // transform
-		_all = _cls.concat(_sc, _clp, _op, _rd, _dm, _po, _bg, _tf), al = _all.length,
-		// _easings = ["linear","easeInQuad","easeOutQuad","easeInOutQuad","easeInCubic","easeOutCubic","easeInOutCubic","easeInQuart","easeInQuart","easeOutQuart","easeInOutQuart","easeInQuint","easeOutQuint","easeInOutQuint","easeInExpo","easeOutExpo","easeInOutExpo"],	
+		_all = _cls.concat(_sc, _clp, _op, _rd, _bm, _tp, _bg, _tf), al = _all.length,
 
 		_tfS = {}, _tfE = {}, _tlS = {}, _tlE = {}, _rtS = {}, _rtE = {}, //internal temp
 
@@ -65,7 +65,7 @@
 		var p = _all[i];
 		if (_cls.indexOf(p) !== -1){
 			_d[p] = 'rgba(0,0,0,0)'; // _d[p] = {r:0,g:0,b:0,a:1};
-		} else if ( _rd.indexOf(p) !== -1 || _dm.indexOf(p) !== -1 || _po.indexOf(p) !== -1){
+		} else if ( _rd.indexOf(p) !== -1 || _bm.indexOf(p) !== -1 || _tp.indexOf(p) !== -1){
 			_d[p] = 0;			
 		} else if ( _bg.indexOf(p) !== -1 ){
 			_d[p] = [50,50];
@@ -98,11 +98,12 @@
 	// internal ticker
 	K.t = function (t) {
 		_t = _raf(K.t);
-		var i = 0, l = _tws.length;		
+		var i = 0, l = _tws.length;
 		while ( i < l ) {
-			if (!_tws[i]) {return false;}			
+			if (!_tws[i]) {return false;}
+						
 			if (K.u(_tws[i],t)) {
-				i++;
+				i++;			
 			} else {
 				_tws.splice(i, 1);
 			}
@@ -122,9 +123,9 @@
 	
 	//main methods
 	K.to = function (el, to, o) {
+		if ( o === undefined ) { o = {}; }
 		var _el = _el || typeof el === 'object' ? el : document.querySelector(el),
 			_o = _o || o;
-
 		_o.rpr = true;
 		_o.toMatrix = o.toMatrix||false;		
 		_o.easing = _o && K.pe(_o.easing) || K.Easing.linear;
@@ -137,6 +138,7 @@
 	};
 
 	K.fromTo = function (el, f, to, o) {
+		if ( o === undefined ) { o = {}; }
 		var _el = _el || typeof el === 'object' ? el : document.querySelector(el);
 		var _o = o;
 
@@ -215,16 +217,24 @@
 				_end = w._vE[p],
 				v1 = _start.value,
 				v2 = _end.value,
-				u = _end.unit;
+				u = _end.unit,
+				// checking array on every frame takes time so let's cache these
+				cls = _cls.indexOf(p) !== -1, 
+				bm = _tp.indexOf(p) !== -1 || _bm.indexOf(p) !== -1,
+				rd = _rd.indexOf(p) !== -1,
+				sc = _sc.indexOf(p) !== -1,
+				bg = _bg.indexOf(p) !== -1,
+				clp = _clp.indexOf(p) !== -1,
+				op = _op.indexOf(p) !== -1;				
 			
 			//process styles by property / property type							
 			if (p === 'transform') {
 				var _tS = '', tP, rps, pps = 'perspective('+w._pp+'px) '; //transform style & property
-
+					
 				for (tP in _end) {
 					var t1 = _start[tP], t2 = _end[tP];
 					rps = _3d.indexOf(tP) !== -1; 
-					if ( /matrix/.test(tP) ) { //if (!t1) return false;
+					if ( tP === 'matrix' || tP === 'matrix3d' ) {
 						var i=0, va = [];
 							for ( i; i<t2.length; i++ ){							
 								va[i] = t1[i]===t2[i] ? t2[i] : (t1[i] + ( t2[i] - t1[i] ) * v);
@@ -255,8 +265,8 @@
 						}
 					}
 				}
-				w._el.style[_tr] = (rps && w._pp && w._pp !== 0 && !('matrix' in _end || 'matrix3d' in _end) ) ? pps + _tS : _tS;
-			} else if (_cls.indexOf(p) !== -1) {
+				w._el.style[_tr] = rps || ( w._pp !== undefined && w._pp !== 0 && !('matrix' in _end || 'matrix3d' in _end) ) ? pps + _tS : _tS;
+			} else if ( cls ) {
 				var _c = {}, c;
 
 				for (c in v2) {
@@ -267,15 +277,16 @@
 					}					
 				}
 				
-				if ( w._hex || _isIE8 ) {					
+				if ( w._hex ) {					
 					w._el.style[p] = K.rth( parseInt(_c.r), parseInt(_c.g), parseInt(_c.b) );										
 				} else {
 					w._el.style[p] = !_c.a ? 'rgb(' + _c.r + ',' + _c.g + ',' + _c.b + ')' : 'rgba(' + _c.r + ',' + _c.g + ',' + _c.b + ',' + _c.a + ')';					
 				}
 
-			} else if (_po.indexOf(p) !== -1 || _dm.indexOf(p) !== -1) {
+			} else if ( bm ) {
 				w._el.style[p] = (v1 + (v2 - v1) * v) + u;
-			} else if (_rd.indexOf(p) !== -1) {
+				
+			} else if ( rd ) {
 				if (/borderRadius/.test(p)) {
 					w._el.style[_br] = (v1 + (v2 - v1) * v) + u;
 				} else if (/TopLeft/.test(p)) {
@@ -287,26 +298,22 @@
 				} else if (/BottomRight/.test(p)) {
 					w._el.style[_brbr] = (v1 + (v2 - v1) * v) + u;
 				}
-			} else if (_sc.indexOf(p) !== -1) {
+			} else if ( sc ) {
 				var ets = w._el === null ? _sct : w._el;							
 				ets.scrollTop = v1 + ( v2 - v1 ) * v;
-			} else if (_bg.indexOf(p) !== -1) {
+			} else if ( bg ) {
 				var px = _start.x.v + ( _end.x.v - _start.x.v ) * v, pxu = _end.x.u || '%',
 					py = _start.y.v + ( _end.y.v - _start.y.v ) * v, pyu = _end.y.u || '%';			
 				w._el.style[p] = px + pxu + ' ' + py + pyu;
-			} else if (_clp.indexOf(p) !== -1) {
-				var h = 0, clp = [];
+			} else if ( clp ) {
+				var h = 0, cl = [];
 				for (h;h<4;h++){
-					clp[h] = (_start[h].v + ( _end[h].v - _start[h].v ) * v) + _end[h].u || 'px'
+					cl[h] = (_start[h].v + ( _end[h].v - _start[h].v ) * v) + _end[h].u || 'px'
 				}	
-				w._el.style[p] = 'rect('+clp+')';
-			} else if (_op.indexOf(p) !== -1) {
-				var opc = v1 + (v2 - v1) * v, fo = parseInt((opc)*100);
-				if (_isIE8) {
-					w._el.style.filter = "alpha(opacity=" + fo + ")";
-				} else {
-					w._el.style.opacity = opc;
-				}
+				w._el.style[p] = 'rect('+cl+')';
+			} else if ( op ) {
+				var opc = v1 + (v2 - v1) * v;
+				w._el.style.opacity = opc;
 			}
 		}
 	};
@@ -356,7 +363,7 @@
 	
 	K.perspective = function (l,w) {
 		if ( w._ppo !== undefined ) { l.style[_pfo] = w._ppo; } // element perspective origin
-		if ( w._ppp !== undefined ) { l.parentNode.style[_pfp] = w._ppp + 'px'; } // parent perspective origin	
+		if ( w._ppp !== undefined ) { l.parentNode.style[_pfp] = w._ppp + 'px'; } // parent perspective	
 		if ( w._pppo !== undefined ) { l.parentNode.style[_pfo] = w._pppo; } // parent perspective origin
 	};
 	
@@ -389,6 +396,7 @@
 		this._uC = _o&&_o.update || null; // _on UpdateCallback
 		this._cC = _o&&_o.complete || null; // _on CompleteCallback
 		this._pC = _o&&_o.pause || null; // _on PauseCallback
+		this._rC = _o&&_o.play || null; // _on ResumeCallback
 		this._stC = _o&&_o.stop || null; // _on StopCallback
 	};
 		
@@ -403,7 +411,7 @@
 		this.scrollIn();
 		var p, sp, hasStart = true, hasFrom = false;
 		
-		K.perspective(this._el,this);
+		K.perspective(this._el,this); // apply the perspective
 				
 		if ( this._rpr ) { // on start we reprocess the valuesStart for TO() method
 			var f = {};
@@ -442,7 +450,7 @@
 		if ( this._tM && ('transform' in this._vE) ) { 
 			if ( this._vS.transform.matrix3d === undefined ) { K.matrix(this,this._vS); }
 			if ( this._vE.transform.matrix3d === undefined ) { K.matrix(this,this._vE); }
-		}		
+		}
 		
 		for ( p in this._vE ) {
 			this._vSR[p] = this._vS[p];			
@@ -523,7 +531,7 @@
 	
 	w.gCS = function (p) { // gCS = get style property for element from computedStyle for .to() method
 		var el = this._el, cs = window.getComputedStyle(el), //the computed style
-			ppp = (_pfT && ( /transform|Radius/.test(p) ) ) ? ('-'+_pf.toLowerCase()+'-'+p) : p, //prefixed property for CSS match
+			ppp = ( _pfT && ( /transform|Radius/.test(p) ) ) ? ('-'+_pf.toString().toLowerCase()+'-'+p) : p, //prefixed property for CSS match
 			s = ( (_pfT && p==='transform' ) || (_pfT && _rd.indexOf(p) !== -1)) // s the property style value
 			  ? cs[ppp]
 			  : cs[p];
@@ -587,6 +595,9 @@
 		this._ps = false;
 		this._sT += window.performance.now() - this._pST;
 
+		if (this._rC !== null) {
+			this._rC.call();
+		}
 		K.add(this);
 		return this;
 	};
@@ -707,7 +718,7 @@
 		return _st;
 	};
 		
-	// _cls _sc _op _dm _po _bg _tf		 
+	// _cls _sc _op _bm _tp _bg _tf		 
 	K.pp = function(p, v) {//process single property
 		if (_tf.indexOf(p) !== -1) {
 			var t = p.replace(/X|Y|Z/, '');
@@ -726,7 +737,7 @@
 				return { value: parseFloat(v, 10) };
 			}
 		}
-		if (_po.indexOf(p) !== -1 || _dm.indexOf(p) !== -1) {
+		if (_tp.indexOf(p) !== -1 || _bm.indexOf(p) !== -1) {
 			return { value: K.truD(v).v, unit: K.truD(v).u };
 		}
 		if (_op.indexOf(p) !== -1) {
@@ -823,176 +834,85 @@
 				var bz = es.replace(/bezier|\s|\(|\)/g,'').split(','), i = 0, l = bz.length;
 				for (i; i<l;i++) { bz[i] = parseFloat(bz[i]); }
 				return K.Ease.bezier(bz[0],bz[1],bz[2],bz[3]); //bezier easing						
+			} else if ( /physics/.test(es) )  {
+				return K.Physics[es](); // predefined physics bezier based easing functions
 			} else {
-				return K.Ease[es](); //bezier based easing functions						
+				return K.Ease[es](); // predefined bezier based easing functions						
 			}
 		}
 	};
 		
-	K.Ease = {}; /*K.Easing = {};  K.Physics = {}; // we build nice ease objects here
+	K.Easing = {};  // we build nice ease objects here
 		
 	//high performance for accuracy (smoothness) trade
-	K.Easing.linear = function (t) { return t; };*/
-	
-	//high accuracy for tiny performance trade
-	K.Ease.easeIn = function(){ return _bz.pB(0.42, 0.0, 1.00, 1.0); };
-	K.Ease.easeOut = function(){ return _bz.pB(0.00, 0.0, 0.58, 1.0); };
-	K.Ease.easeInOut = function(){ return _bz.pB(0.50, 0.16, 0.49, 0.86); };
-				
-	K.Ease.easeInSine = function(){ return _bz.pB(0.47, 0, 0.745, 0.715); };
-	K.Ease.easeOutSine = function(){ return _bz.pB(0.39, 0.575, 0.565, 1); };
-	K.Ease.easeInOutSine = function(){ return _bz.pB(0.445, 0.05, 0.55, 0.95); };
-	
-	K.Ease.easeInQuad = function () { return _bz.pB(0.550, 0.085, 0.680, 0.530); };
-	K.Ease.easeOutQuad = function () { return _bz.pB(0.250, 0.460, 0.450, 0.940); };			
-	K.Ease.easeInOutQuad = function () { return _bz.pB(0.455, 0.030, 0.515, 0.955); };
-	
-	K.Ease.easeInCubic = function () { return _bz.pB(0.55, 0.055, 0.675, 0.19); };
-	K.Ease.easeOutCubic = function () { return _bz.pB(0.215, 0.61, 0.355, 1); };			
-	K.Ease.easeInOutCubic = function () { return _bz.pB(0.645, 0.045, 0.355, 1); };
-	
-	K.Ease.easeInQuart = function () { return _bz.pB(0.895, 0.03, 0.685, 0.22); };
-	K.Ease.easeOutQuart = function () { return _bz.pB(0.165, 0.84, 0.44, 1); };
-	K.Ease.easeInOutQuart = function () { return _bz.pB(0.77, 0, 0.175, 1); };	
+	K.Easing.linear = function (t) { return t; };
 
-	K.Ease.easeInQuint = function(){ return _bz.pB(0.755, 0.05, 0.855, 0.06); };
-	K.Ease.easeOutQuint = function(){ return _bz.pB(0.23, 1, 0.32, 1); };
-	K.Ease.easeInOutQuint = function(){ return _bz.pB(0.86, 0, 0.07, 1); };
-							
-	K.Ease.easeInExpo = function(){ return _bz.pB(0.95, 0.05, 0.795, 0.035); }; 
-	K.Ease.easeOutExpo = function(){ return _bz.pB(0.19, 1, 0.22, 1); };
-	K.Ease.easeInOutExpo = function(){ return _bz.pB(1, 0, 0, 1); };
-
-	K.Ease.easeInCirc = function(){ return _bz.pB(0.6, 0.04, 0.98, 0.335); };
-	K.Ease.easeOutCirc = function(){ return _bz.pB(0.075, 0.82, 0.165, 1); };
-	K.Ease.easeInOutCirc = function(){ return _bz.pB(0.785, 0.135, 0.15, 0.86); };
+	var _PI = Math.PI, _2PI = Math.PI * 2, _hPI = Math.PI / 2,
+		_kea = 0.1, _kep = 0.4;
 	
-	K.Ease.easeInBack = function(){ return _bz.pB(0.600, -0.280, 0.735, 0.045); };
-	K.Ease.easeOutBack = function(){ return _bz.pB(0.175, 0.885, 0.320, 1.275); };
-	K.Ease.easeInOutBack = function(){ return _bz.pB(0.68, -0.55, 0.265, 1.55); };
-	
-	K.Ease.slowMo = function(){ return _bz.pB(0.000, 0.500, 1.000, 0.500); };
-	K.Ease.slowMo1 = function(){ return _bz.pB(0.000, 0.700, 1.000, 0.300); };
-	K.Ease.slowMo2 = function(){ return _bz.pB(0.000, 0.900, 1.000, 0.100); };
-
-	//  BezierEasing - use bezier curve for transition easing function
-	//  by Gaëtan Renaudeau 2014 – MIT License
-	//  optimized by dnp_theme 2015 – MIT License
-	K.Ease.bezier = function(mX1, mY1, mX2, mY2) {		
-	    return _bz.pB(mX1, mY1, mX2, mY2);
+	K.Easing.easingSinusoidalIn = function(t) { return -Math.cos(t * _hPI) + 1; };
+	K.Easing.easingSinusoidalOut = function(t) { return Math.sin(t * _hPI); };
+	K.Easing.easingSinusoidalInOut = function(t) { return -0.5 * (Math.cos(_PI * t) - 1); };
+	K.Easing.easingQuadraticIn = function (t) { return t*t; };
+	K.Easing.easingQuadraticOut = function (t) { return t*(2-t); };
+	K.Easing.easingQuadraticInOut = function (t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t; };
+	K.Easing.easingCubicIn = function (t) { return t*t*t; };
+	K.Easing.easingCubicOut = function (t) { return (--t)*t*t+1; };
+	K.Easing.easingCubicInOut = function (t) { return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1; };
+	K.Easing.easingQuarticIn = function (t) { return t*t*t*t; };
+	K.Easing.easingQuarticOut = function (t) { return 1-(--t)*t*t*t; };
+	K.Easing.easingQuarticInOut = function (t) { return t<.5 ? 8*t*t*t*t : 1-8*(--t)*t*t*t; };
+	K.Easing.easingQuinticIn = function (t) { return t*t*t*t*t; };
+	K.Easing.easingQuinticOut = function (t) { return 1+(--t)*t*t*t*t; };
+	K.Easing.easingQuinticInOut = function (t) { return t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t; };
+	K.Easing.easingCircularIn = function(t) { return -(Math.sqrt(1 - (t * t)) - 1); };
+	K.Easing.easingCircularOut = function(t) { return Math.sqrt(1 - (t = t - 1) * t); };
+	K.Easing.easingCircularInOut = function(t) {	return ((t*=2) < 1) ? -0.5 * (Math.sqrt(1 - t * t) - 1) : 0.5 * (Math.sqrt(1 - (t -= 2) * t) + 1); };
+	K.Easing.easingExponentialIn = function(t) { return Math.pow(2, 10 * (t - 1)) - 0.001; };
+	K.Easing.easingExponentialOut = function(t) { return 1 - Math.pow(2, -10 * t); };
+	K.Easing.easingExponentialInOut = function(t) { return (t *= 2) < 1 ? 0.5 * Math.pow(2, 10 * (t - 1)) : 0.5 * (2 - Math.pow(2, -10 * (t - 1))); };
+	K.Easing.easingBackIn = function(t) { var s = 1.70158; return t * t * ((s + 1) * t - s); };
+	K.Easing.easingBackOut = function(t) { var s = 1.70158; return --t * t * ((s + 1) * t + s) + 1; };
+	K.Easing.easingBackInOut = function(t) { var s = 1.70158 * 1.525;	if ((t *= 2) < 1) return 0.5 * (t * t * ((s + 1) * t - s));	return 0.5 * ((t -= 2) * t * ((s + 1) * t + s) + 2); };
+	K.Easing.easingElasticIn = function(t) {
+		var s;
+		if ( t === 0 ) return 0; if ( t === 1 ) return 1;
+		if ( !_kea || _kea < 1 ) { _kea = 1; s = _kep / 4; } else s = _kep * Math.asin( 1 / _kea ) / _2PI;
+		return - ( _kea * Math.pow( 2, 10 * ( t -= 1 ) ) * Math.sin( ( t - s ) * _2PI / _kep ) );
 	};
+	K.Easing.easingElasticOut = function(t) {
+		var s;
+		if ( t === 0 ) return 0; if ( t === 1 ) return 1;
+		if ( !_kea || _kea < 1 ) { _kea = 1; s = _kep / 4; } else s = _kep * Math.asin( 1 / _kea ) / _2PI ;
+		return ( _kea * Math.pow( 2, - 10 * t) * Math.sin( ( t - s ) * _2PI  / _kep ) + 1 );
+	};
+	K.Easing.easingElasticInOut = function(t) {
+		var s;
+		if ( t === 0 ) return 0; if ( t === 1 ) return 1;
+		if ( !_kea || _kea < 1 ) { _kea = 1; s = _kep / 4; } else s = _kep * Math.asin( 1 / _kea ) / _2PI ;
+		if ( ( t *= 2 ) < 1 ) return - 0.5 * ( _kea * Math.pow( 2, 10 * ( t -= 1 ) ) * Math.sin( ( t - s ) * _2PI  / _kep ) );
+		return _kea * Math.pow( 2, -10 * ( t -= 1 ) ) * Math.sin( ( t - s ) * _2PI  / _kep ) * 0.5 + 1;
+	};
+	K.Easing.easingBounceIn = function(t) { return 1 - K.Easing.easingBounceOut( 1 - t ); };
+	K.Easing.easingBounceOut = function(t) {
+		if ( t < ( 1 / 2.75 ) ) { 
+			return 7.5625 * t * t;
+		} else if ( t < ( 2 / 2.75 ) ) {
+			return 7.5625 * ( t -= ( 1.5 / 2.75 ) ) * t + 0.75;
+		} else if ( t < ( 2.5 / 2.75 ) ) {
+			return 7.5625 * ( t -= ( 2.25 / 2.75 ) ) * t + 0.9375;
+		} else {
+			return 7.5625 * ( t -= ( 2.625 / 2.75 ) ) * t + 0.984375;
+		}
+	};
+	K.Easing.easingBounceInOut = function(t) { if ( t < 0.5 ) return K.Easing.easingBounceIn( t * 2 ) * 0.5; return K.Easing.easingBounceOut( t * 2 - 1 ) * 0.5 + 0.5;};
 		
-	var _bz = K.Ease.bezier.prototype;
-	
-    // These values are established by empiricism with tests (tradeoff: performance VS precision)
-    _bz.ni    = 4; // NEWTON_ITERATIONS
-    _bz.nms   = 0.001; // NEWTON_MIN_SLOPE
-    _bz.sp    = 0.0000001; // SUBDIVISION_PRECISION
-    _bz.smi   = 10, // SUBDIVISION_MAX_ITERATIONS
-
-    _bz.ksts = 11; // k Spline Table Size
-    _bz.ksss = 1.0 / (_bz.ksts - 1.0); // k Sample Step Size
-
-    _bz.f32as = 'Float32Array' in window; // float32ArraySupported
-    _bz.msv = _bz.f32as ? new Float32Array (_bz.ksts) : new Array (_bz.ksts); // m Sample Values
-
-    _bz.A = function(aA1, aA2) { return 1.0 - 3.0 * aA2 + 3.0 * aA1; };
-    _bz.B = function(aA1, aA2) { return 3.0 * aA2 - 6.0 * aA1; };
-    _bz.C = function(aA1)      { return 3.0 * aA1; };
-		
-	_bz.r = {};
-	_bz.pB = function (mX1, mY1, mX2, mY2) {
-		this._p = false; var self = this;
-		
-		_bz.r = function(aX){	
-	        if (!self._p) _bz.pc(mX1, mX2, mY1, mY2); 
-	        if (mX1 === mY1 && mX2 === mY2) return aX;
-	
-	        if (aX === 0) return 0;
-	        if (aX === 1) return 1; 
-	        return _bz.cB(_bz.gx(aX, mX1, mX2), mY1, mY2);		
-		};
-		return _bz.r;
-    };
-	
-    // Returns x(t) given t, x1, and x2, or y(t) given t, y1, and y2.
-    _bz.cB = function(aT, aA1, aA2) { // calc Bezier
-        return ((_bz.A(aA1, aA2)*aT + _bz.B(aA1, aA2))*aT + _bz.C(aA1))*aT;
-    };
-
-    // Returns dx/dt given t, x1, and x2, or dy/dt given t, y1, and y2.
-    _bz.gS = function (aT, aA1, aA2) { // getSlope
-        return 3.0 * _bz.A(aA1, aA2)*aT*aT + 2.0 * _bz.B(aA1, aA2) * aT + _bz.C(aA1);
-    };
-
-    _bz.bS = function(a, aA, aB, mX1, mX2) { // binary Subdivide
-        var x, t, i = 0, j = _bz.sp, y = _bz.smi;
-        do {
-            t = aA + (aB - aA) / 2.0;
-            x = _bz.cB(t, mX1, mX2) - a;
-            if (x > 0.0) {
-                aB = t;
-            } else {
-                aA = t;
-            }
-        } while (Math.abs(x) > j && ++i < y);
-        return t;
-    };
-
-    _bz.nri = function (aX, agt, mX1, mX2) { // newton Raphs on Iterate
-		var i = 0, j = _bz.ni;
-        for (i; i < j; ++i) {
-            var cs = _bz.gS(agt, mX1, mX2);
-            if (cs === 0.0) return agt;
-            var x = _bz.cB(agt, mX1, mX2) - aX;
-            agt -= x / cs;
-        }
-        return agt;
-    };
-
-    _bz.csv = function (mX1, mX2) { // calc Sample Values
-		var i = 0, j = _bz.ksts;
-        for (i; i < j; ++i) {
-            _bz.msv[i] = _bz.cB(i * _bz.ksss, mX1, mX2);
-        }
-    };
-
-    _bz.gx = function (aX,mX1,mX2) { //get to X
-        var iS = 0.0, cs = 1, ls = _bz.ksts - 1;
-
-        for (; cs != ls && _bz.msv[cs] <= aX; ++cs) {
-            iS += _bz.ksss;
-        }
-        --cs;
-
-        // Interpolate to provide an initial guess for t
-        var dist = (aX - _bz.msv[cs]) / (_bz.msv[cs+1] - _bz.msv[cs]),
-            gt = iS + dist * _bz.ksss,
-            ins = _bz.gS(gt, mX1, mX2),
-			fiS = iS + _bz.ksss;
-
-        if (ins >= _bz.nms) {
-            return _bz.nri(aX, gt, mX1, mX2);
-        } else if (ins === 0.0) {
-            return gt;
-        } else {
-            return _bz.bS(aX, iS, fiS, mX1, mX2);
-        }
-    };
-
-    _bz.pc = function(mX1, mX2, mY1, mY2) { 
-	   this._p = true;
-		if (mX1 != mY1 || mX2 != mY2)
-        _bz.csv(mX1, mX2);
-    };	
-	
 	//returns browser prefix
 	function getPrefix(){ 
 		var div = document.createElement('div'), i = 0,	pf = ['Moz', 'Webkit', 'O', 'Ms'],
 			s = ['MozTransform', 'WebkitTransform', 'OTransform', 'MsTransform'], pl = s.length;
 		for (i; i < pl; i++) { if (s[i] in div.style) return pf[i];	}
 		div = null;
-		return false;
 	}
 	
 	return K;
