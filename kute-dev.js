@@ -7,36 +7,37 @@
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define(['KUTE'], factory);
-    } else if (typeof exports === 'object') {
+    } else if (typeof exports == 'object') {
         // Node, not strict CommonJS
-        module.exports = factory(require('KUTE'));
+        module.exports = factory();
     } else {
         // Browser globals		
-		root.KUTE = root.KUTE || factory(root.KUTE);
+		root.KUTE = root.KUTE || factory();
     }
 }(this, function () {
 	var K = K || {}, _tws = [], _t, _stk = false, // _stoppedTick // _tweens // KUTE, _tween, _tick,			
-		_pf = _pf || getPrefix(), // prefix
+		_pf = getPrefix(), // prefix
 		_rafR = _rafR || ((!('requestAnimationFrame' in window)) ? true : false), // is prefix required for requestAnimationFrame
 		_pfT = _pfT || ((!('transform' in document.getElementsByTagName('div')[0].style)) ? true : false), // is prefix required for transform
+		_pfB = _pfB || ((!('border-radius' in document.getElementsByTagName('div')[0].style)) ? true : false), // is prefix required for border-radius
 		_tch = _tch || (('ontouchstart' in window || navigator.msMaxTouchPoints) || false), // support Touch?
 		_ev = _ev || (_tch ? 'touchstart' : 'mousewheel'), //event to prevent on scroll
 				
 		_bd = document.body,
 		_htm = document.getElementsByTagName('HTML')[0],
-		_sct = _sct || (/webkit/i.test(navigator.userAgent) || document.compatMode == 'BackCompat' ? _bd : _htm),
+		_sct = (/webkit/i.test(navigator.userAgent) || document.compatMode == 'BackCompat' ? _bd : _htm),
 
-		_isIE = _isIE || document.documentElement.classList.contains('ie'),
+		_isIE8 = /ie8/.test(document.documentElement.className),
 
 		//assign preffix to DOM properties
 		_pfp = _pfp || _pfT ? _pf + 'Perspective' : 'perspective',
 		_pfo = _pfo || _pfT ? _pf + 'PerspectiveOrigin' : 'perspectiveOrigin',
 		_tr = _tr || _pfT ? _pf + 'Transform' : 'transform',
-		_br = _br || _pfT ? _pf + 'BorderRadius' : 'borderRadius',
-		_brtl = _brtl || _pfT ? _pf + 'BorderTopLeftRadius' : 'borderTopLeftRadius',
-		_brtr = _brtr || _pfT ? _pf + 'BorderTopRightRadius' : 'borderTopRightRadius',
-		_brbl = _brbl || _pfT ? _pf + 'BorderBottomLeftRadius' : 'borderBottomLeftRadius',
-		_brbr = _brbr || _pfT ? _pf + 'BorderBottomRightRadius' : 'borderBottomRightRadius',
+		_br = _br || _pfB ? _pf + 'BorderRadius' : 'borderRadius',
+		_brtl = _brtl || _pfB ? _pf + 'BorderTopLeftRadius' : 'borderTopLeftRadius',
+		_brtr = _brtr || _pfB ? _pf + 'BorderTopRightRadius' : 'borderTopRightRadius',
+		_brbl = _brbl || _pfB ? _pf + 'BorderBottomLeftRadius' : 'borderBottomLeftRadius',
+		_brbr = _brbr || _pfB ? _pf + 'BorderBottomRightRadius' : 'borderBottomRightRadius',
 		_raf = _raf || _rafR ? window[_pf + 'RequestAnimationFrame'] : window['requestAnimationFrame'],
 		_caf = _caf || _rafR ? window[_pf + 'CancelAnimationFrame'] : window['cancelAnimationFrame'],
 		
@@ -53,7 +54,7 @@
 		_tp  = ['fontSize','lineHeight','letterSpacing'], // text properties
 		_bg  = ['backgroundPosition'], // background position
 		_3d  = ['rotateX', 'rotateY','translateZ'], // transform properties that require perspective
-		_tf  = ['matrix', 'matrix3d', 'rotateX', 'rotateY', 'rotateZ', 'translate3d', 'translateX', 'translateY', 'translateZ', 'skewX', 'skewY', 'scale'], // transform
+		_tf  = ['rotate', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'translate3d', 'translateX', 'translateY', 'translateZ', 'skewX', 'skewY', 'scale'], // transform
 		_all = _cls.concat(_sc, _clp, _op, _rd, _bm, _tp, _bg, _tf), al = _all.length,
 
 		_tfS = {}, _tfE = {}, _tlS = {}, _tlE = {}, _rtS = {}, _rtE = {}, //internal temp
@@ -71,13 +72,11 @@
 			_d[p] = [50,50];
 		} else if ( p === 'clip' ){
 			_d[p] = [0,0,0,0];			 
-		} else if ( p === 'matrix' ){
-			_d[p] = [1, 0, 0, 1, 0, 0];		
-		} else if ( p === 'matrix3d' ){
-			_d[p] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];		
 		} else if ( p === 'translate3d' ){
-			_d[p] = [0,0,0];		
-		} else if ( /X|Y|Z/.test(p) ){
+			_d[p] = [0,0,0];
+		} else if ( p === 'translate' ){
+			_d[p] = [0,0];
+		} else if ( p === 'rotate' || /X|Y|Z/.test(p) ){
 			_d[p] = 0;		
 		} else if ( p === 'scale' || p === 'opacity' ){
 			_d[p] = 1;		
@@ -98,12 +97,11 @@
 	// internal ticker
 	K.t = function (t) {
 		_t = _raf(K.t);
-		var i = 0, l = _tws.length;
+		var i = 0, l = _tws.length;		
 		while ( i < l ) {
-			if (!_tws[i]) {return false;}
-						
+			if (!_tws[i]) {return false;}			
 			if (K.u(_tws[i],t)) {
-				i++;			
+				i++;
 			} else {
 				_tws.splice(i, 1);
 			}
@@ -127,7 +125,6 @@
 		var _el = _el || typeof el === 'object' ? el : document.querySelector(el),
 			_o = _o || o;
 		_o.rpr = true;
-		_o.toMatrix = o.toMatrix||false;		
 		_o.easing = _o && K.pe(_o.easing) || K.Easing.linear;
 
 		var _vS = to, // we're gonna have to build this object at start
@@ -142,7 +139,6 @@
 		var _el = _el || typeof el === 'object' ? el : document.querySelector(el);
 		var _o = o;
 
-		_o.toMatrix = o.toMatrix||false;
 		_o.easing = _o && K.pe(_o.easing) || K.Easing.linear;
 			
 		var _vS = K.prP(f, false),			
@@ -194,14 +190,17 @@
 				return true;				
 			} else {
 				if (w._cC) { w._cC.call(); }
-				//stop ticking when finished
-				w.close();				
+				
 				//stop preventing scroll when scroll tween finished 
 				w.scrollOut();
 				var i = 0, ctl = w._cT.length;
 				for (i; i < ctl; i++) {
 					w._cT[i].start(t);
-				}					
+				}	
+
+				//stop ticking when finished
+				w.close();	
+				
 				return false;
 			}
 		}
@@ -210,62 +209,88 @@
 
 	// render for each property
 	K.r = function (w,v) {
-		var p;
+		var p, css = w._el && w._el.style, ets = (w._el === undefined || w._el === null) ? _sct : w._el, opp = _isIE8 ? 'filter':'opacity';
 		for (p in w._vE) {
 
 			var _start = w._vS[p],
 				_end = w._vE[p],
-				v1 = _start.value,
-				v2 = _end.value,
+				v1 = _start.value||0,
+				v2 = _end.value||0,
+				tv = v1 + (v2 - v1) * v,
 				u = _end.unit,
 				// checking array on every frame takes time so let's cache these
 				cls = _cls.indexOf(p) !== -1, 
 				bm = _tp.indexOf(p) !== -1 || _bm.indexOf(p) !== -1,
-				rd = _rd.indexOf(p) !== -1,
+				rd = _rd.indexOf(p) !== -1 && !_isIE8,
 				sc = _sc.indexOf(p) !== -1,
 				bg = _bg.indexOf(p) !== -1,
 				clp = _clp.indexOf(p) !== -1,
-				op = _op.indexOf(p) !== -1;				
+				op = _op.indexOf(p) !== -1,
+				tf = p === 'transform' && !_isIE8;
 			
-			//process styles by property / property type							
-			if (p === 'transform') {
+			//process styles by property / property type
+			if ( rd ) {
+				if (p === 'borderRadius') {
+					css[_br] = tv + u;
+				} else if (p === 'borderTopLeftRadius') {
+					css[_brtl] = tv + u;
+				} else if (p === 'borderTopRightRadius') {
+					css[_brtr] = tv + u;
+				} else if (p === 'borderBottomLeftRadius') {
+					css[_brbl] = tv + u;
+				} else if (p === 'borderBottomRightRadius') {
+					css[_brbr] = tv + u;
+				}		
+									
+			} else if (tf) {
 				var _tS = '', tP, rps, pps = 'perspective('+w._pp+'px) '; //transform style & property
 					
 				for (tP in _end) {
 					var t1 = _start[tP], t2 = _end[tP];
 					rps = _3d.indexOf(tP) !== -1; 
-					if ( tP === 'matrix' || tP === 'matrix3d' ) {
-						var i=0, va = [];
-							for ( i; i<t2.length; i++ ){							
-								va[i] = t1[i]===t2[i] ? t2[i] : (t1[i] + ( t2[i] - t1[i] ) * v);
-							}
-							_tS = tP+'('+va+')';						
 
-					} else {
-						if ( tP === 'translate' ) {
-							var tls = '', ts = {}, ax;														
+
+					if ( tP === 'translate' ) {
+						var tls = '', ts = {}, ax;
+						if ( t2[0] && t2[0].value !== undefined ) { // do the 2d translate
+							var tlx1 = t1[0].value || 0, tlx2 = t2[0].value || 0, txu = t2[0].unit,
+								tly1 = t1[1].value || 0, tly2 = t2[1].value || 0, tyu = t2[1].unit;
+							ts.x = tlx1===tlx2 ? tlx2+txu : (tlx1 + ( tlx2 - tlx1 ) * v) + txu;
+							ts.y = tly1===tly2 ? tly2+tyu : (tly1 + ( tly2 - tly1 ) * v) + tyu;
+								
+							tls = 'translate(' + ts.x + ',' + ts.y + ')';
+						} else { // do the 3d translate
 							for (ax in t2){
 								var x1 = t1[ax].value || 0, x2 = t2[ax].value || 0, xu = t2[ax].unit || 'px';
 								ts[ax] = x1===x2 ? x2+xu : (x1 + ( x2 - x1 ) * v) + xu;	
 							}
-							tls = 'translate3d(' + ts.translateX + ',' + ts.translateY + ',' + ts.translateZ + ')';							
-							_tS = (_tS === '') ? tls : (tls + ' ' + _tS);							
-						} else if (tP === 'rotate' || tP === 'skew') {
-							var aS = {}, rx, rt = '', ap = tP === 'rotate' ? 'rotate' : 'skew';
-								for ( rx in t2 ){
-									var a1 = t1[rx].value, a2 = t2[rx].value, av = a1 + (a2 - a1) * v;
-									aS[rx] = rx + '(' + (av||0) + 'deg' + ') ';
-								}
-								rt = ap === 'rotate' ? (aS.rotateX||'') + (aS.rotateY||'') + (aS.rotateZ||'') : (aS.skewX||'') + (aS.skewY||'');								
-							_tS = (_tS === '') ? rt : (_tS + ' ' + rt);
-						} else if (tP === 'scale') {
-							var s1 = t1.value, s2 = t2.value,
-								s = s1 + (s2 - s1) * v, scS = tP + '(' + s + ')';									
-							_tS = (_tS === '') ? scS : (_tS + ' ' + scS);
+							tls = 'translate3d(' + ts.translateX + ',' + ts.translateY + ',' + ts.translateZ + ')';								
+						}												
+						
+						_tS = (_tS === '') ? tls : (tls + ' ' + _tS);							
+					} else if (tP === 'rotate' || tP === 'skew') {
+						var rt = '';
+						
+						if ( t2.value !== undefined ) { // process 2d rotation on Z axis
+							var a21 = t1.value || 0, a22 = t2.value || 0, a2u = t2.unit;
+							rt = 'rotate('+(a21 + (a22 - a21) * v) + a2u + ')';
+						} else {
+							var aS = {}, rx, ap = tP === 'rotate' ? 'rotate' : 'skew';
+							for ( rx in t2 ){
+								var a1 = t1[rx].value||0, a2 = t2[rx].value||0, av = a1 + (a2 - a1) * v;
+								aS[rx] = rx + '(' + (av) + 'deg' + ') ';
+							}
+							rt = ap === 'rotate' ? (aS.rotateX||'') + (aS.rotateY||'') + (aS.rotateZ||'') : (aS.skewX||'') + (aS.skewY||'');							
 						}
+
+						_tS = (_tS === '') ? rt : (_tS + ' ' + rt);
+					} else if (tP === 'scale') {
+						var s1 = t1.value, s2 = t2.value,
+							s = s1 + (s2 - s1) * v, scS = tP + '(' + s + ')';									
+						_tS = (_tS === '') ? scS : (_tS + ' ' + scS);
 					}
 				}
-				w._el.style[_tr] = rps || ( w._pp !== undefined && w._pp !== 0 && !('matrix' in _end || 'matrix3d' in _end) ) ? pps + _tS : _tS;
+				css[_tr] = rps || ( w._pp !== undefined && w._pp !== 0 ) ? pps + _tS : _tS;
 			} else if ( cls ) {
 				var _c = {}, c;
 
@@ -277,88 +302,33 @@
 					}					
 				}
 				
-				if ( w._hex ) {					
-					w._el.style[p] = K.rth( parseInt(_c.r), parseInt(_c.g), parseInt(_c.b) );										
+				if ( w._hex || _isIE8 ) {					
+					css[p] = K.rth( parseInt(_c.r), parseInt(_c.g), parseInt(_c.b) );										
 				} else {
-					w._el.style[p] = !_c.a ? 'rgb(' + _c.r + ',' + _c.g + ',' + _c.b + ')' : 'rgba(' + _c.r + ',' + _c.g + ',' + _c.b + ',' + _c.a + ')';					
+					css[p] = !_c.a ? 'rgb(' + _c.r + ',' + _c.g + ',' + _c.b + ')' : 'rgba(' + _c.r + ',' + _c.g + ',' + _c.b + ',' + _c.a + ')';					
 				}
 
 			} else if ( bm ) {
-				w._el.style[p] = (v1 + (v2 - v1) * v) + u;
-				
-			} else if ( rd ) {
-				if (/borderRadius/.test(p)) {
-					w._el.style[_br] = (v1 + (v2 - v1) * v) + u;
-				} else if (/TopLeft/.test(p)) {
-					w._el.style[_brtl] = (v1 + (v2 - v1) * v) + u;
-				} else if (/TopRight/.test(p)) {
-					w._el.style[_brtr] = (v1 + (v2 - v1) * v) + u;
-				} else if (/BottomLeft/.test(p)) {
-					w._el.style[_brbl] = (v1 + (v2 - v1) * v) + u;
-				} else if (/BottomRight/.test(p)) {
-					w._el.style[_brbr] = (v1 + (v2 - v1) * v) + u;
-				}
-			} else if ( sc ) {
-				var ets = w._el === null ? _sct : w._el;							
+				css[p] = tv ? tv+u : 'auto';
+			} else if ( sc ) {											
 				ets.scrollTop = v1 + ( v2 - v1 ) * v;
-			} else if ( bg ) {
-				var px = _start.x.v + ( _end.x.v - _start.x.v ) * v, pxu = _end.x.u || '%',
-					py = _start.y.v + ( _end.y.v - _start.y.v ) * v, pyu = _end.y.u || '%';			
-				w._el.style[p] = px + pxu + ' ' + py + pyu;
+			} else if ( bg ) {				
+				var px1 = _start.x.v||50, px2 = _end.x.v||50, py1 = _start.y.v||50, py2 = _end.y.v||50,
+					px = px1 + ( px2 - px1 ) * v, pxu = _end.x.u || '%',
+					py = py1 + ( py2 - py1 ) * v, pyu = _end.y.u || '%';			
+				css[p] = px + pxu + ' ' + py + pyu;
 			} else if ( clp ) {
 				var h = 0, cl = [];
 				for (h;h<4;h++){
-					cl[h] = (_start[h].v + ( _end[h].v - _start[h].v ) * v) + _end[h].u || 'px'
+					var c1 = _start[h].v||0, c2 = _end[h].v||0, cu = _end[h].u || 'px';
+					cl[h] = (c1 + ( c2 - c1 ) * v) + cu;
 				}	
-				w._el.style[p] = 'rect('+cl+')';
+				css[p] = 'rect('+cl+')';
 			} else if ( op ) {
-				var opc = v1 + (v2 - v1) * v;
-				w._el.style.opacity = opc;
+				css[opp] = !_isIE8 ? tv : "alpha(opacity=" + parseInt(tv*100) + ")";
+
 			}
 		}
-	};
-	
-	K.matrix = function (w,o) { // tween reprocess transform to matrix at start() K.matrix(t,tr);
-		var t = '', d, m, c, ty, pp,		
-			parent = document.createElement('div'); 
-		d = document.createElement('div');
-		d.style.position = 'absolute'; 
-		d.style.top = -999+'em'; 
-		parent.appendChild(d);
-		document.body.appendChild(parent);		
-		pp = typeof w._pp === 'number' ? 'perspective('+w._pp+'px) ' : null;
-		for (var p in o.transform) {			
-			var l = o.transform[p];
-			if ( /translate|rotate|skew/.test(p) ) {				
-				for (var sp in l) {
-					var spl = l[sp], vl = sp+'('+spl.value+spl.unit+')'; 
-					t = t !== '' && spl ? t + ' ' + vl : vl;				
-				}
-			} else { //scale
-				t = t !== '' ? t + ' ' + p+'('+l.value+')' : p+'('+l.value+')';
-			}
-		}
-		
-		K.perspective(d,w);
-		d.style[_tr] = pp ? pp+t : t;
-		c = window.getComputedStyle(d)[_tr];
-			
-		ty = 'matrix3d';			
-		m = c.replace(/3d|matrix|\(|\)|\s/g,'').split(',');	
-			
-		// parse all numbers properly
-		for (var x = 0; x<m.length; x++){ 
-			m[x] = parseFloat(m[x]); 
-		}
-		 if ( m.length === 6 ) {
-			m = [m[0], m[1], 0, 0, m[2], m[3], 0, 0, 0, 0, 1, 0, m[4], m[5], 0, 1]; 
-		} 			
-
-		o.transform = {};
-		o.transform[ty] = m;	
-
-		document.body.removeChild(parent);		
-		d = null; parent = null;
 	};
 	
 	K.perspective = function (l,w) {
@@ -386,7 +356,6 @@
 		this._ppo = this._ppo || _o.perspectiveOrigin; // perspective origin	
 		this._ppp = this._ppp || _o.parentPerspective; // parent perspective		
 		this._pppo = this._pppo || _o.parentPerspectiveOrigin; // parent perspective origin		
-		this._tM = this._tM || _o.toMatrix || false; // internal option to convert values to matrix transforms  
 		this._rpr = this._rpr || _o.rpr || false; // internal option to process inline/computed style at start instead of init true/false
 		this._hex = this._hex || _o.keepHex || false; // option to keep hex for color tweens true/false
 		this._e = this._e || _o.easing; // _easing
@@ -415,7 +384,7 @@
 				
 		if ( this._rpr ) { // on start we reprocess the valuesStart for TO() method
 			var f = {};
-			for ( p in this._vS ) { if ( typeof this._vS[p] !== 'object' || (( this._vS[p] instanceof Array) ) ) hasStart = false; }
+			for ( p in this._vS ) { if ( typeof this._vS[p] !== 'object' /*|| ( this._vS[p] instanceof Array ) */) hasStart = false; }
 			for ( p in f ) { if (typeof f[p] !== 'undefined') { hasFrom = true; } else { hasFrom = false; }	}
 	
 			if ( !hasStart && !hasFrom ){
@@ -430,13 +399,14 @@
 			// make a better chaining for .to() method
 			// set transform properties from inline style coming from previous tween
 			for ( p in this._vS ) {
-				if ( p === 'transform' && this._vS.transform.matrix3d === undefined ){
+				if ( p === 'transform' ){
 					for ( sp in this._vS[p]) {
-						var tp = this._vS[p][sp];
-						if (tp.value !== undefined && (!( sp in this._vE[p])) ) { // scale
-							this._vE[p][sp] = this._vS[p][sp];
+						var tp = this._vS[p][sp];		
+
+						if (tp.value !== undefined && (!( sp in this._vE[p])) ) { // 2d transforms
+							this._vE[p][sp] = this._vS[p][sp];							
 						}
-						for (var spp in tp){
+						for (var spp in tp){ // 3d transforms
 							if (this._vE[p][sp] === undefined ) { this._vE[p][sp] = {} }
 							if ( (spp in tp) && tp[spp].value !== undefined && (!( spp in this._vE[p][sp])) ) {
 								this._vE[p][sp][spp] = this._vS[p][sp][spp];
@@ -444,14 +414,9 @@
 						}
 					}					
 				}
-			}	
+			}
 		}
 
-		if ( this._tM && ('transform' in this._vE) ) { 
-			if ( this._vS.transform.matrix3d === undefined ) { K.matrix(this,this._vS); }
-			if ( this._vE.transform.matrix3d === undefined ) { K.matrix(this,this._vE); }
-		}
-		
 		for ( p in this._vE ) {
 			this._vSR[p] = this._vS[p];			
 		}
@@ -464,41 +429,43 @@
 		var p, f = {}, el = this._el, to = this._vS, cs = this.gIS('transform'), deg = ['rotate','skew'], ax = ['X','Y','Z'];
 		for (p in to){
 			if ( _tf.indexOf(p) !== -1 ) {
-				if ( /matrix/.test(p) ) {
-					var m = this.gCS('transform',p);					
-					f[p] = m !== 'none' ? this.gCS('transform',p) : _d[p];												
-				} else {
-					if ( /translate/.test(p) ) {
-						if ( cs[p] !== undefined ) {
-							f[p] = cs[p]
-						} else if ( cs['translate3d'] !== undefined  ) {							
-							f['translate3d'] = cs['translate3d'];		
-						} else {
-							f[p] = _d[p];
-						}			
-					} else if ( p === 'scale' ) {
-						f[p] = cs[p] || _d[p]; // scale
-					} else { // all angles
-						for (var d=0; d<2; d++) {
-							for (var a = 0; a<3; a++) {
-								var s = deg[d]+ax[a];
-								
-								if ( s in cs ) {
-									f[s] = cs[s]; 
-								} else {
-									f[s] = _d[s];
-								}
+				if ( p === 'translateX' || p === 'translateY' || p === 'translateZ' ) {
+					if ( cs[p] !== undefined ) {
+						f[p] = cs[p]
+					} else if ( cs['translate3d'] !== undefined  ) {							
+						f['translate3d'] = cs['translate3d'];		
+					} else {
+						f[p] = _d[p];
+					}					
+				} else if ( p === 'rotate' || p === 'translate' || p === 'scale' ) { // 2d transforms
+
+					f[p] = cs[p] || _d[p];
+				} else { // all angles
+					for (var d=0; d<2; d++) {
+						for (var a = 0; a<3; a++) {
+							var s = deg[d]+ax[a];
+		
+							if ( s in cs ) {
+								f[s] = cs[s]; 
+							} else {
+								f[s] = _d[s];
 							}
 						}
 					}
 				}
 			} else {
-				if ( _sc.indexOf(p) === -1 ) {				
-					f[p] = this.gCS(p) || _d[p];
+				if ( _sc.indexOf(p) === -1 ) {					
+					
+					if (p === 'opacity' && _isIE8 ) { // handle IE8 opacity	
+						var co = this.gCS('filter');					
+						f['opacity'] = typeof co === 'number' ? co : _d['opacity'];
+					} else{
+						f[p] = this.gCS(p) || _d[p];
+					}
 				} else {
-					f[p] = el === null ? (window.pageYOffset || _sct.scrollTop) : el.scrollTop;
+					f[p] = (el === null || el === undefined) ? (window.pageYOffset || _sct.scrollTop) : el.scrollTop;
 				}			
-			}					
+			}
 		}
 		for ( p in cs ){ // also add to _vS values from previous tweens
 			if ( _tf.indexOf(p) !== -1 &&  (!( p in to )) && cs[p] !== undefined ) {
@@ -514,14 +481,17 @@
 			trsf = {}; //the transform object
 		// if we have any inline style in the cssText attribute, usually it has higher priority
 		var css = cst.replace(/\s/g,'').split(';'), i=0, csl = css.length;
+		
 		for ( i; i<csl; i++ ){
 
-			if ( /transform/.test(css[i])) {	
+			if ( /transform/.test(css[i])) {
 				var tps = css[i].split(':')[1].split(')'), k=0, tpl = tps.length; //all transform properties
+				
 				for ( k; k< tpl; k++){
 					var tp = tps[k].split('('); //each transform property
-					if ( tp[0] !== '' && _tf.indexOf(tp[0]) ){
-						trsf[tp[0]] = /translate3d|matrix/.test(tp[0]) ? tp[1].split(',') : tp[1];
+					
+					if ( tp[0] !== '' && _tf.indexOf(tp) ){
+						trsf[tp[0]] = /translate3d/.test(tp[0]) ? tp[1].split(',') : tp[1];
 					}
 				}
 			}
@@ -530,29 +500,22 @@
 	};
 	
 	w.gCS = function (p) { // gCS = get style property for element from computedStyle for .to() method
-		var el = this._el, cs = window.getComputedStyle(el), //the computed style
-			ppp = ( _pfT && ( /transform|Radius/.test(p) ) ) ? ('-'+_pf.toString().toLowerCase()+'-'+p) : p, //prefixed property for CSS match
+		var el = this._el, cs = el.currentStyle || window.getComputedStyle(el), //the computed style
+			ppp = ( !_isIE8 && _pfT && ( /transform|Radius/.test(p) ) ) ? ('-'+ _pf.toLowerCase()+'-'+p) : p, //prefixed property for CSS match
 			s = ( (_pfT && p==='transform' ) || (_pfT && _rd.indexOf(p) !== -1)) // s the property style value
 			  ? cs[ppp]
 			  : cs[p];
 
-		if (p === 'transform' && ppp in cs){ // get a transform Array from computed style
-			var mt = s.split('(')[0], m = s.replace(/3d|matrix|\(|\)|\s|/g,'').split(','), ml = m.length; //matrix type, array values and length
-			
-			if (mt==='none'){
-				return _d['matrix3d'];
-			} else if ( m instanceof Array ) {
-				//make sure we always use a matrix3d
-				if ( ml === 6 ) { m = [m[0], m[1], 0, 0, m[2], m[3], 0, 0, 0, 0, 1, 0, m[4], m[5], 0, 1]; }
-				for (var i=0; i<16; i++){
-					m[i] = parseFloat(m[i]);//make sure all are numbers
-				}
-				return m;		
-			}
-		} else if ( p !== 'transform' && ppp in cs ) {		
+		if ( p !== 'transform' && (ppp in cs) ) {
 			if ( s ){
-				return s;
-			} else {
+				if (ppp==='filter') { // handle IE8 opacity
+					var si = parseFloat(parseInt(s.split('=')[1].replace(')',''))/100);
+					return si;
+				} else {
+					return s;
+				}
+				
+			} else {			
 				return _d[p];
 			}			
 		}
@@ -662,57 +625,42 @@
 		tl = {}; tr = {};
 
 		for (var x in t) {
-			if (typeof t[x] === 'object' && !( t[x] instanceof Array) ) {
-				for (var y in t[x]) {
-					_st[x][y] = K.pp(t[x], t[x][y]);
-				}
-			} else {
-				if (_tf.indexOf(x) !== -1) {
-					
-					if (/matrix/.test(x)) { //process matrix
-						if ( t[x] instanceof Array ) {
-							for (var i = 0; i< t[x].length; i++){
-								t[x][i] = parseFloat(t[x][i]);
-							}							
+			if (_tf.indexOf(x) !== -1) {
+				
+				if (x !== 'translate' && /translate/.test(x)) { //process translate3d
+					var ta = ['X', 'Y', 'Z'], f = 0; //coordinates // 	translate[x] = pp(x, t[x]);	
+
+					for (f; f < 3; f++) {							
+						var a = ta[f];
+						if ( /3d/.test(x) ) {
+							tl['translate' + a] = K.pp('translate' + a, t[x][f]);								
 						} else {
-							tr[x] = t[x].replace(/3d|matrix|\(|\)|\s|/g,'').split(',');
-							for (var i = 0; i< t[x].length; i++){
-								t[x][i] = parseFloat(t[x][i]);
-							}
-						}					
-						tr[x] = t[x];
-					} else {
-						if (/translate/.test(x)) { //process translate3d
-							var ta = ['X', 'Y', 'Z'], f = 0; //coordinates // 	translate[x] = pp(x, t[x]);	
-							for (f; f < 3; f++) {
-								var a = ta[f];
-								if ( /3d/.test(x) ){
-									tl['translate' + a] = K.pp('translate' + a, t[x][f]);
-								} else {
-									tl['translate' + a] = ('translate' + a in t) ? K.pp('translate' + a, t['translate' + a]) : { value: 0, unit: 'px' };
-								}
-							}
-							tr['translate'] = tl;
-						} else if (/rotate|skew/.test(x)) { //process rotation
-							var ap = /rotate/.test(x) ? 'rotate' : 'skew', ra = ['X', 'Y', 'Z'], r = 0, 
-								_rt = {}, _sk = {}, rt = ap === 'rotate' ? _rt : _sk; 
-							for (r; r < 3; r++) {
-								var v = ra[r]; 
-								if ( t[ap+v] !== undefined ) {
-									rt[ap+v] = K.pp(ap + v, t[ap+v]);
-								}			
-							}
-							
-							tr[ap] = rt;
-						} else { //process scale
-							tr[x] = K.pp(x, t[x]);
+							tl['translate' + a] = ('translate' + a in t) ? K.pp('translate' + a, t['translate' + a]) : { value: 0, unit: 'px' };
 						}
 					}
-					_st['transform'] = tr;
 
-				} else {
-					_st[x] = K.pp(x, t[x]);
+					tr['translate'] = tl;
+				} else if ( x !== 'rotate' && /rotate|skew/.test(x)) { //process rotation
+					var ap = /rotate/.test(x) ? 'rotate' : 'skew', ra = ['X', 'Y', 'Z'], r = 0, 
+						_rt = {}, _sk = {}, rt = ap === 'rotate' ? _rt : _sk; 
+					for (r; r < 3; r++) {
+						var v = ra[r]; 
+						if ( t[ap+v] !== undefined ) {
+							rt[ap+v] = K.pp(ap + v, t[ap+v]);
+						}
+					}
+					
+					tr[ap] = rt;
+				} else if ( x === 'translate' || x === 'rotate' ) { //process 2d translation / rotation
+					tr[x] = K.pp(x, t[x]);
+				} else { //process scale
+					tr[x] = K.pp(x, t[x]);
 				}
+
+				_st['transform'] = tr;
+
+			} else {
+				_st[x] = K.pp(x, t[x]);
 			}
 		}
 		return _st;
@@ -729,11 +677,18 @@
 					translateY : { value: K.truD(tv[1]).v, unit: K.truD(tv[1]).u },
 					translateZ : { value: K.truD(tv[2]).v, unit: K.truD(tv[2]).u }
 				};
-			} else if (t === 'translate') {
+			} else if (p !== 'translate' && t === 'translate') {
 				return { value: K.truD(v).v, unit: K.truD(v).u };
-			} else if (t === 'skew' || t === 'rotate') {
+			} else if (p !== 'rotate' && (t === 'skew' || t === 'rotate') ) {
 				return { value: K.truD(v).v, unit: 'deg' };
-			} else if (t === 'scale') {
+			} else if (p === 'translate') {
+				var tv2 = typeof v === 'string' ? v.split(',') : v;
+				return (typeof tv2 === 'object' && tv2 instanceof Array) 
+					? [ {value: K.truD(tv2[0]).v, unit: K.truD(tv2[0]).u}, {value: K.truD(tv2[1]).v, unit: K.truD(tv2[1]).u} ] 
+					: [{ value: K.truD(tv2).v, unit: K.truD(tv2).u }, { value: 0, unit: 'px'} ];
+			} else if (p === 'rotate') {
+				return { value: parseInt(v, 10), unit: 'deg' };
+			} else if (p === 'scale') {
 				return { value: parseFloat(v, 10) };
 			}
 		}
@@ -777,7 +732,15 @@
 	};
 		
 	K.truD = function (d) { //true dimension returns { v = value, u = unit }
-		var x = parseInt(d), y = /[a-z]+|%/g.test(d) ? d.replace(x,'') : 'px'; 
+		var x = parseInt(d), mu = ['px','%','deg','rad','em','rem','vh','vw'], l = mu.length, 
+			y = getU();
+			
+		function getU() {
+			var u;
+			while (l--) { if ( typeof d === 'string' && d.indexOf(mu[length]) ) u = mu[length]; }
+			u = u !== undefined ? u : 'px'
+			return u;
+		}
 		return { v: x, u: y };
 	};
 	
@@ -895,23 +858,19 @@
 	};
 	K.Easing.easingBounceIn = function(t) { return 1 - K.Easing.easingBounceOut( 1 - t ); };
 	K.Easing.easingBounceOut = function(t) {
-		if ( t < ( 1 / 2.75 ) ) { 
-			return 7.5625 * t * t;
-		} else if ( t < ( 2 / 2.75 ) ) {
-			return 7.5625 * ( t -= ( 1.5 / 2.75 ) ) * t + 0.75;
-		} else if ( t < ( 2.5 / 2.75 ) ) {
-			return 7.5625 * ( t -= ( 2.25 / 2.75 ) ) * t + 0.9375;
-		} else {
-			return 7.5625 * ( t -= ( 2.625 / 2.75 ) ) * t + 0.984375;
-		}
+		if ( t < ( 1 / 2.75 ) ) { return 7.5625 * t * t; } 
+		else if ( t < ( 2 / 2.75 ) ) { return 7.5625 * ( t -= ( 1.5 / 2.75 ) ) * t + 0.75; } 
+		else if ( t < ( 2.5 / 2.75 ) ) { return 7.5625 * ( t -= ( 2.25 / 2.75 ) ) * t + 0.9375; } 
+		else {return 7.5625 * ( t -= ( 2.625 / 2.75 ) ) * t + 0.984375; }
 	};
 	K.Easing.easingBounceInOut = function(t) { if ( t < 0.5 ) return K.Easing.easingBounceIn( t * 2 ) * 0.5; return K.Easing.easingBounceOut( t * 2 - 1 ) * 0.5 + 0.5;};
 		
 	//returns browser prefix
-	function getPrefix(){ 
-		var div = document.createElement('div'), i = 0,	pf = ['Moz', 'Webkit', 'O', 'Ms'],
-			s = ['MozTransform', 'WebkitTransform', 'OTransform', 'MsTransform'], pl = s.length;
-		for (i; i < pl; i++) { if (s[i] in div.style) return pf[i];	}
+	function getPrefix() { 
+		var div = document.createElement('div'), i = 0,	pf = ['Moz', 'moz', 'Webkit', 'webkit', 'O', 'o', 'Ms', 'ms'], pl = pf.length,
+			s = ['MozTransform', 'mozTransform', 'WebkitTransform', 'webkitTransform', 'OTransform', 'oTransform', 'MsTransform', 'msTransform'];
+			
+		for (i; i < pl; i++) { if (s[i] in div.style) { return pf[i]; }	}
 		div = null;
 	}
 	
