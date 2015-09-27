@@ -302,10 +302,10 @@
 					}					
 				}
 				
-				if ( w._hex || _isIE8 ) {					
-					css[p] = K.rth( parseInt(_c.r), parseInt(_c.g), parseInt(_c.b) );										
+				if ( w._hex ) {					
+					css[p] = K.rth( parseInt(_c.r), parseInt(_c.g), parseInt(_c.b) );
 				} else {
-					css[p] = !_c.a ? 'rgb(' + _c.r + ',' + _c.g + ',' + _c.b + ')' : 'rgba(' + _c.r + ',' + _c.g + ',' + _c.b + ',' + _c.a + ')';					
+					css[p] = !_c.a || _isIE8 ? 'rgb(' + _c.r + ',' + _c.g + ',' + _c.b + ')' : 'rgba(' + _c.r + ',' + _c.g + ',' + _c.b + ',' + _c.a + ')';
 				}
 
 			} else if ( bm ) {
