@@ -211,7 +211,7 @@
 	K.r = function (w,v) {
 		var p, css = w._el && w._el.style, ets = (w._el === undefined || w._el === null) ? _sct : w._el, opp = _isIE8 ? 'filter':'opacity';
 		for (p in w._vE) {
-
+console.log(w._vS[p])
 			var _start = w._vS[p],
 				_end = w._vE[p],
 				v1 = _start.value ? _start.value : 0,
