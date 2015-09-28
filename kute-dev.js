@@ -130,7 +130,6 @@
 		var _vS = to, // we're gonna have to build this object at start
 			_vE = K.prP(to, true),
 			_tw = new K.Tween(_el, _vS, _vE, _o);
-				
 		return _tw;
 	};
 
@@ -144,7 +143,6 @@
 		var _vS = K.prP(f, false),			
 			_vE = K.prP(to, true),
 			_tw = new K.Tween(_el, _vS, _vE, _o);
-		
 		return _tw;
 	};
 	// fallback method for previous versions
@@ -195,7 +193,7 @@
 				w.scrollOut();
 				var i = 0, ctl = w._cT.length;
 				for (i; i < ctl; i++) {
-					w._cT[i].start(t);
+					w._cT[i].start();
 				}	
 
 				//stop ticking when finished
@@ -211,6 +209,7 @@
 	K.r = function (w,v) {
 		var p, css = w._el && w._el.style, ets = (w._el === undefined || w._el === null) ? _sct : w._el, opp = _isIE8 ? 'filter':'opacity';
 		for (p in w._vE) {
+
 			var _start = w._vS[p],
 				_end = w._vE[p],
 				v1 = _start.value || 0,
@@ -276,7 +275,9 @@
 						} else {
 							var aS = {}, rx, ap = tP === 'rotate' ? 'rotate' : 'skew';
 							for ( rx in t2 ){
-								var a1 = t1[rx].value||0, a2 = t2[rx].value||0, av = a1 + (a2 - a1) * v;
+								var a1 = (t1[rx] !== undefined && t1[rx].value)||0, 
+									a2 = (t2[rx] !== undefined && t2[rx].value)||0, 
+									av = a1 + (a2 - a1) * v;
 								aS[rx] = rx + '(' + (av) + 'deg' + ') ';
 							}
 							rt = ap === 'rotate' ? (aS.rotateX||'') + (aS.rotateY||'') + (aS.rotateZ||'') : (aS.skewX||'') + (aS.skewY||'');							
@@ -302,9 +303,9 @@
 				}
 				
 				if ( w._hex ) {					
-					css[p] = K.rth( parseInt(_c.r), parseInt(_c.g), parseInt(_c.b) );
+					css[p] = K.rth( parseInt(_c.r), parseInt(_c.g), parseInt(_c.b) );										
 				} else {
-					css[p] = !_c.a || _isIE8 ? 'rgb(' + _c.r + ',' + _c.g + ',' + _c.b + ')' : 'rgba(' + _c.r + ',' + _c.g + ',' + _c.b + ',' + _c.a + ')';
+					css[p] = !_c.a || _isIE8 ? 'rgb(' + _c.r + ',' + _c.g + ',' + _c.b + ')' : 'rgba(' + _c.r + ',' + _c.g + ',' + _c.b + ',' + _c.a + ')';					
 				}
 
 			} else if ( bm ) {
@@ -377,32 +378,25 @@
 		this._sT = t || window.performance.now();
 		this._sT += this._dl;
 		this.scrollIn();
-		var p, sp, hasStart = true, hasFrom = false;
+		var p, sp;
 		
 		K.perspective(this._el,this); // apply the perspective
 				
 		if ( this._rpr ) { // on start we reprocess the valuesStart for TO() method
 			var f = {};
-			for ( p in this._vS ) { if ( typeof this._vS[p] !== 'object' || ( this._vS[p] instanceof Array ) ) hasStart = false; }
-			for ( p in f ) { if (typeof f[p] !== 'undefined') { hasFrom = true; } else { hasFrom = false; }	}
-	
-			if ( !hasStart && !hasFrom ){
-				f = this.prS(); 
-				this._vS = {};
-				this._vS = K.prP(f,false);				
-			} else if ( !hasStart && hasFrom ){
-				this._vS = {};
-				this._vS = K.prP(f,false);
-			}
+
+			f = this.prS(); 
+			this._vS = {};
+			this._vS = K.prP(f,false);
 
 			// make a better chaining for .to() method
-			// set transform properties from inline style coming from previous tween
+			// transfer unchanged values to this._vE
 			for ( p in this._vS ) {
 				if ( p === 'transform' ){
 					for ( sp in this._vS[p]) {
-						var tp = this._vS[p][sp];		
+						var tp = this._vS[p][sp];
 
-						if (tp.value !== undefined && (!( sp in this._vE[p])) ) { // 2d transforms
+						if ( tp.value !== undefined && (!( sp in this._vE[p])) ) { // 2d transforms
 							this._vE[p][sp] = this._vS[p][sp];							
 						}
 						for (var spp in tp){ // 3d transforms
@@ -444,9 +438,9 @@
 						for (var a = 0; a<3; a++) {
 							var s = deg[d]+ax[a];
 		
-							if ( s in cs ) {
+							if ( s in cs && s !== 'skewZ' ) {
 								f[s] = cs[s]; 
-							} else {
+							} else if ( s !== 'skewZ' ) {
 								f[s] = _d[s];
 							}
 						}
@@ -643,22 +637,20 @@
 					var ap = /rotate/.test(x) ? 'rotate' : 'skew', ra = ['X', 'Y', 'Z'], r = 0, 
 						_rt = {}, _sk = {}, rt = ap === 'rotate' ? _rt : _sk; 
 					for (r; r < 3; r++) {
-						var v = ra[r]; 
-						if ( t[ap+v] !== undefined ) {
+						var v = ra[r];
+						if ( t[ap+v] !== undefined && x !== 'skewZ' ) {
 							rt[ap+v] = K.pp(ap + v, t[ap+v]);
 						}
 					}
 					
 					tr[ap] = rt;
-				} else if ( x === 'translate' || x === 'rotate' ) { //process 2d translation / rotation
-					tr[x] = K.pp(x, t[x]);
-				} else { //process scale
+				} else if ( x === 'translate' || x === 'rotate' || x === 'scale' ) { //process 2d translation / rotation
 					tr[x] = K.pp(x, t[x]);
 				}
 
 				_st['transform'] = tr;
 
-			} else {
+			} else if (_tf.indexOf(x) === -1)  {
 				_st[x] = K.pp(x, t[x]);
 			}
 		}
@@ -677,16 +669,16 @@
 					translateZ : { value: K.truD(tv[2]).v, unit: K.truD(tv[2]).u }
 				};
 			} else if (p !== 'translate' && t === 'translate') {
-				return { value: K.truD(v).v, unit: K.truD(v).u };
-			} else if (p !== 'rotate' && (t === 'skew' || t === 'rotate') ) {
-				return { value: K.truD(v).v, unit: 'deg' };
+				return { value: K.truD(v).v, unit: (K.truD(v).u||'px') };
+			} else if (p !== 'rotate' && (t === 'skew' || t === 'rotate') && p !== 'skewZ' ) {
+				return { value: K.truD(v).v, unit: (K.truD(v,p).u||'deg') };
 			} else if (p === 'translate') {
 				var tv2 = typeof v === 'string' ? v.split(',') : v;
 				return (typeof tv2 === 'object' && tv2 instanceof Array) 
 					? [ {value: K.truD(tv2[0]).v, unit: K.truD(tv2[0]).u}, {value: K.truD(tv2[1]).v, unit: K.truD(tv2[1]).u} ] 
 					: [{ value: K.truD(tv2).v, unit: K.truD(tv2).u }, { value: 0, unit: 'px'} ];
 			} else if (p === 'rotate') {
-				return { value: parseInt(v, 10), unit: 'deg' };
+				return { value: parseInt(v, 10), unit: (K.truD(v,p).u||'deg') };
 			} else if (p === 'scale') {
 				return { value: parseFloat(v, 10) };
 			}
@@ -730,14 +722,14 @@
 		}
 	};
 		
-	K.truD = function (d) { //true dimension returns { v = value, u = unit }
+	K.truD = function (d,p) { //true dimension returns { v = value, u = unit }
 		var x = parseInt(d), mu = ['px','%','deg','rad','em','rem','vh','vw'], l = mu.length, 
 			y = getU();
 			
 		function getU() {
 			var u;
 			while (l--) { if ( typeof d === 'string' && d.indexOf(mu[length]) ) u = mu[length]; }
-			u = u !== undefined ? u : 'px'
+			u = u !== undefined ? u : (p ? 'deg' : 'px')
 			return u;
 		}
 		return { v: x, u: y };
