@@ -422,7 +422,7 @@
 		var p, f = {}, el = this._el, to = this._vS, cs = this.gIS('transform'), deg = ['rotate','skew'], ax = ['X','Y','Z'];
 		for (p in to){
 			if ( _tf.indexOf(p) !== -1 ) {
-				if ( p === 'translateX' || p === 'translateY' || p === 'translateZ' ) {
+				if ( p === 'translateX' || p === 'translateY' || p === 'translateZ' || p === 'translate3d' ) {
 					if ( cs[p] !== undefined ) {
 						f[p] = cs[p]
 					} else if ( cs['translate3d'] !== undefined  ) {							
