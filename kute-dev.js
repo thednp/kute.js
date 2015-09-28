@@ -214,8 +214,8 @@
 console.log(w._vS[p])
 			var _start = w._vS[p],
 				_end = w._vE[p],
-				v1 = _start.value ? _start.value : 0,
-				v2 = _end.value ? _end.value : 0,
+				v1 = _start.value || 0,
+				v2 = _end.value || 0,
 				tv = v1 + (v2 - v1) * v,
 				u = _end.unit,
 				// checking array on every frame takes time so let's cache these
@@ -384,7 +384,7 @@ console.log(w._vS[p])
 				
 		if ( this._rpr ) { // on start we reprocess the valuesStart for TO() method
 			var f = {};
-			for ( p in this._vS ) { if ( typeof this._vS[p] !== 'object' /*|| ( this._vS[p] instanceof Array ) */) hasStart = false; }
+			for ( p in this._vS ) { if ( typeof this._vS[p] !== 'object' || ( this._vS[p] instanceof Array ) ) hasStart = false; }
 			for ( p in f ) { if (typeof f[p] !== 'undefined') { hasFrom = true; } else { hasFrom = false; }	}
 	
 			if ( !hasStart && !hasFrom ){
