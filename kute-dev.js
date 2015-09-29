@@ -378,49 +378,41 @@
 		this._sT = t || window.performance.now();
 		this._sT += this._dl;
 		this.scrollIn();
-		var p, sp;
 		
 		K.perspective(this._el,this); // apply the perspective
 				
 		if ( this._rpr ) { // on start we reprocess the valuesStart for TO() method
-			var f = {};
-
-			f = this.prS(); 
+			var f = this.prS(); 
 			this._vS = {};
 			this._vS = K.prP(f,false);
-
-			// make a better chaining for .to() method
-			// transfer unchanged values to this._vE
-			for ( p in this._vS ) {
-				if ( p === 'transform' ){
-					for ( sp in this._vS[p]) {
+			
+			for ( var p in this._vS ) {
+				if ( p === 'transform' && (p in this._vE) ){
+					for ( var sp in this._vS[p]) {
 						var tp = this._vS[p][sp];
-
-						if ( tp.value !== undefined && (!( sp in this._vE[p])) ) { // 2d transforms
+						if ( (!( sp in this._vE[p])) ) { // 2d transforms
 							this._vE[p][sp] = this._vS[p][sp];							
-						}
+						}						
 						for (var spp in tp){ // 3d transforms
 							if (this._vE[p][sp] === undefined ) { this._vE[p][sp] = {} }
 							if ( (spp in tp) && tp[spp].value !== undefined && (!( spp in this._vE[p][sp])) ) {
 								this._vE[p][sp][spp] = this._vS[p][sp][spp];
 							}
-						}
+						}						
 					}					
 				}
 			}
 		}
-
 		for ( p in this._vE ) {
 			this._vSR[p] = this._vS[p];			
 		}
-
 		if (!_t) K.t();
 		return this;
 	};
 	
 	w.prS = function () { //prepare valuesStart for .to() method
-		var p, f = {}, el = this._el, to = this._vS, cs = this.gIS('transform'), deg = ['rotate','skew'], ax = ['X','Y','Z'];
-		for (p in to){
+		var f = {}, el = this._el, to = this._vS, cs = this.gIS('transform'), deg = ['rotate','skew'], ax = ['X','Y','Z'];
+		for (var p in to){
 			if ( _tf.indexOf(p) !== -1 ) {
 				if ( p === 'translateX' || p === 'translateY' || p === 'translateZ' || p === 'translate3d' ) {
 					if ( cs[p] !== undefined ) {
@@ -431,9 +423,8 @@
 						f[p] = _d[p];
 					}					
 				} else if ( p === 'rotate' || p === 'translate' || p === 'scale' ) { // 2d transforms
-
 					f[p] = cs[p] || _d[p];
-				} else { // all angles
+				} else if ( /rotate/.test(p) || /skew/.test(p) ) { // all angles
 					for (var d=0; d<2; d++) {
 						for (var a = 0; a<3; a++) {
 							var s = deg[d]+ax[a];
@@ -447,8 +438,7 @@
 					}
 				}
 			} else {
-				if ( _sc.indexOf(p) === -1 ) {					
-					
+				if ( _sc.indexOf(p) === -1 ) {										
 					if (p === 'opacity' && _isIE8 ) { // handle IE8 opacity	
 						var co = this.gCS('filter');					
 						f['opacity'] = typeof co === 'number' ? co : _d['opacity'];
@@ -460,7 +450,7 @@
 				}			
 			}
 		}
-		for ( p in cs ){ // also add to _vS values from previous tweens
+		for ( var p in cs ){ // also add to _vS values from previous tweens	
 			if ( _tf.indexOf(p) !== -1 &&  (!( p in to )) && cs[p] !== undefined ) {
 				f[p] = cs[p];
 			}		
@@ -473,16 +463,12 @@
 		var l = this._el, cst = l.style.cssText,//the cssText	
 			trsf = {}; //the transform object
 		// if we have any inline style in the cssText attribute, usually it has higher priority
-		var css = cst.replace(/\s/g,'').split(';'), i=0, csl = css.length;
-		
+		var css = cst.replace(/\s/g,'').split(';'), i=0, csl = css.length;		
 		for ( i; i<csl; i++ ){
-
 			if ( /transform/.test(css[i])) {
-				var tps = css[i].split(':')[1].split(')'), k=0, tpl = tps.length; //all transform properties
-				
+				var tps = css[i].split(':')[1].split(')'), k=0, tpl = tps.length; //all transform properties				
 				for ( k; k< tpl; k++){
-					var tp = tps[k].split('('); //each transform property
-					
+					var tp = tps[k].split('('); //each transform property					
 					if ( tp[0] !== '' && _tf.indexOf(tp) ){
 						trsf[tp[0]] = /translate3d/.test(tp[0]) ? tp[1].split(',') : tp[1];
 					}
@@ -506,8 +492,7 @@
 					return si;
 				} else {
 					return s;
-				}
-				
+				}				
 			} else {			
 				return _d[p];
 			}			
@@ -604,8 +589,11 @@
 	};
 
 	w.close = function () {
-		var i = _tws.indexOf(this);
-		if (i === _tws.length-1) { K.s(); }
+		var self = this;
+		setTimeout(function(){
+			var i = _tws.indexOf(self);
+			if (i === _tws.length-1) { K.s(); }			
+		},100)
 	};
 				
 	// process properties
@@ -623,7 +611,7 @@
 				if (x !== 'translate' && /translate/.test(x)) { //process translate3d
 					var ta = ['X', 'Y', 'Z'], f = 0; //coordinates // 	translate[x] = pp(x, t[x]);	
 
-					for (f; f < 3; f++) {							
+					for (f; f < 3; f++) {				
 						var a = ta[f];
 						if ( /3d/.test(x) ) {
 							tl['translate' + a] = K.pp('translate' + a, t[x][f]);								
@@ -660,9 +648,9 @@
 	// _cls _sc _op _bm _tp _bg _tf		 
 	K.pp = function(p, v) {//process single property
 		if (_tf.indexOf(p) !== -1) {
-			var t = p.replace(/X|Y|Z/, '');
+			var t = p.replace(/X|Y|Z/, ''), tv;
 			if (p === 'translate3d') { 
-				var tv = v.split(',');
+				tv = v.split(','); 
 				return {
 					translateX : { value: K.truD(tv[0]).v, unit: K.truD(tv[0]).u },
 					translateY : { value: K.truD(tv[1]).v, unit: K.truD(tv[1]).u },
@@ -673,10 +661,10 @@
 			} else if (p !== 'rotate' && (t === 'skew' || t === 'rotate') && p !== 'skewZ' ) {
 				return { value: K.truD(v).v, unit: (K.truD(v,p).u||'deg') };
 			} else if (p === 'translate') {
-				var tv2 = typeof v === 'string' ? v.split(',') : v;
-				return (typeof tv2 === 'object' && tv2 instanceof Array) 
-					? [ {value: K.truD(tv2[0]).v, unit: K.truD(tv2[0]).u}, {value: K.truD(tv2[1]).v, unit: K.truD(tv2[1]).u} ] 
-					: [{ value: K.truD(tv2).v, unit: K.truD(tv2).u }, { value: 0, unit: 'px'} ];
+				tv = typeof v === 'string' ? v.split(',') : v; // console.log( typeof v === 'string' && v.split(','))
+				return (typeof tv === 'object' && tv instanceof Array) 
+					? [ { value: K.truD(tv[0]).v, unit: K.truD(tv[0]).u}, {value: K.truD(tv[1]).v, unit: K.truD(tv[1]).u} ] 
+					: [ { value: K.truD(tv).v, unit: K.truD(tv).u }, { value: 0, unit: 'px'} ];
 			} else if (p === 'rotate') {
 				return { value: parseInt(v, 10), unit: (K.truD(v,p).u||'deg') };
 			} else if (p === 'scale') {
@@ -727,8 +715,8 @@
 			y = getU();
 			
 		function getU() {
-			var u;
-			while (l--) { if ( typeof d === 'string' && d.indexOf(mu[length]) ) u = mu[length]; }
+			var u,i=0;
+			for (i;i<l;i++) { if ( typeof d === 'string' && d.indexOf(mu[i]) !== -1 ) u = mu[i]; }
 			u = u !== undefined ? u : (p ? 'deg' : 'px')
 			return u;
 		}
