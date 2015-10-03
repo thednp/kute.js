@@ -54,7 +54,7 @@
 		_tp  = ['fontSize','lineHeight','letterSpacing'], // text properties
 		_bg  = ['backgroundPosition'], // background position
 		_3d  = ['rotateX', 'rotateY','translateZ'], // transform properties that require perspective
-		_tf  = ['rotate', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'translate3d', 'translateX', 'translateY', 'translateZ', 'skewX', 'skewY', 'scale'], // transform
+		_tf  = ['translate3d', 'translateX', 'translateY', 'translateZ', 'rotate', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'skewX', 'skewY', 'scale'], // transform
 		_all = _cls.concat(_sc, _clp, _op, _rd, _bm, _tp, _bg, _tf), al = _all.length,
 
 		_tfS = {}, _tfE = {}, _tlS = {}, _tlE = {}, _rtS = {}, _rtE = {}, //internal temp
@@ -247,46 +247,44 @@
 					var t1 = _start[tP], t2 = _end[tP];
 					rps = _3d.indexOf(tP) !== -1; 
 
-
 					if ( tP === 'translate' ) {
 						var tls = '', ts = {}, ax;
-						if ( t2[0] && t2[0].value !== undefined ) { // do the 2d translate
-							var tlx1 = t1[0].value || 0, tlx2 = t2[0].value || 0, txu = t2[0].unit,
-								tly1 = t1[1].value || 0, tly2 = t2[1].value || 0, tyu = t2[1].unit;
-							ts.x = tlx1===tlx2 ? tlx2+txu : (tlx1 + ( tlx2 - tlx1 ) * v) + txu;
-							ts.y = tly1===tly2 ? tly2+tyu : (tly1 + ( tly2 - tly1 ) * v) + tyu;
-								
-							tls = 'translate(' + ts.x + ',' + ts.y + ')';
-						} else { // do the 3d translate
-							for (ax in t2){
-								var x1 = t1[ax].value || 0, x2 = t2[ax].value || 0, xu = t2[ax].unit || 'px';
-								ts[ax] = x1===x2 ? x2+xu : (x1 + ( x2 - x1 ) * v) + xu;	
-							}
-							tls = 'translate3d(' + ts.translateX + ',' + ts.translateY + ',' + ts.translateZ + ')';								
-						}												
+						
+						for (ax in t2){
+							var x1 = t1[ax].value || 0, x2 = t2[ax].value || 0, xu = t2[ax].unit || 'px';
+							ts[ax] = x1===x2 ? x2+xu : (x1 + ( x2 - x1 ) * v) + xu;	
+						}
+						tls = t2.x ? 'translate(' + ts.x + ',' + ts.y + ')' :
+							'translate3d(' + ts.translateX + ',' + ts.translateY + ',' + ts.translateZ + ')';									
 						
 						_tS = (_tS === '') ? tls : (tls + ' ' + _tS);							
-					} else if (tP === 'rotate' || tP === 'skew') {
-						var rt = '';
+					} else if ( tP === 'rotate' ) {
+						var rt = '', rS = {}, rx;
 						
-						if ( t2.value !== undefined ) { // process 2d rotation on Z axis
-							var a21 = t1.value || 0, a22 = t2.value || 0, a2u = t2.unit;
-							rt = 'rotate('+(a21 + (a22 - a21) * v) + a2u + ')';
-						} else {
-							var aS = {}, rx, ap = tP === 'rotate' ? 'rotate' : 'skew';
-							for ( rx in t2 ){
-								var a1 = (t1[rx] !== undefined && t1[rx].value)||0, 
-									a2 = (t2[rx] !== undefined && t2[rx].value)||0, 
+						for ( rx in t2 ){
+							if ( t1[rx] ) {
+								var a1 = t1[rx].value, a2 = t2[rx].value, au = t2[rx].unit||'deg', 
 									av = a1 + (a2 - a1) * v;
-								aS[rx] = rx + '(' + (av) + 'deg' + ') ';
+								rS[rx] = rx ==='z' ? 'rotate('+av+au+')' : rx + '(' + av + au + ') ';
 							}
-							rt = ap === 'rotate' ? (aS.rotateX||'') + (aS.rotateY||'') + (aS.rotateZ||'') : (aS.skewX||'') + (aS.skewY||'');							
 						}
-
-						_tS = (_tS === '') ? rt : (_tS + ' ' + rt);
+						rt = t2.z ?  rS.z  : (rS.rotateX||'') + (rS.rotateY||'') + (rS.rotateZ||'');
+						
+						_tS = (_tS === '') ? rt : (_tS + ' ' + rt);	
+					} else if (tP==='skew') {
+						var sk = '', sS = {};
+						for ( var sx in t2 ){
+							if ( t1[sx] ) {
+								var s1 = t1[sx].value, s2 = t2[sx].value, su = t2[sx].unit||'deg', 
+									sv = s1 + (s2 - s1) * v;
+								sS[sx] = sx + '(' + sv + su + ') ';
+							}
+						}
+						sk = (sS.skewX||'') + (sS.skewY||'');
+						_tS = (_tS === '') ? sk : (_tS + ' ' + sk);					
 					} else if (tP === 'scale') {
-						var s1 = t1.value, s2 = t2.value,
-							s = s1 + (s2 - s1) * v, scS = tP + '(' + s + ')';									
+						var sc1 = t1.value, sc2 = t2.value,
+							s = sc1 + (sc2 - sc1) * v, scS = tP + '(' + s + ')';									
 						_tS = (_tS === '') ? scS : (_tS + ' ' + scS);
 					}
 				}
@@ -378,31 +376,41 @@
 		this._sT = t || window.performance.now();
 		this._sT += this._dl;
 		this.scrollIn();
+		var f = {};
 		
 		K.perspective(this._el,this); // apply the perspective
 				
 		if ( this._rpr ) { // on start we reprocess the valuesStart for TO() method
-			var f = this.prS(); 
+			f = this.prS();
 			this._vS = {};
 			this._vS = K.prP(f,false);
 			
-			for ( var p in this._vS ) {
+			for ( p in this._vS ) {
 				if ( p === 'transform' && (p in this._vE) ){
 					for ( var sp in this._vS[p]) {
-						var tp = this._vS[p][sp];
-						if ( (!( sp in this._vE[p])) ) { // 2d transforms
-							this._vE[p][sp] = this._vS[p][sp];							
-						}						
-						for (var spp in tp){ // 3d transforms
-							if (this._vE[p][sp] === undefined ) { this._vE[p][sp] = {} }
-							if ( (spp in tp) && tp[spp].value !== undefined && (!( spp in this._vE[p][sp])) ) {
-								this._vE[p][sp][spp] = this._vS[p][sp][spp];
+						if (!(sp in this._vE[p])) { this._vE[p][sp] = {}; }						
+						for ( var spp in this._vS[p][sp] ) { // 3rd level
+							if ( this._vS[p][sp][spp].value !== undefined  /*&& */ ) {
+								if (!(spp in this._vE[p][sp])) { this._vE[p][sp][spp] = {}; }
+								for ( var sppp in this._vS[p][sp][spp]) { // spp = translateX | rotateX | skewX | rotate2d
+									if ( !(sppp in this._vE[p][sp][spp])) {
+										this._vE[p][sp][spp][sppp] = this._vS[p][sp][spp][sppp]; // sppp = unit | value
+									}
+								}
 							}
-						}						
-					}					
+						}
+						if ( 'value' in this._vS[p][sp] && (!('value' in this._vE[p][sp])) ) { // 2nd level										
+							for ( var spp in this._vS[p][sp] ) { // scale
+								if (!(spp in this._vE[p][sp])) {
+									this._vE[p][sp][spp] = this._vS[p][sp][spp]; // spp = unit | value 
+								}
+							}
+						}
+					}
 				}
 			}
 		}
+		
 		for ( p in this._vE ) {
 			this._vSR[p] = this._vS[p];			
 		}
@@ -412,28 +420,23 @@
 	
 	w.prS = function () { //prepare valuesStart for .to() method
 		var f = {}, el = this._el, to = this._vS, cs = this.gIS('transform'), deg = ['rotate','skew'], ax = ['X','Y','Z'];
+		
 		for (var p in to){
 			if ( _tf.indexOf(p) !== -1 ) {
-				if ( p === 'translateX' || p === 'translateY' || p === 'translateZ' || p === 'translate3d' ) {
-					if ( cs[p] !== undefined ) {
-						f[p] = cs[p]
-					} else if ( cs['translate3d'] !== undefined  ) {							
-						f['translate3d'] = cs['translate3d'];		
+				var r2d = (p === 'rotate' || p === 'translate' || p === 'scale');
+				if ( /translate/.test(p) && p !== 'translate' ) {					
+					if ( to['translate3d'] !== undefined ) {
+						f['translate3d'] = cs['translate3d']; 
 					} else {
 						f[p] = _d[p];
 					}					
-				} else if ( p === 'rotate' || p === 'translate' || p === 'scale' ) { // 2d transforms
-					f[p] = cs[p] || _d[p];
-				} else if ( /rotate/.test(p) || /skew/.test(p) ) { // all angles
+				} else if ( r2d ) { // 2d transforms
+					f[p] = cs[p] || _d[p]; 
+				} else if ( !r2d && /rotate|skew/.test(p) ) { // all angles
 					for (var d=0; d<2; d++) {
 						for (var a = 0; a<3; a++) {
-							var s = deg[d]+ax[a];
-		
-							if ( s in cs && s !== 'skewZ' ) {
-								f[s] = cs[s]; 
-							} else if ( s !== 'skewZ' ) {
-								f[s] = _d[s];
-							}
+							var s = deg[d]+ax[a];								
+							if (_tf.indexOf(s) !== -1 && (s in to) ) { f[s] =  cs[s] || _d[s]; }
 						}
 					}
 				}
@@ -451,8 +454,8 @@
 			}
 		}
 		for ( var p in cs ){ // also add to _vS values from previous tweens	
-			if ( _tf.indexOf(p) !== -1 &&  (!( p in to )) && cs[p] !== undefined ) {
-				f[p] = cs[p];
+			if ( _tf.indexOf(p) !== -1 && (!( p in to )) ) {
+				f[p] = cs[p] || _d[p]; 
 			}		
 		}
 		return f;	
@@ -661,12 +664,19 @@
 			} else if (p !== 'rotate' && (t === 'skew' || t === 'rotate') && p !== 'skewZ' ) {
 				return { value: K.truD(v).v, unit: (K.truD(v,p).u||'deg') };
 			} else if (p === 'translate') {
-				tv = typeof v === 'string' ? v.split(',') : v; // console.log( typeof v === 'string' && v.split(','))
-				return (typeof tv === 'object' && tv instanceof Array) 
-					? [ { value: K.truD(tv[0]).v, unit: K.truD(tv[0]).u}, {value: K.truD(tv[1]).v, unit: K.truD(tv[1]).u} ] 
-					: [ { value: K.truD(tv).v, unit: K.truD(tv).u }, { value: 0, unit: 'px'} ];
+				tv = typeof v === 'string' ? v.split(',') : v; var t2d = {};
+				if (tv instanceof Array) {
+					t2d.x = { value: K.truD(tv[0]).v, unit: K.truD(tv[0]).u },
+					t2d.y = { value: K.truD(tv[1]).v, unit: K.truD(tv[1]).u }
+				} else {
+					t2d.x = { value: K.truD(tv).v, unit: K.truD(tv).u },
+					t2d.y = { value: 0, unit: 'px' }				
+				}
+				return t2d;
 			} else if (p === 'rotate') {
-				return { value: parseInt(v, 10), unit: (K.truD(v,p).u||'deg') };
+				var r2d = {};
+				r2d.z = { value: parseInt(v, 10), unit: (K.truD(v,p).u||'deg') };
+				return r2d;
 			} else if (p === 'scale') {
 				return { value: parseFloat(v, 10) };
 			}
