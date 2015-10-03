@@ -706,8 +706,9 @@
 			if ( v instanceof Array ){				
 				return { x: K.truD(v[0])||{ v: 50, u: '%' }, y: K.truD(v[1])||{ v: 50, u: '%' } };
 			} else {
-				var posxy = v.replace(/top|left/g,0).replace(/right|bottom/g,100).replace(/center|middle/,50).split(/\s|\,/g);
-				return { x: K.truD(posxy[0])||{ v: 50, u: '%' }, y: K.truD(posxy[1])||{ v: 50, u: '%' } };
+				var posxy = v.replace(/top|left/g,0).replace(/right|bottom/g,100).replace(/center|middle/,50).split(/\s|\,/g),
+					xp = K.truD(posxy[0]), yp = K.truD(posxy[1]);
+				return { x: xp, y: yp };
 			}	
 		}
 		if (_rd.indexOf(p) !== -1) {
@@ -722,8 +723,8 @@
 			
 		function getU() {
 			var u,i=0;
-			for (i;i<l;i++) { if ( typeof d === 'string' && d.indexOf(mu[i]) !== -1 ) u = mu[i]; }
-			u = u !== undefined ? u : (p ? 'deg' : 'px')
+			for (i;i<l;i++) { if ( typeof d !== 'number' && d.indexOf(mu[i]) !== -1 ) u = mu[i]; }
+			u = u !== undefined ? u : (p ? 'deg' : 'px'); 
 			return u;
 		}
 		return { v: x, u: y };
