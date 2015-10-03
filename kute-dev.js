@@ -311,7 +311,7 @@
 			} else if ( sc ) {											
 				ets.scrollTop = v1 + ( v2 - v1 ) * v;
 			} else if ( bg ) {				
-				var px1 = _start.x.v||50, px2 = _end.x.v||50, py1 = _start.y.v||50, py2 = _end.y.v||50,
+				var px1 = _start.x.v, px2 = _end.x.v, py1 = _start.y.v, py2 = _end.y.v,
 					px = px1 + ( px2 - px1 ) * v, pxu = '%',
 					py = py1 + ( py2 - py1 ) * v, pyu = '%';			
 				css[p] = px + pxu + ' ' + py + pyu;
@@ -323,7 +323,7 @@
 				}	
 				css[p] = 'rect('+cl+')';
 			} else if ( op ) {
-				css[opp] = !_isIE8 ? tv : "alpha(opacity=" + parseInt(tv*100) + ")";
+				css[opp] = _isIE8 ? "alpha(opacity=" + parseInt(tv*100) + ")" : tv;
 
 			}
 		}
