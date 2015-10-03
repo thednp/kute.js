@@ -420,16 +420,12 @@
 	
 	w.prS = function () { //prepare valuesStart for .to() method
 		var f = {}, el = this._el, to = this._vS, cs = this.gIS('transform'), deg = ['rotate','skew'], ax = ['X','Y','Z'];
-		
+				
 		for (var p in to){
 			if ( _tf.indexOf(p) !== -1 ) {
 				var r2d = (p === 'rotate' || p === 'translate' || p === 'scale');
-				if ( /translate/.test(p) && p !== 'translate' ) {					
-					if ( to['translate3d'] !== undefined ) {
-						f['translate3d'] = cs['translate3d']; 
-					} else {
-						f[p] = _d[p];
-					}					
+				if ( /translate/.test(p) && p !== 'translate' ) {
+					f['translate3d'] = cs['translate3d'] || _d[p]; 					
 				} else if ( r2d ) { // 2d transforms
 					f[p] = cs[p] || _d[p]; 
 				} else if ( !r2d && /rotate|skew/.test(p) ) { // all angles
