@@ -323,7 +323,7 @@
 				}	
 				css[p] = 'rect('+cl+')';
 			} else if ( op ) {
-				css[opp] = _isIE8 ? "alpha(opacity=" + parseInt(tv*100) + ")" : tv;
+				css[opp] = !_isIE8 ? tv : "alpha(opacity=" + parseInt(tv*100) + ")";
 
 			}
 		}
@@ -723,8 +723,8 @@
 			
 		function getU() {
 			var u,i=0;
-			for (i;i<l;i++) { if ( typeof d !== 'number' && d.indexOf(mu[i]) !== -1 ) u = mu[i]; }
-			u = u !== undefined ? u : (p ? 'deg' : 'px'); 
+			for (i;i<l;i++) { if ( typeof d === 'string' && d.indexOf(mu[i]) !== -1 ) u = mu[i]; }
+			u = u !== undefined ? u : (p ? 'deg' : 'px')
 			return u;
 		}
 		return { v: x, u: y };
