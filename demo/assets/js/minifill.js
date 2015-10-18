@@ -20,23 +20,6 @@ if(!Date.now){ Date.now = function now() { return new Date().getTime(); }; }
 	}
 })();
 
-
-// Object.keys
-if (!Object.keys) {
-  Object.keys = function(obj) {
-    var keys = [];
-
-    for (var i in obj) {
-      if (obj.hasOwnProperty(i)) {
-        keys.push(i);
-      }
-    }
-
-    return keys;
-  };
-}
-
-
 // Array.prototype.indexOf
 if (!Array.prototype.indexOf) {
 	Array.prototype.indexOf = function indexOf(searchElement) {
