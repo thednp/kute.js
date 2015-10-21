@@ -23,10 +23,9 @@ Quite easily, you can write 'bit more lines and you're making the earth go round
 //vanilla js
 KUTE.fromTo(el, {
   //options
-    { translate: 0}, opacity: 1 }, // fromValues
-    { translate: 150}, opacity: 0 }, 
-    { duration: 500, delay: 0,
-      easing	: 'exponentialInOut',
+    { translate: 0, opacity: 1 }, // fromValues
+    { translate: 150, opacity: 0 }, 
+    { duration: 500, delay: 0, easing	: 'exponentialInOut',
       start: functionOne, // run function when tween starts 
       complete: functionTwo, // run function when tween animation is finished
       update: functionThree // run function while tween running    
