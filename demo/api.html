@@ -31,7 +31,7 @@
 	<!-- legacy browsers support via polyfill 
 	<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
 	<!--[if IE]>
-		<script src="./assets/js/minifill.js"> </script>
+		<script src="https://cdn.jsdelivr.net/minifill/0.0.2/minifill.min.js"> </script>
 		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 	<![endif]-->
 	
@@ -77,30 +77,9 @@ $ bower install --save kute.js
 </code></pre>
 		<p>Your awesome animation coding would follow after these script links.</p>		
 		
-		<h3>Ideal HTML Template</h3>
-		<p>You need to know when users' browser is a legacy one in order to use KUTE.js only for what browsers can actually do. A quick note here: IE8 doesn't support any <code>transform</code> property or <code>RGBA</code> colors while IE9 can only do 2D transformations. Check the <a href="http://caniuse.com/#feat=transforms2d" target="_blank">2D transforms</a> and the <a href="http://caniuse.com/#feat=transforms3d" target="_blank">3D transforms</a> browser support list for more information.</p> 
-		<p>Don't use <a href="https://modernizr.com/" target="_blank">Modernizr</a>, the best thing we can actually do is use the Microsoft's synthax for it's own legacy browsers, so here's how a very basic <code>HTML</code> template for your websites would look like:</p>
-<pre><code class="language-markup">&lt;!DOCTYPE html&gt;
-	&lt;!--[if lt IE 8]&gt;&lt;html class="ie prehistory" lang="en"&gt;&lt;![endif]--&gt;			
-	&lt;!--[if IE 8]&gt;&lt;html class="ie ie8" lang="en"&gt;&lt;![endif]--&gt;			
-	&lt;!--[if IE 9]&gt;&lt;html class="ie ie9" lang="en"&gt;&lt;![endif]--&gt;			
-	&lt;!--[if !IE]&gt;&lt;!--&gt; &lt;html lang="en"&gt; &lt;!--&lt;![endif]--&gt;				
-	&lt;head&gt;
-		&lt;meta charset="utf-8"&gt;
-		&lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
-		&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;				
-		&lt;!-- SEO meta here  --&gt;					
-		&lt;!-- add your CSS here  --&gt;				
-		&lt;!-- add polyfills  --&gt;
-		&lt;script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"&gt; &lt;/script&gt;
-	&lt;/head&gt;					
-	&lt;body&gt;
-		&lt;!-- site content here --&gt;	
-		&lt;!-- scripts go here --&gt;				
-	&lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
-		<p>For other legacy browsers there is a ton of ways to target them, quite efficiently I would say: <a href="http://browserhacks.com/" target="_blank">there you go</a>.</p>
+		<h3>Targeting Legacy Browsers</h3>
+		<p>You need to know when users' browser is a legacy one in order to use KUTE.js only for what browsers actually support. A quick note here: IE8 doesn't support any <code>transform</code> property or <code>RGBA</code> colors while IE9 can only do 2D transformations. Check the <a href="http://caniuse.com/#feat=transforms2d" target="_blank">2D transforms</a> and the <a href="http://caniuse.com/#feat=transforms3d" target="_blank">3D transforms</a> browser support list for more information.</p> 
+		<p>Don't use <a href="https://modernizr.com/" target="_blank">Modernizr</a>, the best thing you can actually do is to use the Microsoft's synthax for it's own legacy browsers, and <a target="_blank" href="http://www.paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/">here is the full refference</a> on that. For other legacy browsers there is a ton of ways to target them, quite efficiently I would say: <a href="http://browserhacks.com/" target="_blank">there you go</a>.</p>
 	</div>
 
 	<div class="content-wrap">

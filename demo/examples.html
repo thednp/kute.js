@@ -31,7 +31,7 @@
 	<!-- legacy browsers support via polyfill 
 	<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
 	<!--[if IE]>
-		<script src="./assets/js/minifill.js"> </script>
+		<script src="https://cdn.jsdelivr.net/minifill/0.0.2/minifill.min.js"> </script>
 		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 	<![endif]-->
 </head>
@@ -332,15 +332,17 @@ KUTE.to('window',{scroll:450}).start(); // for the window
 		
 		
 		<h2 id="crossbrowser">Cross Browser Animation Example</h2>
-		<p>Unlike the examples <a href="http://codepen.io/thednp/pens/public/" target="_blank">hosted on Codepen</a>, most examples here should be supported on legacy browsers. The next example is going to explain more details about how to target browsers according to their supported properties, so stick around. So, first check your HTML template to have the browser detection for IE8-IE9, then check to have the polyfills and also make sure you target your browsers, here's a <a href="http://browserhacks.com/" target="_blank">complete reference</a>. In some cases you may not have access to the <code>HTML</code> tag, <a href="https://github.com/thednp/kute.js/issues/8#issuecomment-151037342" target="_blank">here's a work around</a>.  Now we are ready:</li>
+		<p>Unlike the examples <a href="http://codepen.io/thednp/pens/public/" target="_blank">hosted on Codepen</a>, most examples here should be supported on legacy browsers. The next example is going to explain more details about how to target browsers according to their supported properties, so stick around. So, if your target audience uses legacy browsers in a significant percent, check to have the proper polyfills and also make sure you target your browsers, here's a <a href="http://browserhacks.com/" target="_blank">complete reference</a>.  Now we are ready:</li>
 		</ul>
 		<h3>Collect Information And Cache It</h3>
 <pre><code class="language-javascript">// grab an HTML element to build a tween object for it 
 var element = document.getElementById("myElement");
 
 // check for IE legacy browsers
-var isIE8 = /ie8/.test(document.documentElement.className);
-var isIE9 = /ie9/.test(document.documentElement.className);
+var isIE = (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) != null) ? parseFloat( RegExp.$1 ) : false;
+var isIE8 = isIE === 8;
+var isIE9 = isIE === 9;
+
 
 // most browsers have specific checks, so make sure 
 // you include all you need for your target audience
@@ -354,7 +356,7 @@ var options = {};
 
 // here we define properties that are commonly supported
 startValues.opacity = 1;
-endValues.opacity = 0.5;
+endValues.opacity = 0.2;
 startValues.backgroundColor = '#CDDC39'; 
 endValues.backgroundColor = '#ec1e71';
 
@@ -383,7 +385,9 @@ if (isIE8) { // or any other browser that doesn"t support transforms
 
 // common tween options
 options.easing = "easingCubicOut";
-options.duration = 2500; 	
+options.duration = 2500;
+options.yoyo = true;
+options.repeat = 1;
 </code></pre>
 
 		<h3>Build Tween Object And Tween Controls</h3>

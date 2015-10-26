@@ -1,7 +1,8 @@
 // some regular checking
-var isIE = /ie/.test(document.documentElement.className),
-	isIE8 = /ie8/.test(document.documentElement.className),
-	isIE9 = /ie9/.test(document.documentElement.className);
+var isIE = (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) != null) ? parseFloat( RegExp.$1 ) : false,
+	isIE8 = isIE === 8,
+	isIE9 = isIE === 9;
+		
 
 
 /* TRANSFORMS EXAMPLES */
@@ -287,7 +288,7 @@ var element = document.getElementById("myElement");
 var startValues = {}, endValues = {}, options = {};
 
 // here we define properties that are commonly supported
-startValues.opacity = 1; endValues.opacity = 0.5;
+startValues.opacity = 1; endValues.opacity = 0.1;
 startValues.backgroundColor = '#ffd626'; endValues.backgroundColor = '#ec1e71';
 
 // here we define the properties according to the target browsers

@@ -3,7 +3,7 @@
 <!--[if IE 8]><html class="ie ie8" lang="en"><![endif]-->
 <!--[if IE 9]><html class="ie ie9" lang="en"><![endif]-->
 
-<!--[if gte IE 9 | !IE ]><!--> <html lang="en"> <!--<![endif]-->
+<!--[if !IE ]><!--> <html lang="en"> <!--<![endif]-->
 
 <head>
     <meta charset="utf-8">
@@ -28,7 +28,7 @@
 	<!-- legacy browsers support via polyfill 
 	<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
 	<!--[if IE]>
-		<script src="./assets/js/minifill.js"> </script>
+		<script src="https://cdn.jsdelivr.net/minifill/0.0.2/minifill.min.js"> </script>
 		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 	<![endif]-->
 
@@ -69,7 +69,7 @@
 	<div class="content-wrap">
 		<h2 id="compatibiity">Browser Compatibility</h2>
 		<p>KUTE.js covers all <strong>modern</strong> browsers but also provides fallback options for legacy browsers. The <strong>prefix free</strong> feature mentioned above is one way to enable smooth Javascript based animations on older versions Gecko/Webkit/IE browsers for <code>transform</code> and <code>border-radius</code>. Generally, KUTE.js is built around most used properties, so I highly recommend checking the <a href="http://caniuse.com" target="_blank">can I use</a> website for a very detailed properties support list on many browsers and versions. For instance legacy browsers may support <a href="http://caniuse.com/#feat=transforms2d">2D transforms</a> or <a href="http://caniuse.com/#feat=transforms3d">3D transforms</a> so make sure you know what browsers support and <a href="http://browserhacks.com/" target="_blank">how to target them</a> before you get to work with a complete browser supported animation setup.</p> 
-		<p><span class="ion-android-globe media"></span>I've put a lot of work in making KUTE.js work with all Internet Explorer versions starting with IE8 and it really works with the help of <a href="https://polyfill.io/" target="_blank">polyfills</a> and an appropriate <code>HTML</code> template. All you need to do is to let the browser breathe, espectially IE8 needs to have resize handlers as minimal as possible. On the other side, IE9 really shines with 2D transforms animation, something that's impossible with CSS <code>transition</code>.</p>	
+		<p><span class="ion-android-globe media"></span>I've put a lot of work in making KUTE.js work with all Internet Explorer versions starting with IE8 and it really works with the help of <a href="https://polyfill.io/" target="_blank">polyfills</a> and the appropriate code to detect them. All you need to do is to let the browser breathe, espectially IE8 needs to have resize handlers as minimal as possible. On the other side, IE9 really shines with 2D transforms animation, something that's impossible with CSS <code>transition</code>.</p>	
 		<p>Speaking of polyfills, KUTE.js requires <code>window.requestAnimationFrame()</code> for the main thread, <code>window.performance.now()</code> for checking the current time, <code>.indexOf()</code> for array checks, <code>window.getComputedStyle()</code> for the <code>.to()</code> method and <code>.addEventListener()</code> for scroll. Unlike other developers I didn't include these polyfills in the code to keep it clean, so that YOU decide whether your project need them or not. Also know that when using the recommended <a href="https://polyfill.io/"target="_blank">polyfill service</a> some <strong>browser detection will not work</strong> because they fill the gap and your code won't work as expected. For instance this would check for IE8 browser <code>var isIE = document.all && !document.addEventListener;</code> but the polyfill covers <code>.addEventListener()</code> so you will never succeed. The provided <strong>ideal HTML template</strong> is the best solution for targeting Microsoft's legacy browsers.</p>
 		<p>As of Safari, we did some tests there too, KUTE.js does it really well.</p>
 	</div>

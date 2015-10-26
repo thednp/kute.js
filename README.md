@@ -4,7 +4,7 @@ A minimal <b>native Javascript</b> tweening engine with <b>jQuery</b> plugin, fo
 <b>kute.js</b> is like a merge of my own <a href="https://github.com/thednp/jQueryTween">jQueryTween</a> with tween.js, but generally it's a much more smarter build. You link the script at your ending <code>&lt;/body&gt;</code> tag and write one line to do just about any animation you can think of.
 
 # CDN
-Thanks to jsdelivr, we have CDN link <a href="http://www.jsdelivr.com/#!kute.js">here</a>.
+Thanks to jsdelivr, we have CDN link <a target="_blank" href="http://www.jsdelivr.com/#!kute.js">here</a>.
 
 # Basic Usage
 At a glance, you can write one line and you're done.
@@ -56,7 +56,7 @@ That's right, there you have it, just a few bits of code to bridge the awesome `
 * handles browser prefixes for you as well.
 
 # Browser Support
-Since most modern browsers can handle pretty much everything, legacy browsers need some help, so give them <a href="https://cdn.polyfill.io/v2/docs/">polyfills.io</a>. Also `kute.js` needs to know when doing stuff for IE9- like my other scripts here, I highy recommend <a href="http://www.paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/">Paul Irish's conditional stylesheets</a> guides to add <code>ie ie[version]</code> to your site's HTML tag.
+Since most modern browsers can handle pretty much everything, legacy browsers need some help, so give them <a href="https://cdn.polyfill.io/v2/docs/">polyfills.io</a>.
 
 # License
 <a href="https://github.com/thednp/kute.js/blob/master/LICENSE">MIT License</a>
