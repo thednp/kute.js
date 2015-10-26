@@ -25,8 +25,8 @@
 		_htm = document.getElementsByTagName('HTML')[0],
 		_sct = (/webkit/i.test(navigator.userAgent) || document.compatMode == 'BackCompat' ? _bd : _htm),
 
-		_isIE = /ie/.test(document.documentElement.className),
-		_isIE8 = /ie8/.test(document.documentElement.className),
+		_isIE = (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) != null) ? parseFloat( RegExp.$1 ) : false,
+		_isIE8 = _isIE === 8,
 
 		//assign preffix to DOM properties
 		_pfp = _pfp || _pfT ? _pf + 'Perspective' : 'perspective',
