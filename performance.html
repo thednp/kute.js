@@ -108,11 +108,14 @@
         <div style="width:100%;clear: both">
           <button class="btn btn-success" id="start" type="button" style="margin-bottom: 15px">Start</button>
         </div>
-            
+ 
+<!--[if IE]><p class="text-danger">The test page is not intended for legacy browsers.</p><![endif]-->
+<!--[if !IE ]><!-->
 <p>These tests are only for modern browsers. In Google Chrome you can enable the FPS metter in developer tools, <a href="https://developer.chrome.com/devtools/docs/rendering-settings" target="_blank">here's how</a>.</p>
 <p>The hack refers to adding a blank transform <code>translate3d(0px,0px,0px);</code> for the elements to promote them into separate layers, as described <a href="https://developers.google.com/web/fundamentals/performance/rendering/simplify-paint-complexity-and-reduce-paint-areas#promote-elements-that-move-or-fade" target="_blank">here</a>.</p>
 <p class="text-danger">Do not try this test on lower end or mobile devices.</p>
-    
+<!--<![endif]-->         
+
 </div>
 <div id="container"></div>
 
@@ -123,10 +126,14 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->	
 <!--<script src="http://cdn.jsdelivr.net/kute.js/0.9.5/kute.min.js"></script>  KUTE CDN -->
+
+<!--[if !IE ]><!-->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.native/0.9.9/bootstrap-native.min.js"></script>
+
 <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js"></script>
-<script src="./assets/js/tween.min.js"></script> <!-- Tween local -->
-<script src="./src/kute.js"></script> <!-- KUTE local -->
-<script src="./assets/js/perf.js"></script> <!-- some stuff -->
+<script src="./assets/js/tween.min.js"></script>
+<script src="./src/kute.js"></script>
+<script src="./assets/js/perf.js"></script>
+<!--<![endif]-->  
 </body>
 </html>
