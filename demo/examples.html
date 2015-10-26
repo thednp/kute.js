@@ -332,7 +332,7 @@ KUTE.to('window',{scroll:450}).start(); // for the window
 		
 		
 		<h2 id="crossbrowser">Cross Browser Animation Example</h2>
-		<p>Unlike the examples <a href="http://codepen.io/thednp/pens/public/" target="_blank">hosted on Codepen</a>, most examples here should be supported on legacy browsers. The next example is going to explain more details about how to target browsers according to their supported properties, so stick around. So, first check your HTML template to have the browser detection for IE8-IE9, then check to have the polyfills and also make sure you target your browsers, here's a <a href="http://browserhacks.com/" target="_blank">complete reference</a>. Now we are ready:</li>
+		<p>Unlike the examples <a href="http://codepen.io/thednp/pens/public/" target="_blank">hosted on Codepen</a>, most examples here should be supported on legacy browsers. The next example is going to explain more details about how to target browsers according to their supported properties, so stick around. So, first check your HTML template to have the browser detection for IE8-IE9, then check to have the polyfills and also make sure you target your browsers, here's a <a href="http://browserhacks.com/" target="_blank">complete reference</a>. In some cases you may not have access to the <code>HTML</code> tag, <a href="https://github.com/thednp/kute.js/issues/8#issuecomment-151037342" target="_blank">here's a work around</a>.  Now we are ready:</li>
 		</ul>
 		<h3>Collect Information And Cache It</h3>
 <pre><code class="language-javascript">// grab an HTML element to build a tween object for it 
@@ -425,7 +425,7 @@ playPauseButton.addEventListener('click', function(e){
 				<a id="stopButton" class="btn btn-red" href="#">Stop</a>
 			</div>
 		</div>
-		<p>Let's explain this code a bit. KUTE.js comes gives you the internal variables <code>myTween.playing</code> and <code>myTween.paused</code> (both true/false) to help you easily manage the tween control methods all together as in this example here. As said before, KUTE.js version 0.9.5 doesn't stat animating by default, for all the examples on this page you have to start it yourself, unlike their versions hosted on Codepen.</p>
+		<p>Let's explain this code a bit. KUTE.js gives you the internal variables <code>myTween.playing</code> and <code>myTween.paused</code> (both true/false) to help you easily manage the tween control methods all together as in this example here. As said before, KUTE.js version 0.9.5 doesn't stat animating by default, for all the examples on this page you have to start it yourself, unlike their versions hosted on Codepen.</p>
 		<ul>
 			<li>the <code class="bg-blue">START</code> button will use the <code>.start()</code> method and the animation starts;</li>
 			<li>the <code class="bg-red">STOP</code> button will use the <code>.stop()</code> method and stops the animation; after this the, animation can only be started again</li>
