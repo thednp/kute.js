@@ -8,18 +8,18 @@ Thanks to jsdelivr, we have CDN link <a target="_blank" href="http://www.jsdeliv
 
 # Basic Usage
 At a glance, you can write one line and you're done.
-```
+```javascript
 //vanilla js
 new KUTE.fromTo('selector', fromValues, toValues, options);
 
 //with jQuery plugin
-$('selector').Kute('fromTo', fromValues, toValues, options);
+$('selector').KUTE('fromTo', fromValues, toValues, options);
 ```
 
 
 # Advanced Usage
 Quite easily, you can write 'bit more lines and you're making the earth go round.
-```
+```javascript
 //vanilla js
 KUTE.fromTo(el, {
   //options
