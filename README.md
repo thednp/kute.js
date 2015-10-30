@@ -24,8 +24,10 @@ Quite easily, you can write 'bit more lines and you're making the earth go round
 KUTE.fromTo(el, {
   //options
     { translate: 0, opacity: 1 }, // fromValues
-    { translate: 150, opacity: 0 }, 
-    { duration: 500, delay: 0, easing	: 'exponentialInOut',
+    { translate: 150, opacity: 0 }, // toValues
+    { duration: 500, delay: 0, easing	: 'exponentialInOut', // basic options
+    
+      //callbacks
       start: functionOne, // run function when tween starts 
       complete: functionTwo, // run function when tween animation is finished
       update: functionThree // run function while tween running    
@@ -41,22 +43,29 @@ KUTE.fromTo(el, {
 For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>.
 
 #jQuery Plugin
-That's right, there you have it, just a few bits of code to bridge the awesome `kute.js` to your jQuery powered projects/apps. The plugin can be found in the [/dist](https://github.com/thednp/kute.js/blob/master/dist/kute-jquery.min.js) folder.
+That's right, there you have it, just a few bits of code to bridge the awesome `kute.js` to your jQuery powered projects/apps. The plugin can be found in the [/master](https://github.com/thednp/kute.js/blob/master/kute-jquery.js) folder.
 
 # What else it does
-* computes properties values properly according to their measurement unit (px,%,deg,etc)
-* properly handles cross browser 3D `transform` when elements have a `perspective`, else the animation won't run
-* it converts `HEX` colors to `RGB` and tweens the inner values, then ALWAYS updates color via `RGB`
+* handles all kinds of `transform` properties and makes sure to always use the same order of the `transform functions` (`translate`, `rotate`, `skew`, `scale`)
+* computes properties' values properly according to their measurement unit (px,%,deg,etc)
+* properly handles cross browser 3D `transform` with `perspective` and `perspective` for element or it's parent
+* converts `HEX` colors to `RGB` and tweens the inner values, then ALWAYS updates color via `RGB`
 * properly replaces `top`, `centered` or any other background position with proper value to be able to tween 
 * for most supported properties it reads the current element computed style property value as initial value (via `currentStyle || getComputedStyle`)
 * allows you to add many callbacks: `start`, `update`, `complete`, `pause`, `stop`, and they can be set as tween options
-* since `translate3D` is best for performance, `kute.js` will always uses it
+* since `translate3D` is best for performance, `kute.js` will always use it
 * accepts "nice & easy string" easing functions, like `linear` or `easingExponentialOut` (removes the use of the evil `eval`, making development safer easier and closer to standards :)
-* uses 31 easing functions, all Robert Penner's easing equations and 2 more libraries
-* handles browser prefixes for you as well.
+* uses all 31 Robert Penner's easing functions, as well as bezier and physics easing functions
+* handles browser prefixes for you for `transform`, `perspective`, `perspective-origin`, `border-radius` and `requestAnimationFrame`
+* all this is possible with a core script of less than 20k size!
 
 # Browser Support
 Since most modern browsers can handle pretty much everything, legacy browsers need some help, so give them <a href="https://cdn.polyfill.io/v2/docs/">polyfills.io</a>.
+
+# Contributions
+* Dav aka @dalisoft contributed a great deal for the performance and functinality of KUTE.js
+* [Ingwie Phoenix](https://github.com/IngwiePhoenix): RequireJS/CommonJS compatibility and usability with common package managers
+* Others who [contribute](https://github.com/thednp/kute.js/graphs/contributors) to the project
 
 # License
 <a href="https://github.com/thednp/kute.js/blob/master/LICENSE">MIT License</a>
