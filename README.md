@@ -53,7 +53,7 @@ That's right, there you have it, just a few bits of code to bridge the awesome `
 * converts `HEX` colors to `RGB` and tweens the numeric values, then ALWAYS updates color via `RGB`
 * properly replaces `top`, `centered` or any other background position with proper value to be able to tween 
 * for most supported properties it reads the current element computed style property value as initial value (via `currentStyle || getComputedStyle`)
-* because it can read properties values from previous tween animations, KUTE.js can do some awesome chaining with it's method
+* because it can read properties values from previous tween animations, KUTE.js can do some awesome chaining with it's `.to()` method
 * allows you to add many callbacks: `start`, `update`, `complete`, `pause`, `stop`, and they can be set as tween options
 * since `translate3D` is best for movement animation performance, `kute.js` will always use it
 * accepts "nice & easy string" easing functions, like `linear` or `easingExponentialOut` (removes the use of the evil `eval`, making development safer easier and closer to standards :)
