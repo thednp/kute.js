@@ -63,7 +63,7 @@ That's right, there you have it, just a few bits of code to bridge the awesome `
 Since most modern browsers can handle pretty much everything, legacy browsers need some help, so give them <a href="https://cdn.polyfill.io/v2/docs/">polyfills.io</a>.
 
 # Contributions
-* Dav aka @dalisoft contributed a great deal for the performance and functinality of KUTE.js
+* Dav aka [@dalisoft](https://github.com/dalisoft) contributed a great deal for the performance and functinality of KUTE.js
 * [Ingwie Phoenix](https://github.com/IngwiePhoenix): RequireJS/CommonJS compatibility and usability with common package managers
 * Others who [contribute](https://github.com/thednp/kute.js/graphs/contributors) to the project
 
