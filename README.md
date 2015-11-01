@@ -6,6 +6,13 @@ A minimal <b>native Javascript</b> tweening engine with <b>jQuery</b> plugin, fo
 # CDN
 Thanks to jsdelivr, we have CDN link <a target="_blank" href="http://www.jsdelivr.com/#!kute.js">here</a>.
 
+# NPM/Bower
+You can install this through NPM or bower respectively:
+
+    $ npm install kute.js
+    # or
+    $ bower install kute.js
+
 # Basic Usage
 At a glance, you can write one line and you're done.
 ```javascript
@@ -16,6 +23,23 @@ new KUTE.fromTo('selector', fromValues, toValues, options);
 $('selector').KUTE('fromTo', fromValues, toValues, options);
 ```
 
+# CommonJS/AMD support
+You can use this module through any of the common javascript module systems. For instance:
+
+```javascript
+// NodeJS/CommonJS style
+var kute = require("kute.js");
+// Add Bezier/Easing...
+require("kute.js/kute-bezier");
+
+// AMD
+define([
+    "kute.js",
+    "kute.js/kute-bezier.js"
+], function(KUTE){
+    // ...
+});
+```
 
 # Advanced Usage
 Quite easily, you can write 'bit more lines and you're making the earth go round.
@@ -26,9 +50,9 @@ KUTE.fromTo(el, {
     { translate: 0, opacity: 1 }, // fromValues
     { translate: 150, opacity: 0 }, // toValues
     { duration: 500, delay: 0, easing	: 'exponentialInOut', // basic options
-    
+
       //callbacks
-      start: functionOne, // run function when tween starts 
+      start: functionOne, // run function when tween starts
       complete: functionTwo, // run function when tween animation is finished
       update: functionThree // run function while tween running    
       stop: functionThree // run function when tween stopped    
@@ -39,7 +63,7 @@ KUTE.fromTo(el, {
 );
 ```
 
-# Demo 
+# Demo
 For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>.
 
 #jQuery Plugin
@@ -51,7 +75,7 @@ That's right, there you have it, just a few bits of code to bridge the awesome `
 * computes properties' values properly according to their measurement unit (px,%,deg,etc)
 * properly handles cross browser 3D `transform` with `perspective` and `perspective-origin` for element or it's parent
 * converts `HEX` colors to `RGB` and tweens the numeric values, then ALWAYS updates color via `RGB`
-* properly replaces `top`, `centered` or any other background position with proper value to be able to tween 
+* properly replaces `top`, `centered` or any other background position with proper value to be able to tween
 * for most supported properties it reads the current element computed style property value as initial value (via `currentStyle || getComputedStyle`)
 * because it can read properties values from previous tween animations, KUTE.js can do some awesome chaining with it's `.to()` method
 * allows you to add many callbacks: `start`, `update`, `complete`, `pause`, `stop`, and they can be set as tween options
