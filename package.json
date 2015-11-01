@@ -1,0 +1,28 @@
+{
+  "name": "kute.js",
+  "version": "0.9.4",
+  "description": "A minimal Native Javascript animation engine with jQuery plugin.",
+  "main": "kute.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thednp/kute.js.git"
+  },
+  "keywords": [
+    "kute.js",
+    "animation",
+    "animations",
+    "native-javascript"
+  ],
+  "author": "thednp",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thednp/kute.js/issues"
+  },
+  "homepage": "https://github.com/thednp/kute.js#readme",
+  "dependencies": {
+    "jquery": "^2.1.4"
+  }
+}

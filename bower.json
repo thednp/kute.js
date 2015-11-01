@@ -1,0 +1,33 @@
+{
+  "name": "KUTE.js",
+  "version": "0.9.4",
+  "homepage": "http://thednp.github.io/kute.js",
+  "authors": [
+    "thednp"
+  ],
+  "description": "A minimal Native Javascript animation engine with jQuery plugin.",
+  "main": "kute.js",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "animations",
+    "native-javascript",
+    "kute.js",
+    "tweening",
+    "engine"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4"
+  }
+}
