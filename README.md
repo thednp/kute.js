@@ -8,10 +8,32 @@ Thanks to jsdelivr, we have CDN link <a target="_blank" href="http://www.jsdeliv
 
 # NPM/Bower
 You can install this through NPM or bower respectively:
-
+```
     $ npm install kute.js
     # or
     $ bower install kute.js
+```
+
+# CommonJS/AMD support
+You can use this module through any of the common javascript module systems. For instance:
+
+```javascript
+// NodeJS/CommonJS style
+var kute = require("kute.js");
+// Add Bezier Easing
+require("kute.js/kute-bezier");
+// Add Physics Easing
+require("kute.js/kute-physics");
+
+// AMD
+define([
+    "kute.js",
+    "kute.js/kute-bezier.js",
+    "kute.js/kute-physics.js"
+], function(KUTE){
+    // ...
+});
+```
 
 # Basic Usage
 At a glance, you can write one line and you're done.
@@ -21,24 +43,6 @@ new KUTE.fromTo('selector', fromValues, toValues, options);
 
 //with jQuery plugin
 $('selector').KUTE('fromTo', fromValues, toValues, options);
-```
-
-# CommonJS/AMD support
-You can use this module through any of the common javascript module systems. For instance:
-
-```javascript
-// NodeJS/CommonJS style
-var kute = require("kute.js");
-// Add Bezier/Easing...
-require("kute.js/kute-bezier");
-
-// AMD
-define([
-    "kute.js",
-    "kute.js/kute-bezier.js"
-], function(KUTE){
-    // ...
-});
 ```
 
 # Advanced Usage
