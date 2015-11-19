@@ -4,16 +4,17 @@
  */
 
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {       
-		define(['KUTE'], factory); // AMD. Register as an anonymous module.
-    } else if (typeof exports == 'object') {
-        module.exports = factory(); // Node, not strict CommonJS
-    } else {
-        // Browser globals		
+	if (typeof define === 'function' && define.amd) {       
+		define([], factory); // AMD. Register as an anonymous module.
+	} else if (typeof exports == 'object') {
+		module.exports = factory(); // Node, not strict CommonJS
+	} else {
+		// Browser globals		
 		root.KUTE = root.KUTE || factory();
     }
 }(this, function () {
-	var K = K || {}, _tws = [], _t, _stk = false, // _stoppedTick // _tweens // KUTE, _tween, _tick,			
+	"use strict";
+	var K = K || {}, _tws = [], _t, // _tweens // KUTE, _tick,			
 		_pf = getPrefix(), // prefix
 		_rafR = _rafR || ((!('requestAnimationFrame' in window)) ? true : false), // is prefix required for requestAnimationFrame
 		_pfT = _pfT || ((!('transform' in document.getElementsByTagName('div')[0].style)) ? true : false), // is prefix required for transform
@@ -94,26 +95,21 @@
 	// internal ticker
 	K.t = function (t) {
 		_t = _raf(K.t);
-		var i = 0, l = _tws.length;
-		while ( i < l ) {
-			if (!_tws[i]) { return false; }
+		var i = 0;
+		while ( i < _tws.length ) {
 			if (_tws[i].u(t)) {
 				i++;
 			} else {
 				_tws.splice(i, 1);
 			}
 		}
-		_stk = false;
 		return true;
 	};
 	
 	// internal stopTick
 	K.s = function () { 
-		if ( _stk === false ) {
-			_caf(_t);
-			_stk = true;
-			_t = null;
-		}
+		_caf(_t);
+		_t = null;
 	};
 	
 	//main methods
@@ -155,8 +151,8 @@
 
 			var _start = w._vS[p],
 				_end = w._vE[p],
-				v1 = _start.value,
-				v2 = _end.value,
+				v1 = w._vS[p].value,
+				v2 = w._vE[p].value,
 				tv = v1 + (v2 - v1) * v,
 				u = _end.unit,
 				// checking array on every frame takes time so let's cache these
@@ -181,7 +177,7 @@
 					css[_brbl] = tv + u;
 				} else if (p === 'borderBottomRightRadius') {
 					css[_brbr] = tv + u;
-				}		
+				}
 									
 			} else if (tf) {
 				var _tS = '', tP, rps, pps = 'perspective('+w._pp+'px) '; //transform style & property
@@ -337,9 +333,9 @@
 							}
 						}
 						if ( 'value' in this._vS[p][sp] && (!('value' in this._vE[p][sp])) ) { // 2nd level										
-							for ( var spp in this._vS[p][sp] ) { // scale
-								if (!(spp in this._vE[p][sp])) {
-									this._vE[p][sp][spp] = this._vS[p][sp][spp]; // spp = unit | value 
+							for ( var spp1 in this._vS[p][sp] ) { // scale
+								if (!(spp1 in this._vE[p][sp])) {
+									this._vE[p][sp][spp1] = this._vS[p][sp][spp1]; // spp = unit | value 
 								}
 							}
 						}
