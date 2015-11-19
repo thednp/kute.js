@@ -5,12 +5,12 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-		define([], factory); // AMD. Register as an anonymous module.
+		define(['KUTE'], factory); // AMD. Register as an anonymous module.
     } else if (typeof exports == 'object') {
         module.exports = factory(); // Node, not strict CommonJS
     } else {
         // Browser globals
-		root.KUTE = root.KUTE || factory();
+		root.KUTE = factory();
     }
 }(this, function () {
 	var K = K || {}, _tws = [], _t, _stk = false, // _stoppedTick // _tweens // KUTE, _tween, _tick,
@@ -94,22 +94,21 @@
 	// internal ticker
 	K.t = function (t) {
 		_t = _raf(K.t);
-		var i = 0, l = _tws.length;
-		while ( i < l ) {
-			if (!_tws[i]) { return false; }
+		var i = 0;
+		while ( i < _tws.length ) { // gives same performance like cached length
 			if (_tws[i].u(t)) {
 				i++;
 			} else {
 				_tws.splice(i, 1);
 			}
 		}
-		_stk = false;
+		//_stk = false; this variable may be decrease performance
 		return true;
 	};
 
 	// internal stopTick
 	K.s = function () {
-		if ( _stk === false ) {
+		if ( !_stk ) {
 			_caf(_t);
 			_stk = true;
 			_t = null;
@@ -359,6 +358,7 @@
 		this._sCF = false;
 		this._sT = t || window.performance.now();
 		this._sT += this._dl;
+		_stk = true;
 		if (!_t) K.t();
 		return this;
 	};
