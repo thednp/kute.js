@@ -6,6 +6,9 @@ A minimal <b>native Javascript</b> tweening engine with <b>jQuery</b> plugin, fo
 # CDN
 Thanks to jsdelivr, we have CDN link <a target="_blank" href="http://www.jsdelivr.com/#!kute.js">here</a>.
 
+# Demo
+For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>.
+
 # NPM/Bower
 You can install this through NPM or bower respectively:
 ```
@@ -64,11 +67,8 @@ KUTE.fromTo(el, {
       resume: functionThree // run function when resuming tween    
     }
   }
-);
+).start();
 ```
-
-# Demo
-For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>.
 
 #jQuery Plugin
 That's right, there you have it, just a few bits of code to bridge the awesome `kute.js` to your jQuery powered projects/apps. The plugin can be found in the [/master](https://github.com/thednp/kute.js/blob/master/kute-jquery.js) folder.
