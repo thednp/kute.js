@@ -3,8 +3,10 @@ A minimal <b>native Javascript</b> tweening engine with <b>jQuery</b> plugin, fo
 
 <b>KUTE.js</b> is like a merge of my own <a href="https://github.com/thednp/jQueryTween">jQueryTween</a> with tween.js, but generally it's a much more smarter build. You link the script at your ending <code>&lt;/body&gt;</code> tag and write one line to do just about any animation you can think of.
 
+<b>Important</b>: starting with 0.9.5 version, KUTE.js changes the prototype structure for performance, usability and browser support, as well as extensibility. The documentation and examples no longer support old versions prior to 0.9.5 release.
+
 # CDN
-Thanks to jsdelivr, we have CDN link <a target="_blank" href="http://www.jsdelivr.com/#!kute.js">here</a>.
+Thanks to jsdelivr, we have a CDN link <a target="_blank" href="http://www.jsdelivr.com/#!kute.js">here</a>.
 
 # Demo
 For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>.
@@ -31,8 +33,9 @@ require("kute.js/kute-physics");
 // AMD
 define([
     "kute.js",
-    "kute.js/kute-bezier.js",
-    "kute.js/kute-physics.js"
+    "kute.js/kute-jquery.js", // optional for jQuery apps
+    "kute.js/kute-bezier.js", // optional for more accurate easing functions
+    "kute.js/kute-physics.js" // optional for more flexible & accurate easing functions
 ], function(KUTE){
     // ...
 });
@@ -42,20 +45,48 @@ define([
 At a glance, you can write one line and you're done.
 ```javascript
 //vanilla js
-new KUTE.fromTo('selector', fromValues, toValues, options);
+KUTE.fromTo('selector', fromValues, toValues, options).start();
 
 //with jQuery plugin
-$('selector').KUTE('fromTo', fromValues, toValues, options);
+var tween = $('selector').KUTE('fromTo', fromValues, toValues, options);
+$(tween).KUTE('start');
 ```
 
 # Advanced Usage
 Quite easily, you can write 'bit more lines and you're making the earth go round.
 ```javascript
 //vanilla js is always the coolest
-KUTE.fromTo(el, {
-  //options
+KUTE.fromTo(el,
     { translate: 0, opacity: 1 }, // fromValues
     { translate: 150, opacity: 0 }, // toValues
+    
+    // tween options object
+    { duration: 500, delay: 0, easing	: 'exponentialInOut', // basic options
+
+      // callbacks
+      start: functionOne, // run function when tween starts
+      complete: functionTwo, // run function when tween animation is finished
+      update: functionThree // run function while tween running    
+      stop: functionThree // run function when tween stopped    
+      pause: functionThree // run function when tween paused    
+      resume: functionThree // run function when resuming tween    
+    }
+).start(); // this is to start animation right away
+```
+
+# jQuery Plugin
+This aims to make the KUTE.js script work native within other jQuery apps but it's not always really needed as we will see in the second subchapter here. The plugin is just a few bits of code to bridge all of the the awesome `kute.js` methods to your jQuery apps. The plugin can be found in the [/master](https://github.com/thednp/kute.js/blob/master/kute-jquery.js) folder. So let's have a look at the syntax.
+
+## Using the jQuery Plugin
+Here's a KUTE.js jQuery Plugin example that showcases most common usage in future apps:
+```javascript
+// first we define the object(s)
+var tween = $('selector').KUTE('fromTo', // apply fromTo() method to selector
+  
+    { translate: 0, opacity: 1 }, // fromValues
+    { translate: 150, opacity: 0 }, // toValues
+    
+    // tween options object
     { duration: 500, delay: 0, easing	: 'exponentialInOut', // basic options
 
       //callbacks
@@ -66,15 +97,23 @@ KUTE.fromTo(el, {
       pause: functionThree // run function when tween paused    
       resume: functionThree // run function when resuming tween    
     }
-  }
-).start();
+);
+
+// then we apply the tween control methods, like start
+$(tween).('start');
 ```
 
-#jQuery Plugin
-That's right, there you have it, just a few bits of code to bridge the awesome `kute.js` to your jQuery powered projects/apps. The plugin can be found in the [/master](https://github.com/thednp/kute.js/blob/master/kute-jquery.js) folder.
+## Alternative usage in jQuery powered applications
+In some cases you can handle animations inside jQuery applications even without the plugin. Here's how the code could look like:
+```javascript
+var tween = KUTE.fromTo($('selector')[0], fromValues, toValues, options);
+tween.start();
+```
+Pay attention to that `$('selector')[0]` as jQuery always creates an array of selected objects and not a single object, that is why we need to focus a tween object to a single HTML object and not a selection of objects. Selections of objects should be handled with `for() {}` loops if that is the case, while the jQuery Plugin handles this properly for your app, as you would expect it to.
 
-# What else it does
-* it computes all the values before starting the animation, then caches them to avoid layout thrashing that could occur during animation
+
+# How it works
+* it computes all the values before starting the animation, then caches them to avoid layout thrashing that occur during animation
 * handles all kinds of `transform` properties and makes sure to always use the same order of the `transform` properties (`translate`, `rotate`, `skew`, `scale`)
 * computes properties' values properly according to their measurement unit (px,%,deg,etc)
 * properly handles cross browser 3D `transform` with `perspective` and `perspective-origin` for element or it's parent
@@ -84,7 +123,7 @@ That's right, there you have it, just a few bits of code to bridge the awesome `
 * because it can read properties values from previous tween animations, KUTE.js can do some awesome chaining with it's `.to()` method
 * allows you to add many callbacks: `start`, `update`, `complete`, `pause`, `stop`, and they can be set as tween options
 * since `translate3D` is best for movement animation performance, `kute.js` will always use it
-* accepts "nice & easy string" easing functions, like `linear` or `easingExponentialOut` (removes the use of the evil `eval`, making development safer easier and closer to standards :)
+* accepts "nice & easy string" easing functions, like `linear` or `easingExponentialOut` (removes the use of the evil `eval`, making development safer, easier and closer to standards :)
 * uses all 31 Robert Penner's easing functions, as well as bezier and physics easing functions
 * handles browser prefixes for you for `transform`, `perspective`, `perspective-origin`, `border-radius` and `requestAnimationFrame`
 * all this is possible with a core script of less than 20k size!
