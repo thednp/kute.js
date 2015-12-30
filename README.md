@@ -75,7 +75,7 @@ That's right, there you have it, just a few bits of code to bridge the awesome `
 
 # What else it does
 * it computes all the values before starting the animation, then caches them to avoid layout thrashing that could occur during animation
-* handles all kinds of `transform` properties and makes sure to always use the same order of the `transform functions` (`translate`, `rotate`, `skew`, `scale`)
+* handles all kinds of `transform` properties and makes sure to always use the same order of the `transform` properties (`translate`, `rotate`, `skew`, `scale`)
 * computes properties' values properly according to their measurement unit (px,%,deg,etc)
 * properly handles cross browser 3D `transform` with `perspective` and `perspective-origin` for element or it's parent
 * converts `HEX` colors to `RGB` and tweens the numeric values, then ALWAYS updates color via `RGB`
