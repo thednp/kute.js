@@ -115,6 +115,7 @@ Pay attention to that `$('selector')[0]` as jQuery always creates an array of se
 # How it works
 * it computes all the values before starting the animation, then caches them to avoid layout thrashing that occur during animation
 * handles all kinds of `transform` properties and makes sure to always use the same order of the `transform` properties (`translate`, `rotate`, `skew`, `scale`)
+* allows you to set `perspective` for an element or it's parent for 3D transforms
 * computes properties' values properly according to their measurement unit (px,%,deg,etc)
 * properly handles cross browser 3D `transform` with `perspective` and `perspective-origin` for element or it's parent
 * converts `HEX` colors to `RGB` and tweens the numeric values, then ALWAYS updates color via `RGB`
