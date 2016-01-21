@@ -100,7 +100,7 @@ var tween = $('selector').KUTE('fromTo', // apply fromTo() method to selector
 );
 
 // then we apply the tween control methods, like start
-$(tween).('start');
+$(tween).KUTE('start');
 ```
 
 ## Alternative usage in jQuery powered applications
