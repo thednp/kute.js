@@ -1,7 +1,5 @@
 # KUTE.js
-A minimal <b>native Javascript</b> tweening engine with <b>jQuery</b> plugin, forked from <a href="https://github.com/tweenjs/tween.js">tween.js</a> with most essential options for web developers, designers and animators. Unlike the original script, KUTE.js delivers easy to use methods to set up high performance animations on the fly.
-
-<b>KUTE.js</b> is like a merge of on of my own scripting with tween.js, but generally it's a much better build. You link the script at your ending <code>&lt;/body&gt;</code> tag and write one line to do just about any animation you can think of.
+A minimal <b>native Javascript</b> tweening engine with <b>jQuery</b> plugin, with most essential options for web developers, designers and animators, delivering easy to use methods to set up high performance, cross-browser animations.
 
 <b>Important</b>: starting with 0.9.5 version, KUTE.js changes the prototype structure for performance, usability and browser support, as well as extensibility. The documentation and examples no longer support old versions prior to 0.9.5 release.
 
