@@ -52,7 +52,7 @@
     </div>
 
 	<div class="content-wrap">
-		<h2 id="performance">Delivering Killer Performance</h2>
+		<h2 id="performance">Badass Performance</h2>
 		<p>KUTE.js was developed with best practices in mind for <strong>fastest code execution</strong> and <strong>memory efficiency</strong>, but performance varies from case to case, as well as for all the other Javascript based animation engines. As a quick note on <a href="about.html#how">how it works</a>, well for the most part values are cached for the entire duration of the animation so that the repetitive tasks run smoothly, uninterruptible and avoid layout thrashing. We all know the more properties used or the more elements to animate at the same time, the more power is required.</p>
 
 		<p><span class="ion-ios-cog media"></span>Of course some would argue on many aspects, but we all trade something for the sake of something else, such as convenience and/or flexibility or fork a project that's already great to make it.. better. For the sake of performance or simply willing to provide a feature, some trade/neglect other elements such as syncronisation (check this <a href="https://www.youtube.com/watch?v=1ZWugkJV5Ks" target="_blank">video</a>), code simplicity (lots of CSS for a <a href="https://daneden.github.io/animate.css/" target="_blank">custom animation</a>) and more other.</p>
@@ -60,7 +60,7 @@
 	</div>
 
 	<div class="content-wrap">
-		<h2 id="prefix">Break Free Of Browser Prefixes</h2>
+		<h2 id="prefix">Browser Prefixes Free</h2>
 		<p>KUTE.js uses a simple function to determine the vendor prefix and checks if the prefix is required. In any case it caches the prefixed/unprefixed property name in a variable to make it available when needed. This applies to the following CSS3 properties: <code>transform</code>, <code>perspective</code>, <code>perspective-origin</code>, <code>border-radius</code> and the <code>requestAnimationFrame</code> Javascript method.</p>
 		<p><span class="ion-paper-airplane media"></span>We aren't only targeting properly browsers for CSS3 styling, but also increase performance because we don't need to update the styling on every frame for all browsers (and their versions) at once, just the right and only one; <strong>less</strong> string concatenation = <strong>more</strong> performance. This asumes you are NOT styling the above CSS3 properties using your stylesheets to avoid glitches with legacy browsers.</p> 
 		<p>This feature is useful mostly for Safari, older Firefox and Opera versions and Internet Explorer 9.</p>
@@ -77,11 +77,17 @@
 	<div class="content-wrap">
 		<h2 id="methods">Methods, Tools and Options</h2>
 		<h3>Building Tween Objects</h3>
-		<p>KUTE.js allows you to create tween objects with the help of <code>.to()</code> and <code>.fromTo()</code> public methods, with distinctive functionalities.</p> 
-		<p><kbd>KUTE.to('selector', toValues, options)</kbd> method is super simple and straightforward and requires a polyfill for <code>window.getComputedStyle()</code> Javascript method on IE8 and more other legacy browsers in order to read the current property value. If no value is set in the stylesheets or inline style, a property specific value will be used. It also computes the value on animation start, delaying the actual animation and potentially creating sync issues on large amounts of elements, but it has the great ability to stack <code>transform</code> properties as they come in chained tweens. However fixing the sync issues is not that hard, see the example at <a href="api.html#start">start()</a> method API.</p>
-		<p><kbd>KUTE.fromTo('selector', fromValues, toValues, options)</kbd> is the other method that's most powerful in terms of performance, flexibility and control on the animation. As an example, while the first method may not process properties' measurement units properly, this method will never fail in that regard, because you can set for both starting values and end values the exact values with the right unit you need.</p> 
+		<p>KUTE.js allows you to create tween objects with the help of <code>.to()</code> and <code>.fromTo()</code> public methods for a single element, with distinctive functionalities, and the other <code>.allTo()</code> and <code>.allFromTo()</code> that use the first two for collections of elements.</p> 
+		
+        <p><kbd>KUTE.to('selector', toValues, options)</kbd> method is super simple and straightforward and requires a polyfill for <code>window.getComputedStyle()</code> Javascript method on IE8 and more other legacy browsers in order to read the current property value. If no value is set in the stylesheets or inline style, a property specific value will be used. It also computes the value on animation start, delaying the actual animation and potentially creating sync issues on large amounts of elements, but it has the great ability to stack <code>transform</code> properties as they come in chained tweens. However fixing the sync issues is not that hard, see the example at <a href="api.html#start">start()</a> method API.</p>
+		
+        <p><kbd>KUTE.fromTo('selector', fromValues, toValues, options)</kbd> is the other method that's most powerful in terms of performance, flexibility and control on the animation. As an example, while the first method may not process properties' measurement units properly, this method will never fail in that regard, because you can set for both starting values and end values the exact values with the right unit you need.</p> 
 
-		<p>It doesn't stack <code>transform</code> properties for chained tweens but you can set all properties to be used in all tweens if you want (end values from previous tween become start values for the next AND unchanged start values become end values), and make sure nothing is left unchecked, to avoid animation glitches. Still, this method is the fastest and bestest for super performance and super control.</p> 
+		<p>It doesn't stack <code>transform</code> properties for chained tweens but you can set all properties to be used in all tweens if you want (end values from previous tween become start values for the next AND unchanged start values become end values), and make sure nothing is left unchecked, to avoid animation glitches. Still, this method is the fastest and bestest for super performance and super control.</p>
+        
+        <p><kbd>KUTE.allTo('selector', toValues, options)</kbd> inherits all functionality from the <code>.to()</code> method but is applied to collections of elements.</p>
+        
+        <p><kbd>KUTE.allFromTo('selector', fromValues, toValues, options)</kbd> is the same as <code>.fromTo()</code> and is applied to collections of elements.</p> 
 
 		<h3>Tween Control</h3>
 		<p>Unlike previous versions where animations started right away, starting with version 0.9.5 KUTE.js gives you great animation control methods such as: <code>.start()</code>, <code>.stop()</code>, <code>.pause()</code> and <code>.resume()</code>. These public methods work either when animation is running or is paused. You need to see the <a href="api.html">documentation</a> to learn how these work.</p> 
