@@ -68,12 +68,12 @@ $ bower install --save kute.js
 
 		<h3>Websites</h3>
 		<p>In your website add the following code, the best would be to put it at the end of your <code>body</code> tag:</p>
-<pre><code class="language-markup">&lt;script src="https://cdn.jsdelivr.net/kute.js/1.0.0/kute.min.js">&lt;/script> &lt;!-- core KUTE.js --></code></pre>
+<pre><code class="language-markup">&lt;script src="https://cdn.jsdelivr.net/kute.js/1.0.1/kute.min.js">&lt;/script> &lt;!-- core KUTE.js --></code></pre>
 
 		<p>Also you can include the tools that you need for your project:</p>
-<pre><code class="language-markup">&lt;script src="https://cdn.jsdelivr.net/kute.js/1.0.0/kute-jquery.min.js">&lt;/script> &lt;!-- jQuery Plugin -->
-&lt;script src="https://cdn.jsdelivr.net/kute.js/1.0.0/kute-easing.min.js">&lt;/script> &lt;!-- Bezier Easing Functions -->
-&lt;script src="https://cdn.jsdelivr.net/kute.js/1.0.0/kute-physics.min.js">&lt;/script> &lt;!-- Physics Easing Functions -->
+<pre><code class="language-markup">&lt;script src="https://cdn.jsdelivr.net/kute.js/1.0.1/kute-jquery.min.js">&lt;/script> &lt;!-- jQuery Plugin -->
+&lt;script src="https://cdn.jsdelivr.net/kute.js/1.0.1/kute-easing.min.js">&lt;/script> &lt;!-- Bezier Easing Functions -->
+&lt;script src="https://cdn.jsdelivr.net/kute.js/1.0.1/kute-physics.min.js">&lt;/script> &lt;!-- Physics Easing Functions -->
 </code></pre>
 		<p>Your awesome animation coding would follow after these script links.</p>		
 		
@@ -84,14 +84,40 @@ $ bower install --save kute.js
 
 	<div class="content-wrap">
 		<h2>Main Methods</h2>
-		<p>These methods allow you to create <strong>tween objects</strong>; here a tween object is essentially like an animation setup for a given HTML element, defining CSS properties, animation duration or repeat. The methods have different uses and performance scores while making it easy to work with.</p>
-		<p><kbd>.to()</kbd> method is the most simple method which allows you to create tween objects for animating CSS properties from a specific default value OR from current/computed value TO a desired value.
-		It's performance is not the same as for the next two because it has to compute the default/current value on tween <code>.start()</code> and thus delays the animation for a cuple of miliseconds, but this feature is great for simple animations AND it has the ability to stack transform properties as they go, making smooth transform animations on chained tweens. See the <a href="#start">.start()</a> method for the solution for sync/delay issue.</p>
+		<p>These methods allow you to create <strong>tween objects</strong> and collections of <strong>tween objects</strong>; as we know, a tween object is essentially like an animation setup for a given HTML element, defining CSS properties, animation duration, repeat or other options. The methods have different uses and performance scores while making it easy to work with.</p>
+        
+		<h3>Single Tween Object Construct</h3>
+		<p>As the heading suggests, the following two methods allow you to create tween objects for a single HTML element, except when used in combination with jQuery and the KUTE.js plugin for jQuery, where, as jQuery always does, it always works with collections of elements.</p>
+        <p><kbd>.to()</kbd> method is the most simple method which allows you to create tween objects for animating CSS properties from a specific default value OR from current/computed value TO a desired value.
+		It's performance is not the same as for the <strong>.fromTo()</strong> method as it has to compute the default/current value on tween <code>.start()</code> and thus delays the animation for a couple of miliseconds; still this feature is great for simple animations AND it has the ability to stack transform properties as they go, making smooth transform animations on chained tweens. See the <a href="#start">.start()</a> method for the solution for sync/delay issue.</p>
 		<p>Considering a given <em>div</em> element is already transparent, a super quick example would be:</p>
 <pre><code class="language-javascript">KUTE.to(div,{opacity:1}).start()</code></pre>
-		<p><kbd>.fromTo()</kbd> method is the best way to build animations for BEST performance and absolute control. The tests prove this method to be the fastest methods but unlike the <code>.to()</code> method, it does not stack transform properties on chained tweens. Also, another advantage is the fact that you can set measurement units for both starting and end values, to avoid glitches. We've talked about this in the <a href="features.html">features page</a>. So here's a quick example:</p> 
+		
+        <p><kbd>.fromTo()</kbd> method is the best way to build animations for BEST performance and absolute control. The tests prove this method to be the fastest method but unlike the <code>.to()</code> method, it does not stack transform properties on chained tweens. Along with the performance advantage, you can set measurement units for both starting and end values, to avoid glitches. We've talked about this in the <a href="features.html">features page</a>. Here's a quick example:</p> 
 <pre><code class="language-javascript">KUTE.fromTo(div,{opacity:1},{opacity:0}).start()</code></pre>
-		<p><kbd>.Animate()</kbd> method is only a fallback for the older KUTE.js versions and works as the <code>.fromTo()</code> method. It will be deprecated with later versions.</p>
+
+		<h3>Multiple Tween Object Construct</h3>
+        <p>These methods allow you to create animations for multiple HTML elements at the same time, all in a single line of code. They use the above methods to create a tween object for each element of the collection and also enable the tween control methods in this new context.</p>	
+		<p><kbd>.allTo()</kbd> method allows you to create an array of tween objects for a collection of elements. This method is using the above <code>.to()</code> method and inherits it's functionality. Considering a given collection <code>myDivs</code> elements, a nice example would be:</p>
+<pre><code class="language-javascript">// on the fly, grab the elements by className, 
+// do the tween objects array, and start kicking
+KUTE.allTo( '.my-div-class', {opacity:1}, {offset: 200, duration: 500} ).start();
+
+// or we cache the objects for better performance and / or later control
+var myDivs          = document.querySelectorAll('.my-div-class');
+var myDivsTweens    = KUTE.allTo( myDivs, {opacity:1}, {offset: 200, duration: 500} );
+</code></pre>
+
+		<p><kbd>.allFromTo()</kbd> method is also a method to animate a collection of elements and it uses the <code>.fromTo()</code> method. Quick example:</p> 
+<pre><code class="language-javascript">KUTE.allFromTo( myDivs, {opacity:1}, {opacity:0}, {offset: 200, duration: 500} ).start()</code></pre>
+
+        <p>Considering that the selector matches two DIV elements, the value for the above variable <code>myDivsTweens</code> is an object that only stores the two tweens, one for each element found:</p>
+<pre><code class="language-javascript">
+myDivsTweens = { // console.log(myDivsTweens);
+    tweens = [ Tween, Tween ] console.log(myDivsTweens.tweens);
+}
+</code></pre>
+        <p>As you can see the above code, these methods have a specific tween option called <code>offset</code> that allows you to set a delay in miliseconds between the starting time of each tween animation. Most tween control methods apply to both methods, except for the <code>.chain()</code> method. In order to chain another tween to one of the <code>myDivsTweens</code> objects, we would need to access it from the array, but let's leave that for later.</p>
 	</div>
 
 	<div class="content-wrap">
@@ -101,21 +127,24 @@ $ bower install --save kute.js
 		<p>This tween object is now ready to work with the methods.</p>
 		
 		<h3 id="start">Starting Animations</h3>
-		<p><kbd>.start()</kbd> method starts animation for a given tween object. It can start the animation for both cached and non-cached objects. Unlike previous versions of KUTE.js, where animation started immediately after tween object creation, now you have to manually start them.</p>
+		<p><kbd>.start()</kbd> method starts animation for a given tween object. It can start the animation for both cached and non-cached objects. Unlike previous versions of KUTE.js, where animation started immediately after tween object creation, now you have to manually start them. This method also applies to arrays of tween objects created with <code>.allTo()</code> and <code>.allFromTo()</code> methods.</p>
 <pre><code class="language-javascript">//cached object defined above
 tween.start();
 
-//non-cached object are created on the fly and garbage collected after animation has finised
+// non-cached object are created on the fly and garbage collected after animation has finised
 KUTE.fromTo(div,{opacity:1},{opacity:0}).start();
 
-//also start the tween at a certain time
+// also start the tween at a certain time
 tween.start(now); // where now must be the current or future time as number, see below
+
+// lastly the method works with tweens made with .allTo() and .allFromTo() methods
+KUTE.allFromTo(divs,{opacity:1},{opacity:0}).start();
 </code></pre>
 
-		<p>As you can see, you can also set a time for the animation to start, example: <code>tween.start(myTimeValue)</code>. Having access to the method is useful when starting animation for large amounts of elements with same properties at the same time because using it properly <strong>eliminates any syncronization issue that may occur</strong>, even if you are using the <code>.to()</code> method. This applies to our performance test page as well, and the trick is super duper simple:</p> 
+		<p>As you can see, you can also set a time for the animation to start, example: <code>tween.start(myTimeValue)</code>. Having access to the method is useful when starting animation for large amounts of elements with same properties at the same time because using it properly <strong>eliminates any syncronization issue</strong> that may occur on animations start, even if you are using the <code>.to()</code> method. The trick is super duper simple:</p> 
 
 <pre><code class="language-javascript">// step 1 - create an empty array and grab the elements to animate
-var tweens = [], myElements = document.querySelector('.myManyElements');
+var tweens = [], myElements = document.querySelector('.myManyElements'), numberOfElements = myElements.length;
 
 // step 2 - define tween objects for each element
 for (var i = 0; i < numberOfElements; i++) {
@@ -139,26 +168,27 @@ for (var i = 0; i < numberOfElements; i++) {
 }
 </code></pre>
 		
-		<p>If you care to see the actual working code, check it in the <a href="./assets/js/perf.js" target="_blank">perf.js</a> file.</p>
+		<p>In other cases the new methods <code>.allTo()</code> and <code>.allFromTo()</code> can be more useful.</p>
 		
 		<h3>Stopping Animation</h3>
-		<p><kbd>.stop()</kbd> method stops animation for a given tween object while animating. You cannot stop the animation for tween objects created on the fly, only for cached objects. Let's assume that for the given tween we decide to stop the animation via <code>click</code> action:</p>
-<pre><code class="language-javascript">stopButton.addEventListener('click', function(){
-	tween.stop();
+		<p><kbd>.stop()</kbd> method stops animation for a given tween object or an array of tween objects (built with <code>.to()</code>/<code>.fromTo()</code> methods) while animating. You cannot stop the animation for tween objects created on the fly, only for cached objects. Let's assume that for the given tween we decide to stop the animation via <code>click</code> action:</p>
+<pre><code class="language-javascript">// for a tween object
+stopButton.addEventListener('click', function(){
+	myTween.stop(); // myMultiTweens.stop();
 }, false);
 </code></pre>
 		
 		<h3>Pausing Animation</h3>
-		<p><kbd>.pause()</kbd> method freezez the animation at any given time for a given tween object, and unlike the <code>.stop()</code> method, this one allows resuming the animation on a later use of the next method <code>.play()</code>.</p>
+		<p><kbd>.pause()</kbd> method freezez the animation at any given time for a given tween object or collection, and unlike the <code>.stop()</code> method, this one allows resuming the animation on a later use of the next method <code>.play()</code>.</p>
 <pre><code class="language-javascript">pauseButton.addEventListener('click', function(){
-	tween.pause();
+	tween.pause(); // or myMultiTweens.pause();
 }, false);
 </code></pre>
 		
 		<h3>Resuming Paused Animation</h3>
-		<p><kbd>.play()</kbd> or <kbd>.resume()</kbd> methods allows you to resume an animation for a given tween object only if it was paused or else will produce no effect.</p>		
+		<p><kbd>.play()</kbd> or <kbd>.resume()</kbd> methods allows you to resume an animation for a given tween object or collection of tweens, only if it was paused or else will produce no effect.</p>		
 <pre><code class="language-javascript">playButton.addEventListener('click', function(){
-	tween.play(); // or tween.resume();
+	tween.play(); // or tween.resume(); || or myMultiTweens.resume();
 }, false);
 </code></pre>
 		
@@ -172,9 +202,20 @@ tween.chain(tween2);
 //the new tween chains the first one creating a loop
 tween2.chain(tween);
 </code></pre>
-		<p>It's also possible to chain multiple tweens, just as shown in the below example, but the one that finishes last (has longest delay and duration together) should be used last in the <code>.chain()</code> method arguments list. Why? Because when a tween is finished it triggers <code>cancelAnimationFrame()</code> and KUTE.js will stop "ticking" causing all other chained tweens to stop prematurelly.</p>
+
+		<p>It's also possible to chain multiple tweens, just as shown in the below example.</p>
 <pre><code class="language-javascript">//chain multiple tweens
 tween.chain(tween1,tween2);
+</code></pre>
+
+        <p>Another thing we talked before is the ability to chain to one of the tween object within the array built with <code>.allTo()</code> or <code>.allFromTo()</code> methods.</p>
+<pre><code class="language-javascript">// chain to a tween from collection
+var tweensCollection = KUTE.allTo('.a-class-for-multiple-elements', {opacity: 1}, {opacity: 0}, {duration: 500});
+
+// considering the collection has 5 tweens,
+// the array is right here tweensCollection.tweens, so
+// let's grab the second and chain another tween to it
+tweensCollection.tweens[1].chain(tween2);
 </code></pre>
 		
 
@@ -186,7 +227,8 @@ tween.chain(tween1,tween2);
 		<p>These options affect all types of tweens, no matter the properties used or context.</p>
 		<p><kbd>duration: 500</kbd> option allows you to set the animation duration in miliseconds. The default value is <strong>700</strong>.</p>
 		<p><kbd>repeat: 20</kbd> option allows you to run the animation of given tween multiple times. The default value is <strong>0</strong>.</p>
-		<p><kbd>delay: 500</kbd> option allows you to schedule the tween animation after a certain number of miliseconds. The default value is <strong>0</strong>.</p>
+		<p><kbd>delay: 500</kbd> option allows you to delay the tween animation for a certain number of miliseconds. The default value is <strong>0</strong>.</p>
+		<p><kbd>offset: 200</kbd> option is only for <code>.allTo()</code> and <code>.allFromTo()</code> methods. This allows you to set a base delay in miliseconds that increases with each element in the collection. This has no effect on other methods and the default value is <strong>0</strong>.</p>
 		<p><kbd>repeatDelay: 500</kbd> option allows you to set a number of miliseconds delay between repeatable animations. If <code>repeat</code> option is set to <strong>0</strong>, will produce no effect. The default value is <strong>0</strong>.</p>		
 		<p><kbd>yoyo: true/false</kbd> option makes use of the internal reverse functionality to also animate from <b>end</b> to <b>start</b> for a given tween. This option requires that you use the <code>repeat</code> option with at least value <b>1</b>. The default value is <strong>false</strong>.</p>
 		<p><kbd>easing: 'easingCubicInOut'</kbd> option allows you to use a custom easing function for your animation. For more info on the easing functions, you need to see the example pages. The default value is <strong>linear</strong>.</p>
@@ -197,6 +239,7 @@ tween.chain(tween1,tween2);
 		<p><kbd>perspectiveOrigin: "50% 50%"</kbd> option allows you to set a <code>perspectiveOrigin</code> for a given HTML. This option has no default value and only accepts valid CSS values according to it's specs.</p>
 		<p><kbd>parentPerspective: 500</kbd> option allows you to set a 3D <code>perspective</code> for the <strong>parent</strong> of the HTML element subject to the transform animation.</p>
 		<p><kbd>parentPerspectiveOrigin: "50% 50%"</kbd> option allows you to set a <code>perspectiveOrigin</code> for the parent of the HTML element subject to the transform animation. Also like the above similar options, this options only accepts valid CSS values.</p>
+		<p><kbd>transformOrigin: "50% 50%"</kbd> option allows you to set a <code>transformOrigin</code> for the HTML element subject to the transform animation. Also this options only accepts valid CSS values.</p>
 
 		<h3>Callback Options</h3>
 		<p>These options also affect all types of tweens, and are bound by the tween control options and the internal update functions.</p>

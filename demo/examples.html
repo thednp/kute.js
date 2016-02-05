@@ -437,6 +437,33 @@ playPauseButton.addEventListener('click', function(e){
 			<li>the <code class="bg-olive">RESUME</code> button will use the <code>.resume()</code> method and resumes the animation; this reverses the button's initial state;</li>
 			<li>make sure you work with the conditions properly when you want to pause an animation you MUST check both <code>!myTween.playing</code> and <code>myTween.paused</code> conditions because you could end up with errors.</li>			
 		</ul>
+        
+		<h2>Multi Tweens</h2>
+		<p>With KUTE.js 1.0.1 we introduced new tween object constructor methods, let's have a little fun.</p>
+<pre><code class="language-javascript">// a simple .to() for a collection of elements would look like this
+var myMultiTween1 = KUTE.allTo('selector1',{translate:[0,150]});
+
+// or a more complex example with the two new options
+
+var myMultiTween2 = KUTE.allFromTo(
+    'selector1',
+    {translate:[0,0], rotate: 0}, 
+    {translate:[0,150], rotate: 360}, 
+    {transformOrigin: '100% 100%', offset: 200 }
+);
+
+</code></pre>
+		<p>And should looks like this:</p>
+		<div class="featurettes">
+			<div class="example-item example-box example-multi bg-indigo">K</div>
+			<div class="example-item example-box example-multi bg-olive">U</div>
+			<div class="example-item example-box example-multi bg-pink">T</div>
+			<div class="example-item example-box example-multi bg-red">E</div>
+				
+			<div class="example-buttons">
+				<a class="btn btn-green" onclick="startMultiTween();" href="#">Start</a>	
+			</div>
+		</div>
 		
 		<ul id="share" class="nav">
 			<li>Share </li>
@@ -467,7 +494,6 @@ playPauseButton.addEventListener('click', function(e){
 
 <!--<script src="http://cdn.jsdelivr.net/kute.js/0.9.2/kute.full.min.js"></script>  KUTE CDN -->
 <script src="./src/kute.js"></script> <!-- some stuff -->
-<!--<script src="./src/kute-keys.js"></script>  some stuff -->
 <script src="./assets/js/scripts.js"></script> <!-- global scripts stuff -->
 <script src="./assets/js/examples.js"></script> <!-- examples stuff -->
 </body>
