@@ -21,8 +21,6 @@
   "bugs": {
     "url": "https://github.com/thednp/kute.js/issues"
   },
-  "homepage": "https://github.com/thednp/kute.js#readme",
-  "dependencies": {
-    "jquery": "^2.1.4"
-  }
+  "homepage": "http://thednp.github.io/kute.js",
+  "dependencies": {}
 }
