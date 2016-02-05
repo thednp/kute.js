@@ -7,14 +7,14 @@
  (function(factory){
   // We need to require the root KUTE and jQuery.
   if (typeof define === 'function' && define.amd) {
-    define(["./kute.js", "jQuery"], function(KUTE, $){
+    define(["./kute.js", "jquery"], function(KUTE, $){
       factory($, KUTE);
       return KUTE;
     });
   } else if(typeof module == "object" && typeof require == "function") {
     // We assume, that require() is sync.
     var KUTE = require("./kute.js");
-    var $ = require("jQuery");
+    var $ = require("jquery");
     
     // Export the modified one. Not really required, but convenient.
     module.exports = factory($, KUTE);
