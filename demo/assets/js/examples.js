@@ -347,7 +347,7 @@ playPauseButton.addEventListener('click', function(e){
 /* MULTI TWEENS EXAMPLE */
 var tweenMulti = KUTE.allFromTo('.example-multi',
     {translate:[0,0], rotate: 0}, 
-    {translate:[0,-50], rotate: 360}, 
+    {translate:[0,-150], rotate: 360}, 
     {transformOrigin: '10% 10%', offset: 300, duration: 1000, easing: 'easingCubicOut', repeat: 1, repeatDelay: 1000, yoyo: true}
 );
 function startMultiTween() {

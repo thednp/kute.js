@@ -438,18 +438,17 @@ playPauseButton.addEventListener('click', function(e){
 			<li>make sure you work with the conditions properly when you want to pause an animation you MUST check both <code>!myTween.playing</code> and <code>myTween.paused</code> conditions because you could end up with errors.</li>			
 		</ul>
         
-		<h2>Multi Tweens</h2>
-		<p>With KUTE.js 1.0.1 we introduced new tween object constructor methods, let's have a little fun.</p>
+		<h2>Tween Object Collections</h2>
+		<p>With KUTE.js 1.0.1 we introduced new tween object constructor methods, they allow you to create a tween object for each element in a collection, a very handy way to ease and speed up the animation programing workflow. Let's have a little fun.</p>
 <pre><code class="language-javascript">// a simple .to() for a collection of elements would look like this
 var myMultiTween1 = KUTE.allTo('selector1',{translate:[0,150]});
 
-// or a more complex example with the two new options
-
+// or a more complex .fromTo() example with the two new options
 var myMultiTween2 = KUTE.allFromTo(
-    'selector1',
+    'selector2',
     {translate:[0,0], rotate: 0}, 
     {translate:[0,150], rotate: 360}, 
-    {transformOrigin: '100% 100%', offset: 200 }
+    {transformOrigin: '10% 10%', offset: 200 }
 );
 
 </code></pre>
