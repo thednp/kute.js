@@ -1,6 +1,6 @@
 {
   "name": "KUTE.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "http://thednp.github.io/kute.js",
   "authors": [
     "thednp"
@@ -28,7 +28,5 @@
     "test",
     "tests"
   ],
-  "dependencies": {
-    "jquery": "~2.1.4"
-  }
+  "dependencies": {}
 }
