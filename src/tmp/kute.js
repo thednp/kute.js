@@ -705,7 +705,7 @@
                 f[p][p1] = K.gCA(el,p1);
               }
             } else if (p==='path') {
-              f[p] = K.svg.getPath(el);
+              f[p] = el.getAttribute('d');
             } else {
               f[p] = this.gCS(p) || _d[p];
             }
