@@ -1,8 +1,18 @@
 // Document
+// HTMLDocument is an extension of Document.  If the browser has HTMLDocument but not Document, the former will suffice as an alias for the latter.
 if (!this.Document){this.Document = this.HTMLDocument; }
 
 // Element
 if (!window.HTMLElement) { window.HTMLElement = window.Element; }
+
+// Window
+(function(global) {
+	if (global.constructor) {
+		global.Window = global.constructor;
+	} else {
+		(global.Window = global.constructor = new Function('return function Window() {}')()).prototype = this;
+	}
+}(this));
 
 // Date.now
 if(!Date.now){ Date.now = function now() { return new Date().getTime(); }; }
@@ -19,6 +29,7 @@ if(!Date.now){ Date.now = function now() { return new Date().getTime(); }; }
 		}
 	}
 })();
+
 
 // Array.prototype.indexOf
 if (!Array.prototype.indexOf) {
@@ -160,53 +171,24 @@ if (!('getComputedStyle' in window)) {
 	})();
 }
 
-// requestAnimationFrame
-if (!window.requestAnimationFrame) {
-
-	var	lT = Date.now(); // lastTime
-	window.requestAnimationFrame = function (callback) {
-		'use strict';
-		if (typeof callback !== 'function') {
-			throw new TypeError(callback + 'is not a function');
-		}
-		
-		var	cT = Date.now(), // currentTime
-			dl = 16 + lT - cT; // delay
-
-		if (dl < 0) { dl = 0;	}
-
-		lT = cT;
-
-		return setTimeout(function () {
-			lT = Date.now();
-			callback(window.performance.now());
-		}, dl);
-	};
-
-	window.cancelAnimationFrame = function (id) {
-		clearTimeout(id);
-	};
-}
-
-
 // Event
 if (!window.Event||!Window.prototype.Event) {
 	(function (){
-		window.Event = Window.prototype.Event = Document.prototype.Event = Element.prototype.Event = function Event(t, args) {
-			if (!t) { throw new Error('Not enough arguments'); } // t is event.type
-			var ev, 
-				b = args && args.bubbles !== undefined ? args.bubbles : false,
-				c = args && args.cancelable !== undefined ? args.cancelable : false;
+		window.Event = Window.prototype.Event = Document.prototype.Event = Element.prototype.Event = function Event(type, eventInitDict) {
+			if (!type) { throw new Error('Not enough arguments'); }
+			var event, 
+				bubbles = eventInitDict && eventInitDict.bubbles !== undefined ? eventInitDict.bubbles : false,
+				cancelable = eventInitDict && eventInitDict.cancelable !== undefined ? eventInitDict.cancelable : false;
 			if ( 'createEvent' in document ) {
-				ev = document.createEvent('Event');			
-				ev.initEvent(t, b, c);
+				event = document.createEvent('Event');			
+				event.initEvent(type, bubbles, cancelable);
 			} else {
-				ev = document.createEventObject();		
-				ev.type = t;
-				ev.bubbles = b;
-				ev.cancelable = c;	
+				event = document.createEventObject();		
+				event.type = type;
+				event.bubbles = bubbles;
+				event.cancelable = cancelable;	
 			}
-			return ev;
+			return event;
 		};
 	})();
 }
@@ -214,13 +196,13 @@ if (!window.Event||!Window.prototype.Event) {
 // CustomEvent
 if (!('CustomEvent' in window) || !('CustomEvent' in Window.prototype)) {
 	(function(){		
-		window.CustomEvent = Window.prototype.CustomEvent = Document.prototype.CustomEvent = Element.prototype.CustomEvent = function CustomEvent(type, args) {
+		window.CustomEvent = Window.prototype.CustomEvent = Document.prototype.CustomEvent = Element.prototype.CustomEvent = function CustomEvent(type, eventInitDict) {
 			if (!type) {
 				throw Error('TypeError: Failed to construct "CustomEvent": An event name must be provided.');
 			}
-			var ev = new Event(type, args);
-			ev.detail = args && args.detail || null;
-			return ev;
+			var event = new Event(type, eventInitDict);
+			event.detail = eventInitDict && eventInitDict.detail || null;
+			return event;
 		};
 		
 	})()
@@ -230,76 +212,83 @@ if (!('CustomEvent' in window) || !('CustomEvent' in Window.prototype)) {
 if (!window.addEventListener||!Window.prototype.addEventListener) {
 	(function (){
 		window.addEventListener = Window.prototype.addEventListener = Document.prototype.addEventListener = Element.prototype.addEventListener = function addEventListener() {
-			var	el = this, // element
-				t = arguments[0], // type
-				l = arguments[1]; // listener
+			var	element = this,
+				type = arguments[0],
+				listener = arguments[1];
 	
-			if (!el._events) {	el._events = {}; }
+			if (!element._events) {	element._events = {}; }
 	
-			if (!el._events[t]) {
-				el._events[t] = function (e) {
-					var	ls = el._events[e.type].list, evs = ls.slice(), i = -1, lg = evs.length, eE; // list | events | index | length | eventElement
-
-					e.preventDefault = function preventDefault() {
-						if (e.cancelable !== false) {
-							e.returnValue = false;
+			if (!element._events[type]) {
+				element._events[type] = function (event) {
+					var	list = element._events[event.type].list,
+						events = list.slice(),
+						index = -1,
+						length = events.length,
+						eventElement;
+	
+					event.preventDefault = function preventDefault() {
+						if (event.cancelable !== false) {
+							event.returnValue = false;
 						}
 					};
 	
-					e.stopPropagation = function stopPropagation() {
-						e.cancelBubble = true;
+					event.stopPropagation = function stopPropagation() {
+						event.cancelBubble = true;
 					};
 	
-					e.stopImmediatePropagation = function stopImmediatePropagation() {
-						e.cancelBubble = true;
-						e.cancelImmediate = true;
+					event.stopImmediatePropagation = function stopImmediatePropagation() {
+						event.cancelBubble = true;
+						event.cancelImmediate = true;
 					};
 	
-					e.currentTarget = el;
-					e.relatedTarget = e.fromElement || null;
-					e.target = e.target || e.srcElement || el;
-					e.timeStamp = new Date().getTime();
+					event.currentTarget = element;
+					event.relatedTarget = event.fromElement || null;
+					event.target = event.target || event.srcElement || element;
+					event.timeStamp = new Date().getTime();
 	
-					if (e.clientX) {
-						e.pageX = e.clientX + document.documentElement.scrollLeft;
-						e.pageY = e.clientY + document.documentElement.scrollTop;
+					if (event.clientX) {
+						event.pageX = event.clientX + document.documentElement.scrollLeft;
+						event.pageY = event.clientY + document.documentElement.scrollTop;
 					}
 	
-					while (++i < lg && !e.cancelImmediate) {
-						if (i in evs) {
-							eE = evs[i];
+					while (++index < length && !event.cancelImmediate) {
+						if (index in events) {
+							eventElement = events[index];
 	
-							if (ls.indexOf(eE) !== -1 && typeof eE === 'function') {
-								eE.call(el, e);
+							if (list.indexOf(eventElement) !== -1 && typeof eventElement === 'function') {
+								eventElement.call(element, event);
 							}
 						}
 					}
 				};
 	
-				el._events[t].list = [];
+				element._events[type].list = [];
 	
-				if (el.attachEvent) {
-					el.attachEvent('on' + t, el._events[t]);
+				if (element.attachEvent) {
+					element.attachEvent('on' + type, element._events[type]);
 				}
 			}
 	
-			el._events[t].list.push(l);
+			element._events[type].list.push(listener);
 		};
 	
 		window.removeEventListener = Window.prototype.removeEventListener = Document.prototype.removeEventListener = Element.prototype.removeEventListener = function removeEventListener() {
-			var	el = this, t = arguments[0], l = arguments[1], i; // element // type  // listener // index
-
-			if (el._events && el._events[t] && el._events[t].list) {
-				i = el._events[t].list.indexOf(l);
+			var	element = this,
+				type = arguments[0],
+				listener = arguments[1],
+				index;
 	
-				if (i !== -1) {
-					el._events[t].list.splice(i, 1);
+			if (element._events && element._events[type] && element._events[type].list) {
+				index = element._events[type].list.indexOf(listener);
 	
-					if (!el._events[t].list.length) {
-						if (el.detachEvent) {
-							el.detachEvent('on' + t, el._events[t]);
+				if (index !== -1) {
+					element._events[type].list.splice(index, 1);
+	
+					if (!element._events[type].list.length) {
+						if (element.detachEvent) {
+							element.detachEvent('on' + type, element._events[type]);
 						}
-						delete el._events[t];
+						delete element._events[type];
 					}
 				}
 			}
@@ -310,47 +299,47 @@ if (!window.addEventListener||!Window.prototype.addEventListener) {
 // Event dispatcher	/ trigger
 if (!window.dispatchEvent||!Window.prototype.dispatchEvent||!Document.prototype.dispatchEvent||!Element.prototype.dispatchEvent) {
 	(function(){	
-		window.dispatchEvent = Window.prototype.dispatchEvent = Document.prototype.dispatchEvent = Element.prototype.dispatchEvent = function dispatchEvent(e) {
+		window.dispatchEvent = Window.prototype.dispatchEvent = Document.prototype.dispatchEvent = Element.prototype.dispatchEvent = function dispatchEvent(event) {
 			if (!arguments.length) {
 				throw new Error('Not enough arguments');
 			}
 	
-			if (!e || typeof e.type !== 'string') {
+			if (!event || typeof event.type !== 'string') {
 				throw new Error('DOM Events Exception 0');
 			}
 	
-			var el = this, t = e.type; // element | event type
+			var element = this, type = event.type;
 	
 			try {
-				if (!e.bubbles) {
-					e.cancelBubble = true;
+				if (!event.bubbles) {
+					event.cancelBubble = true;
 	
 					var cancelBubbleEvent = function (event) {
 						event.cancelBubble = true;
 	
-						(el || window).detachEvent('on' + t, cancelBubbleEvent);
+						(element || window).detachEvent('on' + type, cancelBubbleEvent);
 					};
 	
-					this.attachEvent('on' + t, cancelBubbleEvent);
+					this.attachEvent('on' + type, cancelBubbleEvent);
 				}
 	
-				this.fireEvent('on' + t, e);
+				this.fireEvent('on' + type, event);
 			} catch (error) {
-				e.target = el;
+				event.target = element;
 	
 				do {
-					e.currentTarget = el;
+					event.currentTarget = element;
 	
-					if ('_events' in el && typeof el._events[t] === 'function') {
-						el._events[t].call(el, e);
+					if ('_events' in element && typeof element._events[type] === 'function') {
+						element._events[type].call(element, event);
 					}
 	
-					if (typeof el['on' + t] === 'function') {
-						el['on' + t].call(el, e);
+					if (typeof element['on' + type] === 'function') {
+						element['on' + type].call(element, event);
 					}
 	
-					el = el.nodeType === 9 ? el.parentWindow : el.parentNode;
-				} while (el && !e.cancelBubble);
+					element = element.nodeType === 9 ? element.parentWindow : element.parentNode;
+				} while (element && !event.cancelBubble);
 			}
 	
 			return true;
