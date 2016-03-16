@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<!--[if IE 7]><html class="ie ie7" lang="en"><![endif]-->
+<!--[if IE 8]><html class="ie ie8" lang="en"><![endif]-->
+<!--[if IE 9]><html class="ie ie9" lang="en"><![endif]-->
+
+<!--[if !IE ]><!--> <html lang="en"> <!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A quick start guide for KUTE.js, CDN sources, NPM.">
+    <meta name="keywords" content="kute,kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
+    <meta name="author" content="dnp_theme">
+    <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
+
+    <title>Extending KUTE.js | Javascript Animation Engine</title>
+	
+    <!-- RESET CSS -->
+    <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
+	
+    <!-- DEMO KUTE CSS -->
+    <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
+
+	<!-- Ion Icons -->
+    <link type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+		
+	<!-- Synthax highlighter -->
+	<link href="./assets/css/prism.css" rel="stylesheet">	
+
+    <!-- Polyfill -->
+    <script src="./assets/js/minifill.js"> </script>
+    
+	<!-- legacy browsers support via polyfill 
+	<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
+	<!--[if IE]>
+		<script src="https://cdn.jsdelivr.net/minifill/0.0.2/minifill.min.js"> </script>
+		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	<![endif]-->
+	
+</head>
+
+<body>
+  <div class="fill overlay"></div>
+  
+  <div class="site-wrapper">
+ 
+	<div class="navbar-wrapper">
+      <div class="content-wrap">
+		<a href="index.html"><h1>KUTE.<span>js</span></h1></a>
+		<ul class="nav">
+			<li class="btn-group"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="features.html">Feature Overview</a></li>
+                    <li><a href="properties.html">Supported Properties</a></li>
+                </ul>            
+            </li>
+			<li class="btn-group">
+                <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="examples.html">Core Engine</a></li>
+                    <li><a href="css.html">CSS Plugin </a></li>
+                    <li><a href="svg.html">SVG Plugin </a></li>
+                    <li><a href="attr.html">Attributes Plugin </a></li>
+                </ul>
+            </li>			
+			<li class="btn-group active">
+                <a href="#" data-function="toggle">API <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="start.html">Getting Started</a></li>
+                    <li><a href="api.html">Public Methods</a></li>
+                    <li><a href="easing.html">Easing Functions</a></li>
+                    <li class="active"><a href="extend.html">Extend Guide</a></li>
+                </ul>
+            </li>
+			<li><a href="about.html">About</a></li>
+		</ul>
+      </div>
+    </div>
+
+	<div class="content-wrap">		
+		
+		<h2>Extend Guide</h2>
+		<p>KUTE.js is a very flexible animation engine that allows you to extend beyond measure. In this tutorial we'll dig into what's best to do to extend/customize the functionality of KUTE.js core, plugins and features.</p>
+
+		<h3>Basic Plugin Template</h3>
+		<p>The best way to extend, no matter what you would like to achieve is to use a specific closure, here's an example:</p>
+<pre><code class="language-javascript">/* KUTE.js - The Light Tweening Engine
+ * package - pluginName
+ * desc - what your plugin does
+ * by yourNickname aka YOUR NAME
+ * Licensed under MIT-License
+ */
+
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
+  } else if(typeof module == "object" && typeof require == "function") {
+    var KUTE = require("./kute.js");   
+    module.exports = factory(KUTE);
+  } else if ( typeof window.KUTE !== 'undefined' ) {		
+    factory(KUTE);
+  } else {
+    throw new Error("pluginName require KUTE.js.");
+  }
+}( function (KUTE) {
+    // your code goes here
+    
+    // in this function body
+    
+    // the plugin returns this
+    return this;
+}));
+</code></pre>
+        <p>As suggested in the above template, your function body could be written with one or more of the examples below.</p>
+        
+		<h3>Extend Tween Control</h3>
+		<p>In some cases, you may want to extend with additional tween control methods, so before you do that, make sure to check <code>KUTE.Tween</code> function to get the internal references notation:</p>
+<pre><code class="language-javascript">//add a reference to KUTE object
+var K = window.KUTE;
+
+// let's add a timescale method
+K.Tween.prototype.timescale = function(factor){
+    this._dr *= factor; // this._dr is the internal tween duration
+    return this;
+}
+
+// or let's add a reverse method
+K.Tween.prototype.reverse = function(){
+    for (var p in this._vE) {
+        var tmp = this._vSR[p];         // we cache this object first
+        this._vSR[p] = this._vE[p];     // this._vSR is the internal valuesStartRepeat object
+        this._vE[p] = tmp;              // this._vE is the internal valuesEnd object
+        this._vS[p] = this._vSR[p];     // this._vSR is the internal valuesStart object
+    }
+    return this;
+}
+
+// go back in time
+K.Tween.prototype.seek = function (time) {
+    this._sT -= time;  // this._sT is the startTime
+    return this;
+};
+
+// how about a restart method
+K.Tween.prototype.restart = function(){
+    if (this.playing) {
+        this.stop();
+        this.start();
+    }
+    return this;
+}
+</code></pre>
+        <p>For some reasons these methods aren't included into the core/plugins by default, but let you decide what you need and how to customize the animation engine for your very secific need.</p>
+        
+		<h3>Support For Additional CSS Properties</h3>
+		<p>KUTE.js core engine and plugins cover what I consider to be most essential for animation, but you may have a different opinion. In case you may want to know how to animate properties that are not currently supported, stick to this guide and you'll master it real quick, it's very easy.</p> 
+        <p>We need basically 3 functions:</p>
+        <ul>
+            <li><code>KUTE.prS['propertyName']</code> a <strong>prepareStart</strong> function to get the current value of the property required for the <code>.to()</code> method;</li>
+            <li><code>KUTE.pp['propertyName']</code> a <strong>processProperty</strong> function to process the user value / current value to have it ready to tween;</li>
+            <li><code>KUTE.dom['propertyName']</code> a <strong>domUpdate</strong> function that will update the property value into the DOM;</li>
+            <li><strong>optional</strong> a function that will work as an utility for your value processing.</li>
+        </ul>
+        <p>So let's add support for <kbd class="bg-olive">boxShadow</kbd>! It should be a medium difficulty guide most developers can follow and the purpose of this guide is to showcase how easy it actually is to extend KUTE.js. So grab the above template and let's break it down to pieces:</p>
+<pre><code class="language-javascript">// add a reference to KUTE object
+var K = window.KUTE;
+
+// filter unsupported browsers
+if (!('boxShadow' in document.body.style)) {return;}
+
+// the preffixed boxShadow property, mostly for legacy browsers
+// maybe the browser is supporting the property with its vendor preffix
+// box-shadow: none|h-shadow v-shadow blur spread color |inset|initial|inherit;
+var _boxShadow = K.property('boxShadow'); // note we're using the KUTE.property() autopreffix utility
+var colRegEx = /(\s?(?:#(?:[\da-f]{3}){1,2}|rgba?\(\d{1,3},\s*\d{1,3},\s*\d{1,3}\))\s?)/gi; // a full RegEx for color strings
+</code></pre>
+        <p>Now we have access to the KUTE object, prototypes and it's utility functions, let's write a <code>prepareStart</code> function that will read the current <code>boxShadow</code> value:</p>
+<pre><code class="language-javascript">// for the .to() method, you need to prepareStart the boxShadow property
+// which means you need to read the current computed value
+K.prS['boxShadow'] = function(element,property,value){
+    var cssBoxShadow = K.gCS(element,'boxShadow'); // where K.gCS() is an accurate getComputedStyle() core method
+    return /^none$|^initial$|^inherit$|^inset$/.test(cssBoxShadow) ? '0px 0px 0px 0px rgb(0,0,0)' : cssBoxShadow;
+}
+
+// note that in some cases the window.getComputedStyle(element,null) can be more accurate
+// we are using a hybrid function that's trying to get proper colors and other stuff that
+// some legacy browsers lack in this matter
+
+// also to read the current value of an attribute, replace first line of the above function body with this
+// var attrValue = element.getAttribute(property);
+// and return the value or a default value, mostly rgb(0,0,0) for colors or 0 for other types  
+</code></pre>   
+
+        <p>Next we'll need to write a <code>processProperty</code> function that will prepare the property value and build an Object or Array of values ready to tween. This function also registers the <code>K.dom['boxShadow']</code> function into the KUTE object, and this way we avoid filling the main object with unnecessary functions, just to keep performance tight.</p>
+        
+<pre><code class="language-javascript">// the processProperty for boxShadow 
+// registers the K.dom['boxShadow'] function 
+// returns an array of 6 values in the following format
+// [horizontal, vertical, blur, spread, color: {r:0,g:0,b:0}, inset]
+K.pp['boxShadow'] = function(property,value,element){
+  // the DOM update function for boxShadow registers here
+  // we only enqueue it if the boxShadow property is used to tween
+  if ( !('boxShadow' in K.dom) ) {
+    K.dom['boxShadow'] = function(w,p,v) {       
+      // let's start with the numbers | set unit | also determine inset
+      var numbers = [], unit = 'px', // the unit is always px
+        inset = w._vS[p][5] !== 'none' || w._vE[p][5] !== 'none' ? ' inset' : false; 
+      for (var i=0; i&lt;4; i++){
+        numbers.push( (w._vS[p][i] + (w._vE[p][i] - w._vS[p][i]) * v ) + unit);
+      }
+
+      // now we handle the color
+      var color, _color = {}; 
+      for (var c in w._vE[p][4]) {
+        _color[c] = parseInt(w._vS[p][4][c] + (w._vE[p][4][c] - w._vS[p][4][c]) * v )||0;
+      }
+      color = 'rgb(' + _color.r + ',' + _color.g + ',' + _color.b + ') ';          
+      
+      // last piece of the puzzle, the DOM update
+      w._el.style[_boxShadow] = inset ? color + numbers.join(' ') + inset : color + numbers.join(' ');
+    };
+  }
+
+  // processProperty for boxShadow, builds basic structure with ready to tween values
+  if (typeof value === 'string'){
+    var color, inset = false;
+    // make sure to always have the inset last if possible
+    inset = /inset/.test(value) ? 'inset' : inset;
+    value = /inset/.test(value) ? value.replace(/(\s+inset|inset+\s)/g,'') : value;
+
+    // also getComputedStyle often returns color first "rgb(0, 0, 0) 15px 15px 6px 0px inset"
+    color = value.match(colRegEx); 
+    value = value.replace(color[0],'').split(' ').concat([color[0].replace(/\s/g,'')],[inset]);
+    
+    value = K.processBoxShadowArray(value);
+  } else if (value instanceof Array){
+    value = K.processBoxShadowArray(value);
+  }
+  return value;
+}
+</code></pre>
+
+        <p>Notice we've used an utility function that fixes the Array values and makes sure the structure is right.</p>
+<pre><code class="language-javascript">// utility function to process values accordingly
+// numbers must be floats/integers and color must be rgb object
+K.processBoxShadowArray = function(shadow){
+  var newShadow, i;
+  // properly process the shadow based on amount of values
+  if (shadow.length === 3) { // [h-shadow, v-shadow, color]
+    newShadow = [shadow[0], shadow[1], 0, 0, shadow[2], 'none'];
+  } else if (shadow.length === 4) { // [h-shadow, v-shadow, color, inset] | [h-shadow, v-shadow, blur, color]
+    newShadow = /inset|none/.test(shadow[3]) ? [shadow[0], shadow[1], 0, 0, shadow[2], shadow[3]] : [shadow[0], shadow[1], shadow[2], 0, shadow[3], 'none'];
+  } else if (shadow.length === 5) { // [h-shadow, v-shadow, blur, color, inset] | [h-shadow, v-shadow, blur, spread, color]
+    newShadow = /inset|none/.test(shadow[4]) ? [shadow[0], shadow[1], shadow[2], 0, shadow[3], shadow[4]] : [shadow[0], shadow[1], shadow[2], shadow[3], shadow[4], 'none'];           
+  } else if (shadow.length === 6) { // ideal [h-shadow, v-shadow, blur, spread, color, inset]
+    newShadow = shadow; 
+  } 
+
+  // make sure the numbers are ready to tween
+  for (i=0;i&lt;4;i++){
+    newShadow[i] = parseFloat(newShadow[i]);  
+  }
+  // make sure color is an rgb object
+  newShadow[4] = K.truC(newShadow[4]); // where K.truC() is a core method to return the true color in rgb object format
+  return newShadow;
+}
+</code></pre>
+
+		<p>And now, we are ready to tween both <code>.to()</code> and <code>.fromTo()</code> methods:</p>
+<pre><code class="language-javascript">// tween to a string value
+var myBSTween1 = KUTE.to('selector', {boxShadow: '15px 25px #069'}).start();
+
+// or a fromTo with string and array, hex and rgb
+var myBSTween2 = KUTE.fromTo('selector', {boxShadow: [15, 25, 0, '#069']}, {boxShadow: '0px 0px rgb(0,0,0)'}).start();
+
+// maybe you want to animate an inset boxShadow?
+var myBSTween3 = KUTE.fromTo('selector', {boxShadow: [5, 5, 0, '#069', 'inset']}, {boxShadow: '0px 0px rgb(0,0,0)'}).start();
+</code></pre>
+        <p>You are now ready to demo!</p>
+		<div id="boxShadow" class="featurettes">
+			<div class="example-item example-box bg-lime"></div>
+				
+			<div class="example-buttons">
+				<a class="btn btn-pink" href="javascript:void(0)">Start</a>	
+			</div>
+		</div>
+		<p>This plugin should be compatible with IE9+ and anything that supports <code>boxShadow</code> CSS property. As you can see it can handle pretty much anything you throw at it, but it requires at least 3 values: h-shadow, v-shadow, and color because Safari doesn't work without a color. Also this plugin won't be able to handle multiple instances of <code>boxShadow</code> for same element, because the lack of support on legacy browsers, also the color cannot be RGBA, but hey, it supports both outline and inset shadows and you can fork it anyway to your liking.</p> 
+        <p>If you liked this tutorial, feel free to write your own, a great idea would be for <code>textShadow</code>, it's very similar to the above example plugin.</p>
+        
+		<h3>Utility Methods</h3>
+         <ul>
+            <li><kbd class="bg-lime">KUTE.selector(selector,multi)</kbd> is the selector utility that uses <code>getElementById</code> or <code>querySelector</code> when <code>multi</code> argument is <strong>null</strong> or <strong>false</strong>, BUT when <strong>true</strong>, <code>querySelectorAll</code> is used and returns a HTMLCollection object.</li>
+            <li><kbd class="bg-lime">KUTE.property(propertyName)</kbd> is the <strong>autoPrefix</strong> function that returns the property with the right vendor prefix, but only if required; on legacy browsers that don't support the property, the function returns <strong>undefinedPropertyName</strong> and that would be an easy way to detect support for that property on most legacy browsers: <pre><code class="language-javascript">if (/undefined/.test(KUTE.property('propertyName')) ) { /* legacy browsers */ } else { /* modern browsers */ }</code></pre></li>
+            <li><kbd class="bg-lime">KUTE.getPrefix()</kbd> returns a vendor preffix even if the browser supports a specific preffixed property or not.</li>
+            <li><kbd class="bg-lime">KUTE.gCS(element,property)</kbd> a hybrid <code>getComputedStyle</code> function to get the current value of the property required for the <code>.to()</code> method; it actually checks in <code>element.style</code>, <code>element.currentStyle</code> and <code>window.getComputedStyle(element,null)</code> to make sure it won't miss the property value;</li>
+            <li><kbd class="bg-lime">KUTE.gIS()</kbd> a <code>getInlineStyle</code> function to read the current inline style, very useful for transform, because decomposing a computed <strong>matrix</strong> would require a ton lot more code;</li>
+            <li><kbd class="bg-lime">KUTE.truD(value)</kbd> a function that accepts String and Number and returns a <code>{v: 150, u: 'px'}</code> object for any box model or a single numeric value based property and make it ready to tween.</li>
+            <li><kbd class="bg-lime">KUTE.truC(color)</kbd> a function that returns an <code>{r: 150, g: 150, b: 0}</code> color object ready to tween; if the color value is a <a href="http://www.w3schools.com/colors/colors_names.asp" target="_blank">web safe color</a>, the IE9+ browsers will be able to return the rgb object we need.</li>
+            <li><kbd class="bg-lime">KUTE.htr(hex)</kbd> a function that accepts HEX formatted colors and returns an <code>{r: 150, g: 150, b: 0}</code> color object;</li>
+            <li><kbd class="bg-lime">KUTE.rth(rgb)</kbd> a function that accepts RGBa formatted colors and returns a <code>#006699</code> color string;</li>
+        </ul>       
+
+		<ul id="share" class="nav">
+			<li>Share </li>
+			<li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
+			<li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute.js animation engine by @thednp and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></a></li>
+			<li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
+		</ul>
+		
+	</div>
+	  
+      <!-- FOOTER -->
+     <footer>
+		<div class="content-wrap">
+			<p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+			<p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
+		</div>
+    </footer>
+
+ </div><!-- /.site-wrapper -->
+ 
+
+
+<!-- JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->	
+
+<!-- highlighter -->
+<script src="./assets/js/prism.js" type="text/javascript"></script>	
+
+<!--<script src="http://cdn.jsdelivr.net/kute.js/1.0.0/kute.full.min.js"></script>  KUTE CDN -->
+
+<script src="./src/kute.js"></script> <!-- KUTE.js core -->
+<script src="./assets/js/scripts.js"></script> <!-- some stuff -->
+<script src="./assets/js/kute-bs.js"></script> <!-- the boxShadow plugin -->
+<script src="./assets/js/extend.js"></script> <!-- examples with boxShadow plugin -->
+</body>
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<!--[if IE 7]><html class="ie ie7" lang="en"><![endif]-->
+<!--[if IE 8]><html class="ie ie8" lang="en"><![endif]-->
+<!--[if IE 9]><html class="ie ie9" lang="en"><![endif]-->
+
+<!--[if gte IE 10 | !IE ]><!--> <html lang="en"> <!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The SVG Plugin for KUTE.js enables animation for path morphing, drawing stroke, as well as some SVG specific CSS properties.">
+    <meta name="keywords" content="kute,kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
+    <meta name="author" content="dnp_theme">
+    <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
+
+    <title>KUTE.js SVG Plugin | Javascript Animation Engine</title>
+	
+    <!-- RESET CSS -->
+    <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
+	
+    <!-- DEMO KUTE CSS -->
+    <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
+
+	<!-- Ion Icons -->
+    <link type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+		
+	<!-- Synthax highlighter -->
+	<link href="./assets/css/prism.css" rel="stylesheet">
+    
+    <!-- Polyfill -->
+    <script src="./assets/js/minifill.js"> </script>	
+	<!-- legacy browsers support via polyfill 
+	<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
+	<!--[if IE]>
+		<script src="https://cdn.jsdelivr.net/minifill/0.0.2/minifill.min.js"> </script>
+		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+  <div class="fill overlay"></div>
+  
+  <div class="site-wrapper">
+ 
+	<div class="navbar-wrapper">
+      <div class="content-wrap">
+		<a href="index.html"><h1>KUTE.<span>js</span></h1></a>
+		<ul class="nav">
+			<li class="btn-group"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="features.html">Feature Overview</a></li>
+                    <li><a href="properties.html">Supported Properties</a></li>
+                </ul>            
+            </li>
+			<li class="btn-group active">
+                <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="examples.html">Core Engine</a></li>
+                    <li><a href="css.html">CSS Plugin </a></li>
+                    <li class="active"><a href="svg.html">SVG Plugin </a></li>
+                    <li><a href="attr.html">Attributes Plugin </a></li>
+                </ul>
+            </li>
+			<li class="btn-group">
+                <a href="#" data-function="toggle">API <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="start.html">Getting Started</a></li>
+                    <li><a href="api.html">Public Methods</a></li>
+                    <li><a href="easing.html">Easing Functions</a></li>
+                    <li><a href="extend.html">Extend Guide</a></li>
+                </ul>
+            </li>
+			<li><a href="about.html">About</a></li>
+		</ul>
+      </div>
+    </div>
+
+	<div class="content-wrap">
+		<h2>SVG Plugin</h2>
+		<p>The SVG Plugin for KUTE.js extends the core engine and enables animation for various CSS properties specific to SVG elements as well as morphing path shapes. We'll dig into this in great detail as well as provide valuable tips on how to configure your animation for best performance and visual aesthetics. The SVG Plugin is very light, maybe one of the lightest out there, still, you will find it to be very powerful and flexible.</p>
+        <p>Keep in mind that older browsers like Internet Explorer 8 and below as well as stock browser from Android 4.3 and below <a href="http://caniuse.com/#search=svg" target="_blank">do not support inline SVG</a>.</p>
+		<h3>Shape Morphing</h3>
+        <p>One of the most important parts of the plugin is the shape morphing capability. It only applies to inline <code>&lt;path></code> and <code>&lt;glyph></code> SVG elements, with closed shapes (their <code>d</code> attribute ends with <code>z</code>). The plugin is packed with specific tween options to help you improve the morph animation:</p>
+        <ul>
+            <li><kbd>showMorphInfo: true</kbd> when <code>true</code> the script will log valuable information about the morph such as default/current sample size, number of points based on sample size, the recommended index for points rotation, or if one of the shapes require to be reversed. By default this option is <code>false</code> for serious performance reasons.</li>
+            <li><kbd>morphPrecision: Number</kbd> option allows you to set the sampling size of the morph. The lesser value the better visual but the more power consumption and less performance. The default value is 25 but the <a href="http://bl.ocks.org/mbostock/3081153" target="_blank">D3.js example</a> uses 4.</li>
+            <li><kbd>morphIndex: Number</kbd> option allows you to rotate the second/end path in a way that the points travel the least possible distance during morph, and as an effect the morph animation feel more "natural". By default, this option is not set.</li>
+            <li><kbd>reverseFirstPath: true</kbd> when is <code>true</code> this option allows you to reverse the draw direction of the FIRST shape. By default this option is <code>false</code>.</li>
+            <li><kbd>reverseSecondPath: true</kbd> when is <code>true</code> this option allows you to reverse the draw direction of the SECOND shape. By default this option is also <code>false</code>.</li>
+        </ul>
+        <h4>Basic Example</h4>
+		<p>In the first morph example we are going to go through some basic steps on how to setup and how to improve the morph animation. Our demo is a morph from a rectangle into a star, so first let's create an SVG element with two paths, first is going to be visible, filled with color, while second is going to be hidden. The first path is the start shape and the second is the end shape, you guessed it, and we can also add some ID to the paths so we can easily target them with our code.</p>
+<pre><code class="language-markup">&lt;svg id="morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+    &lt;path id="rectangle" class="bg-lime" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531 c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>
+    &lt;path id="star" style="visibility:hidden" d="M301.113,12.011l99.25,179.996l201.864,38.778L461.706,380.808 l25.508,203.958l-186.101-87.287L115.01,584.766l25.507-203.958L0,230.785l201.86-38.778L301.113,12.011"/>
+&lt;/svg>
+</code></pre>
+        <p>Now we can apply both <code>.to()</code> and <code>fromTo()</code> methods:</p>
+<pre><code class="language-javascript">// the fromTo() method
+var tween = KUTE.fromTo('#rectangle', {path: '#rectangle' }, { path: '#star' }).start();
+
+// OR
+
+// the to() method will take the path's d attribute value and use it as start value
+var tween = KUTE.to('#rectangle', { path: '#star' }).start(); 
+
+// OR
+
+// simply pass in a valid path string without the need to have two paths in your SVG
+var tween = KUTE.to('#rectangle', { path: 'M301.113,12.011l99.25,179.996l201.864,38.778L461.706,380.808l25.508,203.958l-186.101-87.287L115.01,584.766l25.507-203.958L0,230.785l201.86-38.778L301.113,12.011' }).start(); 
+</code></pre>		
+
+		<p>For all the above tween objects the animation should look like this:</p>
+
+		<div class="featurettes">
+            <svg class="example-box-model example-box" id="morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" >
+                <path id="rectangle" class="bg-lime" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
+                    c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>
+                <path id="star" style="visibility:hidden" d="M301.113,12.011l99.25,179.996l201.864,38.778L461.706,380.808
+                    l25.508,203.958l-186.101-87.287L115.01,584.766l25.507-203.958L0,230.785l201.86-38.778L301.113,12.011"/>
+            </svg>            
+			<div class="example-buttons">
+				<a id="morphBtn" class="btn btn-green" href="javascript:void(0)">Start</a>	
+			</div>
+		</div>
+		
+		<p>As you can see, the animation could need some fine tunning. Let's open the console, and this time we'll pass in the <code>showMorphInfo: true</code> tween option that will help us find the best possible morph as performance and visual. Have a look:</p>			
+
+<pre><code class="language-javascript">// let's check the morph info again
+var tween = KUTE.to('#rectangle', { path: '#star' }, {showMorphInfo: true}).start();
+
+// The console log should show you this
+/* ------------------------------------
+KUTE.js Path Morph Log
+The morph used 92 points to draw both paths based on 25 morphPrecision value.
+You may also consider a morphIndex for the second path. Currently the best index seems to be 79.
+If the current animation is not satisfactory, consider reversing one of the paths. Maybe the paths do not intersect or they really have different draw directions.
+*/
+</code></pre>
+
+		<p>Next, we're going to set the <code>morphIndex: 79</code> and we will get an improved morph.</p>			
+		<div class="featurettes">
+            <svg class="example-box-model example-box" id="morph-example1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" >
+                <path id="rectangle1" class="bg-blue" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
+                    c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>
+                <path id="star1" style="visibility:hidden" d="M301.113,12.011l99.25,179.996l201.864,38.778L461.706,380.808
+                    l25.508,203.958l-186.101-87.287L115.01,584.766l25.507-203.958L0,230.785l201.86-38.778L301.113,12.011"/>
+            </svg>            
+	
+			<div class="example-buttons">
+				<a id="morphBtn1" class="btn btn-orange" href="javascript:void(0)">Start</a>	
+			</div>
+		</div>
+		<p>Much better! You can play with <code>morphIndex</code> value, maybe you can get an even better or more interesting morph.</p>
+        
+        <h4>Multi Path Example</h4>
+        <p>In other cases, you may want to morph multiple paths at the same time. Let's have a look at the following paths:</p>			
+<pre><code class="language-markup">&lt;svg id="multi-morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+    &lt;path d="M206.115,255.957c-23.854-12.259-47.043-18.479-68.94-18.479c-2.978,0-5.976,0.09-8.974,0.354 c-27.94,2.312-53.461,9.684-69.875,15.414c-4.354,1.599-8.817,3.288-13.415,5.152L0,414.096	c30.851-11.416,58.146-16.969,83.135-16.969c40.423,0,69.764,15.104,93.996,30.652c11.481-38.959,39.022-133.045,47.241-161.162 C218.397,262.975,212.334,259.332,206.115,255.957z 
+        M264.174,295.535l-45.223,157.074c13.416,7.686,58.549,32.024,93.105,32.024 c27.896,0,59.127-7.147,95.417-21.896l43.179-150.988c-29.316,9.461-57.438,14.26-83.732,14.26 C318.945,326.01,285.363,310.461,264.174,295.535z 
+        M146.411,184.395c38.559,0.399,67.076,15.104,90.708,30.251l46.376-158.672c-9.772-5.598-35.403-19.547-53.929-24.3c-12.193-2.842-25.01-4.308-38.602-4.308c-25.898,0.488-54.194,6.973-86.444,19.9 L60.3,202.564c32.404-12.218,60.322-18.17,86.043-18.17C146.366,184.395,146.411,184.395,146.411,184.395L146.411,184.395z
+        M512,99.062c-29.407,11.416-58.104,17.233-85.514,17.233c-45.844,0-79.646-15.901-101.547-31.183L278.964,244.23 c30.873,19.854,64.146,29.939,99.062,29.939c28.474,0,57.97-6.84,87.73-20.344l-0.091-1.111l1.867-0.443L512,99.062z"/>
+     &lt;path d="M0.175 256l-0.175-156.037 192-26.072v182.109z
+        M224 69.241l255.936-37.241v224h-255.936z
+        M479.999 288l-0.063 224-255.936-36.008v-187.992z
+        M192 471.918l-191.844-26.297-0.010-157.621h191.854z"/>   
+&lt;/svg>
+</code></pre>
+       	<p>As you can see, both these paths have additional subpaths, and KUTE.js will only animate the first of both in this case. To animate them all, we need to break them into multiple paths, so we can handle each path morph properly.</p>
+<pre><code class="language-markup">&lt;svg id="multi-morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+    &lt;path id="w11" d="M206.115,255.957c-23.854-12.259-47.043-18.479-68.94-18.479c-2.978,0-5.976,0.09-8.974,0.354 c-27.94,2.312-53.461,9.684-69.875,15.414c-4.354,1.599-8.817,3.288-13.415,5.152L0,414.096 c30.851-11.416,58.146-16.969,83.135-16.969c40.423,0,69.764,15.104,93.996,30.652c11.481-38.959,39.022-133.045,47.241-161.162 C218.397,262.975,212.334,259.332,206.115,255.957z"/>
+    &lt;path id="w12" d="M264.174,295.535l-45.223,157.074c13.416,7.686,58.549,32.024,93.105,32.024 c27.896,0,59.127-7.147,95.417-21.896l43.179-150.988c-29.316,9.461-57.438,14.26-83.732,14.26 C318.945,326.01,285.363,310.461,264.174,295.535z"/>
+    &lt;path id="w13" d="M146.411,184.395c38.559,0.399,67.076,15.104,90.708,30.251l46.376-158.672c-9.772-5.598-35.403-19.547-53.929-24.3c-12.193-2.842-25.01-4.308-38.602-4.308c-25.898,0.488-54.194,6.973-86.444,19.9 L60.3,202.564c32.404-12.218,60.322-18.17,86.043-18.17C146.366,184.395,146.411,184.395,146.411,184.395L146.411,184.395z"/>
+    &lt;path id="w14" d="M512,99.062c-29.407,11.416-58.104,17.233-85.514,17.233c-45.844,0-79.646-15.901-101.547-31.183L278.964,244.23 c30.873,19.854,64.146,29.939,99.062,29.939c28.474,0,57.97-6.84,87.73-20.344l-0.091-1.111l1.867-0.443L512,99.062z"/>
+    
+    &lt;path id="w21" style="visibility:hidden" d="M0.175 256l-0.175-156.037 192-26.072v182.109z"/>
+    &lt;path id="w22" style="visibility:hidden" d="M224 69.241l255.936-37.241v224h-255.936z"/>
+    &lt;path id="w23" style="visibility:hidden" d="M479.999 288l-0.063 224-255.936-36.008v-187.992z"/>
+    &lt;path id="w24" style="visibility:hidden" d="M192 471.918l-191.844-26.297-0.010-157.621h191.854z"/> 
+&lt;/svg>
+</code></pre>
+        <p>After a close inspection we determined that paths are not ordered the same so it seems we need to tween the paths in a way that their points travel the least possible distance, as follows: w11 to w24, w13 to w21, w14 to w22 and w12 to w23.</p>
+        <p>Now we can write the tween objects and get to working:</p>
+<pre><code class="language-javascript">var multiMorph1 = KUTE.to('#w11', { path: '#w24' }).start();
+var multiMorph2 = KUTE.to('#w13', { path: '#w21' }).start();
+var multiMorph3 = KUTE.to('#w14', { path: '#w22' }).start();
+var multiMorph3 = KUTE.to('#w12', { path: '#w23' }).start();
+</code></pre>
+
+        <p>As you can imagine, it's quite hard if not impossible to code something that would do all this work automatically, so after a few minutes of tweaking the options, here's what we should see:</p>
+       
+		<div class="featurettes">
+            <svg class="example-box-model example-box" id="multi-morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 550 550" >
+                <path id="w11" class="bg-red" d="M206.115,255.957c-23.854-12.259-47.043-18.479-68.94-18.479c-2.978,0-5.976,0.09-8.974,0.354 c-27.94,2.312-53.461,9.684-69.875,15.414c-4.354,1.599-8.817,3.288-13.415,5.152L0,414.096 c30.851-11.416,58.146-16.969,83.135-16.969c40.423,0,69.764,15.104,93.996,30.652c11.481-38.959,39.022-133.045,47.241-161.162 C218.397,262.975,212.334,259.332,206.115,255.957z"/>
+                <path id="w12" class="bg-orange" d="M264.174,295.535l-45.223,157.074c13.416,7.686,58.549,32.024,93.105,32.024 c27.896,0,59.127-7.147,95.417-21.896l43.179-150.988c-29.316,9.461-57.438,14.26-83.732,14.26 C318.945,326.01,285.363,310.461,264.174,295.535z"/>
+                <path id="w13" class="bg-green" d="M146.411,184.395c38.559,0.399,67.076,15.104,90.708,30.251l46.376-158.672c-9.772-5.598-35.403-19.547-53.929-24.3c-12.193-2.842-25.01-4.308-38.602-4.308c-25.898,0.488-54.194,6.973-86.444,19.9 L60.3,202.564c32.404-12.218,60.322-18.17,86.043-18.17C146.366,184.395,146.411,184.395,146.411,184.395L146.411,184.395z"/>
+                <path id="w14" class="bg-blue" d="M512,99.062c-29.407,11.416-58.104,17.233-85.514,17.233c-45.844,0-79.646-15.901-101.547-31.183L278.964,244.23 c30.873,19.854,64.146,29.939,99.062,29.939c28.474,0,57.97-6.84,87.73-20.344l-0.091-1.111l1.867-0.443L512,99.062z"/>
+                
+                <path id="w21" style="visibility:hidden" d="M0.175 256l-0.175-156.037 192-26.072v182.109z"/>
+                <path id="w22" style="visibility:hidden" d="M224 69.241l255.936-37.241v224h-255.936z"/>
+                <path id="w23" style="visibility:hidden" d="M479.999 288l-0.063 224-255.936-36.008v-187.992z"/>
+                <path id="w24" style="visibility:hidden" d="M192 471.918l-191.844-26.297-0.010-157.621h191.854z"/>
+            </svg>            
+	
+			<div class="example-buttons">
+				<a id="multiMorphBtn" class="btn btn-olive" href="javascript:void(0)">Start</a>	
+			</div>
+		</div>       
+        <p>This final touch required using <code>reverseSecondPath:true</code> option for all tweens because each shape have a slightly different position from its corresponding shape, so make sure to check the <a href="assets/js/svg.js" target="_blank">svg.js</a> for a full code review.</p>
+        
+        <h4>Complex Example</h4>
+        <p>The last morph example is a bit more complex as the paths have subpaths with different positions and other important differences such as having different amounts of subpaths. In that case you have to manually clone one or more paths in a way that the number of starting shapes is equal to the number of ending shapes, as well as making sure the starting shapes are close to their corresponding end shapes; at this point you should be just like in the previous example. So without further talking, let's get into it:</p>
+       
+		<div class="featurettes">
+            <svg class="example-box-model example-box" id="multi-morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 513">
+                <path id="rectangle-container" class="bg-blue" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"/>
+                <path id="symbol-left" class="bg-light" d="M155.889 333.394h-55.632c-3.351 0-5.854-1.504-7.271-3.792-1.467-2.379-1.542-5.464 0-8.534l59.11-104.313c0.063-0.114 0.063-0.19 0-0.316l-37.615-65.116c-1.556-3.098-1.783-6.157-0.316-8.534 1.417-2.301 4.235-3.477 7.586-3.477h55.632c8.535 0 12.72 5.499 15.489 10.431 0 0 38.020 66.33 38.249 66.696-2.252 3.97-60.059 106.21-60.059 106.21-2.844 5.131-6.852 10.745-15.173 10.745z"/>
+                <path id="symbol-left-clone" class="bg-light" d="M155.889 333.394h-55.632c-3.351 0-5.854-1.504-7.271-3.792-1.467-2.379-1.542-5.464 0-8.534l59.11-104.313c0.063-0.114 0.063-0.19 0-0.316l-37.615-65.116c-1.556-3.098-1.783-6.157-0.316-8.534 1.417-2.301 4.235-3.477 7.586-3.477h55.632c8.535 0 12.72 5.499 15.489 10.431 0 0 38.020 66.33 38.249 66.696-2.252 3.97-60.059 106.21-60.059 106.21-2.844 5.131-6.852 10.745-15.173 10.745z"/>
+                <path id="symbol-right" class="bg-lime" d="M418.956 75.269l-123.176 217.79c-0.075 0.115-0.075 0.255 0 0.367l78.431 143.295c1.556 3.084 1.593 6.221 0.113 8.597-1.415 2.288-4.033 3.552-7.383 3.552h-55.57c-8.522 0-12.783-5.663-15.54-10.596 0 0-78.848-144.646-79.050-145.023 3.944-6.98 123.797-219.523 123.797-219.523 2.984-5.362 6.587-10.596 14.894-10.596h56.203c3.351 0 5.981 1.265 7.396 3.553 1.466 2.376 1.428 5.511-0.115 8.584z"/>
+                     
+                <path id="circle-container" style="visibility: hidden;" d="M256 0c-141.385 0-256 114.614-256 256s114.614 256 256 256c141.385 0 256-114.615 256-256 0-141.386-114.615-256-256-256z"/>
+                <path id="eye-right" style="visibility: hidden;" d="M352 128c17.673 0 32 21.49 32 48s-14.327 48-32 48-32-21.49-32-48 14.327-48 32-48z"/>
+                <path id="eye-left" style="visibility: hidden;" d="M176 156.031c29.823 0 51 11.166 51 28.641 0 3.699 1.906 21.497-0.085 24.797-7.414-12.288-27.405-21.094-50.915-21.094s-43.501 8.806-50.915 21.094c-1.991-3.3-0.085-21.098-0.085-24.797 0-17.475 21.177-28.641 51-28.641z"/>
+                <path id="mouth" style="visibility: hidden;" d="M250.172 416c-59.621 0-111.929-32.14-141.446-80.476 35.205 27.53 97.267 32.905 162.644 19.989 70.124-13.853 124.555-45.771 144.227-88.297-10.827 83.98-80.759 148.784-165.425 148.784z"/>
+            </svg>
+	
+			<div class="example-buttons">
+				<a id="compliMorphBtn" class="btn btn-red" href="javascript:void(0)">Start</a>	
+			</div>
+		</div>
+        <p>While there are other tools such as <a href="http://alexk111.github.io/SVG-Morpheus/" target="_blank">SVGMorpheus</a> to enable this kind of multi-path morph, they lack in options to improve the visual and performance. The demos look acceptable in most cases, but the SVGs were manually prepared/optimized which makes it pretty much unusable on a broader horizon. Again, the SVG Plugin for KUTE.js uses approximatelly the same algorithm as D3.js for determining the coordinates for tween, it's super light, it's a better solution.</p>
+        
+        <h4>Recommendations</h4>
+        <ul>
+           <li>The SVG morph animation is very expensive so try to optimize the number of morph animations that run at the same time.</li>
+           <li>When morphing subpaths/multipaths instead of cloning shapes to have same number of shapes in both starting and ending shapes, you should also consider a fade and/or scale animation to improve the overal animation performance, don't forget about mobile devices.</li>
+           <li>Large displays would need best resolution possible so a small <code>morphPrecision</code> value (1-10) would be required, assuming performant hardware are powering the displays. For small displays you can get quite comfortable with almost any value, including the default value.</li>
+           <li>Faster animation speed could be a great trick to hide any polygonal "artefacts".</li>
+           <li>Always use the <code>showMorphInfo:true</code> tween option to check how the values required for the morph change with every new option value, but <strong>never forget to disable it</strong> after you have optimized the morph to your liking, this option enables a function that detects the best index for points rotation that is very expensive and delays the animation for quite some time.</li>
+        </ul>
+        
+		<h3>Drawing Stroke</h3>
+		<p>Next, we're going to animate the stroke of a <code>&lt;path></code> element, as this type of animation only works with this kind of SVG elements because it's the only one that supports the <code>.getTotalLength()</code> method. Here some code examples:</p>
+<pre><code class="language-javascript">// draw the stroke from 0-10% to 90-100%
+var tween1 = KUTE.fromTo('selector1',{draw:'0% 10%'}, {draw:'90% 100%'});
+    
+// draw the stroke from zero to full path length
+var tween2 = KUTE.fromTo('selector1',{draw:'0% 0%'}, {draw:'0% 100%'});
+    
+// draw the stroke from full length to 50%
+var tween3 = KUTE.fromTo('selector1',{draw:'0% 100%'}, {draw:'50% 50%'});
+</code></pre>
+		<p>We're gonna chain these tweens and start the animation real quick.</p>		
+		<div class="featurettes">
+            <svg class="example-box-model example-box" id="draw-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 513">
+                <path fill="none" style="stroke:#2196F3; stroke-width:10; stroke-dashoffset: -724.077px; stroke-dasharray: 0px, 1448.15px" id="drawSVG" d="M432 64l-240 240-112-112-80 80 192 192 320-320z"/>            
+            </svg>
+	
+			<div class="example-buttons">
+				<a id="drawBtn" class="btn btn-blue" href="javascript:void(0)">Start</a>	
+			</div>
+		</div>
+		<p>Remember: the <code>draw</code> property also accepts absolute values, eg. <code>draw: '0 150'</code>; the <code>.to()</code> method takes <code>0% 100%</code> as start value for your tweens when <code>stroke-dasharray</code> and <code>stroke-dashoffset</code> are not set.</p>				
+
+		<h3>CSS Properties</h3>
+		<p>As you probably noticed in the above examples we've animated the background color for some of the shapes, that is <code>fill</code>, one of the properties supported by the SVG Plugin, so let's create some tweens real quick:</p>
+<pre><code class="language-javascript">// fill HEX/RGBa
+var tween1 = KUTE.to('selector', {fill: '#069'});
+    
+// fillOpacity Number 0-1
+var tween2 = KUTE.to('selector',{fillOpacity: 0.2});
+
+// stroke HEX/RGBa
+var tween3 = KUTE.to('selector',{stroke: 'rgba(00,66,99,0.8)'});
+    
+// strokeOpacity Number 0-1
+var tween4 = KUTE.to('selector',{strokeOpacity: 0.6});
+    
+// strokeWidth Number
+var tween5 = KUTE.to('selector',{strokeWidth: 10});
+</code></pre>       
+        <p>A quick demo with the above:<p>
+		<div class="featurettes">
+            <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 615 615">
+                <path class="bg-orange" id="fillSVG" style="stroke-width: 110px; stroke: #FF5722; transform: scale(0.85) translate(60px,60px); -webkit-transform: scale(0.85) translate(60px,60px);" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
+                    c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>            
+            </svg>
+	
+			<div class="example-buttons">
+				<a id="cssBtn" class="btn btn-orange" href="javascript:void(0)">Start</a>	
+			</div>
+		</div>
+        
+        <p>Now let's have a look at gradients, here we can animate the <code>stopColor</code> defined within the SVG's <code>&lt;linearGradient&gt;</code> element.</p> 
+<pre><code class="language-markup">&lt;linearGradient id="gradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+    &lt;stop offset="0%" style="stop-color: #ffd626; stop-opacity:1">&lt;/stop>
+    &lt;!-- our tween object targets the element below -->
+    &lt;stop id="myStopColor" offset="100%" style="stop-color: #FF5722; stop-opacity:1">&lt;/stop> 
+&lt;/linearGradient>
+</code></pre>
+<pre><code class="language-javascript">// stopColor HEX/RGBa
+var tween6 = KUTE.to('#myStopColor',{stopColor: 'rgb(00,66,99)'});
+</code></pre>
+
+        <p>Same as above, for <code>stopOpacity</code> we also target the right element defined within the SVG's <code>&lt;linearGradient&gt;</code> element.</p>
+<pre><code class="language-markup">&lt;linearGradient id="gradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+    &lt;stop offset="0%" style="stop-color: #2196F3; stop-opacity:1">&lt;/stop>
+    &lt;!-- our tween object targets the element below -->
+    &lt;stop id="myStopOpacity" offset="100%" style="stop-color: #e91b1f; stop-opacity:1">&lt;/stop>
+&lt;/linearGradient>
+</code></pre>
+<pre><code class="language-javascript">// stopOpacity Number 0-1
+var tween7 = KUTE.to('#myStopOpacity',{stopOpacity: 0.2});
+</code></pre>
+        
+		<div class="featurettes">
+            <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 615 615">
+                <defs>
+                    <linearGradient id="gradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color: #ffd626; stop-opacity:1"></stop>
+                    <stop id="stopCSVG" offset="100%" style="stop-color: #FF5722; stop-opacity:1"></stop>
+                    </linearGradient>
+                </defs>
+                <path fill="url(#gradient1)" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
+                    c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>            
+            </svg>
+            <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 615 615">
+                <defs>
+                    <linearGradient id="gradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color: #2196F3; stop-opacity:1"></stop>
+                    <stop id="stopOSVG" offset="100%" style="stop-color: #e91b1f; stop-opacity:1"></stop>
+                    </linearGradient>
+                </defs>   
+                <path fill="url(#gradient2)" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
+                    c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>            
+            </svg>
+			<div class="example-buttons">
+				<a id="gradBtn" class="btn btn-yellow" href="javascript:void(0)">Start</a>	
+			</div>
+		</div>
+        <p>The SVG Plugin can be combined with the <a href="attr.html">Attributes Plugin</a> to enable even more advanced/complex animations for SVG elements.</p>
+	</div>
+
+      <!-- FOOTER -->
+     <footer>
+		<div class="content-wrap">
+			<p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+			<p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
+		</div>
+    </footer>
+
+ </div><!-- /.site-wrapper -->
+ 
+
+
+<!-- JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->	
+
+<!-- highlighter -->
+<script src="./assets/js/prism.js" type="text/javascript"></script>
+
+<!--<script src="http://cdn.jsdelivr.net/kute.js/0.9.2/kute.full.min.js"></script>  KUTE CDN -->
+<script src="./src/kute.js"></script> <!-- some stuff -->
+<script src="./src/kute-svg.js"></script> <!-- some stuff -->
+<script src="./assets/js/scripts.js"></script> <!-- global scripts stuff -->
+<script src="./assets/js/svg.js"></script> <!-- css plugin stuff -->
+</body>
+</html>
