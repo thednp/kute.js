@@ -9,7 +9,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="KUTE.js is a minimal Javascript animation engine">
+    <meta name="description" content="The KUTE.js features overview.">
     <meta name="keywords" content="kute,kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
     <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
@@ -25,6 +25,9 @@
 	<!-- Ion Icons -->
     <link type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
 
+    <!-- Polyfill -->
+    <script src="./assets/js/minifill.js"> </script>
+    
 	<!-- legacy browsers support via polyfill 
 	<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
 	<!--[if IE]>
@@ -43,16 +46,38 @@
       <div class="content-wrap">
 		<a href="index.html"><h1>KUTE.<span>js</span></h1></a>
 		<ul class="nav">
-			<li class="active"><a href="features.html">Features</a></li>
-			<li><a href="examples.html">Examples</a></li>
-			<li><a href="api.html">API</a></li>
+			<li class="btn-group active"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li class="active"><a href="features.html">Feature Overview</a></li>
+                    <li><a href="properties.html">Supported Properties</a></li>
+                </ul>            
+            </li>
+			<li class="btn-group">
+                <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="examples.html">Core Engine</a></li>
+                    <li><a href="css.html">CSS Plugin </a></li>
+                    <li><a href="svg.html">SVG Plugin </a></li>
+                    <li><a href="attr.html">Attributes Plugin </a></li>
+                </ul>
+            </li>
+			<li class="btn-group">
+                <a href="#" data-function="toggle">API <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="start.html">Getting Started</a></li>
+                    <li><a href="api.html">Public Methods</a></li>
+                    <li><a href="easing.html">Easing Functions</a></li>
+                    <li><a href="extend.html">Extend Guide</a></li>
+                </ul>
+            </li>
 			<li><a href="about.html">About</a></li>
 		</ul>
       </div>
     </div>
 
 	<div class="content-wrap">
-		<h2 id="performance">Delivering Killer Performance</h2>
+		<h2>Features Overview</h2>
+		<h3 id="performance">Badass Performance</h3>
 		<p>KUTE.js was developed with best practices in mind for <strong>fastest code execution</strong> and <strong>memory efficiency</strong>, but performance varies from case to case, as well as for all the other Javascript based animation engines. As a quick note on <a href="about.html#how">how it works</a>, well for the most part values are cached for the entire duration of the animation so that the repetitive tasks run smoothly, uninterruptible and avoid layout thrashing. We all know the more properties used or the more elements to animate at the same time, the more power is required.</p>
 
 		<p><span class="ion-ios-cog media"></span>Of course some would argue on many aspects, but we all trade something for the sake of something else, such as convenience and/or flexibility or fork a project that's already great to make it.. better. For the sake of performance or simply willing to provide a feature, some trade/neglect other elements such as syncronisation (check this <a href="https://www.youtube.com/watch?v=1ZWugkJV5Ks" target="_blank">video</a>), code simplicity (lots of CSS for a <a href="https://daneden.github.io/animate.css/" target="_blank">custom animation</a>) and more other.</p>
@@ -60,128 +85,57 @@
 	</div>
 
 	<div class="content-wrap">
-		<h2 id="prefix">Break Free Of Browser Prefixes</h2>
+		<h3 id="extensible">Extensible Prototype</h3>
+		<p>KUTE.js already packs quite alot of features, and that is thanks to its flexible nature that allows you to easily extend to your heart's desire. Whether you like to extend with CSS properties, easing functions, HTML presentation attributes or anything that Javascript can touch, even if it's not possible with CSS transitions or other Javascript libraries, KUTE.js makes it super easy. </p>
+		<p>For instance if you want to be able to animate the <code>filter</code> property, you only need three functions: one for preparing the property values needed for tween object build-up, a second function to read current value and the last one for the DOM update callback, everything else is nicely taken care of. KUTE.js also provides very useful utilities for processing strings, HEX/RGBA colors and other tools you can use for your own plugin's processing.</p> 
+		<p>You may want to head over to the <a href="extend.html">extend</a> page for an indepth guide on how to write your own plugin/extension.</p> 
+	</div>
+
+	<div class="content-wrap">
+		<h3 id="prefix">Auto Browser Prefix</h3>
 		<p>KUTE.js uses a simple function to determine the vendor prefix and checks if the prefix is required. In any case it caches the prefixed/unprefixed property name in a variable to make it available when needed. This applies to the following CSS3 properties: <code>transform</code>, <code>perspective</code>, <code>perspective-origin</code>, <code>border-radius</code> and the <code>requestAnimationFrame</code> Javascript method.</p>
 		<p><span class="ion-paper-airplane media"></span>We aren't only targeting properly browsers for CSS3 styling, but also increase performance because we don't need to update the styling on every frame for all browsers (and their versions) at once, just the right and only one; <strong>less</strong> string concatenation = <strong>more</strong> performance. This asumes you are NOT styling the above CSS3 properties using your stylesheets to avoid glitches with legacy browsers.</p> 
 		<p>This feature is useful mostly for Safari, older Firefox and Opera versions and Internet Explorer 9.</p>
 	</div>
 
 	<div class="content-wrap">
-		<h2 id="compatibiity">Browser Compatibility</h2>
-		<p>KUTE.js covers all <strong>modern</strong> browsers but also provides fallback options for legacy browsers. The <strong>prefix free</strong> feature mentioned above is one way to enable smooth Javascript based animations on older versions Gecko/Webkit/IE browsers for <code>transform</code> and <code>border-radius</code>. Generally, KUTE.js is built around most used properties, so I highly recommend checking the <a href="http://caniuse.com" target="_blank">can I use</a> website for a very detailed properties support list on many browsers and versions. For instance legacy browsers may support <a href="http://caniuse.com/#feat=transforms2d">2D transforms</a> or <a href="http://caniuse.com/#feat=transforms3d">3D transforms</a> so make sure you know what browsers support and <a href="http://browserhacks.com/" target="_blank">how to target them</a> before you get to work with a complete browser supported animation setup.</p> 
+		<h3 id="compatibility">Browser Compatibility</h3>
+		<p>KUTE.js covers all <strong>modern</strong> browsers but also provides fallback options for legacy browsers. The <strong>prefix free</strong> feature mentioned above is one way to enable smooth Javascript based animations on older versions Gecko/Webkit/IE browsers for <code>transform</code> and <code>border-radius</code>. Generally, KUTE.js is built around most used properties, so I highly recommend checking the <a href="http://caniuse.com" target="_blank">can I use</a> website for a very detailed properties support list on many browsers and versions. For instance, some legacy browsers may support <a href="http://caniuse.com/#feat=transforms2d">2D transforms</a> or <a href="http://caniuse.com/#feat=transforms3d">3D transforms</a> so make sure you know what browsers support and <a href="http://browserhacks.com/" target="_blank">how to target them</a> before you get to work with a complete browser supported animation setup.</p> 
 		<p><span class="ion-android-globe media"></span>I've put a lot of work in making KUTE.js work with all Internet Explorer versions starting with IE8 and it really works with the help of <a href="https://polyfill.io/" target="_blank">polyfills</a> and the appropriate code to detect them. All you need to do is to let the browser breathe, espectially IE8 needs to have resize handlers as minimal as possible. On the other side, IE9 really shines with 2D transforms animation, something that's impossible with CSS <code>transition</code>.</p>	
-		<p>Speaking of polyfills, KUTE.js requires <code>window.requestAnimationFrame()</code> for the main thread, <code>window.performance.now()</code> for checking the current time, <code>.indexOf()</code> for array checks, <code>window.getComputedStyle()</code> for the <code>.to()</code> method and <code>.addEventListener()</code> for scroll. Unlike other developers I didn't include these polyfills in the code to keep it clean, so that YOU decide whether your project need them or not. Also know that when using the recommended <a href="https://polyfill.io/"target="_blank">polyfill service</a> some <strong>browser detection will not work</strong> because they fill the gap and your code won't work as expected. For instance this would check for IE8 browser <code>var isIE = document.all && !document.addEventListener;</code> but the polyfill covers <code>.addEventListener()</code> so you will never succeed. The provided <strong>ideal HTML template</strong> is the best solution for targeting Microsoft's legacy browsers.</p>
+		<p>Speaking of polyfills, KUTE.js no longer requires <code>window.requestAnimationFrame()</code> for the main thread, but it does require the <code>window.performance.now()</code> for checking the current time, <code>.indexOf()</code> for array/string checks, <code>window.getComputedStyle()</code> for the <code>.to()</code> method and <code>.addEventListener()</code> for scroll animation. Unlike other developers I didn't include these polyfills in the code to keep it clean, so that YOU decide whether your project need them or not. Also know that when using the recommended <a href="https://polyfill.io/"target="_blank">polyfill service</a> some <strong>browser detection will not work</strong> because they fill the gap and your code won't work as expected. For instance this would check for IE8 browser <code>var isIE = document.all && !document.addEventListener;</code> but the polyfill covers <code>.addEventListener()</code> so you will never succeed. This very demo is a great solution for targeting Microsoft's legacy browsers.</p>
 		<p>As of Safari, we did some tests there too, KUTE.js does it really well.</p>
 	</div>
 	
 	<div class="content-wrap">
-		<h2 id="methods">Methods, Tools and Options</h2>
-		<h3>Building Tween Objects</h3>
-		<p>KUTE.js allows you to create tween objects with the help of <code>.to()</code> and <code>.fromTo()</code> public methods, with distinctive functionalities.</p> 
-		<p><kbd>KUTE.to('selector', toValues, options)</kbd> method is super simple and straightforward and requires a polyfill for <code>window.getComputedStyle()</code> Javascript method on IE8 and more other legacy browsers in order to read the current property value. If no value is set in the stylesheets or inline style, a property specific value will be used. It also computes the value on animation start, delaying the actual animation and potentially creating sync issues on large amounts of elements, but it has the great ability to stack <code>transform</code> properties as they come in chained tweens. However fixing the sync issues is not that hard, see the example at <a href="api.html#start">start()</a> method API.</p>
-		<p><kbd>KUTE.fromTo('selector', fromValues, toValues, options)</kbd> is the other method that's most powerful in terms of performance, flexibility and control on the animation. As an example, while the first method may not process properties' measurement units properly, this method will never fail in that regard, because you can set for both starting values and end values the exact values with the right unit you need.</p> 
-
-		<p>It doesn't stack <code>transform</code> properties for chained tweens but you can set all properties to be used in all tweens if you want (end values from previous tween become start values for the next AND unchanged start values become end values), and make sure nothing is left unchecked, to avoid animation glitches. Still, this method is the fastest and bestest for super performance and super control.</p> 
-
-		<h3>Tween Control</h3>
-		<p>Unlike previous versions where animations started right away, starting with version 0.9.5 KUTE.js gives you great animation control methods such as: <code>.start()</code>, <code>.stop()</code>, <code>.pause()</code> and <code>.resume()</code>. These public methods work either when animation is running or is paused. You need to see the <a href="api.html">documentation</a> to learn how these work.</p> 
+		<h3 id="methods">Methods, Tools and Options</h3>
+		<h4>Building Tween Objects</h4>
+		<p>KUTE.js allows you to create tween objects with the help of <code>.to()</code> and <code>.fromTo()</code> methods for a single element, with distinctive functionalities, and the other <code>.allTo()</code> and <code>.allFromTo()</code> that use the first two for collections of elements.</p> 
 		
-		<h3>Tween Options</h3>
+        <p><kbd>KUTE.to('selector', toValues, options)</kbd> method is super simple and straightforward and requires a polyfill for <code>window.getComputedStyle()</code> Javascript method on IE8 and more other legacy browsers in order to read the current property value. If no value is set in the stylesheets or inline style, a property specific value will be used. It also computes the value on animation start, delaying the actual animation and potentially creating sync issues on large amounts of elements, but it has the great ability to stack <code>transform</code> properties as they come in chained tweens. However fixing the sync issues is not that hard, see the example at <a href="api.html#start">start()</a> method API.</p>
+		
+        <p><kbd>KUTE.fromTo('selector', fromValues, toValues, options)</kbd> is the other method that's most powerful in terms of performance, flexibility and control on the animation. As an example, while the first method may not process properties' measurement units properly, this method will never fail in that regard, because you can set for both starting values and end values the exact values with the right unit you need.</p> 
+
+		<p>It doesn't stack <code>transform</code> properties for chained tweens but you can set all properties to be used in all tweens if you want (end values from previous tween become start values for the next AND unchanged start values become end values), and make sure nothing is left unchecked, to avoid animation glitches. Still, this method is the fastest and bestest for super performance and super control.</p>
+        
+        <p><kbd>KUTE.allTo('selector', toValues, options)</kbd> and <kbd>KUTE.allFromTo('selector', fromValues, toValues, options)</kbd> inherit all functionality from the <code>.to()</code> and <code>.fromTo()</code> method respectively, but they apply to collections of elements. Unlike the first two methods that create single element tween objects, these two create collections of tween objects. Be sure to check the <a href="api.html">API</a> documentation on all the methods.</p>
+
+		<h4>Tween Control</h4>
+		<p>Unlike previous versions where animations started right away, starting with version 0.9.5 KUTE.js gives you great animation control methods such as: <code>.start()</code>, <code>.stop()</code>, <code>.pause()</code> and <code>.resume()</code>. These public methods work either when animation is not running, running or is paused. You need to see the <a href="api.html">documentation</a> to learn how these work.</p> 
+		
+		<h4>Tween Options</h4>
 		<p>Aside from the usual options such as duration, delay, easing, repeat or yoyo, it also comes with specific tween options for <code>transform</code>. For instance 3D rotations require a <code>perspective</code> or a <code>perspective-origin</code>, right?</p>
 		
-		<h3>Callback System</h3>
+		<h4>Callback System</h4>
 		<p>Another important KUTE.js feature is the solid callback system. This allows you to schedule functions to run on animation start, on each frame, on pause / resume, on stop and on complete. The functions bound at start or resume will delay the animation, while the functions running on each frame can potentially influence performance on large amounts of elements so you must use them wisely.</p>
 
-		<h3>Addons</h3>
-		<p>KUTE.js sports some fine tuned addons: jQuery Plugin, cubic bezier easing functions and also physics based easing functions. I am also considering to feature an attributes plugin as well as SVG library and maybe other tools in the future.</p>
+		<h4>Addons</h4>
+		<p>KUTE.js sports some fine tuned addons: jQuery Plugin, cubic bezier easing functions and also physics based easing functions. It also features an attributes plugin as well as a SVG plugin for various awesome stuff, but I'm open for more features in the future.</p>
 		
 		<p>Check the <a href="api.html">documentation</a> on these methods and the <a href="examples.html">examples page</a> for more.</p>
 	</div>
-	
-	<div class="content-wrap">
-		<h2>Support For Plenty Of Properties</h2>
-		<p>KUTE.js covers all animation needs such as most <code>transform</code> properties, <code>scroll</code> for window or a given element, colors, <code>border-radius</code>, and almost the full box model. Due to it's modular coding, KUTE.js is very flexible and makes it very easy to add support for more properties, but I'm considering removing unnecessary properties in the future (mostly from the box model category). Note: not all browsers support <a href="http://caniuse.com/#feat=transforms2d" target="_blank">2D transforms</a> or <a href="http://caniuse.com/#feat=transforms3d" target="_blank">3D transforms</a>.</p>
-		<p>All common measurement units are supported: <code>px</code> and <code>%</code> for translations and box-model properties, or <code>deg</code> and <code>rad</code> for rotations and skews, while <code>clip</code> only supports <code>px</code>. Other properties such as <code>opacity</code>, <code>scale</code> or <code>scroll</code> are unitless, and <code>background-position</code> always uses <code>%</code> as measurement unit. As for the text properties you can use <code>px</code>, <code>em</code>, <code>rem</code>, <code>vh</code> and <code>vw</code>. Be sure to <a href="http://caniuse.com/#feat=viewport-units" target="_blank">check</a> what your browsers support in terms of measurement unit.</p>
-				
-		<h3>Opacity</h3>
-		<p>In most cases, the best animation possible is the <code>opacity</code>, for performance, aesthetics and maybe more other reasons such as avoiding unwanted layout changes. KUTE.js also covers IE8 here with the help of proprietary synthax <code>filter: alpha(opacity=0)</code> but requires that you use the provided HTML template in order to detect the browser. Also, opacity can be used for instance on legacy browsers that don't support <code>RGBA</code> colors. Eg. <code>opacity:0.5</code> will make an element semitransparent.</p>
-		
-		<h3>2D Transform Properties</h3>
-		<ul>
-			<li><kbd>translate</kbd> property can be used for horizontal and / or vertical movement. EG. <code>translate:150</code> to translate an element 150px to the right or <code>translate:[-150,200]</code> to move the element to the left by 150px and to bottom by 200px. Supported on IE9.</li>
-			<li><kbd>rotate</kbd> is a property used to rotate an element on the Z axis or the plain document. Eg. <code>rotate:250</code> will rotate an element clockwise by 250 degrees. Supported on IE9.</li>
-			<li><kbd>skewX</kbd> is a property used to apply a skew transformation on the X axis. Eg. <code>skewX:25</code> will skew an element by 25 degrees. Supported on IE9.</li>
-			<li><kbd>skewY</kbd> is a property used to apply a skew transformation on the Y axis. Eg. <code>skewY:25</code> will skew an element by 25 degrees. Supported on IE9.</li>
-			<li><kbd>scale</kbd> is a property used to apply a size transformation. Eg. <code>scale:2</code> will enlarge an element by a degree of 2. Supported on IE9.</li>
-			<li><kbd>matrix</kbd> property is not supported.</li>
-		</ul>		
-		
-		<h3>3D Transform Properties</h3>
-		<ul>
-			<li><kbd>translateX</kbd> property is for horizontal movement. EG. <code>translateX:150</code> to translate an element 150px to the right. Modern browsers only.</li>
-			<li><kbd>translateY</kbd> property is for vertical movement. EG. <code>translateY:-250</code> to translate an element 250px towards the top. Modern browsers only.</li>
-			<li><kbd>translateZ</kbd> property is for movement on the Z axis in a given 3D field. EG. <code>translateZ:-250</code> to translate an element 250px to it's back, making it smaller. Modern browsers only and requires a <code>perspective</code> tween option to be used; the smaller perspective value, the deeper translation.</li>
-			<li><kbd>translate3d</kbd> property is for movement on all the axis in a given 3D field. EG. <code>translate3d:[-150,200,150]</code> to translate an element 150px to the left, 200px to the bottom and 150px closer to the viewer, making it larger. Modern browsers only and also requires using a <code>perspective</code> tween option.</li>
-			<li><kbd>rotateX</kbd> property rotates an element on the X axis in a given 3D field. Eg. <code>rotateX:250</code> will rotate an element clockwise by 250 degrees. Modern browsers only and requires perspective.</li>
-			<li><kbd>rotateY</kbd> property rotates an element on the Y axis in a given 3D field. Eg. <code>rotateY:-150</code> will rotate an element counter-clockwise by 150 degrees. Modern browsers only and also requires perspective.</li>
-			<li><kbd>rotateZ</kbd> property rotates an element on the Z axis and is the equivalent of the 2D rotation. Eg. <code>rotateZ:-150</code> will rotate an element counter-clockwise by 150 degrees. Modern browsers only and doesn't require perspective.</li>
-			<li><kbd>rotate3d</kbd> and <kbd>matrix3d</kbd> properties are not supported.</li>
-		</ul>
-
-		<h3>Box Model Properties</h3>
-		<ul>
-			<li><kbd>left</kbd>, <kbd>top</kbd>, <kbd>right</kbd> and <kbd>bottom</kbd> are <code>position</code> based properties for movement on vertical and / or horizontal axis. These properties require that the element to animate uses <code>position: absolute/relative</code> styling as well as it's parent element requires <code>position:relative</code>. These properties can be used as fallback for browsers with no support for <code>translate</code> properties such as IE8.</li>
-			<li><kbd>width</kbd>, <kbd>height</kbd>, <kbd>minWidth</kbd>, <kbd>minHeight</kbd>, <kbd>maxWidth</kbd>, <kbd>maxHeight</kbd> are properties that allow you to animate the size of an element on horizontal and / or vertical axis. These properties can be used on images as fallback for <code>scale</code> on IE8 again, as well as for other purposes.</li>
-			<li><kbd>padding</kbd>, <kbd>margin</kbd>, <kbd>paddingTop</kbd>, <kbd>paddingBottom</kbd>, <kbd>paddingLeft</kbd>, <kbd>paddingRight</kbd>, <kbd>marginTop</kbd>, <kbd>marginBottom</kbd>, <kbd>marginLeft</kbd> and <kbd>marginRight</kbd> are properties that allow you to animate the spacing of an element inside (via padding) and outside (via margin). Shorthand notations such as <code>margin: "20px 50px"</code> or any other type are not supported.</li>
-			<li><kbd>borderWidth</kbd>, <kbd>borderTopWidth</kbd>, <kbd>borderRightWidth</kbd>, <kbd>borderBottomWidth</kbd> are <kbd>borderLeftWidth</kbd> are properties that allow you to animate the border of an element either on all sides at once or each side separatelly. Shorthand notations are not supported.</li>
-		</ul>		
-		<p><strong>Remember</strong>: these properties are <strong>layout modifiers</strong> that may force repaint of the entire DOM, drastically affecting performance on lower end and mobile devices. They also trigger <code>resize</code> event that may cause crashes on old browsers such as IE8 when using handlers bound on <code>resize</code>, so use with caution.</p>
-
-		<h3>Border Radius</h3>
-		<ul>
-			<li><kbd>borderRadius</kbd> allows you to animate the <code>border-radius</code> on all corners for a given element.</li>
-			<li><kbd>borderTopLeftRadius</kbd> allows you to animate the <code>border-top-left-radius</code> for a given element.</li>
-			<li><kbd>borderTopRightRadius</kbd> allows you to animate the <code>border-top-right-radius</code> for a given element.</li>
-			<li><kbd>borderBottomLeftRadius</kbd> allows you to animate the <code>border-bottom-left-radius</code>for a given element.</li>
-			<li><kbd>borderBottomRightRadius</kbd> allows you to animate the <code>border-bottom-right-radius</code>for a given element.</li>
-		</ul>			
-		<p>For all radius properties above <code>borderRadius:20</code> or <code>borderTopLeftRadius:'25%'</code> will do. In the first case <code>px</code> is the default measurement unit used, while in the second we require using <code>%</code> unit which is relative to the element's size.</p>
-		<p><strong>Remember</strong>: shorthands for <code>border-radius</code> are not supported. Also KUTE.js does not cover early implementations by Mozilla Firefox (Eg. <code>-moz-border-radius-topleft</code>) as they were deprecated with later versions.</p>
-
-		<h3>Color Properties</h3>
-		<p>KUTE.js currently supports values such as <code>HEX</code>, <code>RGB</code> and <code>RGBA</code> for all color properties, but IE8 does not support <code>RGBA</code> and always uses <code>RGB</code> when detected, otherwise will produce no effect. There is also a tween option <code>keepHex:true</code> to convert the color format. Eg. <code>color: '#ff0000'</code> or <code>backgroundColor: 'rgb(202,150,20)'</code> or <code>borderColor: 'rgba(250,100,20,0.5)'</code></p>	
-		<ul>
-			<li><kbd>color</kbd> allows you to animate the color for a given text element.</li>
-			<li><kbd>backgroundColor</kbd> allows you to animate the <code>background-color</code> for a given element.</li>
-			<li><kbd>borderColor</kbd> allows you to animate the <code>border-color</code> on all sides for a given element.</li>
-			<li><kbd>borderTopColor</kbd>, <kbd>borderRightColor</kbd>, <kbd>borderBottomColor</kbd> and <kbd>borderLeftColor</kbd> properties allow you to animate the color of the border on each side of a given element.</li>
-		</ul>			
-		<p><strong>Remember</strong>: shorthands for <code>border-color</code> property as well as web color names (Eg. red, green, olive, etc.) are not supported.</p>
-
-		<h3>Text Properties</h3>
-		<p> These properties can be combinated with each other when applied to text elements (paragraphs, headings) as animation fallback for <code>scale</code> on browsers that don't support <code>transform</code> at all. Yes, IE8 and other legacy browsers.</p>
-		<ul>
-			<li><kbd>fontSize</kbd> allows you to animate the <code>font-size</code> for a given element.</li>
-			<li><kbd>lineHeight</kbd> allows you to animate the <code>line-height</code> for a given element.</li>
-			<li><kbd>letterSpacing</kbd> allows you to animate the <code>letter-spacing</code> for a given element.</li>
-		</ul>
-		<p><strong>Remember</strong>: these properties are also <strong>layout modifiers</strong>.</p>
-
-		<h3>Scroll Animation</h3>
-		<p>KUTE.js currently supports only vertical scroll for both the window and a given element that's scrollable. Both <code>scroll: 150</code> or <code>scrollTop: 150</code> notations will do. When animating scroll, KUTE.js will disable all scroll and swipe handlers to prevent animation bubbles.</p>			
-
-		<h3>Other properties</h3>
-		<ul>
-			<li><kbd>clip</kbd> allows you to animate the <code>clip</code> property for a given element. Only rect is supported. Eg. <code>clip:[250,200,300,0]</code>. See <a href="http://www.w3.org/TR/CSS2/visufx.html#propdef-clip" target="_blank">spec</a> for details.</li>
-			<li><kbd>backgroundPosition</kbd> allows you to animate the <code>background-position</code> for a given element that uses a background image. It only uses % as measurement unit. Eg. <code>backgroundPosition:[50,20]</code></li>
-		</ul>
-		
-		<h3>Did We Miss Any Important Property?</h3>			
-		<p>Make sure you go to <a href="https://github.com/thednp/kute.js/issues" target="_blank">the issues tracker</a> and report the missing property ASAP.</p>			
-	</div>
 
 	<div class="content-wrap">
-		<h2>Developer Friendly</h2>
+		<h3>Developer Friendly</h3>
 		<p><span class="ion-happy media"></span>You can develop with KUTE.js for free thanks to the <a href="https://github.com/thednp/kute.js/blob/master/LICENSE" target="_blank">MIT License</a> terms. The terms in short allow you to use the script <strong>for free</strong> in both <strong>personal</strong> and <strong>commercial application</strong> as long as you give <strong>proper credits</strong> to the original author. Also a link back would be appreciated.</p>
 		<p>Also KUTE.js is <a href="api.html">super documented</a>, all features and options are showcased with detailed <a href="examples.html">examples</a> so you can get your hands really dirty.</p>
 		
@@ -197,7 +151,7 @@
      <footer>
 		<div class="content-wrap">
 			<p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
-			<p>&copy; 2007 - 2015 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
+			<p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
 		</div>
     </footer>
 
@@ -211,7 +165,7 @@
 
 <!--<script src="http://cdn.jsdelivr.net/kute.js/0.9.2/kute.full.min.js"></script>  KUTE CDN -->
 
-<script src="./src/kute.js"></script> <!-- some stuff -->
+<script src="./src/kute.js"></script> <!-- KUTE.js core -->
 <script src="./assets/js/scripts.js"></script> <!-- some stuff -->
 </body>
 </html>

@@ -9,7 +9,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="KUTE.js is a minimal Javascript animation engine">
+    <meta name="description" content="A detailed API documentation on KUTE.js main methods, options and easing functions.">
     <meta name="keywords" content="kute,kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
     <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
@@ -28,6 +28,9 @@
 	<!-- Synthax highlighter -->
 	<link href="./assets/css/prism.css" rel="stylesheet">	
 
+    <!-- Polyfill -->
+    <script src="./assets/js/minifill.js"> </script>
+    
 	<!-- legacy browsers support via polyfill 
 	<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
 	<!--[if IE]>
@@ -46,52 +49,66 @@
       <div class="content-wrap">
 		<a href="index.html"><h1>KUTE.<span>js</span></h1></a>
 		<ul class="nav">
-			<li><a href="features.html">Features</a></li>
-			<li><a href="examples.html">Examples</a></li>
-			<li class="active"><a href="api.html">API</a></li>
+			<li class="btn-group"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="features.html">Feature Overview</a></li>
+                    <li><a href="properties.html">Supported Properties</a></li>
+                </ul>            
+            </li>
+			<li class="btn-group">
+                <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="examples.html">Core Engine</a></li>
+                    <li><a href="css.html">CSS Plugin </a></li>
+                    <li><a href="svg.html">SVG Plugin </a></li>
+                    <li><a href="attr.html">Attributes Plugin </a></li>
+                </ul>
+            </li>			
+			<li class="btn-group active">
+                <a href="#" data-function="toggle">API <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="start.html">Getting Started</a></li>
+                    <li class="active"><a href="api.html">Public Methods</a></li>
+                    <li><a href="easing.html">Easing Functions</a></li>
+                    <li><a href="extend.html">Extend Guide</a></li>
+                </ul>
+            </li>
 			<li><a href="about.html">About</a></li>
 		</ul>
       </div>
     </div>
 
-	<div class="content-wrap">		
-		
-		<h2>Getting Started</h2>
-		<p>Welcome to KUTE.js API documentation, here we're going to talk about how to download, install, use, control and set up cross browser animations, in great detailed. KUTE.js can be found on <a href="http://www.jsdelivr.com/#!kute.js" target="_blank">CDN</a> and also npm and Bower repositories with all it's features and tools.</p>
-
-		<h3>Bower and NPM</h3>
-		<p>You can install KUTE.js package by using either Bower or NPM.</p>
-<pre><code class="language-clike">$ npm install --save kute.js
-# Or
-$ bower install --save kute.js
-</code></pre>
-
-		<h3>Websites</h3>
-		<p>In your website add the following code, the best would be to put it at the end of your <code>body</code> tag:</p>
-<pre><code class="language-markup">&lt;script src="https://cdn.jsdelivr.net/kute.js/1.0.0/kute.min.js">&lt;/script> &lt;!-- core KUTE.js --></code></pre>
-
-		<p>Also you can include the tools that you need for your project:</p>
-<pre><code class="language-markup">&lt;script src="https://cdn.jsdelivr.net/kute.js/1.0.0/kute-jquery.min.js">&lt;/script> &lt;!-- jQuery Plugin -->
-&lt;script src="https://cdn.jsdelivr.net/kute.js/1.0.0/kute-easing.min.js">&lt;/script> &lt;!-- Bezier Easing Functions -->
-&lt;script src="https://cdn.jsdelivr.net/kute.js/1.0.0/kute-physics.min.js">&lt;/script> &lt;!-- Physics Easing Functions -->
-</code></pre>
-		<p>Your awesome animation coding would follow after these script links.</p>		
-		
-		<h3>Targeting Legacy Browsers</h3>
-		<p>You need to know when users' browser is a legacy one in order to use KUTE.js only for what browsers actually support. A quick note here: IE8 doesn't support any <code>transform</code> property or <code>RGBA</code> colors while IE9 can only do 2D transformations. Check the <a href="http://caniuse.com/#feat=transforms2d" target="_blank">2D transforms</a> and the <a href="http://caniuse.com/#feat=transforms3d" target="_blank">3D transforms</a> browser support list for more information.</p> 
-		<p>Don't use <a href="https://modernizr.com/" target="_blank">Modernizr</a>, the best thing you can actually do is to use the Microsoft's synthax for it's own legacy browsers, and <a target="_blank" href="http://www.paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/">here is the full refference</a> on that. For other legacy browsers there is a ton of ways to target them, quite efficiently I would say: <a href="http://browserhacks.com/" target="_blank">there you go</a>.</p>
-	</div>
 
 	<div class="content-wrap">
-		<h2>Main Methods</h2>
-		<p>These methods allow you to create <strong>tween objects</strong>; here a tween object is essentially like an animation setup for a given HTML element, defining CSS properties, animation duration or repeat. The methods have different uses and performance scores while making it easy to work with.</p>
-		<p><kbd>.to()</kbd> method is the most simple method which allows you to create tween objects for animating CSS properties from a specific default value OR from current/computed value TO a desired value.
-		It's performance is not the same as for the next two because it has to compute the default/current value on tween <code>.start()</code> and thus delays the animation for a cuple of miliseconds, but this feature is great for simple animations AND it has the ability to stack transform properties as they go, making smooth transform animations on chained tweens. See the <a href="#start">.start()</a> method for the solution for sync/delay issue.</p>
+		<h2>Public Methods</h2>
+		<p>These methods allow you to create <strong>tween objects</strong> and collections of <strong>tween objects</strong>; as we know, a tween object is essentially like an animation setup for a given HTML element, defining CSS properties, animation duration, repeat or other options. The methods have different uses and performance scores while making it easy to work with.</p>
+        
+		<h3>Single Tween Object</h3>
+		<p>As the heading suggests, the following two methods allow you to create tween objects for a single HTML element, except when used in combination with jQuery and the KUTE.js plugin for jQuery, where, as jQuery always does, it always works with collections of elements.</p>
+        <p><kbd>.to()</kbd> method is the most simple method which allows you to create tween objects for animating CSS properties from a specific default value OR from current/computed value TO a desired value.
+		It's performance is not the same as for the <strong>.fromTo()</strong> method as it has to compute the default/current value on tween <code>.start()</code> and thus delays the animation for a couple of miliseconds; still this feature is great for simple animations AND it has the ability to stack transform properties as they go, making smooth transform animations on chained tweens. See the <a href="#start">.start()</a> method for the solution for sync/delay issue.</p>
 		<p>Considering a given <em>div</em> element is already transparent, a super quick example would be:</p>
 <pre><code class="language-javascript">KUTE.to(div,{opacity:1}).start()</code></pre>
-		<p><kbd>.fromTo()</kbd> method is the best way to build animations for BEST performance and absolute control. The tests prove this method to be the fastest methods but unlike the <code>.to()</code> method, it does not stack transform properties on chained tweens. Also, another advantage is the fact that you can set measurement units for both starting and end values, to avoid glitches. We've talked about this in the <a href="features.html">features page</a>. So here's a quick example:</p> 
+		
+        <p><kbd>.fromTo()</kbd> method is the best way to build animations for BEST performance and absolute control. The tests prove this method to be the fastest method but unlike the <code>.to()</code> method, it does not stack transform properties on chained tweens. Along with the performance advantage, you can set measurement units for both starting and end values, to avoid glitches. We've talked about this in the <a href="features.html">features page</a>. Here's a quick example:</p> 
 <pre><code class="language-javascript">KUTE.fromTo(div,{opacity:1},{opacity:0}).start()</code></pre>
-		<p><kbd>.Animate()</kbd> method is only a fallback for the older KUTE.js versions and works as the <code>.fromTo()</code> method. It will be deprecated with later versions.</p>
+
+		<h3>Tween Object Collections</h3>
+        <p>The two new methods allow you to create animations for multiple HTML elements at the same time, all in a single line of code. They use the above methods to create a tween object for each element of the collection and also enable the tween control methods in this new context.</p>	
+		<p><kbd>.allTo()</kbd> method allows you to create an array of tween objects for a collection of elements. This method is using the above <code>.to()</code> method and inherits it's functionality. Considering a given collection <code>myDivs</code> elements, a nice example would be:</p>
+<pre><code class="language-javascript">// on the fly, grab the elements by className, 
+// do the tween objects array, and start kicking
+KUTE.allTo( '.my-div-class', {opacity:1}, {offset: 200, duration: 500} ).start();
+
+// or we cache the objects for better performance and / or later control
+var myDivs          = document.querySelectorAll('.my-div-class');
+var myDivsTweens    = KUTE.allTo( myDivs, {opacity:1}, {offset: 200, duration: 500} );
+</code></pre>
+
+		<p><kbd>.allFromTo()</kbd> method is also a method to animate a collection of elements and it uses the <code>.fromTo()</code> method. Quick example:</p> 
+<pre><code class="language-javascript">KUTE.allFromTo( myDivs, {opacity:1}, {opacity:0}, {offset: 200, duration: 500} ).start()</code></pre>
+
+        <p>As you can see the above code, these methods have a specific tween option called <code>offset</code> that allows you to set a delay in miliseconds between the starting time of each tween animation. Most tween control methods apply to both methods, except for the <code>.chain()</code> method. In order to chain another tween to one of the <code>myDivsTweens</code> objects, we would need to access it from the array, but let's leave that for later.</p>
 	</div>
 
 	<div class="content-wrap">
@@ -101,21 +118,25 @@ $ bower install --save kute.js
 		<p>This tween object is now ready to work with the methods.</p>
 		
 		<h3 id="start">Starting Animations</h3>
-		<p><kbd>.start()</kbd> method starts animation for a given tween object. It can start the animation for both cached and non-cached objects. Unlike previous versions of KUTE.js, where animation started immediately after tween object creation, now you have to manually start them.</p>
+		<p><kbd>.start()</kbd> method starts animation for a given tween object. It can start the animation for both cached and non-cached objects. Unlike previous versions of KUTE.js, where animation started immediately after tween object creation, now you have to manually start them. This method also applies to arrays of tween objects created with <code>.allTo()</code> and <code>.allFromTo()</code> methods.</p>
 <pre><code class="language-javascript">//cached object defined above
 tween.start();
 
-//non-cached object are created on the fly and garbage collected after animation has finised
+// non-cached object are created on the fly and garbage collected after animation has finised
 KUTE.fromTo(div,{opacity:1},{opacity:0}).start();
 
-//also start the tween at a certain time
+// also start the tween at a certain time
 tween.start(now); // where now must be the current or future time as number, see below
+
+// lastly the method works with tweens made with .allTo() and .allFromTo() methods
+KUTE.allFromTo(divs,{opacity:1},{opacity:0}).start();
+KUTE.allTo(divs,{opacity:0}).start();
 </code></pre>
 
-		<p>As you can see, you can also set a time for the animation to start, example: <code>tween.start(myTimeValue)</code>. Having access to the method is useful when starting animation for large amounts of elements with same properties at the same time because using it properly <strong>eliminates any syncronization issue that may occur</strong>, even if you are using the <code>.to()</code> method. This applies to our performance test page as well, and the trick is super duper simple:</p> 
+		<p>As you can see, you can also set a time for the animation to start, example: <code>tween.start(myTimeValue)</code>. Having access to the method is useful when starting animation for large amounts of elements with same properties at the same time because using it properly <strong>eliminates any syncronization issue</strong> that may occur on animations start, even if you are using the <code>.to()</code> method. The trick is super duper simple:</p> 
 
 <pre><code class="language-javascript">// step 1 - create an empty array and grab the elements to animate
-var tweens = [], myElements = document.querySelector('.myManyElements');
+var tweens = [], myElements = document.querySelector('.myManyElements'), numberOfElements = myElements.length;
 
 // step 2 - define tween objects for each element
 for (var i = 0; i < numberOfElements; i++) {
@@ -139,26 +160,27 @@ for (var i = 0; i < numberOfElements; i++) {
 }
 </code></pre>
 		
-		<p>If you care to see the actual working code, check it in the <a href="./assets/js/perf.js" target="_blank">perf.js</a> file.</p>
+		<p>In other cases the new methods <code>.allTo()</code> and <code>.allFromTo()</code> can be more useful.</p>
 		
 		<h3>Stopping Animation</h3>
-		<p><kbd>.stop()</kbd> method stops animation for a given tween object while animating. You cannot stop the animation for tween objects created on the fly, only for cached objects. Let's assume that for the given tween we decide to stop the animation via <code>click</code> action:</p>
-<pre><code class="language-javascript">stopButton.addEventListener('click', function(){
-	tween.stop();
+		<p><kbd>.stop()</kbd> method stops animation for a given tween object or an array of tween objects (built with <code>.to()</code>/<code>.fromTo()</code> methods) while animating. You cannot stop the animation for tween objects created on the fly, only for cached objects. Let's assume that for the given tween we decide to stop the animation via <code>click</code> action:</p>
+<pre><code class="language-javascript">// for a tween object
+stopButton.addEventListener('click', function(){
+	myTween.stop(); // myMultiTweens.stop();
 }, false);
 </code></pre>
 		
 		<h3>Pausing Animation</h3>
-		<p><kbd>.pause()</kbd> method freezez the animation at any given time for a given tween object, and unlike the <code>.stop()</code> method, this one allows resuming the animation on a later use of the next method <code>.play()</code>.</p>
+		<p><kbd>.pause()</kbd> method freezez the animation at any given time for a given tween object or collection, and unlike the <code>.stop()</code> method, this one allows resuming the animation on a later use of the next method <code>.play()</code>.</p>
 <pre><code class="language-javascript">pauseButton.addEventListener('click', function(){
-	tween.pause();
+	tween.pause(); // or myMultiTweens.pause();
 }, false);
 </code></pre>
 		
 		<h3>Resuming Paused Animation</h3>
-		<p><kbd>.play()</kbd> or <kbd>.resume()</kbd> methods allows you to resume an animation for a given tween object only if it was paused or else will produce no effect.</p>		
+		<p><kbd>.play()</kbd> or <kbd>.resume()</kbd> methods allows you to resume an animation for a given tween object or collection of tweens, only if it was paused or else will produce no effect.</p>		
 <pre><code class="language-javascript">playButton.addEventListener('click', function(){
-	tween.play(); // or tween.resume();
+	tween.play(); // or tween.resume(); || or myMultiTweens.resume();
 }, false);
 </code></pre>
 		
@@ -172,21 +194,39 @@ tween.chain(tween2);
 //the new tween chains the first one creating a loop
 tween2.chain(tween);
 </code></pre>
-		<p>It's also possible to chain multiple tweens, just as shown in the below example, but the one that finishes last (has longest delay and duration together) should be used last in the <code>.chain()</code> method arguments list. Why? Because when a tween is finished it triggers <code>cancelAnimationFrame()</code> and KUTE.js will stop "ticking" causing all other chained tweens to stop prematurelly.</p>
+
+		<p>It's also possible to chain multiple tweens, just as shown in the below example.</p>
 <pre><code class="language-javascript">//chain multiple tweens
 tween.chain(tween1,tween2);
 </code></pre>
-		
 
+        <p>Another thing we talked before is the ability to chain to one of the tween object within the array built with <code>.allTo()</code> or <code>.allFromTo()</code> methods.</p>
+<pre><code class="language-javascript">// chain to a tween from collection
+var tweensCollection = KUTE.allTo('.a-class-for-multiple-elements', {opacity: 1}, {opacity: 0});
+
+// considering the collection has 5 tweens,
+// the array is right here tweensCollection.tweens, so
+// let's grab the second and chain another tween to it
+tweensCollection.tweens[1].chain(tween2);
+</code></pre>
+		<p>Also we can chain the tweens created with <code>.allTo()</code> and <code>.allFromTo()</code> methods like this:</p>
+<pre><code class="language-javascript">// chain a collection of tweens to another tween
+var tweensCollection2 = KUTE.allTo('.a-class-for-multiple-elements', {opacity: 1}, {opacity: 0});
+
+// the array is right here tweensCollection2.tweens
+// we can pass it in the chain of another tween
+tween2.chain(tweensCollection2.tweens);
+</code></pre>
 	</div>
 
 	<div class="content-wrap">
-		<h2>Tween Options</h2>
+		<h2 id="tweenoptions">Tween Options</h2>
 		<h3>Common Options</h3>
 		<p>These options affect all types of tweens, no matter the properties used or context.</p>
 		<p><kbd>duration: 500</kbd> option allows you to set the animation duration in miliseconds. The default value is <strong>700</strong>.</p>
 		<p><kbd>repeat: 20</kbd> option allows you to run the animation of given tween multiple times. The default value is <strong>0</strong>.</p>
-		<p><kbd>delay: 500</kbd> option allows you to schedule the tween animation after a certain number of miliseconds. The default value is <strong>0</strong>.</p>
+		<p><kbd>delay: 500</kbd> option allows you to delay the tween animation for a certain number of miliseconds. The default value is <strong>0</strong>.</p>
+		<p><kbd>offset: 200</kbd> option is only for <code>.allTo()</code> and <code>.allFromTo()</code> methods. This allows you to set a base delay in miliseconds that increases with each element in the collection. This has no effect on other methods and the default value is <strong>0</strong>.</p>
 		<p><kbd>repeatDelay: 500</kbd> option allows you to set a number of miliseconds delay between repeatable animations. If <code>repeat</code> option is set to <strong>0</strong>, will produce no effect. The default value is <strong>0</strong>.</p>		
 		<p><kbd>yoyo: true/false</kbd> option makes use of the internal reverse functionality to also animate from <b>end</b> to <b>start</b> for a given tween. This option requires that you use the <code>repeat</code> option with at least value <b>1</b>. The default value is <strong>false</strong>.</p>
 		<p><kbd>easing: 'easingCubicInOut'</kbd> option allows you to use a custom easing function for your animation. For more info on the easing functions, you need to see the example pages. The default value is <strong>linear</strong>.</p>
@@ -197,6 +237,16 @@ tween.chain(tween1,tween2);
 		<p><kbd>perspectiveOrigin: "50% 50%"</kbd> option allows you to set a <code>perspectiveOrigin</code> for a given HTML. This option has no default value and only accepts valid CSS values according to it's specs.</p>
 		<p><kbd>parentPerspective: 500</kbd> option allows you to set a 3D <code>perspective</code> for the <strong>parent</strong> of the HTML element subject to the transform animation.</p>
 		<p><kbd>parentPerspectiveOrigin: "50% 50%"</kbd> option allows you to set a <code>perspectiveOrigin</code> for the parent of the HTML element subject to the transform animation. Also like the above similar options, this options only accepts valid CSS values.</p>
+		<p><kbd>transformOrigin: "50% 50%"</kbd> option allows you to set a <code>transformOrigin</code> for the HTML element subject to the transform animation. Also this options only accepts valid CSS values.</p>
+
+		<h3>SVG Options</h3>
+		<p>These options only affect animation of the <code>path</code> tween property, or what you know as SVG morphing.</p> 
+        
+		<p><kbd>showMorphInfo: true</kbd> when <code>true</code> the script will log valuable information about the morph in order to help you maximize both performance and visuals of the morph.</p>
+		<p><kbd>morphPrecision: Number</kbd> option allows you to set the sampling size of the morph. The lesser value the better visual but the more power consumption.</p>
+		<p><kbd>morphIndex: Number</kbd> option allows you to rotate the second/end path in a way that the points travel the least possible distance during morph, and as an effect the morph animation feel more "natural".</p>
+		<p><kbd>reverseFirstPath: true</kbd> when is <code>true</code> this option allows you to reverse the draw direction of the FIRST shape.</p>
+		<p><kbd>reverseSecondPath: true</kbd> when is <code>true</code> this option allows you to reverse the draw direction of the SECOND shape.</p>
 
 		<h3>Callback Options</h3>
 		<p>These options also affect all types of tweens, and are bound by the tween control options and the internal update functions.</p>
@@ -219,92 +269,7 @@ KUTE.fromTo(div,{left:150},{left:0},{complete: callback}).start();
 		<p><kbd>keepHex: true</kbd> option allows you to always use <code>HEX</code> color format, even if you have used <code>RGB</code> or <code>RGBA</code>. This option is useful when tweening color properties on legacy browsers, however modern browsers may ignore this option for performance reasons.</p>
 	</div>
 
-	<div class="content-wrap">
-		<h2>Easing Functions</h2>
-		<p>The easing functions generally make animations closer to reality and completely eliminate the boring factor for a given context. The most simple example to understand what they do, think of gravity. Dropping an object from a given height, will start moving to the ground with accelerated speed. If the object has some sort of bounciness like a ball, it will jump back up and up again, till the gravity will eventually stick the object to the ground.</p> 
-		<p>What scientists observed and put in theory houndreads of years ago, later the pioneers of scripting started to implement the laws of physics into digital animation and came up with this notion of easing to describe the progression of movement. If you care to dig into the concept, <a href="http://upshots.org/actionscript/jsas-understanding-easing" targt="_blank">here's an excellent resource</a> some developers recommend. I would also recommend <a href="https://medium.com/@sureshvselvaraj/animation-principles-in-ui-design-understanding-easing-bea05243fe3" target="_blank">this one</a> too.</p>
-		
-		<h3>Core Functions</h3>
-		<p>Modern browsers that support <code>transition</code> can also make use of some generic easing functions via the CSS3 <code>transition-timing-function:ease-out</code> property, but in Javascript animation, we need some special functions. The popular <a href="robertpenner.com/easing/" target="_blank">Robert Penner's easing functions</a> set is one of them, and is the default set included with KUTE.js because it's the fastest set I know in terms of performance. Some functions may lack a bit of accuracy but they cover the most animation needs. Generally the easing functions' names are built with keywords that describe the type of easing, like <em>circular</em> or <em>exponential</em>, and also the type of progression <em>in</em> and/or <em>out</em>.</p>
-		
-		<p>To use them, simply set a tween option like so <code>easing: KUTE.Easing.easingSinusoidalInOut</code> or simply <code>easing: 'easingSinusoidalInOut'</code>.</p>
-		<p><kbd>linear</kbd> is the default easing function and just as it sounds, it means that the animation has no acceleration or deceleration over time. While this one is basically boring, it's the fastest in all, and it's very useful when animating opacity or colors because we cannot really distinguish changes in speed for such cases, but mostly for movement.</p>
-		
-		<p><kbd>curve</kbd> based functions are the next set of easings we are going to tak about. They are basically the same, the only difference is the number of multipliers applied (better think of it like the more weight an object has, the more acceleration):</p>
-		<ul>
-			<li><strong>Sinusoidal</strong> - multiplier of 1 (super light object, like a feather)</li>
-			<li><strong>Quadratic</strong> - multiplier of 2</li>
-			<li><strong>Cubic</strong> - multiplier of 3</li>
-			<li><strong>Quartic</strong> - multiplier of 4</li>
-			<li><strong>Quintic</strong> - multiplier of 5</li>
-			<li><strong>Circular</strong> - multiplier of 6</li>
-			<li><strong>Exponential</strong> - multiplier of 10 (super heavy object, like a truck)</li>
-		</ul>
-		
-		<p>The In / Out explained:</p>
-		<ul>
-			<li><strong>In</strong> - means that the animation starts with very very low speed and gains acceleration over time, but when it reaches the maximum speed, animation stops. These functions are: <kbd>easingSinusoidalIn</kbd>, <kbd>easingQuadraticIn</kbd>,<kbd>easingCubicIn</kbd>, <kbd>easingQuarticIn</kbd>, <kbd>easingQuinticIn</kbd>, <kbd>easingCircularIn</kbd> and <kbd>easingExponentialIn</kbd>.</li>
-			<li><strong>Out</strong> - means that the animation starts with maximum speed and constantly decelerates over time until the animation stops. These functions are: <kbd>easingSinusoidalOut</kbd>, <kbd>easingQuadraticOut</kbd>, <kbd>easingCubicOut</kbd>, <kbd>easingQuarticOut</kbd>, <kbd>easingQuinticOut</kbd>, <kbd>easingCircularOut</kbd> and <kbd>easingExponentialOut</kbd>.</li>
-			<li><strong>InOut</strong> - means that the animation accelerates halfway until it reaches the maximum speed, then begins to decelerate until it stops. These functions are: <kbd>easingSinusoidalInOut</kbd>, <kbd>easingQuadraticInOut</kbd>, <kbd>easingCubicInOut</kbd>, <kbd>easingQuarticInOut</kbd>, <kbd>easingQuinticInOut</kbd>, <kbd>easingCircularInOut</kbd> and <kbd>easingExponentialInOut</kbd>.</li>
-		</ul>
-			 
-		<p><kbd>back</kbd> easing functions describe more complex animations (I would call them <em>reverse gravity</em> easings). They also come with <em>in</em> and/or <em>out</em> types of progression. </p>
-		<ul>		
-			<li><kbd>easingBackIn</kbd> would be best described when you throw an object into the air with a small amount of physical power, it will move up decelerating until it stops, then will move to the grund with acceleration.</li>
-			<li><kbd>easingBackOut</kbd> would be best described as the previous function, but viewed in reverse mode.</li>
-			<li><kbd>easingBackInOut</kbd> is a combination of the other two.</li>
-		</ul>
-		
-		<p><kbd>elasticity</kbd> easing functions describe the kind of animation where the object is elastic. With <em>in</em> and/or <em>out</em> as well. </p>
-		<ul>
-			<li><kbd>easingElasticOut</kbd> would be best described by the movement of a guitar string after being pinched, moving up and down, with decreasing frequency, until it stops.</li>
-			<li><kbd>easingElasticIn</kbd> would be best described as the above function but viewed in reverse mode.</li>
-			<li><kbd>easingElasticInOut</kbd> is simply a combination of the other two.</li>
-		</ul>
-		
-		<p><kbd>gravity</kbd> based easing functions describe the kind of animation where the object has a certain degree of bounciness, like a ball. With <em>in</em> and/or <em>out</em> as well.</p>
-		<ul>
-			<li><kbd>easingBounceOut</kbd> looks just like a ball falling on the ground and start boucing up and down with decreasing frequency untill it stops.</li>
-			<li><kbd>easingBounceIn</kbd> looks like the previous viewed in reverse mode</li>
-			<li><kbd>easingBounceInOut</kbd> is a combination of the other two.</li>
-		</ul>
-		
-		<h3>Cubic Bezier Functions</h3>
-		<p>While modern browsers support CSS3 <code>transition</code> with <code>transition-timing-function: cubic-bezier(0.1,0.5,0.8,0.5)</code>, in Javascript animation we need some specific functions to cover that kind of functionality. As mentioned in the <a href="features.html">features page</a>, we are using a modified version of the <a href="https://github.com/gre/bezier-easing" target="_blank">cubic-bezier</a> by Gaëtan Renaudeau. I believe this must be most accurate easing functions set.</p>
-		<p>You can use them either with <code>easing: KUTE.Ease.bezier(mX1, mY1, mX2, mY2)</code> or <code>easing: 'bezier(mX1, mY1, mX2, mY2)'</code>, where mX1, mY1, mX2, mY2 are <em>Float</em> values from 0 to 1. You can find the right values you need <a href="http://cubic-bezier.com/" target="_blank">right here</a>.</p>
-		<p>There is also a pack of presets, and the keywords look very similar if you have used jQuery.Easing plugin before:</p>
-		<ul>
-			<li>Equivalents of the browser's <strong>generic</strong> timing functions: <kbd>easeIn</kbd>, <kbd>easeOut</kbd> and <kbd>easeInOut</kbd></li>
-			<li><strong>Sinusoidal</strong> timing functions: <kbd>easeInSine</kbd>, <kbd>easeOutSine</kbd> and <kbd>easeInOutSine</kbd></li>
-			<li><strong>Quadratic</strong> timing functions: <kbd>easeInQuad</kbd>, <kbd>easeOutQuad</kbd> and <kbd>easeInOutQuad</kbd></li>
-			<li><strong>Cubic</strong> timing functions: <kbd>easeInCubic</kbd>, <kbd>easeOutCubic</kbd> and <kbd>easeInOutCubic</kbd></li>
-			<li><strong>Quartic</strong> timing functions: <kbd>easeInQuart</kbd>, <kbd>easeInQuart</kbd> and <kbd>easeInOutQuart</kbd></li>
-			<li><strong>Quintic</strong> timing functions: <kbd>easeInQuint</kbd>, <kbd>easeOutQuint</kbd> and <kbd>easeInOutQuint</kbd></li>
-			<li><strong>Exponential</strong> timing functions: <kbd>easeInExpo</kbd>, <kbd>easeOutExpo</kbd> and <kbd>easeInOutExpo</kbd></li>
-			<li><strong>Back</strong> timing functions: <kbd>easeInBack</kbd>, <kbd>easeOutBack</kbd> and <kbd>easeInOutBack</kbd></li>
-			<li><strong>Special slow motion</strong> timing functions look <a href="http://cubic-bezier.com/#0,.58,1,.3" target="_blank">like this</a>: <kbd>slowMo</kbd>, <kbd>slowMo1</kbd> and <kbd>slowMo2</kbd></li>
-		</ul>
-		
-		<h3>Physics Based Functions</h3>
-		<p>KUTE.js also packs the <a href="http://dynamicsjs.com/" target="_blank">dynamics physics</a> easing functions by Michael Villar and I have to say these functions are amazing in terms of flexibility, control and performance. They allow you to control the friction, bounciness, frequency, elasticity, or multiple bezier points for your animations.</p>
-		<p>You can use them either with regular Javascript invocation as shown below and configure / visualize them on the <a href="http://dynamicsjs.com/" target="_blank">author's website</a>, while you can also use the pack of presets featuring mostly <kbd>bezier</kbd> based functions. Ok now, let's get to it:</p>
-	
-		<ul>
-			<li><strong>spring</strong> function is basically an <strong>elastic</strong> type of easing that allows you to set <code>frequency:1-1000</code>, <code>friction:1-1000</code>, <code>anticipationSize:0-1000</code> (a kind of delay in miliseconds) and <code>anticipationStrength:0-1000</code> (a kind of a new curve to add to the function while waiting the anticipationSize). Usage: <code>easing: KUTE.Physics.spring({friction:100,frequency:600})</code>.</li>
-			<li><strong>bounce</strong> function is also an <strong>elastic</strong> easing function, but it works different than Robert Penner's version that's basically a <kbd>gravity</kbd> based function. This one here will always come back to the starting values. This function allows you to set <code>frequency:0-1000</code> and <code>friction:0-1000</code>. Usage: <code>easing: KUTE.Physics.bounce({friction:100,frequency:600})</code>.</li>
-			<li><strong>gravity</strong> function does what a ball dropped on the ground does, bounces until it stops. It allows you to set: <code>elasticity:1-1000</code> and <code>bounciness:0-1000</code>. Usage: <code>easing: KUTE.Physics.gravity({elasticity:100,bounciness:600})</code>.</li>
-			<li><strong>forceWithGravity</strong> function acts just like <code>gravity</code> except that the ball instead of being dropped it's thrown into the air. This allows you to set same options: <code>elasticity:1-1000</code> and <code>bounciness:0-1000</code>. Usage: <code>easing: KUTE.Physics.forceWithGravity({elasticity:100,bounciness:600})</code>.</li>
-			<li><strong>bezier</strong> easing function is a bit more complicated as it allows you to set multiple points of bezier curves.  Usage: <code>easing: KUTE.Physics.bezier({points:POINTS_ARRAY_COMES HERE})</code>, again use the author's website, edit the bezier curve as you wish and copy paste the points array into this function. Here's how a basic <em>easeIn</em> looks like: 
-<pre><code class="language-javascript">// sample bezier based easing setting
-easing: KUTE.Physics.bezier({points: [{"x":0,"y":0,"cp":[{"x":0.483,"y":0.445}]},{"x":1,"y":1,"cp":[{"x":0.009,"y":0.997}]}] })
-</code></pre>
-			</li>
-		</ul>
-		<p>The presets can be used both as a string <code>easing:'physicsIn'</code> or <code>easing:KUTE.Physics.physicsIn(friction:200)</code>. The list is:</p>
-		<ul>
-			<li><strong>curves</strong>: <kbd>physicsIn</kbd>, <kbd>physicsOut</kbd>, <kbd>physicsInOut</kbd> can do all multipliers (from sinusoidal to exponential) via the <code>friction</code> option;</li>
-			<li><strong>back</strong>: <kbd>physicsBackIn</kbd>, <kbd>physicsBackOut</kbd>, <kbd>physicsBackInOut</kbd> also benefit from the <code>friction</code> option.</li>
-		</ul>		
+	<div class="content-wrap">		
 
 		<ul id="share" class="nav">
 			<li>Share </li>
@@ -319,7 +284,7 @@ easing: KUTE.Physics.bezier({points: [{"x":0,"y":0,"cp":[{"x":0.483,"y":0.445}]}
      <footer>
 		<div class="content-wrap">
 			<p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
-			<p>&copy; 2007 - 2015 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
+			<p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
 		</div>
     </footer>
 
@@ -336,7 +301,7 @@ easing: KUTE.Physics.bezier({points: [{"x":0,"y":0,"cp":[{"x":0.483,"y":0.445}]}
 
 <!--<script src="http://cdn.jsdelivr.net/kute.js/1.0.0/kute.full.min.js"></script>  KUTE CDN -->
 
-<script src="./src/kute.js"></script> <!-- some stuff -->
+<script src="./src/kute.js"></script> <!-- KUTE.js core -->
 <script src="./assets/js/scripts.js"></script> <!-- some stuff -->
 </body>
 </html>

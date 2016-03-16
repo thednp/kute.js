@@ -9,7 +9,7 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 2; /* ~25px */
-  color: #ddd;
+  color: #ccc;
   background-color: #999;
   position: relative
  
@@ -56,11 +56,13 @@ footer p {margin: 0 0 10px}
 .navbar-wrapper h1 span { font-size: 24px; color: #555; letter-spacing: -1px; }
 .navbar-wrapper h1.active span { color: #ffd626 }
 .navbar-wrapper .nav { float: left; padding: 0 0 18px; margin: 0; border-bottom: 1px solid #555 }
-.nav li { float: left; display: block; line-height: 25px; list-style: none }
-.nav li:not(:last-child) { margin-right: 12px }
+.nav > li { float: left; display: block; line-height: 25px; list-style: none }
+.nav > li:not(:last-child) { margin-right: 12px }
 .ie8 .nav li { margin-right: 12px }
-.nav li.active a { color: #ffd626 }
+.ie8 .nav li li { margin-right: 0 }
+.nav li.active > a { color: #ffd626 }
 .nav li a { color: #ccc }
+.nav li a:hover, .nav li a:focus { text-decoration: none }
 @media (max-width: 768px){
 	.navbar-wrapper .content-wrap { height: 94px}
 	.navbar-wrapper h1 {border: 0}
@@ -91,6 +93,13 @@ background: #222;
 /* easy hack to improve box model properties performance on modern browsers only ofc */
 	transform: translate3d(0px,0px,0px); -webkit-transform: translate3d(0px,0px,0px); 
 }
+.example-box-model {
+    font-size: 40px; text-align:center; font-weight: bold; 
+	float: left; position:relative; 
+	border-radius: 5px; margin: 0 20px 20px 0;
+}
+
+.easing-example {float: none; font-size: 24px; width: 320px}
 .example-buttons {position: absolute; top: 18px; right:0}
 
 /* text properties example */
@@ -109,7 +118,7 @@ h1.example-item span {
 
 .ie8 h1.example-item span,
 .ie8 .btn.example-item {filter: alpha(opacity=0)}
-/*.ie8 .btn.example-item * {filter: inherit}*/
+.ie8 .btn.example-item * {filter: inherit}
 
 /* UTILITY STYLES
 -------------------------------------------------- */
@@ -171,7 +180,7 @@ div { background-color: rgba(0,0,0,0.2) }*/
 /* TYPO STYLES
 -------------------------------------------------- */
 p, ul, ol { margin: 0 0 20px }
-h1, h2, h3, h4, strong {color: #ffd626}
+h1, h2, h3, h4, strong {color: #fff}
 h1 { font-size: 54px; letter-spacing:-3px; line-height: 0.92; font-weight: normal; }
 h2 { font-size: 46px; letter-spacing:-2px; line-height: 1.08; font-weight: normal; margin: 1.08em 0 0.27em; width: 100%; }
 h3 { font-size: 24px; letter-spacing:0px; line-height: 0.96; font-weight: normal; }
@@ -258,24 +267,26 @@ hr {
 }
 
 /* share */
-#share {position: fixed; top: 20px;right: 20px;}
+#share {position: fixed; top: 0px; right: 0px; padding:10px 20px; background: #2e2e2e;}
 #share .icon {font-size: 24px; line-height: 1}
 
 /* buttons */
 .btn { padding: 12px 15px; color:#fff; border:0; background-color: #999; line-height: 44px; }
-.bg-gray { color:#fff; background-color: #555; }
+.bg-gray { color:#fff; background-color: #555; fill: #555 }
 .btn.active { background-color: #2196F3 }
 .btn:hover, .btn:active, .btn:focus { color: #fff; text-decoration: none; background-color: #777}
-.btn-olive, .bg-olive {background-color: #9C27B0; color: #fff} .btn-olive:hover, .btn-olive:active, .btn-olive:focus { background-color: #673AB7 }
-.btn-indigo, .bg-indigo { background-color: #673AB7; color: #fff} .btn-indigo:hover, .btn-indigo:active, .btn-indigo:focus { background-color: #ffd626; color:#000 }
-.btn-green, .bg-green { background-color: #4CAF50; color: #fff} .btn-green:hover, .btn-green:active, .btn-green:focus { background-color: #9C27B0 }
-.btn-red, .bg-red { background-color: #e91b1f; color: #fff} .btn-red:hover, .btn-red:active, .btn-red:focus { background-color: #4CAF50 }
-.btn-yellow, .bg-yellow { background-color: #ffd626; color:#000} .btn-yellow:hover, .btn-yellow:active, .btn-yellow:focus { background-color: #4CAF50; color: #000 }
-.btn-blue, .bg-blue { background-color: #2196F3; color: #fff} .btn-blue:hover, .btn-blue:active, .btn-blue:focus { background-color: #e91b1f }
-.btn-pink, .bg-pink { background-color: #E91E63; color: #fff} .btn-pink:hover, .btn-pink:active, .btn-pink:focus { background-color: #2196F3 }
-.btn-orange, .bg-orange { background-color: #FF5722; color: #fff} .btn-orange:hover, .btn-orange:active, .btn-orange:focus { background-color: #4CAF50 }
-.btn-lime, .bg-lime { background-color: #CDDC39; color: #000} .btn-lime:hover, .btn-lime:active, .btn-lime:focus { background-color: #e91b1f }
-.btn-teal, .bg-teal { background-color: #009688; color: #fff} .btn-teal:hover, .btn-teal:active, .btn-teal:focus { background-color: #9C27B0 }
+.btn-olive, .bg-olive {background-color: #9C27B0; color: #fff; fill: #9C27B0} .btn-olive:hover, .btn-olive:active, .btn-olive:focus { background-color: #673AB7 }
+.btn-indigo, .bg-indigo { background-color: #673AB7; color: #fff; fill: #673AB7} .btn-indigo:hover, .btn-indigo:active, .btn-indigo:focus { background-color: #ffd626; color:#000 }
+.btn-green, .bg-green { background-color: #4CAF50; color: #fff; fill: #4CAF50} .btn-green:hover, .btn-green:active, .btn-green:focus { background-color: #9C27B0 }
+.btn-red, .bg-red { background-color: #e91b1f; color: #fff; fill: #e91b1f} .btn-red:hover, .btn-red:active, .btn-red:focus { background-color: #4CAF50 }
+.btn-yellow, .bg-yellow { background-color: #ffd626; color:#000; fill: #ffd626} .btn-yellow:hover, .btn-yellow:active, .btn-yellow:focus { background-color: #4CAF50; color: #000 }
+.btn-blue, .bg-blue { background-color: #2196F3; color: #fff; fill: #2196F3} .btn-blue:hover, .btn-blue:active, .btn-blue:focus { background-color: #e91b1f }
+.btn-pink, .bg-pink { background-color: #E91E63; color: #fff; fill: #E91E63} .btn-pink:hover, .btn-pink:active, .btn-pink:focus { background-color: #2196F3 }
+.btn-orange, .bg-orange { background-color: #FF5722; color: #fff; fill: #FF5722} .btn-orange:hover, .btn-orange:active, .btn-orange:focus { background-color: #4CAF50 }
+.btn-lime, .bg-lime { background-color: #CDDC39; color: #000; fill: #CDDC39} .btn-lime:hover, .btn-lime:active, .btn-lime:focus { background-color: #e91b1f }
+.btn-teal, .bg-teal { background-color: #009688; color: #fff; fill: #009688} .btn-teal:hover, .btn-teal:active, .btn-teal:focus { background-color: #9C27B0 }
+
+.bg-light {background-color: #fff; color: #777; fill: #fff}
 
 .icon-large { font-size: 78px; line-height: 0.64; text-shadow: 2px 2px 0 #FFF,3px 3px 0px #ccc;}
 .icon-large.fa-cogs:before { color: #4CAF50 }
@@ -290,6 +301,54 @@ hr {
 .btn span.right { margin: 0 0 0 10px }
 .btn span.left { margin: 0 10px 0 0 }
 
+.btn-group { position: relative; display: inline-block }
+.btn-group ul {
+    background: #555; max-height: 300px; width: 200px;
+    position: absolute; bottom: -9999em; left: 0; list-style: none; 
+    overflow: auto; padding: 0; z-index: 5
+}
+.btn-group ul li { padding: 5px 15px; cursor: pointer; display: block }
+.btn-group ul.subnav li { padding: 0; }
+.btn-group ul.subnav li > a { padding: 5px 15px; display: block }
+.btn-group ul li.titlef { font-weight: bold; }
+.btn-group ul li:hover { 
+    background: #333;
+}
+
+.btn-group.open ul {
+    bottom: 26px;
+}
+.nav .btn-group ul {bottom: auto; top: -999em}
+.nav .btn-group.open ul {
+    top: 43px;
+}
+
+/* Style the scrolBar for modern browsers */
+.btn-group ul::-webkit-scrollbar {
+	width: 7px;
+}
+.btn-group ul::-webkit-scrollbar-thumb {
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	background: rgba(92,92,92,0.8);
+	box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+}
+.btn-group ul::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(255,255,255,0.4);
+}
+
+/* caret */
+.caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-top: 4px dashed;
+    border-top: 4px solid\9;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
 
 /* STYLE CODE WRAPPING
 -------------------------------------------------- */

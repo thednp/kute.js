@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<!--[if IE 7]><html class="ie ie7" lang="en"><![endif]-->
+<!--[if IE 8]><html class="ie ie8" lang="en"><![endif]-->
+<!--[if IE 9]><html class="ie ie9" lang="en"><![endif]-->
+
+<!--[if !IE ]><!--> <html lang="en"> <!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A quick start guide for KUTE.js, CDN sources, NPM.">
+    <meta name="keywords" content="kute,kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
+    <meta name="author" content="dnp_theme">
+    <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
+
+    <title>Getting Started with KUTE.js | Javascript Animation Engine</title>
+	
+    <!-- RESET CSS -->
+    <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
+	
+    <!-- DEMO KUTE CSS -->
+    <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
+
+	<!-- Ion Icons -->
+    <link type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+		
+	<!-- Synthax highlighter -->
+	<link href="./assets/css/prism.css" rel="stylesheet">	
+
+    <!-- Polyfill -->
+    <script src="./assets/js/minifill.js"> </script>
+    
+	<!-- legacy browsers support via polyfill 
+	<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
+	<!--[if IE]>
+		<script src="https://cdn.jsdelivr.net/minifill/0.0.2/minifill.min.js"> </script>
+		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	<![endif]-->
+	
+</head>
+
+<body>
+  <div class="fill overlay"></div>
+  
+  <div class="site-wrapper">
+ 
+	<div class="navbar-wrapper">
+      <div class="content-wrap">
+		<a href="index.html"><h1>KUTE.<span>js</span></h1></a>
+		<ul class="nav">
+			<li class="btn-group"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="features.html">Feature Overview</a></li>
+                    <li><a href="properties.html">Supported Properties</a></li>
+                </ul>            
+            </li>
+			<li class="btn-group">
+                <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="examples.html">Core Engine</a></li>
+                    <li><a href="css.html">CSS Plugin </a></li>
+                    <li><a href="svg.html">SVG Plugin </a></li>
+                    <li><a href="attr.html">Attributes Plugin </a></li>
+                </ul>
+            </li>			
+			<li class="btn-group active">
+                <a href="#" data-function="toggle">API <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li class="active"><a href="start.html">Getting Started</a></li>
+                    <li><a href="api.html">Public Methods</a></li>
+                    <li><a href="easing.html">Easing Functions</a></li>
+                    <li><a href="extend.html">Extend Guide</a></li>
+                </ul>
+            </li>
+			<li><a href="about.html">About</a></li>
+		</ul>
+      </div>
+    </div>
+
+	<div class="content-wrap">		
+		
+		<h2>Getting Started</h2>
+		<p>Welcome to KUTE.js API documentation, here we're going to talk about how to download, install, use, control and set up cross browser animations, in great detail. KUTE.js can be found on <a href="http://www.jsdelivr.com/#!kute.js" target="_blank">CDN</a> and also npm and Bower repositories with all it's features and tools.</p>
+
+		<h3>Bower and NPM</h3>
+		<p>You can install KUTE.js package by using either Bower or NPM.</p>
+<pre><code class="language-clike">$ npm install --save kute.js
+# Or
+$ bower install --save kute.js
+</code></pre>
+
+		<h3>Websites</h3>
+		<p>In your website add the following code, the best would be to put it at the end of your <code>body</code> tag:</p>
+<pre><code class="language-markup">&lt;script src="https://cdn.jsdelivr.net/kute.js/1.5.0/kute.min.js">&lt;/script> &lt;!-- core KUTE.js --></code></pre>
+
+		<p>Also you can include the tools that you need for your project:</p>
+<pre><code class="language-markup">&lt;script src="https://cdn.jsdelivr.net/kute.js/1.5.0/kute-jquery.min.js">&lt;/script> &lt;!-- jQuery Plugin -->
+&lt;script src="https://cdn.jsdelivr.net/kute.js/1.5.0/kute-easing.min.js">&lt;/script> &lt;!-- Bezier Easing Functions -->
+&lt;script src="https://cdn.jsdelivr.net/kute.js/1.5.0/kute-physics.min.js">&lt;/script> &lt;!-- Physics Easing Functions -->
+&lt;script src="https://cdn.jsdelivr.net/kute.js/1.5.0/kute-css.min.js">&lt;/script> &lt;!-- CSS Plugin -->
+&lt;script src="https://cdn.jsdelivr.net/kute.js/1.5.0/kute-svg.min.js">&lt;/script> &lt;!-- SVG Plugin -->
+&lt;script src="https://cdn.jsdelivr.net/kute.js/1.5.0/kute-attr.min.js">&lt;/script> &lt;!-- Attributes Plugin -->
+</code></pre>
+		<p>Your awesome animation coding would follow after these script links.</p>		
+		
+		<h3>Targeting Legacy Browsers</h3>
+		<p>You need to know when users' browser is a legacy one in order to use KUTE.js only for what browsers actually support. A quick note here: IE8 doesn't support any <code>transform</code> property or <code>RGBA</code> colors while IE9 can only do 2D transformations. Check the <a href="http://caniuse.com/#feat=transforms2d" target="_blank">2D transforms</a> and the <a href="http://caniuse.com/#feat=transforms3d" target="_blank">3D transforms</a> browser support list for more information.</p> 
+		<p>Don't use <a href="https://modernizr.com/" target="_blank">Modernizr</a>, the best thing you can actually do is to use the Microsoft's synthax for it's own legacy browsers, and <a target="_blank" href="http://www.paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/">here is the full refference</a> on that. For other legacy browsers there is a ton of ways to target them, quite efficiently I would say: <a href="http://browserhacks.com/" target="_blank">there you go</a>.</p>
+
+
+		<ul id="share" class="nav">
+			<li>Share </li>
+			<li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
+			<li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute.js animation engine by @thednp and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></a></li>
+			<li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
+		</ul>
+		
+	</div>
+	  
+      <!-- FOOTER -->
+     <footer>
+		<div class="content-wrap">
+			<p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+			<p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
+		</div>
+    </footer>
+
+ </div><!-- /.site-wrapper -->
+ 
+
+
+<!-- JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->	
+
+<!-- highlighter -->
+<script src="./assets/js/prism.js" type="text/javascript"></script>	
+
+<!--<script src="http://cdn.jsdelivr.net/kute.js/1.0.0/kute.full.min.js"></script>  KUTE CDN -->
+
+<script src="./src/kute.js"></script> <!-- some stuff -->
+<script src="./assets/js/scripts.js"></script> <!-- some stuff -->
+</body>
+</html>

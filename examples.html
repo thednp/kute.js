@@ -9,7 +9,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="KUTE.js is a minimal Javascript animation engine">
+    <meta name="description" content="Animation examples for KUTE.js core engine with most essential CSS properties and easing functions.">
     <meta name="keywords" content="kute,kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
     <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
@@ -27,11 +27,13 @@
 		
 	<!-- Synthax highlighter -->
 	<link href="./assets/css/prism.css" rel="stylesheet">
-	
+
+    <!-- Polyfill -->
+    <script src="./assets/js/minifill.js"> </script>
+    	
 	<!-- legacy browsers support via polyfill 
 	<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
 	<!--[if IE]>
-		<script src="https://cdn.jsdelivr.net/minifill/0.0.2/minifill.min.js"> </script>
 		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 	<![endif]-->
 </head>
@@ -45,17 +47,38 @@
       <div class="content-wrap">
 		<a href="index.html"><h1>KUTE.<span>js</span></h1></a>
 		<ul class="nav">
-			<li><a href="features.html">Features</a></li>
-			<li class="active"><a href="examples.html">Examples</a></li>
-			<li><a href="api.html">API</a></li>
+			<li class="btn-group"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="features.html">Feature Overview</a></li>
+                    <li><a href="properties.html">Supported Properties</a></li>
+                </ul>            
+            </li>
+			<li class="btn-group active">
+                <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li class="active"><a href="examples.html">Core Engine</a></li>
+                    <li><a href="css.html">CSS Plugin </a></li>
+                    <li><a href="svg.html">SVG Plugin </a></li>
+                    <li><a href="attr.html">Attributes Plugin </a></li>
+                </ul>
+            </li>
+			<li class="btn-group">
+                <a href="#" data-function="toggle">API <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="start.html">Getting Started</a></li>
+                    <li><a href="api.html">Public Methods</a></li>
+                    <li><a href="easing.html">Easing Functions</a></li>
+                    <li><a href="extend.html">Extend Guide</a></li>
+                </ul>
+            </li>
 			<li><a href="about.html">About</a></li>
 		</ul>
       </div>
     </div>
 
 	<div class="content-wrap">
-		<h2>Quick Examples</h2>
-		<p>KUTE.js can be used in most cases with native Javascript, but also with jQuery. So, before we head over to the more advanced examples, let's have a quick look at these two basic examples here. <strong>Note</strong>: the examples are posted on <a href="http://codepen.io/thednp/pens/public/" target="_blank">codepen</a>.</p>
+		<h2>Core Engine</h2>
+		<p>KUTE.js core engine can animate by itself a great deal of CSS properties as well as scroll. You can do it all with native Javascript or with jQuery, but before we head over to the more advanced examples, let's have a quick look at these two basic examples here. <strong>Note</strong>: the examples are posted on <a href="http://codepen.io/thednp/pens/public/" target="_blank">codepen</a>.</p>
 		
 		<h3>Basic Native Javascript Example</h3>
 		<p>When developing with native Javascript, a very basic syntax goes like this:</p>
@@ -65,13 +88,15 @@
 var tween = KUTE.fromTo('selector', {left: 0}, {left: 100}, {yoyo: true});</code>
 </pre>
 
-		<p>Now the tween object is created, it's a good time for you to know that via Native Javascript we <strong>always</strong> animate the first HTML element only, even if you're using a class selector. To create/control a tween for multiple elements such as <code>querySelectorAll()</code> or <code>getElementsByTagName()</code>, you need to do a <code>for ()</code> loop. Now let's apply the tween control methods:</p>
+		<p>Now the tween object is created, it's a good time for you to know that via Native Javascript we <strong>always</strong> animate the first HTML element only, even if you're using a class selector. To create/control a tween for multiple elements such as <code>querySelectorAll()</code> or <code>getElementsByTagName()</code>, you need to do a <code>for ()</code> loop, or make use of the two new methods: <code>.allTo()</code> or <code>.allFromTo()</code>. Now let's apply the tween control methods:</p>
+
 <pre><code class="language-javascript">tween.start(); // starts the animation
 tween.stop(); // stops current tween and all chained tweens animating
 tween.pause(); // pauses current tween animation
 tween.play(); // or tween.resume(); resumes current tween animation
 tween.chain(tween2); // when tween animation finished, you can trigger the start of another tween
 </code></pre>
+
 		<p>The demo for the above example is  <a href="http://codepen.io/thednp/pen/Bozbgg" target="_blank">here</a>.</p>
 		
 		<h3>Basic jQuery Example</h3>
@@ -88,10 +113,10 @@ $(tween).KUTE('chain',myTween2); // when tween animation finished, you can trigg
 </code></pre>
 		<p>The demo for the above example is <a href="http://codepen.io/thednp/pen/dYXLyj" target="_blank">here</a>.</p>
 		
-		<h2>Transform Properties Examples</h2>
+		<h3>Transform Properties Examples</h3>
 		<p>KUTE.js supports almost all about <code>transform</code> as described in the <a href="http://www.w3.org/TR/css3-transforms/" target="_blank">spec</a>: the 2D <code>translate</code>, <code>rotate</code>, <code>skewX</code>, <code>skewY</code> and <code>scale</code>, as well as the 3D <code>translateX</code>, <code>translateY</code>, <code>translateZ</code>, <code>translate3d</code>, <code>rotateX</code>, <code>rotateX</code>, <code>rotateY</code>, <code>rotateZ</code> properties. Additionally it allows you to set a <code>perspective</code> for the element or it's parent as well as a <code>perpective-origin</code> for the element or it's parent.</p>
 		
-		<h3>Translations</h3>
+		<h4>Translations</h4>
 		<p>In the next example the first box is moving to left 250px with <code>translate</code> property, the second box is moving to the right by 200px using <code>translateX</code> and the third box is moving to the bottom using <code>translate3d</code>. The last box also uses <code>translate3d</code> but requires a <code>perspective</code> value for the animation on the Z axis to be effective.</p>
 <pre><code class="language-javascript">var tween1 = KUTE.fromTo('selector1',{translate:0},{translate:-250}); // or translate:[x,y] for both axis
 var tween2 = KUTE.fromTo('selector2',{translateX:0},{translateX:200});
@@ -99,58 +124,59 @@ var tween3 = KUTE.fromTo('selector3',{translate3d:[0,0,0]},{translate3d:[0,100,0
 var tween4 = KUTE.fromTo('selector4',{translate3d:[0,0,0]},{translate3d:[0,0,-100]},{parentPerspective: 100});
 </code></pre>
 		<p>And here is how it looks like:</p>
-		<div class="featurettes">
-			<div data-property-translate="170" class="example-item example-box bg-indigo">2D</div>
-			<div data-property-translate-x="-170" class="example-item example-box bg-olive">X</div>
-			<div data-property-translate3d="[0,170,0]" class="example-item example-box bg-pink">Y</div>
-			<div data-property-translate3d="[0,0,-100]" data-option-parent-perspective="200" class="example-item example-box bg-red">Z</div>
+		<div id="translate-examples" class="featurettes">
+			<div class="example-item example-box bg-indigo">2D</div>
+			<div class="example-item example-box bg-olive">X</div>
+			<div class="example-item example-box bg-pink">Y</div>
+			<div class="example-item example-box bg-red">Z</div>
 				
 			<div class="example-buttons">
-				<a class="btn btn-blue" href="#">Start</a>	
+				<a class="btn btn-blue" href="javascript:void(0)">Start</a>	
 			</div>
 		</div>
 		
 		<p>As you can see in your browsers console, for all animations <code>translate3d</code> is used, as explained in the <a href="features.html">features page</a>. Also the first example that's using the 2D <code>translate</code> for both vertical and horizontal axis even if we only set X axis. You can download this example <a href="http://codepen.io/thednp/share/zip/rOLbyY">here</a>.</p>
 		<p><strong>Remember</strong>: stacking <code>translate</code> and <code>translate3d</code> together may not work and IE9 does not support <code>perspective</code>.</p>
 		
-		<h3>Rotations</h3>
+		<h4>Rotations</h4>
 		<p>Next we're gonna animate 4 elements with one axis each element. Unlike translations, KUTE.js does not support <code>rotate3d</code>.</p>
+
 <pre><code class="language-javascript">var tween1 = KUTE.fromTo('selector1',{rotate:0},{rotate:-720});
 var tween2 = KUTE.fromTo('selector2',{rotateX:0},{rotateX:200});
 var tween3 = KUTE.fromTo('selector3',{rotateY:0},{rotateY:160},{perspective:100});
 var tween4 = KUTE.fromTo('selector4',{rotateZ:0},{rotateZ:360});
-</code></pre>		
+</code></pre>
+
 		<p>And here is how it looks like:</p>
-		<div class="featurettes">
-			<div data-property-rotate="-720" class="example-item example-box bg-blue">2D</div>
-			<div data-property-rotate-x="180" class="example-item example-box bg-indigo">X</div>
-			<div data-property-rotate-y="-180" data-option-perspective="200" class="example-item example-box bg-olive">Y</div>
-			<div data-property-rotate-z="360" class="example-item example-box bg-pink">Z</div>
-				
+		<div id="rotExamples" class="featurettes">
+			<div class="example-item example-box bg-blue">2D</div>
+			<div class="example-item example-box bg-indigo">X</div>
+			<div data-option-perspective="200" class="example-item example-box bg-olive">Y</div>
+			<div class="example-item example-box bg-pink">Z</div>
 			<div class="example-buttons">
-				<a class="btn btn-green" href="#">Start</a>	
+				<a class="btn btn-green" href="javascript:void(0)">Start</a>	
 			</div>
 		</div>
 		<p>The <code>rotateX</code> and <code>rotateY</code> are 3D based rotations, so they require a perspective in order to make the browser render proper 3D layers, but in the example they animate different because only the second, Y axis, uses a <code>perspective</code> setting. The rotation on Z axis does not require a perspective. Unlike translations, you can stack all axis rotation for your animation, but we will see that in a later example. You can download this example <a href="http://codepen.io/thednp/share/zip/NGrmMR">here</a>.</p>
 				
-		<h3>Skews</h3>
+		<h4>Skews</h4>
 		<p>KUTE.js supports <code>skewX</code> and <code>skewY</code> so let's animate the two. Since they are 2D transformations, IE9 supports skews.</p>
 <pre><code class="language-javascript">var tween1 = KUTE.fromTo('selector1',{skewX:0},{skewX:20});
 var tween2 = KUTE.fromTo('selector2',{skewY:0},{skewY:45});
-</code></pre>		
+</code></pre>
 		
 		<p>And here is how it looks like:</p>
-		<div class="featurettes">
-			<div data-property-skew-x="-25" class="example-item example-box bg-teal">X</div>
-			<div data-property-skew-y="25" class="example-item example-box bg-green">Y</div>
+		<div id="skewExamples" class="featurettes">
+			<div class="example-item example-box bg-teal">X</div>
+			<div class="example-item example-box bg-green">Y</div>
 				
 			<div class="example-buttons">
-				<a class="btn btn-yellow" href="#">Start</a>	
+				<a class="btn btn-yellow" href="javascript:void(0)">Start</a>	
 			</div>
 		</div>
 		<p>You can download this example <a href='http://codepen.io/thednp/share/zip/wKWbKd/'>here</a>.</p>
 				
-		<h3>Mixed Transformations</h3>
+		<h4>Mixed Transformations</h4>
 		<p>The current specification does not support animating different transform properties with multiple tween objects at the same time, you must stack them all together into a single object. See the example below:</p>
 
 <pre><code class="language-javascript">var tween1 = KUTE.fromTo('selector1',{rotateX:0},{rotateX:20}).start();
@@ -173,19 +199,19 @@ var tween2 = KUTE.fromTo(
 </code></pre>
 		<p>Now you can see we are using the specific transform options, the first tween object uses these settings for an element and the second for its parent.</p>
 
-		<div class="featurettes">
-			<div data-property-translate-x="200" data-property-rotate-x="360" data-property-rotate-y="15" data-property-rotate-z="5" data-option-perspective="400" class="example-item example-box bg-pink" style="line-height: 50px; font-size: 25px;">element perspective 400px</div>
-			<div data-property-translate-x="-200" data-property-rotate-x="360" data-property-rotate-y="15"  data-property-rotate-z="5" data-option-parent-perspective="400" class="example-item example-box bg-orange" style="line-height: 50px; font-size: 25px;">parent perspective 400px</div>
+		<div id="mixTransforms" class="featurettes">
+			<div class="example-item example-box bg-pink" style="line-height: 50px; font-size: 25px;">element perspective 400px</div>
+			<div class="example-item example-box bg-orange" style="line-height: 50px; font-size: 25px;">parent perspective 400px</div>
 				
 			<div class="example-buttons">
-				<a class="btn btn-olive" href="#">Start</a>	
+				<a class="btn btn-olive" href="javascript:void(0)">Start</a>	
 			</div>
 		</div>
 		
 		<p>This example also shows the difference between an element's perspective and a parent's perspective. You can download the above example <a href='http://codepen.io/thednp/share/zip/jbrovv/'>here</a>.</p>
 		
-		<h3>Chained Transformations</h3>
-		<p>I'm gonna insist on the tween chaining feature a bit because when we run animations one after another we are kinda expecting a certain degree of continuity. As explained before, the best solution is the <code>.to()</code> method because it has the ability to <strong>stack</strong> properties found in the element's inline styling, mostly from previous tween animation, and use them as start values for the next tween. It also transfers unchanged values to values end for that same reason. OK now, let's see a side by side comparison with 3 elements:</p>
+		<h4>Chained Transformations</h4>
+		<p>KUTE.js has the ability to stack transform properties as they come in chained tweens because when we run animations one after another we are kinda expecting a certain degree of continuity. As explained before, the best solution is the <code>.to()</code> method because it has the ability to <strong>stack</strong> properties found in the element's inline styling, mostly from previous tween animation, and use them as start values for the next tween. It also transfers unchanged values to values end for that same reason. OK now, let's see a side by side comparison with 3 elements:</p>
 		<div id="chainedTweens" class="featurettes">
 			<div class="example-item example-box bg-gray" style="font-size: 30px">FROMTO</div>
 			<div class="example-item example-box bg-olive" style="font-size: 30px">FROMTO</div>
@@ -208,40 +234,14 @@ var tween2 = KUTE.fromTo(
 			<li>2D and 3D translations would work best in if you provide a value at all times; eg. <code>translate:[x,y]</code> and <code>translate3d:[x,y,z]</code>; for instance using <code>translate:150</code> or <code>translateX:150</code> would mean that all other axis are 0;</li>
 			<li>on larger amount of elements animating chains, the <code>.fromTo()</code> method is fastest, so you will have more work, but can potentially minimize or eliminate any syncronization issues that may occur, as explained in the <a href="features.html">features page</a>;</li>
 			<li>download this example <a href='http://codepen.io/thednp/share/zip/PPWZRL/'>here</a>.</li>
-		</ul>
-
-		<h2>Border Radius</h2>
-		<p>In the example below we are doing some animation on the <code>border-radius</code> property. The first box animates all corners, while the other boxes animate each corner at a time. A quick reminder, for radius properties KUTE.js supports <code>px</code>, <code>%</code> and text properties' units such as <code>em</code> or <code>rem</code>.</p>
-<pre><code class="language-javascript">KUTE.to('selector1',{borderRadius:'100%'}).start();
-KUTE.to('selector2',{borderTopLeftRadius:'100%'}).start();
-KUTE.to('selector3',{borderTopRightRadius:'100%'}).start();
-KUTE.to('selector4',{borderBottomLeftRadius:'100%'}).start();
-KUTE.to('selector5',{borderBottomRightRadius:'100%'}).start();
-</code></pre>		
-
-		<p>And here is how it looks like:</p>
-
-		<div class="featurettes">
-			<div data-property-border-radius="80" class="example-item example-box bg-red">ALL</div>
-			<div data-property-border-top-left-radius="150" class="example-item example-box bg-pink">TL</div>
-			<div data-property-border-top-right-radius="150" data-option-perspective="200" class="example-item example-box bg-olive">TR</div>
-			<div data-property-border-bottom-left-radius="150" class="example-item example-box bg-indigo">BL</div>
-			<div data-property-border-bottom-right-radius="150" class="example-item example-box bg-blue">BR</div>
-				
-			<div class="example-buttons">
-				<a class="btn btn-green" href="#">Start</a>	
-			</div>
-		</div>
-		
-		<p>A quick important reminder here is that KUTE.js does not support shorthands for radius properties. Also early implementations by Mozilla's Firefox browser like <code>-moz-border-radius-topleft</code> are not supported because they were depracated with later versions. Download this example <a href='http://codepen.io/thednp/share/zip/VvpypW/'>here</a>.</p>			
+		</ul>	
 	
-		<h2>Box Model Properties</h2>
-		<p>While KUTE.js supports almost all the box model properties, the next example will animate most common properties, we will focus mostly on size, spacing and position. Other properties such as <code>minWidth</code> or <code>maxHeight</code> require a more complex context and we won't insist on them.</p>
+		<h3>Box Model Properties</h3>
+		<p>KUTE.js core engine supports most used box model properties, and almost all the box model properties via the <a href="css.html">CSS Plugin</a>, so the next example will only animate <code>width</code>, <code>height</code>, <code>top</code> and <code>left</code>.</p>
 <pre><code class="language-javascript">var tween1 = KUTE.to('selector1',{width:200});
 var tween2 = KUTE.to('selector1',{height:300});
 var tween3 = KUTE.to('selector1',{left:250});
 var tween4 = KUTE.to('selector1',{top:100});
-var tween5 = KUTE.to('selector1',{padding:'5%'});
 </code></pre>
 		<p>We're gonna chain these tweens and start the animation. You can download this example <a href='http://codepen.io/thednp/share/zip/xwqYbX/'>here</a>.</p>		
 		<div id="boxModel" class="featurettes">
@@ -255,38 +255,16 @@ var tween5 = KUTE.to('selector1',{padding:'5%'});
 		
 		<p>TIP: the <code>width</code> and <code>height</code> properties used together can be great for <code>scale</code> animation fallback on images for legacy browsers.</p>
 		
-		<h2>Text Properties</h2>
-		<p>OK here we're gonna do a cool example for text properties. Basically the below code would work:</p>
-<pre><code class="language-javascript">var tween1 = KUTE.to('selector1',{fontSize:'200%'});
-var tween2 = KUTE.to('selector1',{line-height:24});
-var tween3 = KUTE.to('selector1',{letter-spacing:50});
-</code></pre>
-		<p>But our example will feature some more than just that. We're gonna animate each character of a given string, with a small delay. The heading will animate <code>fontSize</code> and <code>letterSpacing</code> properties for each character while the button will animate <code>fontSize</code> and <code>lineHeight</code> properties. Watch this:</p>		
-		
-		<div id="textProperties" class="featurettes" style="min-height: 150px">
-			<h1 class="example-item">Howdy!</h1>
-			<a href="javascript:void(0)" class="example-item btn btn-red">Button</a>
-				
-			<div class="example-buttons">
-				<a class="btn btn-pink" href="javascript:void(0)">Start</a>	
-			</div>
-		</div>
-		<p>TIP: this should also work in IE8 as a fallback for scale animation for text. It's not perfect, can be improved for sure, but if it's a must, this would do. Download this example <a href='http://codepen.io/thednp/share/zip/bVqLpb/'>here</a>.</p>
-
-		<h2>Color Properties</h2>
-		<p>The next example is about animating color properties. As for example, check these lines for reference.</p>
-<pre><code class="language-javascript">KUTE.to('selector1',{color:'#069'}).start();
+		<h3>Color Properties</h3>
+		<p>The next example is about animating color properties. As for example, check these lines for reference. Additional color properties such as <code>borderColor</code> or <code>borderLeftColor</code> are supported via the <a href="css.html">CSS Plugin</a>.</p>
+<pre><code class="language-javascript">KUTE.to('selector1',{color:'rgb(0,66,99)'}).start();
 KUTE.to('selector1',{backgroundColor:'#069'}).start();
-KUTE.to('selector1',{borderColor:'rgb(25,25,25)'}).start();
-KUTE.to('selector1',{borderTopColor:'#069'}).start();
-KUTE.to('selector1',{borderRightColor:'rgba(25,25,25,0.25)'}).start();
-KUTE.to('selector1',{borderBottomColor:'#069'}).start();
-KUTE.to('selector1',{borderLeftColor:'#069'}).start();
+KUTE.to('selector1',{backgroundColor:'turquoise'}).start(); // IE9+ only
 </code></pre>
 		<p>Let's get some animation going. Download the example <a href='http://codepen.io/thednp/share/zip/OypvNR/'>here</a>.</p>		
 		
 		<div id="colBox" class="featurettes">
-			<div class="example-item example-box bg-olive" style="width: 135px; height: 135px; border:15px solid #9C27B0; line-height: 105px; font-size:30px">Colors</div>
+			<div class="example-item example-box bg-olive">Colors</div>
 				
 			<div class="example-buttons">
 				<a class="btn btn-blue" href="#">Start</a>	
@@ -294,36 +272,8 @@ KUTE.to('selector1',{borderLeftColor:'#069'}).start();
 		</div>
 
 		<p>A quick reminder: you can also use <code>RGB</code> or <code>RGBA</code>, but the last one is not supported on IE8 and it will fallback to <code>RGB</code>.</p>	
-
-		<h2>Clip Property</h2>
-		<p>This property allows you to animate the rectangular shape of an element that is set to <code>position:absolute</code>. In CSS this property works like this <code>clip: rect(top,right,bottom,left)</code> forming a rectangular shape that masks an element making parts of it invisible.</p>
-<pre><code class="language-javascript">KUTE.to('selector',{clip:[0,150,100,0]}).start();</code></pre>
-		<p>A quick example here could look like this:</p>
 		
-		<div id="clip" class="featurettes" style="min-height: 190px">
-			<div class="example-item example-box bg-red" style="position: absolute; background: url('http://img.dummy-image-generator.com/people/dummy-250x250-Eye.jpg') center center no-repeat;"></div>
-				
-			<div class="example-buttons">
-				<a class="btn btn-olive" href="#">Start</a>	
-			</div>
-		</div>
-		<p><strong>Note</strong> that this would produce no effect for elements that have <code>overflow:visible</code> style rule. Download this example <a href='http://codepen.io/thednp/pen/NGpYmM/'>here</a>.</p>	
-
-		<h2>Background Position</h2>
-		<p>Another property we can animate with KUTE.js is <code>backgroundPosition</code>. Quick example:</p>
-<pre><code class="language-javascript">KUTE.to('selector1',{backgroundPosition:[0,50]}).start();</code></pre>
-		<p>A working example would look like this:</p>
-		
-		<div id="bgPos" class="featurettes">
-			<div class="example-item example-box" style="background: url('http://img.dummy-image-generator.com/abstract/dummy-400x300-Rope.jpg') center center no-repeat;"></div>
-				
-			<div class="example-buttons">
-				<a class="btn btn-lime" href="#">Start</a>	
-			</div>
-		</div>		
-		<p>Download this example <a href='http://codepen.io/thednp/share/zip/EVWEwJ/'>here</a>.</p>
-		
-		<h2>Vertical Scrolling</h2>
+		<h3>Vertical Scrolling</h3>
 		<p>Another property we can animate with KUTE.js is <code>scrollTop</code>. I works for both the window and any scrollable object. Quick example:</p>
 <pre><code class="language-javascript">KUTE.to('selector',{scroll:450}).start(); // for a scrollable element
 KUTE.to('window',{scroll:450}).start(); // for the window
@@ -331,10 +281,10 @@ KUTE.to('window',{scroll:450}).start(); // for the window
 		<p>A working example would work like <a href="http://codepen.io/thednp/pen/bVqKmp/" target="_blank">this</a>. Scroll works with IE8+ and is a unitless property even if these scroll distances are measured in pixels.</p>
 		
 		
-		<h2 id="crossbrowser">Cross Browser Animation Example</h2>
+		<h3 id="crossbrowser">Cross Browser Animation Example</h3>
 		<p>Unlike the examples <a href="http://codepen.io/thednp/pens/public/" target="_blank">hosted on Codepen</a>, most examples here should be supported on legacy browsers. The next example is going to explain more details about how to target browsers according to their supported properties, so stick around. So, if your target audience uses legacy browsers in a significant percent, check to have the proper polyfills and also make sure you target your browsers, here's a <a href="http://browserhacks.com/" target="_blank">complete reference</a>.  Now we are ready:</li>
 		</ul>
-		<h3>Collect Information And Cache It</h3>
+		<h4>Collect Information And Cache It</h4>
 <pre><code class="language-javascript">// grab an HTML element to build a tween object for it 
 var element = document.getElementById("myElement");
 
@@ -348,7 +298,7 @@ var isIE9 = isIE === 9;
 // you include all you need for your target audience
 
 </code></pre>
-		<h3>Define Properties And Options Objects</h3>
+		<h4>Define Properties And Options Objects</h4>
 <pre><code class="language-javascript">// create values and options objects
 var startValues = {};
 var endValues = {};
@@ -390,7 +340,7 @@ options.yoyo = true;
 options.repeat = 1;
 </code></pre>
 
-		<h3>Build Tween Object And Tween Controls</h3>
+		<h4>Build Tween Object And Tween Controls</h4>
 <pre><code class="language-javascript">// the cached object
 var myTween = KUTE.fromTo(element, startValues, endValues, options);
 
@@ -418,7 +368,7 @@ playPauseButton.addEventListener('click', function(e){
 	}  
 }, false);
 </code></pre>
-		<h3>Live Demo</h3>
+		<h4>Live Demo</h4>
 		<div class="featurettes" id="crossBrowser">
 			<div id="myElement" class="example-item example-box bg-yellow">
 				
@@ -437,20 +387,137 @@ playPauseButton.addEventListener('click', function(e){
 			<li>the <code class="bg-olive">RESUME</code> button will use the <code>.resume()</code> method and resumes the animation; this reverses the button's initial state;</li>
 			<li>make sure you work with the conditions properly when you want to pause an animation you MUST check both <code>!myTween.playing</code> and <code>myTween.paused</code> conditions because you could end up with errors.</li>			
 		</ul>
-		
+        
+		<h3>Tween Object Collections</h3>
+		<p>With KUTE.js 1.5.0 new tween object constructor methods were introduced, and they allow you to create a tween object for each element in a collection, a very handy way to ease and speed up the animation programing workflow. Let's have a little fun.</p>
+<pre><code class="language-javascript">// a simple .to() for a collection of elements would look like this
+var myMultiTween1 = KUTE.allTo('selector1',{translate:[0,150]});
+
+// or a more complex .fromTo() example with the two new options
+var myMultiTween2 = KUTE.allFromTo(
+    'selector2',
+    {translate:[0,0], rotate: 0}, 
+    {translate:[0,150], rotate: 360}, 
+    {transformOrigin: '10% 10%', offset: 200 }
+);
+</code></pre>
+		<p>And should looks like this:</p>
+		<div class="featurettes">
+			<div class="example-item example-box example-multi bg-indigo">K</div>
+			<div class="example-item example-box example-multi bg-olive">U</div>
+			<div class="example-item example-box example-multi bg-pink">T</div>
+			<div class="example-item example-box example-multi bg-red">E</div>
+				
+			<div class="example-buttons">
+				<a class="btn btn-green" onclick="startMultiTween();" href="javascript:void(0)">Start</a>	
+			</div>
+		</div>
+		<p>As you can see, we also used the new tween options <code>offset</code> and <code>transformOrigin</code> and they make it so much more easy.</p>
 		<ul id="share" class="nav">
 			<li>Share </li>
 			<li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
 			<li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute.js animation engine by @thednp and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></a></li>
 			<li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
-		</ul>		
+		</ul>
+        
+        <h3>Easing Functions</h3>
+        <p>We've talked about KUTE.js featuring many easing functions, so let's go ahead and create some examples. The first box below will animate with <code>linear</code> easing function and the second will use another function you choose. The example also features some predefined easing functions from the additional plugins: cubic bezier easing and physics based easing functions.</p>
+		<div class="featurettes">
+			<div class="example-item easing-example example-box bg-green">Linear</div>
+			<div class="example-item easing-example example-box bg-pink"></div>
+				
+			<div class="example-buttons">
+                <div class="btn-group">
+				    <a id="easingSelectButton" class="btn btn-red" data-function="toggle" href="#">Select</a>
+                    <ul id="easings">
+                        <li class="titlef">Core Functions</li>
+                        <li>easingSinusoidalIn</li>
+                        <li>easingSinusoidalOut</li>
+                        <li>easingSinusoidalInOut</li>
+                        <li>easingQuadraticIn</li>
+                        <li>easingQuadraticOut</li>
+                        <li>easingQuadraticInOut</li>
+                        <li>easingCubicIn</li>
+                        <li>easingCubicOut</li>
+                        <li>easingCubicInOut</li>
+                        <li>easingQuarticIn</li>
+                        <li>easingQuarticOut</li>
+                        <li>easingQuarticInOut</li>
+                        <li>easingQuinticIn</li>
+                        <li>easingQuinticOut</li>
+                        <li>easingQuinticInOut</li>
+                        <li>easingCircularIn</li>
+                        <li>easingCircularOut</li>
+                        <li>easingCircularInOut</li>
+                        <li>easingExponentialIn</li>
+                        <li>easingExponentialOut</li>
+                        <li>easingExponentialInOut</li>
+                        <li>easingBackIn</li>
+                        <li>easingBackOut</li>
+                        <li>easingBackInOut</li>
+                        <li>easingElasticIn</li>               
+                        <li>easingElasticOut</li>               
+                        <li>easingElasticInOut</li>  
+                        <li class="titlef">Bezier Functions</li>
+                        <li>bezier(0.15, 0.7, 0.2, 0.9)</li>
+                        <li>bezier(0.25, 0.5, 0.6, 0.7)</li>
+                        <li>bezier(0.35, 0.2, 0.9, 0.2)</li>
+                        <li>easeIn</li>
+                        <li>easeOut</li>
+                        <li>easeInOut</li>
+                        <li>easeInSine</li>
+                        <li>easeOutSine</li>
+                        <li>easeInOutSine</li>
+                        <li>easeInQuad</li>
+                        <li>easeOutQuad</li>
+                        <li>easeInOutQuad</li>
+                        <li>easeInCubic</li>
+                        <li>easeOutCubic</li>
+                        <li>easeInOutCubic</li>
+                        <li>easeInQuart</li>
+                        <li>easeOutQuart</li>
+                        <li>easeInOutQuart</li>
+                        <li>easeInQuint</li>
+                        <li>easeOutQuint</li>
+                        <li>easeInOutQuint</li>
+                        <li>easeInExpo</li>
+                        <li>easeOutExpo</li>
+                        <li>easeInOutExpo</li>
+                        <li>easeInCirc</li>
+                        <li>easeOutCirc</li>
+                        <li>easeInOutCirc</li>
+                        <li>easeInBack</li>
+                        <li>easeOutBack</li>
+                        <li>easeInOutBack</li>
+                        <li>slowMo</li>
+                        <li>slowMo1</li>
+                        <li>slowMo2</li>
+                        <li class="titlef">Physics Functions</li>  
+                        <li>physicsIn</li> 
+                        <li>physicsOut</li>  
+                        <li>physicsInOut</li>  
+                        <li>physicsBackIn</li>  
+                        <li>physicsBackOut</li>  
+                        <li>physicsBackInOut</li>  
+                        <li>spring</li>  
+                        <li>bounce</li>  
+                        <li>gravity</li>  
+                        <li>forceWithGravity</li>  
+                        <li>bezier</li>  
+                        <li>multiPointBezier</li>  
+                    </ul>
+                </div>
+				<a id="startEasingTween" class="btn btn-blue" href="#">Start</a>	
+			</div>
+		</div>
+        <p>As you can see, the cubic-bezier easing functions can be used with both presets and as well as strings such as <code>bezier(0.15, 0.7, 0.2, 0.9)</code>. The physics based easing functions have their own presets, but the last 6 are all the examples shown in the <a href="easing.html">API documentation</a>, so make sure to check.</p>   	
 	</div>
 
       <!-- FOOTER -->
      <footer>
 		<div class="content-wrap">
 			<p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
-			<p>&copy; 2007 - 2015 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
+			<p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
 		</div>
     </footer>
 
@@ -466,8 +533,9 @@ playPauseButton.addEventListener('click', function(e){
 <script src="./assets/js/prism.js" type="text/javascript"></script>
 
 <!--<script src="http://cdn.jsdelivr.net/kute.js/0.9.2/kute.full.min.js"></script>  KUTE CDN -->
-<script src="./src/kute.js"></script> <!-- some stuff -->
-<!--<script src="./src/kute-keys.js"></script>  some stuff -->
+<script src="./src/kute.js"></script> <!-- KUTE.js core -->
+<script src="./src/kute-bezier.js"></script> <!-- KUTE.js Bezier Easing -->
+<script src="./src/kute-physics.js"></script> <!-- KUTE.js Physics Easing -->
 <script src="./assets/js/scripts.js"></script> <!-- global scripts stuff -->
 <script src="./assets/js/examples.js"></script> <!-- examples stuff -->
 </body>

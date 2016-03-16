@@ -24,7 +24,10 @@
 
 	<!-- Ion Icons -->
     <link type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
-	
+
+    <!-- Polyfill -->
+    <script src="./assets/js/minifill.js"> </script>
+    	
 	<!-- legacy browsers support via polyfill 
 	<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
 	<!--[if IE]>
@@ -43,9 +46,30 @@
       <div class="content-wrap">
 		<a href="index.html"><h1 class="active">KUTE.<span>js</span></h1></a>
 		<ul class="nav">
-			<li><a href="features.html">Features</a></li>
-			<li><a href="examples.html">Examples</a></li>
-			<li><a href="api.html">API</a></li>
+			<li class="btn-group"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="features.html">Feature Overview</a></li>
+                    <li><a href="properties.html">Supported Properties</a></li>
+                </ul>            
+            </li>
+			<li class="btn-group">
+                <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="examples.html">Core Engine</a></li>
+                    <li><a href="css.html">CSS Plugin </a></li>
+                    <li><a href="svg.html">SVG Plugin </a></li>
+                    <li><a href="attr.html">Attributes Plugin </a></li>
+                </ul>
+            </li>
+			<li class="btn-group">
+                <a href="#" data-function="toggle">API <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="start.html">Getting Started</a></li>
+                    <li><a href="api.html">Public Methods</a></li>
+                    <li><a href="easing.html">Easing Functions</a></li>
+                    <li><a href="extend.html">Extend Guide</a></li>
+                </ul>
+            </li>
 			<li><a href="about.html">About</a></li>
 		</ul>
       </div>
@@ -93,8 +117,8 @@
 			<h2 class="nomarginlarge">At A Glance</h2>
 			<div class="columns hiddenoverflow">
 				<div class="col2">
-					<h3>Killer Performance</h3>
-					<p>KUTE.js is crazy fast with it's <a href="features.html#performance">outstanding performance</a>, with super fast code execution, it's also memory efficient. I made a <a href="performance.html">cool demo</a> to showcase how KUTE.js really scales on performance. </p>
+					<h3>Badass Performance</h3>
+					<p>KUTE.js is crazy fast with it's <a href="features.html#performance">outstanding performance</a> and super fast code execution, it's also memory efficient. I made a <a href="performance.html">cool demo</a> to showcase how KUTE.js really scales on performance. </p>
 				</div>
 				<div class="col2">
 					<h3>Prefix Free</h3>
@@ -104,21 +128,21 @@
 			<div class="columns hiddenoverflow">
 				<div class="col2">
 					<h3>All Browsers Compatible</h3>
-					<p>KUTE.js covers <a href="features.html#compatibiity">all modern browsers</a> with fallback options for legacy browsers. When using <a href="https://polyfill.io/">polyfills</a> and the right <a href="http://browserhacks.com" target="_blank">browser detection</a> you can manage all kinds of <a href="examples.html#crossbrowser">fallback animations</a> for legacy browsers.</p>
+					<p>KUTE.js covers <a href="features.html#compatibility">all modern browsers</a> with fallback options for legacy browsers. When using <a href="https://polyfill.io/">polyfills</a> and the right <a href="http://browserhacks.com" target="_blank">browser detection</a> you can manage all kinds of <a href="examples.html#crossbrowser">fallback animations</a> for legacy browsers.</p>
 				</div>
 				<div class="col2">
 					<h3>Powerful Methods</h3>
-					<p>KUTE.js allows you to create tweens and chainable tweens, gives you tween control methods (stop/pause/resume/restart) and comes with full <a href="features.html#methods">spectrum tween options</a>.</p>
+					<p>KUTE.js allows you to <a href="features.html#methods">create tweens</a> and chainable tweens, gives you tween control methods (start/stop/pause/resume) and comes with full spectrum <a href="api.html#tweenoptions">tween options</a>.</p>
 				</div>
 			</div>
 			<div class="columns hiddenoverflow">
 				<div class="col2">
 					<h3>Packed With Tools</h3>
-					<p>KUTE.js comes with tools to help you configure awesome animations: jQuery plugin, cubic-bezier and physics easing functions, color convertors, and a lot of options to play with.</p>
+					<p>KUTE.js comes with tools to help you configure awesome animations: SVG Plugin, jQuery plugin, cubic-bezier and physics easing functions, color convertors, and you can even <a href="features.html#extensible">extend</a> it yourself.</p>
 				</div>
 				<div class="col2">
 					<h3>Plenty Of Properties</h3>
-					<p>KUTE.js covers all animation needs such as <code>transform</code>, <code>scroll</code> (window or other elements), colors (border, background and text), <code>border-radius</code>, almost the full box model and also text properties.</p>
+					<p>KUTE.js covers all animation needs such as SVG morph and other specific CSS properties, then <code>transform</code>, <code>scroll</code>, <code>border-radius</code>, and almost the full box model and also text properties.</p>
 				</div>
 			</div>
 			<div class="columns hiddenoverflow">	
@@ -168,7 +192,7 @@
      <footer>
 		<div class="content-wrap">
 			<p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
-			<p>&copy; 2007 - 2015 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
+			<p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
 		</div>
     </footer>
 
@@ -182,8 +206,9 @@
 <!-- Placed at the end of the document so the pages load faster -->	
 <!--<script src="http://cdn.jsdelivr.net/kute.js/0.9.5/kute.min.js"></script>  KUTE CDN -->
 
-<script src="./src/kute.js"></script> <!-- KUTE local -->
-<script src="./assets/js/home.js"></script> <!-- some stuff -->
+<script src="./src/kute.js"></script> <!-- KUTE.js core -->
+<script src="./src/kute-css.js"></script> <!-- KUTE.js CSS Plugin -->
 <script src="./assets/js/scripts.js"></script> <!-- some stuff -->
+<script src="./assets/js/home.js"></script> <!-- some stuff -->
 </body>
 </html>
