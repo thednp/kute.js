@@ -238,6 +238,7 @@ var multiMorph3 = KUTE.to('#w12', { path: '#w23' }).start();
            <li>Large displays would need best resolution possible so a small <code>morphPrecision</code> value (1-10) would be required, assuming performant hardware are powering the displays. For small displays you can get quite comfortable with almost any value, including the default value.</li>
            <li>Faster animation speed could be a great trick to hide any polygonal "artefacts".</li>
            <li>Always use the <code>showMorphInfo:true</code> tween option to check how the values required for the morph change with every new option value, but <strong>never forget to disable it</strong> after you have optimized the morph to your liking, this option enables a function that detects the best index for points rotation that is very expensive and delays the animation for quite some time.</li>
+           <li>The SVG morph performance is the same for both <code>.to()</code> and <code>.fromTo()</code> methods because the processing of the two paths happens on tween start delaying the animation, so keep that in mind when working with syncing multiple tweens, the morph will always start later.</li>
         </ul>
         
 		<h3>Drawing Stroke</h3>
