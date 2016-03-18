@@ -21,17 +21,30 @@ You can install this through NPM or bower respectively:
 You can use this module through any of the common javascript module systems. For instance:
 
 ```javascript
-// NodeJS/CommonJS style
+// CommonJS style
+//grab the core
 var kute = require("kute.js");
+// Add SVG Plugin
+require("kute.js/kute-svg");
+// Add CSS Plugin
+require("kute.js/kute-css");
+// Add Attributes Plugin
+require("kute.js/kute-attr");
+// Add Text Plugin
+require("kute.js/kute-text");
 // Add Bezier Easing
 require("kute.js/kute-bezier");
 // Add Physics Easing
 require("kute.js/kute-physics");
 
-// AMD
+// AMD style
 define([
-    "kute.js",
+    "kute.js", // core engine
     "kute.js/kute-jquery.js", // optional for jQuery apps
+    "kute.js/kute-svg.js", // optional for SVG morph, draw and other SVG related CSS
+    "kute.js/kute-css.js", // optional for additional CSS properties
+    "kute.js/kute-attr.js", // optional for animating presentation attributes
+    "kute.js/kute-text.js" // optional for string write and number incrementing animations
     "kute.js/kute-bezier.js", // optional for more accurate easing functions
     "kute.js/kute-physics.js" // optional for more flexible & accurate easing functions
 ], function(KUTE){
