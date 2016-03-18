@@ -92,6 +92,32 @@
 $ bower install --save kute.js
 </code></pre>
 
+		<h3>Require and CommonJS</h3>
+<pre><code class="language-javascript">// CommonJS style
+var kute = require("kute.js"); //grab the core
+require("kute.js/kute-svg"); // Add SVG Plugin
+require("kute.js/kute-css"); // Add CSS Plugin
+require("kute.js/kute-attr"); // Add Attributes Plugin
+require("kute.js/kute-text"); // Add Text Plugin
+require("kute.js/kute-bezier"); // Add Bezier Easing
+require("kute.js/kute-physics"); // Add Physics Easing
+</code></pre>
+
+<pre><code class="language-javascript">// AMD style
+define([
+    "kute.js",
+    "kute.js/kute-jquery.js", // optional for jQuery apps
+    "kute.js/kute-svg.js", // optional for SVG morph, draw and other SVG related CSS
+    "kute.js/kute-css.js", // optional for additional CSS properties
+    "kute.js/kute-attr.js", // optional for animating presentation attributes
+    "kute.js/kute-text.js" // optional for string write and number incrementing animations
+    "kute.js/kute-bezier.js", // optional for more accurate easing functions
+    "kute.js/kute-physics.js" // optional for more flexible & accurate easing functions
+], function(KUTE){
+    // ...
+});
+</code></pre>
+        
 		<h3>Websites</h3>
 		<p>In your website add the following code, the best would be to put it at the end of your <code>body</code> tag:</p>
 <pre><code class="language-markup">&lt;script src="https://cdn.jsdelivr.net/kute.js/1.5.0/kute.min.js">&lt;/script> &lt;!-- core KUTE.js --></code></pre>
@@ -102,6 +128,7 @@ $ bower install --save kute.js
 &lt;script src="https://cdn.jsdelivr.net/kute.js/1.5.0/kute-physics.min.js">&lt;/script> &lt;!-- Physics Easing Functions -->
 &lt;script src="https://cdn.jsdelivr.net/kute.js/1.5.0/kute-css.min.js">&lt;/script> &lt;!-- CSS Plugin -->
 &lt;script src="https://cdn.jsdelivr.net/kute.js/1.5.0/kute-svg.min.js">&lt;/script> &lt;!-- SVG Plugin -->
+&lt;script src="https://cdn.jsdelivr.net/kute.js/1.5.0/kute-text.min.js">&lt;/script> &lt;!-- Text Plugin -->
 &lt;script src="https://cdn.jsdelivr.net/kute.js/1.5.0/kute-attr.min.js">&lt;/script> &lt;!-- Attributes Plugin -->
 </code></pre>
 		<p>Your awesome animation coding would follow after these script links.</p>		
