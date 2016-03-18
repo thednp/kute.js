@@ -58,6 +58,7 @@
                     <li><a href="examples.html">Core Engine</a></li>
                     <li><a href="css.html">CSS Plugin </a></li>
                     <li><a href="svg.html">SVG Plugin </a></li>
+                    <li><a href="text.html">Text Plugin </a></li>
                     <li><a href="attr.html">Attributes Plugin </a></li>
                 </ul>
             </li>
@@ -66,6 +67,7 @@
                 <ul class="subnav">
                     <li><a href="start.html">Getting Started</a></li>
                     <li><a href="api.html">Public Methods</a></li>
+                    <li><a href="options.html">Tween Options</a></li>
                     <li><a href="easing.html">Easing Functions</a></li>
                     <li><a href="extend.html">Extend Guide</a></li>
                 </ul>
@@ -79,10 +81,10 @@
 	<div class="content-wrap">	
 		<div class="columns welcome">
 			<div class="col2 table">
-				<div class="cell">
-					<h2 class="nomargin">Welcome Developers!</h2>
-					<p class="lead">KUTE.js is a Javascript animation engine with top performance, memory efficient &amp; modular code. It delivers a whole bunch of tools to help you create great custom animations.</p> 
-					<p>	
+				<div class="frontpage">
+					<h2 class="nomargin"></h2>
+					<p class="lead"></p> 
+					<p class="btns">	
 						<a class="btn btn-blue" href="https://github.com/thednp/kute.js/archive/master.zip">Download</a>
 						<a class="btn" href="https://github.com/thednp/kute.js">Github</a>
 						<a class="btn" href="http://www.jsdelivr.com/#!kute.js">CDN</a>
@@ -122,7 +124,7 @@
 				</div>
 				<div class="col2">
 					<h3>Prefix Free</h3>
-					<p>KUTE.js can detect if the user's browser requires prefix and <a href="features.html#prefix">uses it accordingly</a> for <code>requestAnimationFrame</code>, <code>transform</code> and <code>border-radius</code>, hustle free for older Gecko/Webkit/IE browsers.</p>
+					<p>KUTE.js can detect if the user's browser requires prefix and <a href="features.html#prefix">uses it accordingly</a> for <code>transform</code> and <code>border-radius</code>, and even use the utilities yourself, so hustle free for older Gecko/Webkit/IE browsers.</p>
 				</div>
 			</div>
 			<div class="columns hiddenoverflow">
@@ -132,17 +134,17 @@
 				</div>
 				<div class="col2">
 					<h3>Powerful Methods</h3>
-					<p>KUTE.js allows you to <a href="features.html#methods">create tweens</a> and chainable tweens, gives you tween control methods (start/stop/pause/resume) and comes with full spectrum <a href="api.html#tweenoptions">tween options</a>.</p>
+					<p>KUTE.js allows you to <a href="features.html#methods">create tweens</a> and chainable tweens, gives you tween control methods (start/stop/pause/resume) and comes with full spectrum <a href="options.html">tween options</a>.</p>
 				</div>
 			</div>
 			<div class="columns hiddenoverflow">
 				<div class="col2">
 					<h3>Packed With Tools</h3>
-					<p>KUTE.js comes with tools to help you configure awesome animations: SVG Plugin, jQuery plugin, cubic-bezier and physics easing functions, color convertors, and you can even <a href="features.html#extensible">extend</a> it yourself.</p>
+					<p>KUTE.js comes with tools to help you configure awesome animations: CSS / SVG / ATTR Plugins, jQuery plugin, easing functions, color convertors, and you can even <a href="features.html#extensible">extend</a> it yourself.</p>
 				</div>
 				<div class="col2">
 					<h3>Plenty Of Properties</h3>
-					<p>KUTE.js covers all animation needs such as SVG morph and other specific CSS properties, then <code>transform</code>, <code>scroll</code>, <code>border-radius</code>, and almost the full box model and also text properties.</p>
+					<p>KUTE.js covers <a href="properties.html">all animation needs</a> such as SVG morph and other specific CSS properties, then <code>transform</code>, <code>scroll</code>, <code>border-radius</code>, and almost the full box model and also text properties.</p>
 				</div>
 			</div>
 			<div class="columns hiddenoverflow">	
@@ -169,7 +171,7 @@
 			<div class="col3">
 				<span class="ion-ios-paper media"></span>
 				<h3>Documentation</h3>
-				<p>The <a href="api.html">API documentation</a> is here for you to get you started.</p>
+				<p>The <a href="start.html">API documentation</a> is here for you to get you started.</p>
 			</div>
 
 			<div class="col3">
@@ -208,6 +210,7 @@
 
 <script src="./src/kute.js"></script> <!-- KUTE.js core -->
 <script src="./src/kute-css.js"></script> <!-- KUTE.js CSS Plugin -->
+<script src="./src/kute-text.js"></script> <!-- KUTE.js CSS Plugin -->
 <script src="./assets/js/scripts.js"></script> <!-- some stuff -->
 <script src="./assets/js/home.js"></script> <!-- some stuff -->
 </body>

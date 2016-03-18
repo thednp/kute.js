@@ -17,8 +17,8 @@
   }
 })(function(KUTE){
   var K = window.KUTE, p,
-    _br = K.property('borderRadius'), _brtl = K.property('borderTopLeftRadius'), _brtr = K.property('borderTopRightRadius'),
-    _brbl = K.property('borderBottomLeftRadius'), _brbr = K.property('borderBottomRightRadius'), // all radius props prefixed
+    _br = K.property('borderRadius'), _brtl = K.property('borderTopLeftRadius'), _brtr = K.property('borderTopRightRadius'), // all radius props prefixed
+    _brbl = K.property('borderBottomLeftRadius'), _brbr = K.property('borderBottomRightRadius'),
     _cls = ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
     _rd  = ['borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'], // border radius px/any
     _bm  = ['right', 'bottom', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 
@@ -45,7 +45,7 @@
     }
   }
   
-  // create prepare/render functions for additional colors properties
+  // create prepare/process/render functions for additional colors properties
   for (var i = 0, l = _cls.length; i<l; i++) {
     p = _cls[i];
     K.pp[p] = function(p,v) {
@@ -74,7 +74,7 @@
     };
   }
   
-  // create prepare/render functions for additional box model properties
+  // create prepare/process/render functions for additional box model properties
   for (var i = 0, l = _mg.length; i<l; i++) {
     p = _mg[i];
     K.pp[p] = function(p,v){
@@ -90,7 +90,7 @@
     };
   }
   
-  //create prepare/render functions for radius properties
+  //create prepare/process/render functions for radius properties
   for (var i = 0, l = _rd.length; i<l; i++) {
     p = _rd[i];
     K.pp[p] = function(p,v){

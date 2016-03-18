@@ -50,6 +50,7 @@
                     <li><a href="examples.html">Core Engine</a></li>
                     <li><a href="css.html">CSS Plugin </a></li>
                     <li><a href="svg.html">SVG Plugin </a></li>
+                    <li><a href="text.html">Text Plugin </a></li>
                     <li><a href="attr.html">Attributes Plugin </a></li>
                 </ul>
             </li>
@@ -58,6 +59,7 @@
                 <ul class="subnav">
                     <li><a href="start.html">Getting Started</a></li>
                     <li><a href="api.html">Public Methods</a></li>
+                    <li><a href="options.html">Tween Options</a></li>
                     <li><a href="easing.html">Easing Functions</a></li>
                     <li><a href="extend.html">Extend Guide</a></li>
                 </ul>
@@ -88,8 +90,8 @@
 		</ol>
 		<p>Basically, this is it!</p>
 		
-		<h2 id="performance">A Word On Performance</h2>
-		<p>As said before, performance varies from case to case; this chapter aims to explain what you should expect working with animation engines in these various scenarios at maximum stress, usually when your CPU cooler starts to work really hard, and how scalable performance can really be on various machines, operating systems or mobile devices.</p>
+		<h2 id="performance">A Note On Performance</h2>
+		<p>As said before, performance varies from case to case; this chapter aims to explain what you should expect working with animation engines in these various scenarios at maximum stress, usually when your CPU cooler starts to work really hard, and how scalable performance can really be on various machines, operating systems or mobile devices. We'll dig into each case, by property type or anything that can be considered a factor of influence.</p>
 		
 		<h3>Function Nesting</h3>
 		<p>This could be one of the most important factors that influence performance, because we neglect this fact most of the time and changing the scope of an animation engine is important to look after. A quick example would be when we create tween objects on events such as <code>click</code>, <code>scroll</code> or <code>resize</code>, we basically set a totally different scope for the animation and we fill the memory with large chunks of trash/jank, especially on events like <code>resize</code>.</p> 
@@ -107,7 +109,7 @@
 		<h3>Box Model</h3>
 		<p><span class="ion-nuclear media"></span>We compared position with transition above, but now we are going to talk about other issues related to <strong>resizers</strong>: <code>width</code>, <code>height</code>, <code>margin</code>, <code>padding</code> and <code>borderWidth</code> or any of their variations. The code execution is super fast, but when resizing the window while animations are running, the browser is also computing the resize handlers, the animation performance is very very low on <strong>all</strong> browsers, especially when you animate these resize properties. When this <strong>toxic combination</strong> occurs animating a large amount of elements to animate could crash any browser, no exception, and I think any developer should know about this.</p>
 		<p>The <code>resize</code> event triggered by these resizer properties can cause some <strong>severe issues with legacy browsers</strong> such as IE8. These good old browsers don't understand much about Javascript driven layout changes and thus skip/fail to execute any handlers attached to window resize event bubbles.</p> 
-		<p>A workaound the resizers effect on the layout would be to use them only for absolute positioned elements, this way the layout will not need to be repainted and the recomposition is limited to the element itself. If not, and you are required to provide legacy support, you must DISABLE any resize handlers for IE8 and any other browser that runs slow or crashes. You should also consider not using any resize animation for legacy browsers especially when usability and larger reach is expected.</p>
+		<p>A workaound for the resizers' effect on the layout would be to use them only for absolute positioned elements, this way the layout will not need to be repainted and the recomposition is limited to the elements themselves. If not, and you are required to provide legacy support, you must DISABLE any resize handlers for IE8 and any other browser that runs slow or crashes. You should also consider not using any resize animation for legacy browsers especially when usability and larger reach is expected.</p>
 		
 		<h3>RGB and HEX</h3>
 		<p><span class="ion-android-color-palette media"></span>When animating any color property such as (text) <code>color</code> or <code>background-color</code>, KUTE.js always uses/converts to RGB/RGBA, but there is a <code>keepHex:true</code> tween option that overrides that. Still some browsers such as Chrome will still show you the computed style for your color as RGB no matter what. The conversion process will decrease performance, making <kbd>RGB</kbd> the <strong>winner</strong>.</p>
@@ -123,6 +125,10 @@
 		<p><span class="ion-trash-a media"></span>The goal of the development strategy is to be able to execute the script, update layout and repaint, all under 16 miliseconds, so that the animation runs constantly at 60fps. However running some repeatable animations for a large amount of elements would really give garbage collectors a lot of work and thus some frames take more than 16 miliseconds. The more properties and/or elements, the more work.</p>		
 		<p>While garbage collection is a great way modern browsers use to clean the memory, sometimes the garbage collector can jump in anytime, cousing drops in the order of miliseconds. Still, if it's the case, there are ways to help composing the layout faster, but we will see that in the performance testing <a href="performance">page</a>.</p>
 	
+		<h3>Property Value Complexity</h3>
+		<p>Just like the high amount of simultaneous animations influence performance, the property value complexity is also an important factor. If we were to compare all the supported properties in terms of complexity, the list would go like this (from most expensive to least): path morphing, regular transform, matrix3d (not yet supported), box-shadow / text-shadow,  colors, box model<span style="color:red">*</span>, unitless props (scroll, opacity).</p>
+        <p>The <span style="color:red">*</span> wants to emphasize the fact that box model properties of type resizers have additional performance drawbacks as discussed in a previous chapter.</p>
+        
 		<h3>OSs, Desktops and Mobiles</h3>
 		<p><span class="ion-social-tux media"></span>The performance tests have been performed mainly on Microsoft Windows 8.1 and Ubuntu Linux 14.04 Trusty Tahr with latest nVidia graphics drivers on both OSs, all set up for maximum performance. The browsers are obviously Firefox (both OSs), Google Chrome (both OSs), Opera (both OSs) and IE11 (Win8).</p> 
 		<p><span class="ion-social-windows media"></span>The results show <strong>Windows</strong> based browsers came better than Ubuntu based ones, mainly because of DirectX and better drivers that greatly improve hardware accelerated graphics, while Linux still faces some noticeable issues with vertical sync among many others, but hey it's a work in progress and it's open source!</p>
@@ -141,7 +147,7 @@
 		<h2>KUTE.js Project</h2>
 		<p>KUTE.js continues what was started with <strong>jQueryTween</strong> (removed) and the main goal is to improve usability, compatibility, code quality and performance. KUTE.js includes a jQuery plugin to help you easily implement it in your jQuery applications, and also packs a set of tools such as bezier and physics based easing functions, all elegantly packed for convenience and distributed via CDN.</p>
 		<p>It all started with a fork of the popular <a href="https://github.com/tweenjs/tween.js" target="_blank">tween.js</a> and ended up having a KUTE.js version 0.9.5 that's almost as good as the boss, <a href="https://greensock.com" target="_blank">GSAP</a>, at least in terms of performance and browser support. TweenMax have been an outstanding source of wonderful coding practices, and a very tough competitor.</p>
-		<p>In the hystory of the making there were consistent contributions of <a href="https://github.com/dalisoft" target="_blank">Dav</a> aka @dalisoft for features such as play &amp; pause, as well as for performance related issues. Generally I would stress that the code is a joint work of me and Dav. Big thanks Dav, well done.</p>
+		<p>In the hystory of the making there were consistent contributions of <a href="https://github.com/dalisoft" target="_blank">Dav</a> aka @dalisoft for features such as play &amp; pause, <a href="text.html">Text Plugin</a>, as well as for performance related issues. Generally I would stress that the code is a joint work of me and Dav. Big thanks Dav, well done.</p>
 		<p>Also I would like to thank <a href="http://ingwie.me/" target="_blank">Ingwie Phoenix</a> for the npm/Bower and UMD implementations.</p>
 		
 		<ul id="share" class="nav">

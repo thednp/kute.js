@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<!--[if IE 7]><html class="ie ie7" lang="en"><![endif]-->
+<!--[if IE 8]><html class="ie ie8" lang="en"><![endif]-->
+<!--[if IE 9]><html class="ie ie9" lang="en"><![endif]-->
+
+<!--[if !IE ]><!--> <html lang="en"> <!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="KUTE.js tween options refference on most common options as well as property or plugin specific.">
+    <meta name="keywords" content="kute,kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
+    <meta name="author" content="dnp_theme">
+    <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
+
+    <title>KUTE.js Tween Options | Javascript Animation Engine</title>
+	
+    <!-- RESET CSS -->
+    <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
+	
+    <!-- DEMO KUTE CSS -->
+    <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
+
+	<!-- Ion Icons -->
+    <link type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+		
+	<!-- Synthax highlighter -->
+	<link href="./assets/css/prism.css" rel="stylesheet">	
+
+    <!-- Polyfill -->
+    <script src="./assets/js/minifill.js"> </script>
+    
+	<!-- legacy browsers support via polyfill 
+	<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
+	<!--[if IE]>
+		<script src="https://cdn.jsdelivr.net/minifill/0.0.2/minifill.min.js"> </script>
+		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	<![endif]-->
+	
+</head>
+
+<body>
+  <div class="fill overlay"></div>
+  
+  <div class="site-wrapper">
+ 
+	<div class="navbar-wrapper">
+      <div class="content-wrap">
+		<a href="index.html"><h1>KUTE.<span>js</span></h1></a>
+		<ul class="nav">
+			<li class="btn-group"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="features.html">Feature Overview</a></li>
+                    <li><a href="properties.html">Supported Properties</a></li>
+                </ul>            
+            </li>
+			<li class="btn-group">
+                <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="examples.html">Core Engine</a></li>
+                    <li><a href="css.html">CSS Plugin </a></li>
+                    <li><a href="svg.html">SVG Plugin </a></li>
+                    <li><a href="text.html">Text Plugin </a></li>
+                    <li><a href="attr.html">Attributes Plugin </a></li>
+                </ul>
+            </li>			
+			<li class="btn-group active">
+                <a href="#" data-function="toggle">API <span class="caret"></span></a>
+                <ul class="subnav">
+                    <li><a href="start.html">Getting Started</a></li>
+                    <li><a href="api.html">Public Methods</a></li>
+                    <li class="active"><a href="options.html">Tween Options</a></li>
+                    <li><a href="easing.html">Easing Functions</a></li>
+                    <li><a href="extend.html">Extend Guide</a></li>
+                </ul>
+            </li>
+			<li><a href="about.html">About</a></li>
+		</ul>
+      </div>
+    </div>
+
+	<div class="content-wrap">
+		<h2 id="tweenoptions">Tween Options</h2>
+		<h3>Common Options</h3>
+        <p>These options affect all types of tweens, no matter the properties used or context.</p>
+        <ul>
+            <li><kbd>duration: 500</kbd> option allows you to set the animation duration in miliseconds. The default value is <strong>700</strong>.</li>
+            <li><kbd>repeat: 20</kbd> option allows you to run the animation of given tween multiple times. The default value is <strong>0</strong>.</li>
+            <li><kbd>delay: 500</kbd> option allows you to delay the tween animation for a certain number of miliseconds. The default value is <strong>0</strong>.</li>
+            <li><kbd>offset: 200</kbd> option is only for <code>.allTo()</code> and <code>.allFromTo()</code> methods. This allows you to set a base delay in miliseconds that increases with each element in the collection. This has no effect on other methods and the default value is <strong>0</strong>.</li>
+            <li><kbd>repeatDelay: 500</kbd> option allows you to set a number of miliseconds delay between repeatable animations. If <code>repeat</code> option is set to <strong>0</strong>, will produce no effect. The default value is <strong>0</strong>.</li>		
+            <li><kbd>yoyo: true/false</kbd> option makes use of the internal reverse functionality to also animate from <b>end</b> to <b>start</b> for a given tween. This option requires that you use the <code>repeat</code> option with at least value <b>1</b>. The default value is <strong>false</strong>.</li>
+            <li><kbd>easing: 'easingCubicInOut'</kbd> option allows you to use a custom easing function for your animation. For more info on the easing functions, you need to see the example pages. The default value is <strong>linear</strong>.</li>
+        </ul>
+
+		<h3>Transform Options</h3>
+		<p>These options only affect animation involving any 3D property from CSS3 <code>transform</code> and have no effect on other CSS properties. While you can set <code>perspective</code> or <code>perspective origin</code> via CSS, these options are here to help, especially with full browser support and preffix free handling.</p>
+        <ul>
+            <li><kbd>perspective: 500</kbd> option allows you to set a 3D transformation <code>perspective</code> for a given HTML element. No default value.</li>
+            <li><kbd>perspectiveOrigin: "50% 50%"</kbd> option allows you to set a <code>perspectiveOrigin</code> for a given HTML. This option has no default value and only accepts valid CSS values according to it's specs.</li>
+            <li><kbd>parentPerspective: 500</kbd> option allows you to set a 3D <code>perspective</code> for the <strong>parent</strong> of the HTML element subject to the transform animation.</li>
+            <li><kbd>parentPerspectiveOrigin: "50% 50%"</kbd> option allows you to set a <code>perspectiveOrigin</code> for the parent of the HTML element subject to the transform animation. Also like the above similar options, this options only accepts valid CSS values.</li>
+            <li><kbd>transformOrigin: "50% 50%"</kbd> option allows you to set a <code>transformOrigin</code> for the HTML element subject to the transform animation. Also this options only accepts valid CSS values.</li>
+        </ul>
+
+		<h3>SVG Plugin Options</h3>
+		<p>The following options only affect animation of the <code>path</code> tween property, to customize the SVG morph animation. See <a href="svg.html">SVG Plugin</a> page.</p>
+        <ul>
+            <li><kbd>showMorphInfo: true</kbd> when <code>true</code> the script will log information about the morph in order to help you maximize/customize the morph.</li>
+            <li><kbd>morphPrecision: Number</kbd> option allows you to set the sampling size of the morph. The lesser value the better visual but the more power required.</li>
+            <li><kbd>morphIndex: Number</kbd> option allows you to rotate the second/end path in a way that the points travel the least possible distance during morph, and as an effect the morph animation feel more "natural".</li>
+            <li><kbd>reverseFirstPath: true</kbd> when is <code>true</code> this option allows you to reverse the draw direction of the FIRST shape.</li>
+            <li><kbd>reverseSecondPath: true</kbd> when is <code>true</code> this option allows you to reverse the draw direction of the SECOND shape.</li>
+        </ul>
+
+		<h3>Text Plugin Options</h3>
+		<p>The only option for the plugin is the <kbd>textChars</kbd> option for the <kbd class="bg-olive">text</kbd> property and allows you to set the characters set for the scrambling character during the animation. See <a href="text.html">Text Plugin</a> page for more instructions and demo.</p>
+        
+		<h3>Callback Options</h3>
+        <p>These options also affect all types of tweens, and are bound by the tween control options and the internal update functions.</p>
+        <ul>
+            <li><kbd>start: function</kbd> option allows you to set a function to run once tween animation starts.</li>
+            <li><kbd>update: function</kbd> option allows you to set a function to run on every frame.</li>
+            <li><kbd>pause: function</kbd> option allows you to set a function to run when animation is paused.</li>
+            <li><kbd>resume: function</kbd> option allows you to set a function to run when animation is resumed.</li>
+            <li><kbd>stop: function</kbd> option allows you to set a function to run when animation is stopped.</li>
+            <li><kbd>complete: function</kbd> option allows you to set a function to run when animation is finished.</li>
+        </ul>
+        
+		<p>A quick example would look like this:</p>
+<pre><code class="language-javascript">//define a function
+var callback = function(){
+	//do some foo
+}
+
+//create object and start animating already
+KUTE.fromTo(div,{left:150},{left:0},{complete: callback}).start();
+</code></pre>		
+		<h3>Other</h3>
+		<p><kbd>keepHex: true</kbd> option allows you to always use <code>HEX</code> color format, even if you have used <code>RGB</code> or <code>RGBA</code>. This option is useful when tweening color properties on legacy browsers, however modern browsers may ignore this option for performance reasons.</p>
+	</div>
+
+	<div class="content-wrap">		
+
+		<ul id="share" class="nav">
+			<li>Share </li>
+			<li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
+			<li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute.js animation engine by @thednp and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></a></li>
+			<li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
+		</ul>
+		
+	</div>
+	  
+      <!-- FOOTER -->
+     <footer>
+		<div class="content-wrap">
+			<p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+			<p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
+		</div>
+    </footer>
+
+ </div><!-- /.site-wrapper -->
+ 
+
+
+<!-- JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->	
+
+<!-- highlighter -->
+<script src="./assets/js/prism.js" type="text/javascript"></script>	
+
+<!--<script src="http://cdn.jsdelivr.net/kute.js/1.0.0/kute.full.min.js"></script>  KUTE CDN -->
+
+<script src="./src/kute.js"></script> <!-- KUTE.js core -->
+<script src="./assets/js/scripts.js"></script> <!-- some stuff -->
+</body>
+</html>

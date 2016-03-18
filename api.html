@@ -9,7 +9,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="A detailed API documentation on KUTE.js main methods, options and easing functions.">
+    <meta name="description" content="A detailed API documentation on KUTE.js public methods.">
     <meta name="keywords" content="kute,kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
     <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
@@ -61,6 +61,7 @@
                     <li><a href="examples.html">Core Engine</a></li>
                     <li><a href="css.html">CSS Plugin </a></li>
                     <li><a href="svg.html">SVG Plugin </a></li>
+                    <li><a href="text.html">Text Plugin </a></li>
                     <li><a href="attr.html">Attributes Plugin </a></li>
                 </ul>
             </li>			
@@ -69,6 +70,7 @@
                 <ul class="subnav">
                     <li><a href="start.html">Getting Started</a></li>
                     <li class="active"><a href="api.html">Public Methods</a></li>
+                    <li><a href="options.html">Tween Options</a></li>
                     <li><a href="easing.html">Easing Functions</a></li>
                     <li><a href="extend.html">Extend Guide</a></li>
                 </ul>
@@ -217,56 +219,6 @@ var tweensCollection2 = KUTE.allTo('.a-class-for-multiple-elements', {opacity: 1
 // we can pass it in the chain of another tween
 tween2.chain(tweensCollection2.tweens);
 </code></pre>
-	</div>
-
-	<div class="content-wrap">
-		<h2 id="tweenoptions">Tween Options</h2>
-		<h3>Common Options</h3>
-		<p>These options affect all types of tweens, no matter the properties used or context.</p>
-		<p><kbd>duration: 500</kbd> option allows you to set the animation duration in miliseconds. The default value is <strong>700</strong>.</p>
-		<p><kbd>repeat: 20</kbd> option allows you to run the animation of given tween multiple times. The default value is <strong>0</strong>.</p>
-		<p><kbd>delay: 500</kbd> option allows you to delay the tween animation for a certain number of miliseconds. The default value is <strong>0</strong>.</p>
-		<p><kbd>offset: 200</kbd> option is only for <code>.allTo()</code> and <code>.allFromTo()</code> methods. This allows you to set a base delay in miliseconds that increases with each element in the collection. This has no effect on other methods and the default value is <strong>0</strong>.</p>
-		<p><kbd>repeatDelay: 500</kbd> option allows you to set a number of miliseconds delay between repeatable animations. If <code>repeat</code> option is set to <strong>0</strong>, will produce no effect. The default value is <strong>0</strong>.</p>		
-		<p><kbd>yoyo: true/false</kbd> option makes use of the internal reverse functionality to also animate from <b>end</b> to <b>start</b> for a given tween. This option requires that you use the <code>repeat</code> option with at least value <b>1</b>. The default value is <strong>false</strong>.</p>
-		<p><kbd>easing: 'easingCubicInOut'</kbd> option allows you to use a custom easing function for your animation. For more info on the easing functions, you need to see the example pages. The default value is <strong>linear</strong>.</p>
-
-		<h3>Transform Options</h3>
-		<p>These options only affect animation involving any property from CSS3 <code>transform</code> specs and have no effect on other CSS properties. While you can set <code>perspective</code> or <code>perspective origin</code> via CSS, these options are here to help, especially with full browser support and preffix free handling.</p>
-		<p><kbd>perspective: 500</kbd> option allows you to set a 3D transformation <code>perspective</code> for a given HTML element that is subject to transform animation. No default value.</p>
-		<p><kbd>perspectiveOrigin: "50% 50%"</kbd> option allows you to set a <code>perspectiveOrigin</code> for a given HTML. This option has no default value and only accepts valid CSS values according to it's specs.</p>
-		<p><kbd>parentPerspective: 500</kbd> option allows you to set a 3D <code>perspective</code> for the <strong>parent</strong> of the HTML element subject to the transform animation.</p>
-		<p><kbd>parentPerspectiveOrigin: "50% 50%"</kbd> option allows you to set a <code>perspectiveOrigin</code> for the parent of the HTML element subject to the transform animation. Also like the above similar options, this options only accepts valid CSS values.</p>
-		<p><kbd>transformOrigin: "50% 50%"</kbd> option allows you to set a <code>transformOrigin</code> for the HTML element subject to the transform animation. Also this options only accepts valid CSS values.</p>
-
-		<h3>SVG Options</h3>
-		<p>These options only affect animation of the <code>path</code> tween property, or what you know as SVG morphing.</p> 
-        
-		<p><kbd>showMorphInfo: true</kbd> when <code>true</code> the script will log valuable information about the morph in order to help you maximize both performance and visuals of the morph.</p>
-		<p><kbd>morphPrecision: Number</kbd> option allows you to set the sampling size of the morph. The lesser value the better visual but the more power consumption.</p>
-		<p><kbd>morphIndex: Number</kbd> option allows you to rotate the second/end path in a way that the points travel the least possible distance during morph, and as an effect the morph animation feel more "natural".</p>
-		<p><kbd>reverseFirstPath: true</kbd> when is <code>true</code> this option allows you to reverse the draw direction of the FIRST shape.</p>
-		<p><kbd>reverseSecondPath: true</kbd> when is <code>true</code> this option allows you to reverse the draw direction of the SECOND shape.</p>
-
-		<h3>Callback Options</h3>
-		<p>These options also affect all types of tweens, and are bound by the tween control options and the internal update functions.</p>
-		<p><kbd>start: function</kbd> option allows you to set a function to run once tween animation starts.</p>
-		<p><kbd>update: function</kbd> option allows you to set a function to run on every frame.</p>
-		<p><kbd>pause: function</kbd> option allows you to set a function to run when animation is paused.</p>
-		<p><kbd>resume: function</kbd> option allows you to set a function to run when animation is resumed.</p>
-		<p><kbd>stop: function</kbd> option allows you to set a function to run when animation is stopped.</p>
-		<p><kbd>complete: function</kbd> option allows you to set a function to run when animation is finished.</p>
-		<p>A quick example would look like this:</p>
-<pre><code class="language-javascript">//define a function
-var callback = function(){
-	//do some foo
-}
-
-//create object and start animating already
-KUTE.fromTo(div,{left:150},{left:0},{complete: callback}).start();
-</code></pre>		
-		<h3>Other</h3>
-		<p><kbd>keepHex: true</kbd> option allows you to always use <code>HEX</code> color format, even if you have used <code>RGB</code> or <code>RGBA</code>. This option is useful when tweening color properties on legacy browsers, however modern browsers may ignore this option for performance reasons.</p>
 	</div>
 
 	<div class="content-wrap">		

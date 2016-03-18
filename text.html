@@ -9,12 +9,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="The Attributes Plugin for KUTE.js enables animation for any numeric presentation attribute.">
+    <meta name="description" content="The Text Plugin for KUTE.js enables string manipulation.">
     <meta name="keywords" content="kute,kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
     <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
 
-    <title>KUTE.js Attributes Plugin | Javascript Animation Engine</title>
+    <title>KUTE.js Text Plugin | Javascript Animation Engine</title>
 	
     <!-- RESET CSS -->
     <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
@@ -37,6 +37,7 @@
 		<script src="https://cdn.jsdelivr.net/minifill/0.0.2/minifill.min.js"> </script>
 		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 	<![endif]-->
+    <style>.text-example {margin: 0 0 20px; font-size: 28px} .red {color: red}</style>
 </head>
 
 <body>
@@ -60,8 +61,8 @@
                     <li><a href="examples.html">Core Engine</a></li>
                     <li><a href="css.html">CSS Plugin </a></li>
                     <li><a href="svg.html">SVG Plugin </a></li>
-                    <li><a href="text.html">Text Plugin </a></li>
-                    <li class="active"><a href="attr.html">Attributes Plugin </a></li>
+                    <li class="active"><a href="text.html">Text Plugin </a></li>
+                    <li><a href="attr.html">Attributes Plugin </a></li>
                 </ul>
             </li>
 			<li class="btn-group">
@@ -80,63 +81,65 @@
     </div>
 
 	<div class="content-wrap">
-		<h2>Attributes Plugin</h2>
-		<p>The KUTE.js Attributes Plugin extends the core engine and enables animation for any numeric presentation attribute, with or without a measurement unit or what we know as suffix. The plugin can be a great asset for creating complex animations in combination with the <a href="svg.html">SVG Plugin</a> as we'll see in the following examples. As a quick refference, the basic synthax goes like this:</p>
+		<h2>Text Plugin</h2>
+		<p>The KUTE.js Text Plugin extends the core engine and enables animation for text elements in two ways: either incrementing or decreasing a number in a given string or writing a string character by character with a very cool effect.</p>
 
-<pre><code class="language-javascript">// basic synthax for unitless properties
-var myAttrTween = KUTE.to('selector', {attr: {attributeName: 75}});
+<pre><code class="language-javascript">// basic synthax for number increments
+var myNumberTween = KUTE.to('selector', {number: 1500}); // this assumes it will start from current number or from 0
 
-// OR for attributes that are ALWAYS suffixed / have a measurement unit
-var mySufAttrTween = KUTE.to('selector', {attr:{attributeName: '15%'}});
+// OR text writing character by character
+var myTextTween = KUTE.to('selector', {text: 'A text string with other &lt;span&gt;substring&lt;/span&gt; should do.'});
 </code></pre>
 
-        <p>Currently the Attributes Plugin does not support color properties such as <code>fill</code> or <code>stroke</code> as well as properties with multiple values like <code>stroke-dasharray</code>, <code>viewBox</code> or <code>transform</code> for simplicity reasons. Still, you have access to just about any SVGElement/Element presentation attribute available.</p>
+        <p>The effects of these two properties are very popular, but pay attention to the fact that every 16 miliseconds the browser has to parse the HTML structure around your target elements so caution is advised. With other words, try to limit the number of simultaneus text animations.</p>
         
-		<h3>Unitless Properties</h3>
-		<p>In the first example, let's play with the attributes of a <code>&lt;circle&gt;</code> element: radius and center coordinates.</p>
-<pre><code class="language-javascript">// radius attribute
-var radiusTween = KUTE.to('#circle', {attr: {r: 75}});
-    
-// coordinates of the circle center
-var coordinatesTween = KUTE.to('#circle', {attr:{cx:0,cy:0}});
-</code></pre>       
-        <p>A quick demo with the above:<p>
+		<h3>Number Incrementing/Decreasing</h3>
+		<p>In the first example, let's animate a number, approximatelly as written above:</p>     
 		<div class="featurettes">
-            <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
-                <circle class="bg-orange" id="circle" cx="75" cy="75" r="40" />          
-            </svg>
+            <p class="text-example">Total number of lines: <span id="numText">0</span></p>
 	
 			<div class="example-buttons">
-				<a id="circleBtn" class="btn btn-orange" href="javascript:void(0)">Start</a>	
+				<a id="numBtn" class="btn btn-orange" href="javascript:void(0)">Start</a>	
 			</div>
 		</div>
-        
-		<h3>Suffixed Properties</h3>
-        <p>Similar to the example on gradients with <a href="svg.html">SVG Plugin</a>, we can also animate the gradient positions, but make sure to always include the <code>%</code> suffix:</p>
-<pre><code class="language-javascript">// gradient positions to middle
-var closingGradient = KUTE.to('#gradient', {attr: {x1:'49%', x2:'49%', y1:'49%', y2:'49%'}});
-    
-// gradient positions rotated
-var rotatingGradient = KUTE.to('#gradient', {attr: {x1:'49%', x2:'51%', y1:'51%', y2:'51%'}});
-</code></pre>
-        
+		<p>The button action will toggle the <code>valuesEnd</code> value for the <code>number</code> property, because tweening a number to itself would produce no effect.</p>     
+                
+		<h3>Writing Text</h3>
+		<p>This feature come with a additional tween option called <kbd>textChars</kbd> for the scrambling text character:</p> 
+        <ul>
+            <li><code>alpha</code> use lowercase alphabetical characters, the default value</li>
+            <li><code>upper</code> use UPPERCASE alphabetical characters</li>
+            <li><code>numeric</code> use numerical characters</li>
+            <li><code>symbols</code> use symbols such as #, $, %, etc.</li>
+            <li><code>all</code> use all alpha numeric and symbols.</li>
+            <li><code>YOUR CUSTOM STRING</code> use your own custom characters; eg: <code>'KUTE.JS IS #AWESOME'</code>.</li>
+        </ul>
 		<div class="featurettes">
-            <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 615 615">
-                <defs>
-                    <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style="stop-color: #e91b1f; stop-opacity:1"></stop>
-                        <stop offset="100%" style="stop-color: #2196F3; stop-opacity:1"></stop>
-                    </linearGradient>
-                </defs>
-                <path fill="url(#gradient)" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
-                    c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>            
-            </svg>
+            <p class="text-example" id="headText">Click the Start button on the right.</p>
 	
 			<div class="example-buttons">
-				<a id="gradBtn" class="btn btn-pink" href="javascript:void(0)">Start</a>	
+				<a id="headBtn" class="btn btn-blue" href="javascript:void(0)">Start</a>	
 			</div>
 		</div>
-        <p>This plugin is quite handy and a great addition to the <a href="svg.html">SVG Plugin</a>.</p>
+        <p>Keep in mind that the <code>yoyo</code> feature will NOT un-write / delete character by character the string, but will write the previous text instead.</p>
+		
+        <h3>Combining Both</h3>
+		<div class="featurettes">
+            <div class="columns">
+			    <div class="col2" style="width: 80px">
+                    <p class="text-example" id="comNum">0</p>
+	            </div>
+			    <div class="col2" style="text-align: left">
+                    <p class="text-example" id="comText">Clicks so far?</p>
+	            </div>
+			</div>
+			<div class="example-buttons">
+				<a id="comBtn" class="btn btn-olive" href="javascript:void(0)">Start</a>
+		    </div>
+		</div>
+        <p>In this example we've used the <code>textChars</code> option with <code>symbols</code> and <code>all</code> values respectively, but combining the two text properties and some other KUTE.js features can really spice up some content. Have fun!</p>
+        
+
 	</div>
 
       <!-- FOOTER -->
@@ -160,8 +163,8 @@ var rotatingGradient = KUTE.to('#gradient', {attr: {x1:'49%', x2:'51%', y1:'51%'
 
 <!--<script src="http://cdn.jsdelivr.net/kute.js/1.5.0/kute.min.js"></script>  KUTE CDN -->
 <script src="./src/kute.js"></script> <!-- KUTE.js core -->
-<script src="./src/kute-attr.js"></script> <!-- KUTE.js Attributes Plugin -->
+<script src="./src/kute-text.js"></script> <!-- KUTE.js Text Plugin -->
 <script src="./assets/js/scripts.js"></script> <!-- global scripts stuff -->
-<script src="./assets/js/attr.js"></script> <!-- css plugin examples -->
+<script src="./assets/js/text.js"></script> <!-- css plugin examples -->
 </body>
 </html>
