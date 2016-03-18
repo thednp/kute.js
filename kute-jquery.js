@@ -25,7 +25,7 @@
   } else {
     throw new Error("jQuery plugin for KUTE.js depends on KUTE.js and jQuery. Read the docs for more info.");
   }
- })(function($, KUTE) {
+})(function($, KUTE) {
   'use strict';
   var $K = function( method, start, end, ops ) { // method can be fromTo(), to(), stop(), start(), chain(), pause()
     var tws = [], i, l = this.length;

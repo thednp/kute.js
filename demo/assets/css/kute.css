@@ -212,7 +212,7 @@ h1, h3, [class*="col"] > h4 {margin: 0 0 20px}
 @media (max-width: 479px){
 	.columns > [class*="col"] { float:none; width: 100%; }
 }
-
+.frontpage { margin-top:27% }
 .table { display: table; height: 480px }
 .cell { display: table-cell; vertical-align: middle }
 
@@ -271,6 +271,7 @@ hr {
 #share .icon {font-size: 24px; line-height: 1}
 
 /* buttons */
+.btns .btn {opacity: 0; float: left; line-height: 1; margin: 0 3px 3px 0}
 .btn { padding: 12px 15px; color:#fff; border:0; background-color: #999; line-height: 44px; }
 .bg-gray { color:#fff; background-color: #555; fill: #555 }
 .btn.active { background-color: #2196F3 }
@@ -321,6 +322,12 @@ hr {
 .nav .btn-group ul {bottom: auto; top: -999em}
 .nav .btn-group.open ul {
     top: 43px;
+}
+@media (max-width: 768px){
+    .nav .btn-group.open ul {
+        top: 30px;
+    }
+    #easings {left: auto; right: 0}
 }
 
 /* Style the scrolBar for modern browsers */

@@ -1,6 +1,10 @@
 // vars
-var block = document.getElementById('blocks'),
+var textOpened = false,
+    block = document.getElementById('blocks'),
 	bs = block.querySelectorAll('.bg'),
+	h2 = document.querySelector('h2'),
+	lead = document.querySelector('.lead'),
+	btns = document.querySelector('.btns').querySelectorAll('.btn'),
 	b = block.querySelector('.bg'),
 	isIE = /ie/.test(document.documentElement.className),
 	isIE8 = /ie8/.test(document.documentElement.className),
@@ -15,7 +19,7 @@ window.addEventListener('resize',resizeHandler,false);
 replay.addEventListener('click',runOnClick,false);
 
 function resizeHandler(e) {
-	var css = window.getComputedStyle(b),
+	var css = window.getComputedStyle(b,null),
 		bw = parseInt(css.width), i = 0;
 	for (i;i<9;i++){
 		bs[i].style.minHeight = bw+'px';
@@ -85,13 +89,23 @@ function closeTheAnimations() {
 }
 
 function runAnimations() {
-	var t1 = KUTE.fromTo(block,{left:0},{left:150},{duration:1000, easing: 'easingCubicIn', start: openTheAnimations}).start(),
+    var fn = !textOpened ? openText : null,
+	    t1 = KUTE.fromTo(block,{left:0},{left:150},{duration:1000, easing: 'easingCubicIn', start: openTheAnimations}).start(),
 		t2 = KUTE.fromTo(block,{left:150},{left:0},{duration:2500, easing: 'easingElasticOut', start: openTheAnimations}),
 		t3 = KUTE.fromTo(block,{rotateZ:0,rotateY:-10},{rotateZ:-20,rotateY:25},{duration:2500, easing: 'easingQuadraticInOut'}).start(),
-		t4 = KUTE.fromTo(block,{rotateZ:-20,rotateY:385},{rotateZ:0,rotateY:-10},{duration:3500, delay: 3600, easing: 'easingQuadraticInOut'});	
+		t4 = KUTE.fromTo(block,{rotateZ:-20,rotateY:385},{rotateZ:0,rotateY:-10},{duration:3500, delay: 3600, easing: 'easingQuadraticInOut', start: fn});	
 
 	t1.chain(t2);
 	t3.chain(t4);
 
 	doBlockAnimations();
+}
+
+function openText(){
+    var hd = KUTE.to(h2, {text: 'Welcome Developers!'}, {delay: 4500, duration:2000, easing: 'easingCubicInOut'}).start(),
+	    ld = KUTE.to(lead, {text: 'KUTE.js is a Javascript animation engine with <strong>top performance</strong>, memory efficient & modular code. It delivers a whole bunch of tools to help you create great custom animations.'}, {duration:4000, easing: 'easingCubicInOut'});
+	    btnst = KUTE.allFromTo(btns, {rotate: 45, opacity: 0 }, { rotate: 0, opacity: 1 }, {transformOrigin: '250px center 0px', offset: 200, duration:700, easing: 'easingCubicInOut'});
+	hd.chain(ld);
+    ld.chain(btnst);
+    textOpened = true;
 }

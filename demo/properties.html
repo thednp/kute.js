@@ -57,6 +57,7 @@
                     <li><a href="examples.html">Core Engine</a></li>
                     <li><a href="css.html">CSS Plugin </a></li>
                     <li><a href="svg.html">SVG Plugin </a></li>
+                    <li><a href="text.html">Text Plugin </a></li>
                     <li><a href="attr.html">Attributes Plugin </a></li>
                 </ul>
             </li>
@@ -65,6 +66,7 @@
                 <ul class="subnav">
                     <li><a href="start.html">Getting Started</a></li>
                     <li><a href="api.html">Public Methods</a></li>
+                    <li><a href="options.html">Tween Options</a></li>
                     <li><a href="easing.html">Easing Functions</a></li>
                     <li><a href="extend.html">Extend Guide</a></li>
                 </ul>
@@ -160,7 +162,7 @@
 		<p>The <a href="attr.html">Attributes Plugin</a> can animate any numerical presentation attribute such as <kbd class="bg-olive">width</kbd>, <kbd class="bg-olive">cx</kbd> or <kbd class="bg-olive">stop-opacity</kbd>, but the values can be also suffixed: <code>150px</code> or <code>50%</code>, and for that you must always provide a string value that include the measurement unit, and that, of course, depends on the attribute. This plugin can be a great addition to the above SVG Plugin for specific gradient attributes or specific geometric shapes' attributes.</p>
 		<p>The synthax is slightly different to make sure we don't mess up with CSS properties that have the same name because the presentation attribute may be a unitless attribute while the CSS property might require a suffix (%,px,etc). For instance <code>KUTE.to('selector', {attr:{width:150}})</code> is clearly different from <code>KUTE.to('selector', {width:150})</code> which is the the CSS property with the same name.</p>
         
-		<h3>Text Properties</h3>
+		<h3>Typography Properties</h3>
 		<p>The <a href="css.html">CSS Plugin</a> also cover the text properties, and these can be combinated with each other when applied to text elements (paragraphs, headings) as animation fallback for <code>scale</code> on browsers that don't support <code>transform</code> at all. Yes, IE8 and other legacy browsers.</p>
 		<ul>
 			<li><kbd class="bg-olive">fontSize</kbd> allows you to animate the <code>font-size</code> for a given element.</li>
@@ -173,7 +175,14 @@
 		<h3>Scroll Animation</h3>
 		<p>KUTE.js core engine currently supports only vertical <kbd class="bg-blue">scroll</kbd> for both the window and a given element that's scrollable (when <code>scrollHeight</code> is higher than <code>offsetHeight</code>). Both <code>scroll: 150</code> or <code>scrollTop: 150</code> notations will do. When animating scroll, KUTE.js will disable all scroll and swipe handlers to prevent animation bubbles as well as scroll bottlenecks.</p>		
 
-		<h3>Other properties</h3>
+		<h3>String Properties</h3>
+		<ul>
+			<li><kbd class="bg-olive">number</kbd> allows you to tween a number either from 0 or from a current value and updates the <code>innerHTML</code> for a given target. Eg. <code>number:1500</code></li>
+			<li><kbd class="bg-olive">text</kbd> allows you to write a string one character at a time followed by a scrambling character. Eg. <code>text: 'A demo with &lt;b>substring&lt;/b>'</code>. </li>
+		</ul>
+        <p>See <a href="text.html">Text Plugin</a> for details.</p>
+
+		<h3>Other Properties</h3>
 		<ul>
 			<li><kbd class="bg-olive">clip</kbd> allows you to animate the <code>clip</code> property for a given element. Only rect is supported. Eg. <code>clip:[250,200,300,0]</code>. See <a href="http://www.w3.org/TR/CSS2/visufx.html#propdef-clip" target="_blank">spec</a> for details.</li>
 			<li><kbd class="bg-olive">backgroundPosition</kbd> allows you to animate the <code>background-position</code> for a given element that uses a background image. It only uses % as measurement unit. Eg. <code>backgroundPosition:[50,20]</code></li>
