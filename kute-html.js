@@ -15,7 +15,7 @@
     module.exports = factory(KUTE);
   } else if ( typeof window.KUTE !== 'undefined' ) {
     // Browser globals		
-    factory(KUTE);
+    factory(window.KUTE);
   } else {
     throw new Error("HTML Plugin require KUTE.js.");
   }
