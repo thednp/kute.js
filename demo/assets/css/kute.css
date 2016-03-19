@@ -272,6 +272,7 @@ hr {
 
 /* buttons */
 .btns .btn {opacity: 0; float: left; line-height: 1; margin: 0 3px 3px 0}
+.ie8 .btns .btn {filter: alpha(opacity=0);}
 .btn { padding: 12px 15px; color:#fff; border:0; background-color: #999; line-height: 44px; }
 .bg-gray { color:#fff; background-color: #555; fill: #555 }
 .btn.active { background-color: #2196F3 }
