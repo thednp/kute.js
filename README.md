@@ -1,5 +1,5 @@
 # KUTE.js
-A minimal <b>native Javascript</b> tweening engine with <b>jQuery</b> plugin, with most essential options for web developers, designers and animators, delivering easy to use methods to set up high performance, cross-browser animations.
+A minimal <b>native Javascript</b> animation engine with <b>jQuery</b> plugin, with most essential features for web developers, designers and animators, delivering easy to use methods to set up high performance, cross-browser animations.
 
 # Demo / CDN
 For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>. Thanks to jsdelivr, we have a CDN link <a target="_blank" href="http://www.jsdelivr.com/#!kute.js">here</a>.
