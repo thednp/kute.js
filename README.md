@@ -6,11 +6,12 @@ For documentation, examples and other cool tips, check the <a href="http://thedn
 
 # Core Engine - [visit page](http://thednp.github.io/kute.js/examples.html)
 * tween object methods: `.to()`, `.fromTo()`, `.allTo()`, `.allFromTo()`
-* tween control methods: `.start()`, `.stop()`, `.play()`
+* tween control methods: `.start()`, `.stop()`, `.pause()`, `.play()`
 * 2D and 3D transforms: all except `matrix`, `matrix3d`, `scale3d`, `rotate3d`
 * box model properties: `top`, `left`, `width`, `height`
 * colors: `color`, `backgroundColor`
 * scroll: vertical scroll animation for `window` or any element with `overflow: auto|scroll`
+* options: `yoyo`, `duration`, `easing`, `repeat`, `delay`, `offset` (for tween collections), `repeatDelay` and other transform/plugins related options
 * Robert Penner's easing functions
 * extensible prototypes and utility methods
  
