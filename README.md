@@ -1,13 +1,83 @@
 # KUTE.js
 A minimal <b>native Javascript</b> tweening engine with <b>jQuery</b> plugin, with most essential options for web developers, designers and animators, delivering easy to use methods to set up high performance, cross-browser animations.
 
-<b>Important</b>: starting with 0.9.5 version, KUTE.js changes the prototype structure for performance, usability and browser support, as well as extensibility. The documentation and examples no longer support old versions prior to 0.9.5 release.
+# Demo / CDN
+For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>. Thanks to jsdelivr, we have a CDN link <a target="_blank" href="http://www.jsdelivr.com/#!kute.js">here</a>.
 
-# CDN
-Thanks to jsdelivr, we have a CDN link <a target="_blank" href="http://www.jsdelivr.com/#!kute.js">here</a>.
+# Core Engine - [visit page](http://thednp.github.io/kute.js/examples.html)
+* tween object methods: `.to()`, `.fromTo()`, `.allTo()`, `.allFromTo()`
+* tween control methods: `.start()`, `.stop()`, `.play()`
+* 2D and 3D transforms: all except `matrix`, `matrix3d`, `scale3d`, `rotate3d`
+* box model properties: `top`, `left`, `width`, `height`
+* colors: `color`, `backgroundColor`
+* scroll: vertical scroll animation for `window` or any element with `overflow: auto|scroll`
+* Robert Penner's easing functions
+* extensible prototypes and utility methods
+ 
+# SVG Plugin - [visit page](http://thednp.github.io/kute.js/svg.html)
+* morphs SVGs with the `path` tween property, updating the `d` attribute of `<path>` or `<glyph>` elements
+* draws SVGs with the `draw` tween property for `<path>` elements
+* SVG related color CSS properties such as: `fill`, `stroke`, `stopColor`
+* other SVG CSS properties: `strokeWidth`, `stopOpacity`
 
-# Demo
-For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>.
+# CSS Plugin - [visit page](http://thednp.github.io/kute.js/css.html)
+* fills the box model supported properties: `margin`, `padding`, variations like `marginTop`, all variations for `width` or `height` like `maxHeight`, `outlineWidth`, then `borderWidth` with side variations, except short-hand notations
+* `borderRadius` properties radius
+* adds support for more color properties: `outlineColor`, `borderColor` or side variations, etc
+* the `clip` property only for `rect` type of values
+* the 
+
+# Text Plugin - [visit page](http://thednp.github.io/kute.js/text.html)
+* animated number increments/decreases
+* writing text with a cool effect
+ 
+# Attributes Plugin - [visit page](http://thednp.github.io/kute.js/attr.html)
+* animates any numeric presentation attribute with suffixed value
+* animates any other non-suffixed numeric presentation attribute
+
+# Easing Functions - [visit page](http://thednp.github.io/kute.js/easing.html)
+* optimized dynamics easing functions
+* optimized cubic bezier easing functions
+
+# jQuery Plugin
+This aims to make the KUTE.js script work native within other jQuery apps but it's not always really needed as we will see in the second subchapter here. Since the demos don't insist on this particulat plugin, we'll write some basics right here.
+
+The plugin is just a few bits of code to bridge all of the the awesome `kute.js` methods to your jQuery apps. The plugin can be found in the [/master](https://github.com/thednp/kute.js/blob/master/kute-jquery.js) folder. So let's have a look at the syntax.
+
+## Using the jQuery Plugin
+Here's a KUTE.js jQuery Plugin example that showcases most common usage in future apps:
+```javascript
+// first we define the object(s)
+var tween = $('selector').KUTE('fromTo', // apply fromTo() method to selector
+  
+    { translate: 0, opacity: 1 }, // fromValues
+    { translate: 150, opacity: 0 }, // toValues
+    
+    // tween options object
+    { duration: 500, delay: 0, easing	: 'exponentialInOut', // basic options
+
+      //callbacks
+      start: functionOne, // run function when tween starts
+      complete: functionTwo, // run function when tween animation is finished
+      update: functionThree // run function while tween running    
+      stop: functionThree // run function when tween stopped    
+      pause: functionThree // run function when tween paused    
+      resume: functionThree // run function when resuming tween    
+    }
+);
+
+// then we apply the tween control methods, like start
+$(tween).KUTE('start');
+```
+
+## Alternative usage in jQuery powered applications
+In some cases you can handle animations inside jQuery applications even without the plugin. Here's how the code could look like:
+```javascript
+var tween = KUTE.fromTo($('selector')[0], fromValues, toValues, options);
+tween.start();
+```
+Pay attention to that `$('selector')[0]` as jQuery always creates an array of selected objects and not a single object, that is why we need to focus a tween object to a single HTML object and not a selection of objects. Selections of objects should be handled with `for() {}` loops if that is the case, while the jQuery Plugin handles this properly for your app, as you would expect it to.
+
 
 # NPM/Bower
 You can install this through NPM or bower respectively:
@@ -84,44 +154,6 @@ KUTE.fromTo(el,
     }
 ).start(); // this is to start animation right away
 ```
-
-# jQuery Plugin
-This aims to make the KUTE.js script work native within other jQuery apps but it's not always really needed as we will see in the second subchapter here. The plugin is just a few bits of code to bridge all of the the awesome `kute.js` methods to your jQuery apps. The plugin can be found in the [/master](https://github.com/thednp/kute.js/blob/master/kute-jquery.js) folder. So let's have a look at the syntax.
-
-## Using the jQuery Plugin
-Here's a KUTE.js jQuery Plugin example that showcases most common usage in future apps:
-```javascript
-// first we define the object(s)
-var tween = $('selector').KUTE('fromTo', // apply fromTo() method to selector
-  
-    { translate: 0, opacity: 1 }, // fromValues
-    { translate: 150, opacity: 0 }, // toValues
-    
-    // tween options object
-    { duration: 500, delay: 0, easing	: 'exponentialInOut', // basic options
-
-      //callbacks
-      start: functionOne, // run function when tween starts
-      complete: functionTwo, // run function when tween animation is finished
-      update: functionThree // run function while tween running    
-      stop: functionThree // run function when tween stopped    
-      pause: functionThree // run function when tween paused    
-      resume: functionThree // run function when resuming tween    
-    }
-);
-
-// then we apply the tween control methods, like start
-$(tween).KUTE('start');
-```
-
-## Alternative usage in jQuery powered applications
-In some cases you can handle animations inside jQuery applications even without the plugin. Here's how the code could look like:
-```javascript
-var tween = KUTE.fromTo($('selector')[0], fromValues, toValues, options);
-tween.start();
-```
-Pay attention to that `$('selector')[0]` as jQuery always creates an array of selected objects and not a single object, that is why we need to focus a tween object to a single HTML object and not a selection of objects. Selections of objects should be handled with `for() {}` loops if that is the case, while the jQuery Plugin handles this properly for your app, as you would expect it to.
-
 
 # How it works
 * it computes all the values before starting the animation, then caches them to avoid layout thrashing that occur during animation
