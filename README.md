@@ -22,11 +22,11 @@ For documentation, examples and other cool tips, check the <a href="http://thedn
 * other SVG CSS properties: `strokeWidth`, `stopOpacity`
 
 # CSS Plugin - [visit page](http://thednp.github.io/kute.js/css.html)
-* fills the box model supported properties: `margin`, `padding`, variations like `marginTop`, all variations for `width` or `height` like `maxHeight`, `outlineWidth`, then `borderWidth` with side variations, except short-hand notations
+* all box model properties: `margin`, `padding`, with all their variations like `marginTop`, all variations for `width` or `height` like `maxHeight` or `minWidth`, `outlineWidth`, `borderWidth` with all side variations, except short-hand notations
 * `borderRadius` properties radius
-* adds support for more color properties: `outlineColor`, `borderColor` or side variations, etc
-* the `clip` property only for `rect` type of values
-* the 
+* color properties: `outlineColor`, `borderColor` with all side variations except shorthands, etc
+*`clip` property only for `rect` type of values
+* text properties: `fontSize`, `lineHeight`,  `lettersSpacing` and `wordSpacing` 
 
 # Text Plugin - [visit page](http://thednp.github.io/kute.js/text.html)
 * animated number increments/decreases
@@ -38,7 +38,7 @@ For documentation, examples and other cool tips, check the <a href="http://thedn
 
 # Easing Functions - [visit page](http://thednp.github.io/kute.js/easing.html)
 * optimized dynamics easing functions
-* optimized cubic bezier easing functions
+* optimized cubic-bezier easing functions
 
 # jQuery Plugin
 This aims to make the KUTE.js script work native within other jQuery apps but it's not always really needed as we will see in the second subchapter here. Since the demos don't insist on this particulat plugin, we'll write some basics right here.
