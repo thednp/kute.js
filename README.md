@@ -77,7 +77,12 @@ In some cases you can handle animations inside jQuery applications even without 
 var tween = KUTE.fromTo($('selector')[0], fromValues, toValues, options);
 tween.start();
 ```
-Pay attention to that `$('selector')[0]` as jQuery always creates an array of selected objects and not a single object, that is why we need to focus a tween object to a single HTML object and not a selection of objects. Selections of objects should be handled with `for() {}` loops if that is the case, while the jQuery Plugin handles this properly for your app, as you would expect it to.
+Pay attention to that `$('selector')[0]` as jQuery always creates an array of selected objects and not a single object, that is why we need to focus a tween object to a single HTML object and not a selection of objects. HTMLCollection objects should be handled with `allFromTo()` or `allTo()` methods.
+
+```javascript
+var tween = KUTE.allFromTo($('selector'), fromValues, toValues, options);
+tween.start();
+```
 
 
 # NPM/Bower
