@@ -148,12 +148,18 @@ $(tween).KUTE('start');
 ```
 
 ## Alternative usage in jQuery powered applications
-In some cases you can handle animations inside jQuery applications even without the plugin. Here's how the code could look like:
+When size matters, you can handle animations inside jQuery applications without the plugin. Here's how:
 ```javascript
 var tween = KUTE.fromTo($('selector')[0], fromValues, toValues, options);
+
+// or simply provide a class|id selector, just like the usual
+var tween = KUTE.fromTo('#myElement', fromValues, toValues, options);
+
 tween.start();
 ```
-Pay attention to that `$('selector')[0]` as jQuery always creates an array of selected objects and not a single object, that is why we need to focus a tween object to a single HTML object and not a selection of objects. HTMLCollection objects should be handled with `allFromTo()` or `allTo()` methods.
+Pay attention to that `$('selector')[0]` as jQuery always creates an array of selected objects and not a single object, that is why we need to target a single HTML object for out tween object and not a colection of objects. 
+
+HTMLCollection objects should be handled with `allFromTo()` or `allTo()` methods.
 
 ```javascript
 var tween = KUTE.allFromTo($('selector'), fromValues, toValues, options);
