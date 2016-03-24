@@ -9,13 +9,44 @@ morphBtn.addEventListener('click', function(){
 }, false);
 
 var morphTween1 = KUTE.to('#rectangle1', { path: '#star1' }, {
-    showMorphInfo: true, morphIndex: 79,
+    showMorphInfo: true, morphIndex: 73,
     duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'
 }); 
 
 var morphBtn1 = document.getElementById('morphBtn1');
 morphBtn1.addEventListener('click', function(){
     !morphTween1.playing && morphTween1.start();
+}, false);
+
+// polygon morph
+var morphTween21 = KUTE.fromTo('#triangle', {path: '#triangle', fill: '#673AB7'}, { path: '#square', fill: '#2196F3' }, {
+    duration: 1500, easing: 'easingCubicOut',
+}); 
+var morphTween22 = KUTE.fromTo('#triangle', {path: '#square', fill: '#2196F3'}, { path: '#star2', fill: 'deeppink' }, {
+    morphIndex: 9, 
+    delay: 500, duration: 1500, easing: 'easingCubicOut'
+}); 
+var morphTween23 = KUTE.fromTo('#triangle', {path: '#star2', fill: 'deeppink'}, { path: '#triangle', fill: '#673AB7' }, {
+    delay: 500, duration: 1500, easing: 'easingCubicOut'
+});
+
+morphTween21.chain(morphTween22);
+morphTween22.chain(morphTween23);
+morphTween23.chain(morphTween21);
+
+var morphBtn2 = document.getElementById('morphBtn2');
+morphBtn2.addEventListener('click', function(){
+    if ( !morphTween21.playing && !morphTween22.playing && !morphTween23.playing ) {  
+      morphTween21.start(); morphTween21._dl = 500;
+      morphBtn2.innerHTML = 'Stop';
+      morphBtn2.className = 'btn btn-pink';
+    } else {
+      morphTween21.playing && morphTween21.stop(); morphTween21._dl = 0;
+      morphTween22.playing && morphTween22.stop();
+      morphTween23.playing && morphTween23.stop();
+      morphBtn2.innerHTML = 'Start'; 
+      morphBtn2.className = 'btn btn-green';
+    }
 }, false);
 
 
@@ -36,10 +67,10 @@ multiMorphBtn.addEventListener('click', function(){
 
 // complex multi morph
 var compliMorphBtn = document.getElementById('compliMorphBtn');
-var compliMorph1 = KUTE.to('#rectangle-container', { path: '#circle-container', fill: "#FF5722" }, { morphPrecision: 10, morphIndex: 161, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var compliMorph2 = KUTE.to('#symbol-left', { path: '#eye-left', fill: "#fff" }, { morphPrecision: 10, morphIndex: 20, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var compliMorph3 = KUTE.to('#symbol-left-clone', { path: '#mouth', fill: "#fff" }, { morphPrecision: 10, morphIndex: 8, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var compliMorph4 = KUTE.to('#symbol-right', { path: '#eye-right', fill: "#fff" }, { morphPrecision: 10, morphIndex: 55, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var compliMorph1 = KUTE.fromTo('#rectangle-container', {path: '#rectangle-container', fill: "#2196F3"}, { path: '#circle-container', fill: "#FF5722" }, { morphPrecision: 10, morphIndex: 161, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var compliMorph2 = KUTE.fromTo('#symbol-left', {path: '#symbol-left', fill: "#fff"},  { path: '#eye-left', fill: "#fff" }, { morphPrecision: 10, morphIndex: 20, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var compliMorph3 = KUTE.fromTo('#symbol-left-clone', {path: '#symbol-left-clone', fill: "#fff"},  { path: '#mouth', fill: "#fff" }, { morphPrecision: 10, morphIndex: 8, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var compliMorph4 = KUTE.fromTo('#symbol-right', {path: '#symbol-right', fill: "#CDDC39"},  { path: '#eye-right', fill: "#fff" }, { morphPrecision: 10, morphIndex: 55, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
 
 compliMorphBtn.addEventListener('click', function(){
     !compliMorph1.playing && compliMorph1.start();
@@ -56,11 +87,6 @@ var draw2 = KUTE.fromTo('#drawSVG',{draw:'0% 10%'}, {draw:'90% 100%'}, {duration
 var draw3 = KUTE.fromTo('#drawSVG',{draw:'90% 100%'}, {draw:'100% 100%'}, {duration: 1500, easing: "easingCubicIn"}); 
 var draw4 = KUTE.fromTo('#drawSVG',{draw:'0% 0%'}, {draw:'0% 100%'}, {duration: 3500, easing: "easingBounceOut"});
 var draw5 = KUTE.fromTo('#drawSVG',{draw:'0% 100%'}, {draw:'50% 50%'}, {duration: 2500, easing: "easingExponentialInOut"});
-// var draw1 = KUTE.to('#drawSVG', {draw:'0% 10%'}, {duration: 1500, easing: "easingCubicIn"}); 
-// var draw2 = KUTE.to('#drawSVG', {draw:'90% 100%'}, {duration: 2500, easing: "easingCubicOut"}); 
-// var draw3 = KUTE.to('#drawSVG', {draw:'100% 100%'}, {duration: 1500, easing: "easingCubicIn"}); 
-// var draw4 = KUTE.to('#drawSVG', {draw:'0% 100%'}, {duration: 3500, easing: "easingBounceOut"});
-// var draw5 = KUTE.to('#drawSVG', {draw:'50% 50%'}, {duration: 2500, easing: "easingExponentialInOut"});
 
 draw1.chain(draw2); draw2.chain(draw3); draw3.chain(draw4); draw4.chain(draw5);
 
