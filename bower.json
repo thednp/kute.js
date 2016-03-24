@@ -5,7 +5,7 @@
   "authors": [
     "thednp"
   ],
-  "description": "A minimal Native Javascript animation engine with jQuery plugin.",
+  "description": "A minimal Native Javascript animation engine.",
   "main": "kute.js",
   "moduleType": [
     "amd",
