@@ -92,8 +92,8 @@
 			<li><kbd class="bg-blue">rotate</kbd> is a property used to rotate an element on the Z axis or the plain document. Eg. <code>rotate:250</code> will rotate an element clockwise by 250 degrees. Supported on IE9.</li>
 			<li><kbd class="bg-blue">skewX</kbd> is a property used to apply a skew transformation on the X axis. Eg. <code>skewX:25</code> will skew an element by 25 degrees. Supported on IE9.</li>
 			<li><kbd class="bg-blue">skewY</kbd> is a property used to apply a skew transformation on the Y axis. Eg. <code>skewY:25</code> will skew an element by 25 degrees. Supported on IE9.</li>
-			<li><kbd class="bg-blue">scale</kbd> is a property used to apply a size transformation. Eg. <code>scale:2</code> will enlarge an element by a degree of 2. Supported on IE9.</li>
-			<li><kbd class="bg-red">matrix</kbd> property is not supported.</li>
+			<li><kbd class="bg-blue">scale</kbd> is a property used to apply a single value size transformation. Eg. <code>scale:2</code> will enlarge an element by a degree of 2. Supported on IE9.</li>
+			<li><kbd class="bg-red">matrix</kbd>, double axis <kbd class="bg-red">skew</kbd> and double axis <kbd class="bg-red">scale</kbd> properties are not supported.</li>
 		</ul>		
 		
 		<h3>3D Transform Properties</h3>
@@ -106,7 +106,7 @@
 			<li><kbd class="bg-blue">rotateX</kbd> property rotates an element on the X axis in a given 3D field. Eg. <code>rotateX:250</code> will rotate an element clockwise by 250 degrees. Modern browsers only and requires perspective.</li>
 			<li><kbd class="bg-blue">rotateY</kbd> property rotates an element on the Y axis in a given 3D field. Eg. <code>rotateY:-150</code> will rotate an element counter-clockwise by 150 degrees. Modern browsers only and also requires perspective.</li>
 			<li><kbd class="bg-blue">rotateZ</kbd> property rotates an element on the Z axis and is the equivalent of the 2D rotation. Eg. <code>rotateZ:-150</code> will rotate an element counter-clockwise by 150 degrees. Modern browsers only and doesn't require perspective.</li>
-			<li><kbd class="bg-red">rotate3d</kbd> and <kbd class="bg-red">matrix3d</kbd> properties are not supported.</li>
+			<li><kbd class="bg-red">matrix3d</kbd>, <kbd class="bg-red">rotate3d</kbd>, and <kbd class="bg-red">scale3d</kbd> properties are not supported.</li>
 		</ul>
 
 		<h3>Box Model Properties</h3>
@@ -196,7 +196,7 @@
         </ul>
         			
 		<h3>Did We Miss Any Important Property?</h3>			
-		<p>Make sure you go to <a href="https://github.com/thednp/kute.js/issues" target="_blank">the issues tracker</a> and report the missing property ASAP.</p>			
+		<p>Make sure you go to <a href="https://github.com/thednp/kute.js/issues" target="_blank">the issues tracker</a> and report the missing property ASAP, or you can check the <a href="extend.html">extend</a> guide and learn how to develop a plugin to support a new property yourself.</p>			
 	</div>
 
 	<div class="content-wrap">
@@ -210,12 +210,12 @@
 	</div>
 	  
       <!-- FOOTER -->
-     <footer>
+   <footer>
 		<div class="content-wrap">
 			<p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
 			<p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
 		</div>
-    </footer>
+   </footer>
 
  </div><!-- /.site-wrapper -->
  

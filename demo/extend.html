@@ -153,6 +153,14 @@ K.Tween.prototype.restart = function(){
     }
     return this;
 }
+
+// methods to queue callbacks with ease
+K.Tween.prototype.onUpdate = function(){
+    this._uC = arguments; 
+    return this;
+}
+// _sC = startCallback | _cC = completeCallback | _stC = stopCallback
+// _pC = pauseCallback | _rC = resumeCallback
 </code></pre>
         <p>For some reasons these methods aren't included into the core/plugins by default, but let you decide what you need and how to customize the animation engine for your very secific need.</p>
         

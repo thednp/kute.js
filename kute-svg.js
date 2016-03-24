@@ -23,31 +23,31 @@
   'use strict';
   
   var K = window.KUTE, S = S || {}, p,
-    _svg = document.getElementsByTagName('path')[0],
+    _svg = K.selector('path') || K.selector('svg'),
     _ns = _svg && _svg.ownerSVGElement && _svg.ownerSVGElement.namespaceURI || 'http://www.w3.org/2000/svg',
     _nm = ['strokeWidth', 'strokeOpacity', 'fillOpacity', 'stopOpacity'], // numeric SVG CSS props
     _cls = ['fill', 'stroke', 'stopColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
-    trm = function(s){ if (!String.prototype.trim) { return s.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, ''); } else { return s.trim(); }};
+    pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi;
   
   if (_svg && !_svg.ownerSVGElement) {return;} // if SVG API is not supported, return
     
   // SVG MORPH
-  // get path d attribute or create a path with string value
-  S.getPath = function(e){
+  // get path d attribute or create a path from string value
+  S.gPt = function(e){
     var p = {}, el = typeof e === 'object' ? e : /^\.|^\#/.test(e) ? document.querySelector(e) : null;
     if ( el && /path|glyph/.test(el.tagName) ) {
-      p.e = S.forcePath(el);
+      p.e = S.fPt(el);
       p.o = el.getAttribute('d');
 
     } else if (!el && /[a-z][^a-z]*/ig.test(e)) { // maybe it's a string path already
-      var np = S.createPath(trm(e));
+      var np = S.cP(e.trim());
       p.e = np;
       p.o = e;
     }
     return p;
   }
   
-  S.pathCross = function(w){
+  S.pCr = function(w){ // pathCross
     // path tween options
     this._mpr = w.morphPrecision || 25;  
     this._midx = w.morphIndex; 
@@ -55,24 +55,45 @@
     this._rv1 = w.reverseFirstPath;
     this._rv2 = w.reverseSecondPath;
     
-    var p1 = S.getOnePath(w._vS.path.o), p2 = S.getOnePath(w._vE.path.o), arr;
+    var p1 = S.gOp(w._vS.path.o), p2 = S.gOp(w._vE.path.o), arr;
+    this._isp = !/[CSQTA]/i.test(p1) && !/[CSQTA]/i.test(p2); // both shapes are polygons
     
-    arr = S._pathCross(p1,p2);
+    arr = S._pCr(p1,p2,w._el.parentNode);
 
     w._vS.path.d = arr[0];
     w._vE.path.d = arr[1];
   }
 
-  S._pathCross = function(s,e){
-    s = S.createPath(s); e = S.createPath(e);    
-    var arr = S.getSegments(s,e,this._mpr), s1 = arr[0], e1 = arr[1], arL = e1.length, idx;
+  S._pCr = function(s,e,svg){ // _pathCross
+    var s1, e1, arr, idx, arL, sm, lg, smp, lgp, nsm = [], sml, cl = [], len, tl, cs;
+    this._sp = false;
     
+    if (!this._isp) {
+        s = S.cP(s); e = S.cP(e);  
+        arr = S.gSegs(s,e,this._mpr); 
+        s1 = arr[0]; e1 = arr[1]; arL = e1.length;
+    } else {
+      s = S.pTA(s); e = S.pTA(e); 
+      arL = Math.max(s.length,e.length);
+      if ( arL === e.length) { sm = s; lg = e; } else { sm = e; lg = s; }
+      sml = sm.length;
+
+      smp = S.cP('M'+sm.join('L')+'z'); len = smp.getTotalLength() / arL;
+      for (var i=0; i<arL; i++){
+        tl = smp.getPointAtLength(len*i);
+        cs = S.gCP(len,tl,sm);
+        nsm.push( [ cs[0], cs[1] ] );
+      }
+
+      if (arL === e.length) { e1 = lg; s1 = nsm; } else { s1 = lg; e1 = nsm; }
+    }
+
     // reverse arrays
     if (this._rv1) { s1.reverse(); }
     if (this._rv2) { e1.reverse(); }
 
     // determine index for best/minimum distance between points
-    if (this._smi) { idx = S.getBestIndex(s1,e1); }
+    if (this._smi) { idx = S.gBi(s1,e1); }
     
     // shift second array to for smallest tween distance
     if (this._midx) {
@@ -82,7 +103,10 @@
 
     // the console.log helper utility
     if (this._smi) {
-      console.log( 'KUTE.js Path Morph Log\nThe morph used ' + arL + ' points to draw both paths based on '+this._mpr+' morphPrecision value.\n' 
+      // also show the points
+      S.shP(s1,e1,svg);
+      var mpi = this._isp ? 'the polygon with the most points.\n' : (this._mpr === 25 ? 'the default' : 'your') +' morphPrecision value of '+this._mpr+'.\n';
+      console.log( 'KUTE.js Path Morph Log\nThe morph used ' + arL + ' points to draw both paths based on '+mpi 
         + (this._midx ? 'You\'ve configured the morphIndex to ' + this._midx + ' while the recommended is ' + idx+ '.\n' : 'You may also consider a morphIndex for the second path. Currently the best index seems to be ' + idx + '.\n')
         + (
             !this._rv1 && !this._rv2 ? 'If the current animation is not satisfactory, consider reversing one of the paths. Maybe the paths do not intersect or they really have different draw directions.' :
@@ -95,93 +119,137 @@
     return [s1,e1]
   }
 
-  S.getSegments = function(s,e,r){
+  S.gSegs = function(s,e,r){ // getSegments returns an array of points based on a sample size morphPrecision
     var s1 = [], e1 = [], le1 = s.getTotalLength(), le2 = e.getTotalLength(), ml = Math.max(le1,le2),
       d = r, ar = ml / r, j = 0, sl = ar*r; // sl = sample length
 
-    // populate the points arrays based on morphPrecision as sample size
-    while ( (j += r) < sl ) {
+    while ( (j += r) < sl ) { // populate the points arrays based on morphPrecision as sample size
       s1.push( [s.getPointAtLength(j).x, s.getPointAtLength(j).y]);
       e1.push( [e.getPointAtLength(j).x, e.getPointAtLength(j).y]);
     }
     return [s1,e1];
-  }    
+  }
   
-  S.getBestIndex = function(s,e){
-    var s1 = S.clone(s), e1 = S.clone(e), d = [], i, r = [], l = s1.length, t, ax, ay;
+  S.gCP = function(p,t,s){ // getClosestPoint for polygon paths it returns a close point from the original path (length,pointAtLength,smallest); // intervalLength
+    var x, y, a = [], l = s.length, dx, nx, pr;
+    for (i=0; i<l; i++){
+      x = Math.abs(s[i][0] - t.x);
+      y = Math.abs(s[i][1] - t.y);
+      a.push( Math.sqrt( x * x + y * y ) );
+    }
+    dx = a.indexOf(Math.min.apply(null,a));
+    pr = !!s[dx-1] ? dx-1 : l-1;
+    nx = !!s[dx+1] ? dx+1 : 0;
+    return Math.abs(s[pr][0] - t.x) < p && Math.abs(s[pr][1] - t.y) < p ? s[pr]
+    : Math.abs(s[nx][0] - t.x) < p && Math.abs(s[nx][1] - t.y) < p ? s[nx] 
+    : Math.abs(s[dx][0] - t.x) < p && Math.abs(s[dx][1] - t.y) < p ? s[dx] 
+    : [t.x,t.y];
+  }
+  
+  S.shP = function(s,e,v){// showPoints helper function to visualize the points on the path
+    if (!this._sp){
+        var c, a = arguments, cl, p, l;
+        for (var i=0; i<2; i++){
+          p = a[i]; l = p.length; cl = i=== 0 ? { f: 'DeepPink', o: 'HotPink' } : { f: 'Lime', o: 'LimeGreen' };
+          for (var j=0; j<l; j++) {
+            c = document.createElementNS(_ns,'circle');
+            c.setAttribute('cx',p[j][0]); c.setAttribute('cy',p[j][1]);
+            c.setAttribute('r', j===0 ? 20 : 10 ); c.setAttribute('fill', j===0 ? cl.f : cl.o);
+            if (this._isp) { v.appendChild(c); } else if (!this._isp && j===0 ) { v.appendChild(c);}
+          }
+        }
+        this._sp = true; c = null;
+    }      
+  }
+  
+  S.gBi = function(s,e){ // getBestIndex for shape rotation
+    var s1 = S.clone(s), e1 = S.clone(e), d = [], i, l = e.length, t, ax, ay;
     for (i=0; i<l; i++){
       t = e1.splice(i,l-i); e1 = t.concat(e1);
       ax = Math.abs(s1[i][0] - e1[i][0]);
       ay = Math.abs(s1[i][1] - e1[i][1]);
       d.push( Math.sqrt( ax * ax + ay * ay ) );
-      r.push( e1 );
       e1 = []; e1 = S.clone(e); t = null;
     }
     return d.indexOf(Math.min.apply(null,d));
   }
   
-  S.getOnePath = function(p){
+  S.gOp = function(p){ // getOnePath, first path only
     var a = p.split(/z/i);
     if (a.length > 2) {
-       return trm(a[0]) + 'z';
-    } else { return trm(p); }
+       return a[0].trim() + 'z';
+    } else { return p.trim(); }
   }
 
-  S.createPath = function (p){
+  S.cP = function (p){ // createPath
     var c = document.createElementNS(_ns,'path'), d = typeof p === 'object' ? p.getAttribute('d') : p; 
     c.setAttribute('d',d); return c;
   }
   
-  S.forcePath = function(p){
+  S.fPt = function(p){ // forcePath for glyph elements
     if (p.tagName === 'glyph') { // perhaps we can also change other SVG tags in the future 
-      var c = S.createPath(p); p.parentNode.appendChild(c); return c;
+      var c = S.cP(p); p.parentNode.appendChild(c); return c;
     } 
     return p;
   }
   
-  S.clone = function(obj) {
+  S.clone = function(a) {
     var copy;
-
-    // Handle Array
-    if (obj instanceof Array) {
+    if (a instanceof Array) {
       copy = [];
-      for (var i = 0, len = obj.length; i < len; i++) {
-        copy[i] = S.clone(obj[i]);
+      for (var i = 0, len = a.length; i < len; i++) {
+        copy[i] = S.clone(a[i]);
       }
       return copy;
     }
-
-    // Handle Object
-    if (obj instanceof Object) {
-      copy = {};
-      for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) {
-          copy[attr] = S.clone(obj[attr]);
+    return a;
+  }
+  
+  S.pTA = function(p) { // simple pathToAbsolute for polygons
+    var np = p.match(pathReg), wp = [], l = np.length, s, c, r, x = 0, y = 0;
+    for (var i = 0; i<l; i++){
+      np[i] = np[i]; c = np[i][0]; r = new RegExp(c+'[^\\d|\\-]*','i'); 
+      np[i] = np[i].replace(/(^|[^,])\s*-/g, '$1,-').replace(/(\s+\,|\s|\,)/g,',').replace(r,'').split(',');
+      np[i][0] = parseFloat(np[i][0]);
+      np[i][1] = parseFloat(np[i][1]);
+      if (i === 0) { x+=np[i][0]; y +=np[i][1]; } 
+      else {
+        x = np[i-1][0]; 
+        y = np[i-1][1]; 
+        if (/l/i.test(c)) {
+          np[i][0] = c === 'l' ? np[i][0] + x : np[i][0];
+          np[i][1] = c === 'l' ? np[i][1] + y : np[i][1];  
+        } else if (/h/i.test(c)) {
+          np[i][0] = c === 'h' ? np[i][0] + x : np[i][0];
+          np[i][1] = y;  
+        } else if (/v/i.test(c)) {
+          np[i][0] = x;
+          np[i][1] = c === 'v' ? np[i][0] + y : np[i][0];
         }
       }
-      return copy;
     }
-
-    return obj;
-  }  
+    return np;
+  }
+  
+  // a shortHand pathCross
+  K.svq = function(w){ if ( w._vE.path ) S.pCr(w); }
   
   // register the render SVG path object  
   // process path object and also register the render function
-  K.pp['path'] = function(a,o,l) {
+  K.pp['path'] = function(a,o,l) { // K.pp['path']('path',value,element);
     if (!('path' in K.dom)) {
-      K.dom['path'] = function(w,p,v){    
-        var curve =[], i, l;
-
+      K.dom['path'] = function(w,p,v){
+        var points =[], i, l;
         for(i=0,l=w._vE.path.d.length;i<l;i++) { // for each point
-          curve[i] = [];
+          points[i] = [];
           for(var j=0;j<2;j++) { // each point coordinate
-            curve[i].push(w._vS.path.d[i][j]+(w._vE.path.d[i][j]-w._vS.path.d[i][j])*v);
+            points[i].push(w._vS.path.d[i][j]+(w._vE.path.d[i][j]-w._vS.path.d[i][j])*v);
           }
         }
-        w._el.setAttribute("d", v === 1 ? w._vE.path.o : 'M' + curve.join('L') + 'Z' );       
+        w._el.setAttribute("d", v === 1 ? w._vE.path.o : 'M' + points.join('L') + 'Z' );       
       }
     }
-    return S.getPath(o);
+    return S.gPt(o);
   };
     
   K.prS['path'] = function(el,p,v){
@@ -189,14 +257,14 @@
   };
 
   // SVG DRAW
-  S.getDraw = function(e,v){
+  S.gDr = function(e,v){
     var l = e.getTotalLength(), start, end, d, o;
     if ( v instanceof Object ) {
       return v;
     } else if (typeof v === 'string') { 
       v = v.split(/\,|\s/);
-      start = /%/.test(v[0]) ? S.percent(trm(v[0]),l) : parseFloat(v[0]);
-      end = /%/.test(v[1]) ? S.percent(trm(v[1]),l) : parseFloat(v[1]);
+      start = /%/.test(v[0]) ? S.pc(v[0].trim(),l) : parseFloat(v[0]);
+      end = /%/.test(v[1]) ? S.pc(v[1].trim(),l) : parseFloat(v[1]);
     } else if (typeof v === 'undefined') {
       o = parseFloat(K.gCS(e,'strokeDashoffset'));
       d = K.gCS(e,'strokeDasharray').split(/\,/);
@@ -208,7 +276,7 @@
     return { s: start, e: end, l: l } 
   };
   
-  S.percent = function(v,l){
+  S.pc = function(v,l){
     return parseFloat(v) / 100 * l;
   };
   
@@ -226,11 +294,11 @@
         w._el.style.strokeDasharray = e+o<1 ? '0px, ' + l + 'px' : (e+o) + 'px, ' + l + 'px';
       }
     }
-    return S.getDraw(l,o);
+    return S.gDr(l,o);
   }
   
   K.prS['draw'] = function(el,p,v){
-    return S.getDraw(el)
+    return S.gDr(el)
   }
   
   // SVG CSS Properties
@@ -262,7 +330,7 @@
     }
   }
   
-  for ( var i = 0, l = _nm.length; i< l; i++) { // for numeric CSS props SVG related
+  for ( var i = 0, l = _nm.length; i< l; i++) { // for numeric CSS props for SVG elements
     p = _nm[i];
     if (p === 'strokeWidth'){
       K.pp[p] = function(p,v){

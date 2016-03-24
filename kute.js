@@ -27,14 +27,15 @@
      return r ? f + (p.charAt(0).toUpperCase() + p.slice(1)) : p;
   };
   
-  K.selector = function(el,multi){
+  K.selector = function(el,multi){ // a selector utility
     var nl;
     if (multi){
       nl = typeof el === 'object' && el.length ? el : document.querySelectorAll(el);
     } else {
       nl = typeof el === 'object' ? el : /^#/.test(el) ? document.getElementById(el.replace('#','')) : document.querySelector(el);       
     }
-    if (nl === null && el !== 'window') throw new TypeError('Element not found or incorrect selector: '+el); else return nl;   
+    if (nl === null && el !== 'window') throw new TypeError('Element not found or incorrect selector: '+el); 
+    return nl;   
   };
    
   var _tch = ('ontouchstart' in window || navigator.msMaxTouchPoints) || false, // support Touch?
@@ -89,9 +90,9 @@
   };
 
   K.fromTo = function (el, f, to, o) {
-    var _el = K.selector(el), ft = K.prP(f, to, _el),
-        _vS = ft[0], _vE = ft[1]; o = o || {};
-    return new K.Tween(_el, _vS, _vE, o);
+    var _el = K.selector(el), ft = K.prP(f, to, _el), _vS = ft[0], _vE = ft[1]; o = o || {};
+    var tw = new K.Tween(_el, _vS, _vE, o); K.svg && K.svq(tw); // on init we process the SVG paths
+    return tw;
   };
   
   // multiple elements tweening
@@ -173,111 +174,9 @@
   K.add = function (tw) {  _tws.push(tw); };
   K.remove = function (tw) {
     var i = _tws.indexOf(tw);
-    if (i !== -1) {
-      _tws.splice(i, 1);
-    }
+    if (i !== -1) { _tws.splice(i, 1); }
   };  
-  K.s = function () { _caf(_t);  _t = null; }; 
-  
-  // register functions for the render object K.dom(w, p, w._e(e));
-  K._queue = function (w) {
-    for ( var p in w._vE ) {
-      var cls = _cls.indexOf(p) !== -1, 
-        bm = _bm.indexOf(p) !== -1,
-        sc = _sc.indexOf(p) !== -1,
-        op = _op.indexOf(p) !== -1,
-        tf = p === 'transform';
-      if ( bm && (!(p in K.dom)) ) {
-        K.dom[p] = function(w,p,v) {
-          w._el.style[p] = (w._vS[p].value + (w._vE[p].value - w._vS[p].value) * v ) + w._vE[p].unit;
-        };
-      } else if (tf && (!(p in K.dom)) ) {
-
-        K.dom[p] = function(w,p,v) {
-          var _tS = '', tP, rps, pps = 'perspective('+w._pp+'px) ';
-          for (tP in w._vE[p]) {
-            var t1 = w._vS[p][tP], t2 = w._vE[p][tP];
-            rps = rps || _3d.indexOf(tP) !== -1 && !_isIE; 
-
-            if ( tP === 'translate' ) {
-              var tls = '', ts = {}, ax;
-
-              for (ax in t2){
-                var x1 = t1[ax].value || 0, x2 = t2[ax].value || 0, xu = t2[ax].unit || 'px';
-                ts[ax] = x1===x2 ? x2+xu : (x1 + ( x2 - x1 ) * v) + xu;  
-              }
-              tls = t2.x ? 'translate(' + ts.x + ',' + ts.y + ')' :
-                'translate3d(' + ts.translateX + ',' + ts.translateY + ',' + ts.translateZ + ')';                  
-
-              _tS = (_tS === '') ? tls : (tls + ' ' + _tS);              
-            } else if ( tP === 'rotate' ) {
-              var rt = '', rS = {}, rx;
-
-              for ( rx in t2 ){
-                if ( t1[rx] ) {
-                  var a1 = t1[rx].value, a2 = t2[rx].value, au = t2[rx].unit||'deg', 
-                    av = a1 + (a2 - a1) * v;
-                  rS[rx] = rx ==='z' ? 'rotate('+av+au+')' : rx + '(' + av + au + ') ';
-                }
-              }
-              rt = t2.z ?  rS.z  : (rS.rotateX||'') + (rS.rotateY||'') + (rS.rotateZ||'');
-
-              _tS = (_tS === '') ? rt : (_tS + ' ' + rt);  
-            } else if (tP==='skew') {
-              var sk = '', sS = {};
-              for ( var sx in t2 ){
-                if ( t1[sx] ) {
-                  var s1 = t1[sx].value, s2 = t2[sx].value, su = t2[sx].unit||'deg', 
-                    sv = s1 + (s2 - s1) * v;
-                  sS[sx] = sx + '(' + sv + su + ') ';
-                }
-              }
-              sk = (sS.skewX||'') + (sS.skewY||'');
-              _tS = (_tS === '') ? sk : (_tS + ' ' + sk);          
-            } else if (tP === 'scale') {
-              var sc1 = t1.value, sc2 = t2.value,
-                s = sc1 + (sc2 - sc1) * v, scS = tP + '(' + s + ')';                  
-              _tS = (_tS === '') ? scS : (_tS + ' ' + scS);
-            }
-          }
-          w._el.style[_tr] = rps || ( w._pp !== undefined && w._pp !== 0 ) ? pps + _tS : _tS;
-        };
-
-      } else if ( cls && (!(p in K.dom)) ) {
-        K.dom[p] = function(w,p,v) {
-          var _c = {}; 
-          for (var c in w._vE[p].value) {
-            if ( c !== 'a' ){
-              _c[c] = parseInt(w._vS[p].value[c] + (w._vE[p].value[c] - w._vS[p].value[c]) * v )||0;            
-            } else {
-              _c[c] = (w._vS[p].value[c] && w._vE[p].value[c]) ? parseFloat(w._vS[p].value[c] + (w._vE[p].value[c] - w._vS[p].value[c]) * v) : null;
-            }          
-          }
-
-          if ( w._hex ) {
-            w._el.style[p] = K.rth( _c.r, _c.g, _c.b );
-          } else {
-            w._el.style[p] = !_c.a || _isIE8 ? 'rgb(' + _c.r + ',' + _c.g + ',' + _c.b + ')' : 'rgba(' + _c.r + ',' + _c.g + ',' + _c.b + ',' + _c.a + ')';          
-          }                    
-        };
-      } else if ( sc && (!(p in K.dom)) ) {
-        K.dom[p] = function(w,p,v) {
-          w._el = (w._el === undefined || w._el === null) ? _sct : w._el;
-          w._el.scrollTop = w._vS[p].value + (w._vE[p].value - w._vS[p].value) * v;
-        };
-      } else if ( op && (!(p in K.dom)) ) {
-        if (_isIE8) {
-          K.dom[p] = function(w,p,v) {
-            w._el.style.filter = "alpha(opacity=" + ( w._vS[p].value + (w._vE[p].value - w._vS[p].value) * v) * 100 + ")";
-          };
-        } else {
-          K.dom[p] = function(w,p,v) {
-            w._el.style.opacity = w._vS[p].value + (w._vE[p].value - w._vS[p].value) * v;
-          };
-        }
-      }
-    }
-  };
+  K.s = function () { _caf(_t);  _t = null; };
     
   // process properties for _vE and _vS or one of them
   K.prP = function (e, s, l) {
@@ -330,6 +229,57 @@
   // process properties object | registers the plugins prepareStart functions
   K.pp = {};  K.prS = {}; 
   K.pp.tf = function(p,v){ // transform prop / value
+    if (!('transform' in K.dom)) {
+      K.dom['transform'] = function(w,p,v) {
+        var _tS = '', tP, rps, pps = 'perspective('+w._pp+'px) ';
+        for (tP in w._vE[p]) {
+          var t1 = w._vS[p][tP], t2 = w._vE[p][tP];
+          rps = rps || _3d.indexOf(tP) !== -1 && !_isIE; 
+
+          if ( tP === 'translate' ) {
+            var tls = '', ts = {}, ax;
+
+            for (ax in t2){
+              var x1 = t1[ax].value || 0, x2 = t2[ax].value || 0, xu = t2[ax].unit || 'px';
+              ts[ax] = x1===x2 ? x2+xu : (x1 + ( x2 - x1 ) * v) + xu;  
+            }
+            tls = t2.x ? 'translate(' + ts.x + ',' + ts.y + ')' :
+              'translate3d(' + ts.translateX + ',' + ts.translateY + ',' + ts.translateZ + ')';                  
+
+            _tS = (_tS === '') ? tls : (tls + ' ' + _tS);              
+          } else if ( tP === 'rotate' ) {
+            var rt = '', rS = {}, rx;
+
+            for ( rx in t2 ){
+              if ( t1[rx] ) {
+                var a1 = t1[rx].value, a2 = t2[rx].value, au = t2[rx].unit||'deg', 
+                  av = a1 + (a2 - a1) * v;
+                rS[rx] = rx ==='z' ? 'rotate('+av+au+')' : rx + '(' + av + au + ') ';
+              }
+            }
+            rt = t2.z ?  rS.z  : (rS.rotateX||'') + (rS.rotateY||'') + (rS.rotateZ||'');
+
+            _tS = (_tS === '') ? rt : (_tS + ' ' + rt);  
+          } else if (tP==='skew') {
+            var sk = '', sS = {};
+            for ( var sx in t2 ){
+              if ( t1[sx] ) {
+                var s1 = t1[sx].value, s2 = t2[sx].value, su = t2[sx].unit||'deg', 
+                  sv = s1 + (s2 - s1) * v;
+                sS[sx] = sx + '(' + sv + su + ') ';
+              }
+            }
+            sk = (sS.skewX||'') + (sS.skewY||'');
+            _tS = (_tS === '') ? sk : (_tS + ' ' + sk);          
+          } else if (tP === 'scale') {
+            var sc1 = t1.value, sc2 = t2.value,
+              s = sc1 + (sc2 - sc1) * v, scS = tP + '(' + s + ')';                  
+            _tS = (_tS === '') ? scS : (_tS + ' ' + scS);
+          }
+        }
+        w._el.style[_tr] = rps || ( w._pp !== undefined && w._pp !== 0 ) ? pps + _tS : _tS;
+      };
+    }
     var t = p.replace(/X|Y|Z/, ''), tv;
     if (p === 'translate3d') {
       tv = v.split(','); 
@@ -360,9 +310,57 @@
       return { value: K.truD(v,p).v };
     }
   };
-  K.pp.unl = function(p,v){ return { value: K.truD(v).v }; } // scroll | opacity | unitless  
-  K.pp.box = function(p,v){ return { value: K.truD(v).v, unit: K.truD(v).u }; } // box model | text props | radius props
-  K.pp.cls = function(p,v){ return { value: K.truC(v) }; } // colors
+  K.pp.unl = function(p,v){  // scroll | opacity | unitless  
+    if (/scroll/.test(p)){
+        K.dom[p] = function(w,p,v) {
+          w._el = (w._el === undefined || w._el === null) ? _sct : w._el;
+          w._el.scrollTop = w._vS[p].value + (w._vE[p].value - w._vS[p].value) * v;
+        };
+    } else if (p === 'opacity') {
+      if (!(p in K.dom)) {    
+        if (_isIE8) {
+          K.dom[p] = function(w,p,v) {
+            w._el.style.filter = "alpha(opacity=" + ( w._vS[p].value + (w._vE[p].value - w._vS[p].value) * v) * 100 + ")";
+          };
+        } else {
+          K.dom[p] = function(w,p,v) {
+            w._el.style.opacity = w._vS[p].value + (w._vE[p].value - w._vS[p].value) * v;
+          };
+        }
+      }
+    }
+    return { value: K.truD(v).v }; 
+  } 
+  K.pp.box = function(p,v){
+    if (!(p in K.dom)) {
+      K.dom[p] = function(w,p,v) {
+        w._el.style[p] = (w._vS[p].value + (w._vE[p].value - w._vS[p].value) * v ) + w._vE[p].unit;
+      };
+    }   
+    return { value: K.truD(v).v, unit: K.truD(v).u }; 
+  } 
+    // box model | text props | radius props
+  K.pp.cls = function(p,v){ // colors
+    if (!(p in K.dom)) {
+      K.dom[p] = function(w,p,v) {
+        var _c = {}; 
+        for (var c in w._vE[p].value) {
+          if ( c !== 'a' ){
+            _c[c] = parseInt(w._vS[p].value[c] + (w._vE[p].value[c] - w._vS[p].value[c]) * v )||0;            
+          } else {
+            _c[c] = (w._vS[p].value[c] && w._vE[p].value[c]) ? parseFloat(w._vS[p].value[c] + (w._vE[p].value[c] - w._vS[p].value[c]) * v) : null;
+          }          
+        }
+
+        if ( w._hex ) {
+          w._el.style[p] = K.rth( _c.r, _c.g, _c.b );
+        } else {
+          w._el.style[p] = !_c.a || _isIE8 ? 'rgb(' + _c.r + ',' + _c.g + ',' + _c.b + ')' : 'rgba(' + _c.r + ',' + _c.g + ',' + _c.b + ',' + _c.a + ')';          
+        }                    
+      };
+    }
+    return { value: K.truC(v) }; 
+  } 
     
   K.truD = function (d,p) { //true dimension returns { v = value, u = unit }
     var x = parseInt(d) || 0, mu = ['px','%','deg','rad','em','rem','vh','vw'], l = mu.length, 
@@ -453,7 +451,7 @@
         }        
       } else {      
         return _d[p];
-      }      
+      }
     }
   };  
   
@@ -569,8 +567,6 @@
     
     //also add plugins options
     for (var o in _o) { if (!(o in this) && !/perspective|delay|duration|repeat|origin|start|stop|update|complete|pause|play|yoyo|easing/i.test(o) ) { this[o] = _o[o]; } }
-
-    K._queue(this);
   };
     
   var w = K.Tween.prototype;
@@ -580,10 +576,7 @@
        
     K.perspective(this._el,this); // apply the perspective and transform origin
     if ( this._rpr ) { this.stack(); } // on start we reprocess the valuesStart for TO() method
-
-    // SVG Plugin
-    if (K.svg && this._vE.path) K.svg.pathCross(this); // on start we process the SVG paths
-    
+        
     for ( var e in this._vE ) {
       this._vSR[e] = this._vS[e];      
     }
@@ -716,7 +709,8 @@
           }
         }
       }
-    }  
+    }
+    K.svg && K.svq(this); // SVG Plugin | on start we process the SVG paths
   };
     
   //prepare valuesStart for .to() method
