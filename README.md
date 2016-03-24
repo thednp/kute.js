@@ -45,46 +45,6 @@ This aims to make the KUTE.js script work native within other jQuery apps but it
 
 The plugin is just a few bits of code to bridge all of the the awesome `kute.js` methods to your jQuery apps. The plugin can be found in the [/master](https://github.com/thednp/kute.js/blob/master/kute-jquery.js) folder. So let's have a look at the syntax.
 
-## Using the jQuery Plugin
-Here's a KUTE.js jQuery Plugin example that showcases most common usage in future apps:
-```javascript
-// first we define the object(s)
-var tween = $('selector').KUTE('fromTo', // apply fromTo() method to selector
-  
-    { translate: 0, opacity: 1 }, // fromValues
-    { translate: 150, opacity: 0 }, // toValues
-    
-    // tween options object
-    { duration: 500, delay: 0, easing	: 'exponentialInOut', // basic options
-
-      //callbacks
-      start: functionOne, // run function when tween starts
-      complete: functionTwo, // run function when tween animation is finished
-      update: functionThree // run function while tween running    
-      stop: functionThree // run function when tween stopped    
-      pause: functionThree // run function when tween paused    
-      resume: functionThree // run function when resuming tween    
-    }
-);
-
-// then we apply the tween control methods, like start
-$(tween).KUTE('start');
-```
-
-## Alternative usage in jQuery powered applications
-In some cases you can handle animations inside jQuery applications even without the plugin. Here's how the code could look like:
-```javascript
-var tween = KUTE.fromTo($('selector')[0], fromValues, toValues, options);
-tween.start();
-```
-Pay attention to that `$('selector')[0]` as jQuery always creates an array of selected objects and not a single object, that is why we need to focus a tween object to a single HTML object and not a selection of objects. HTMLCollection objects should be handled with `allFromTo()` or `allTo()` methods.
-
-```javascript
-var tween = KUTE.allFromTo($('selector'), fromValues, toValues, options);
-tween.start();
-```
-
-
 # NPM/Bower
 You can install this through NPM or bower respectively:
 ```
@@ -160,6 +120,46 @@ KUTE.fromTo(el,
     }
 ).start(); // this is to start animation right away
 ```
+
+## Using the jQuery Plugin
+Here's a KUTE.js jQuery Plugin example that showcases most common usage in future apps:
+```javascript
+// first we define the object(s)
+var tween = $('selector').KUTE('fromTo', // apply fromTo() method to selector
+  
+    { translate: 0, opacity: 1 }, // fromValues
+    { translate: 150, opacity: 0 }, // toValues
+    
+    // tween options object
+    { duration: 500, delay: 0, easing	: 'exponentialInOut', // basic options
+
+      //callbacks
+      start: functionOne, // run function when tween starts
+      complete: functionTwo, // run function when tween animation is finished
+      update: functionThree // run function while tween running    
+      stop: functionThree // run function when tween stopped    
+      pause: functionThree // run function when tween paused    
+      resume: functionThree // run function when resuming tween    
+    }
+);
+
+// then we apply the tween control methods, like start
+$(tween).KUTE('start');
+```
+
+## Alternative usage in jQuery powered applications
+In some cases you can handle animations inside jQuery applications even without the plugin. Here's how the code could look like:
+```javascript
+var tween = KUTE.fromTo($('selector')[0], fromValues, toValues, options);
+tween.start();
+```
+Pay attention to that `$('selector')[0]` as jQuery always creates an array of selected objects and not a single object, that is why we need to focus a tween object to a single HTML object and not a selection of objects. HTMLCollection objects should be handled with `allFromTo()` or `allTo()` methods.
+
+```javascript
+var tween = KUTE.allFromTo($('selector'), fromValues, toValues, options);
+tween.start();
+```
+
 
 # How it works
 * it computes all the values before starting the animation, then caches them to avoid layout thrashing that occur during animation
