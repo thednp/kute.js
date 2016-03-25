@@ -345,10 +345,10 @@
       K.pp[p] = function(p,v){
         if (!(p in K.dom)) {
           K.dom[p] = function(w,p,v) {
-            w._el.style[p] = w._vS[p].value + (w._vE[p].value - w._vS[p].value) * v;
+            w._el.style[p] = w._vS[p] + (w._vE[p] - w._vS[p]) * v;
           }
         }
-        return K.pp.unl(p,v);
+        return parseFloat(v);
       }
     } 
     K.prS[p] = function(el,p,v){

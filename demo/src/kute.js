@@ -307,7 +307,7 @@
       r2d.z = { value: K.truD(v,p).v, unit: (K.truD(v,p).u||'deg') };
       return r2d;
     } else if (p === 'scale') {
-      return { value: K.truD(v,p).v };
+      return { value: parseFloat(v) }; // this must be parseFloat(v)
     }
   };
   K.pp.unl = function(p,v){  // scroll | opacity | unitless  
@@ -329,7 +329,7 @@
         }
       }
     }
-    return { value: K.truD(v).v }; 
+    return { value: parseFloat(v) }; 
   } 
   K.pp.box = function(p,v){
     if (!(p in K.dom)) {
