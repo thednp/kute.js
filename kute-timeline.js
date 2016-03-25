@@ -41,6 +41,7 @@
 					for (var set in options) {
 						opt[set] = options[set][prop] || options[set] || defOpt[set][prop] || defOpt[prop];
 					}
+				}
 					var offset = opt.offset || 0;
 					opt.delay = (opt.delay || 0) + _totalTime;
 					for (var i = 0, len = all.length; i < len; i++) {
@@ -54,9 +55,8 @@
 					}
 					_totalTime += opt.duration || 1000;
 					this._startTime.push((this._startTime[this._startTime.length - 1] || 0));
-				}
 
-				return this.start();
+				return this;
 			};
 			this.to = function (els, to, opt) {
 				return this.tween(els, to, opt);
@@ -69,9 +69,7 @@
 				s = this;
 				for (var i = 0, len = t.length; i < len; i++) {
 					for (var it = 0, lent = this._tweens.length; it < lent; it++) {
-						for (var el = 0, len2 = this._collection.length; el < len2; el++) {
 							this._tweens[it][prop].apply(this._tweens[it], v);
-						}
 					}
 				}
 			}
