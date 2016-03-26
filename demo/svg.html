@@ -10,7 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="The SVG Plugin for KUTE.js enables animation for path morphing, drawing stroke, as well as some SVG specific CSS properties.">
-    <meta name="keywords" content="kute,kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
+    <meta name="keywords" content="kute,kute.js,animation,javascript animation,tweening engine,animation engine,morph svg,draw svg,svg animation,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
     <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
 
@@ -80,10 +80,10 @@
 
 	<div class="content-wrap">
 		<h2>SVG Plugin</h2>
-		<p>The SVG Plugin for KUTE.js extends the core engine and enables animation for various CSS properties specific to SVG elements as well as morphing path shapes. We'll dig into this in great detail as well as provide valuable tips on how to configure your animation for best performance and visual aesthetics. The SVG Plugin is very light, maybe one of the lightest out there, still, you will find it to be very powerful and flexible.</p>
+		<p>The SVG Plugin for KUTE.js extends the core engine and enables animation for various SVG specific CSS properties, as well as SVG morphing of path shapes. We'll dig into this in great detail as well as provide valuable tips on how to configure your animation for best performance and visual aesthetics. The SVG Plugin is very light, maybe one of the lightest out there, still, you will find it to be very powerful and flexible.</p>
         <p>Keep in mind that older browsers like Internet Explorer 8 and below as well as stock browser from Android 4.3 and below <a href="http://caniuse.com/#search=svg" target="_blank">do not support inline SVG</a> so make sure to fiter out your SVG tweens.</p>
-		<h3>Shape Morphing</h3>
-        <p>One of the most important parts of the plugin is the shape morphing capability. It only applies to inline <code>&lt;path></code> and <code>&lt;glyph></code> SVG elements, with closed shapes (their <code>d</code> attribute ends with <code>z</code>). On initialization or animation start, depending on the chosen KUTE.js method, it will <a href="http://phrogz.net/SVG/convert_path_to_polygon.xhtml" target="_blank">sample a number of points</a> along the two paths based on a default / given sample size and will create two arrays with these points, the arrays that we need for interpolation. Further more, with a set of options we can then rearrange / reverse these arrays to optimize and / or maximize the visual effect of the morph:</p>
+		<h3>SVG Morphing</h3>
+        <p>One of the most important parts of the plugin is the SVG morphing capability. It only applies to inline <code>&lt;path></code> and <code>&lt;glyph></code> SVG elements, with closed shapes (their <code>d</code> attribute ends with <code>z</code>). On initialization or animation start, depending on the chosen KUTE.js method, it will <a href="http://phrogz.net/SVG/convert_path_to_polygon.xhtml" target="_blank">sample a number of points</a> along the two paths based on a default / given sample size and will create two arrays with these points, the arrays that we need for interpolation. Further more, with a set of options we can then rearrange / reverse these arrays to optimize and / or maximize the visual effect of the morph:</p>
         <ul>
             <li><kbd>showMorphInfo: true</kbd> when <code>true</code> the script will log valuable information about the morph such as default/current sample size, number of points based on sample size, the recommended index for points rotation, or if one of the shapes require to be reversed. By default this option is <code>false</code> for performance reasons. This option will also show you the first point for both shapes so you can visualize how the settings affect the morph.</li>
             <li><kbd>morphPrecision: Number</kbd> option allows you to set the sampling size of the morph. The lesser value the better visual but the more power consumption and less performance. The default value is 25 but the <a href="http://bl.ocks.org/mbostock/3081153" target="_blank">D3.js example</a> uses 4.</li>
