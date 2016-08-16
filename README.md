@@ -2,7 +2,7 @@
 A minimal <b>native Javascript</b> animation engine with <b>jQuery</b> plugin, with most essential features for web developers, designers and animators, delivering easy to use methods to set up high performance, cross-browser animations.
 
 # Demo / CDN
-For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>. Thanks to jsdelivr, we have a CDN link <a target="_blank" href="http://www.jsdelivr.com/#!kute.js">here</a>.
+For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>. Thanks to jsdelivr, we have a CDN link <a target="_blank" href="http://www.jsdelivr.com/#!kute.js">here</a>. We also have cdnjs link <a href="https://cdnjs.com/libraries/kute.js" target="_blank">right here</a>. Sweet!
 
 # Core Engine - [visit page](http://thednp.github.io/kute.js/examples.html)
 * tween object methods: `.to()`, `.fromTo()`, `.allTo()`, `.allFromTo()`
