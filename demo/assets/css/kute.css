@@ -74,14 +74,22 @@ footer p {margin: 0 0 10px}
 .ie8 .btn.top-right { top:55px }
 
 /* featurettes */
-.featurettes {    
-background: #222;
-    padding: 60px 0;
-    width: 100%;
-    clear: both;
-    margin: 60px 0;
-    float: left;
+.featurettes { 
+	background: #eee;
+	padding: 60px 0;
+	width: 100%;
+	clear: both;
+	margin: 60px 0;
+	float: left;
+	color: #777;
 }
+/*.featurettes.dark {background: #222}*/
+.featurettes h1,
+.featurettes h2,
+.featurettes h3,
+.featurettes b,
+.featurettes strong {color: #222}
+.featurettes a {color: #2196F3}
 
 .content-wrap .featurettes { margin: 0 0 20px; padding: 20px 0 0 20px; display: inline-block; border-radius: 10px; position: relative }
 
@@ -276,12 +284,14 @@ hr {
 .btn { padding: 12px 15px; color:#fff; border:0; background-color: #999; line-height: 44px; }
 .bg-gray { color:#fff; background-color: #555; fill: #555 }
 .btn.active { background-color: #2196F3 }
-.btn:hover, .btn:active, .btn:focus { color: #fff; text-decoration: none; background-color: #777}
+.featurettes .btn, .featurettes .btn:hover, .featurettes .btn:active, .featurettes .btn:focus,
+.btn:hover, .btn:active, .btn:focus { color: #fff; }
+.btn:hover, .btn:active, .btn:focus { text-decoration: none; background-color: #777}
 .btn-olive, .bg-olive {background-color: #9C27B0; color: #fff; fill: #9C27B0} .btn-olive:hover, .btn-olive:active, .btn-olive:focus { background-color: #673AB7 }
 .btn-indigo, .bg-indigo { background-color: #673AB7; color: #fff; fill: #673AB7} .btn-indigo:hover, .btn-indigo:active, .btn-indigo:focus { background-color: #ffd626; color:#000 }
 .btn-green, .bg-green { background-color: #4CAF50; color: #fff; fill: #4CAF50} .btn-green:hover, .btn-green:active, .btn-green:focus { background-color: #9C27B0 }
 .btn-red, .bg-red { background-color: #e91b1f; color: #fff; fill: #e91b1f} .btn-red:hover, .btn-red:active, .btn-red:focus { background-color: #4CAF50 }
-.btn-yellow, .bg-yellow { background-color: #ffd626; color:#000; fill: #ffd626} .btn-yellow:hover, .btn-yellow:active, .btn-yellow:focus { background-color: #4CAF50; color: #000 }
+.btn-yellow, .bg-yellow { background-color: #ffd626; color:#000 !important; fill: #ffd626} .btn-yellow:hover, .btn-yellow:active, .btn-yellow:focus { background-color: #4CAF50; color: #fff !important }
 .btn-blue, .bg-blue { background-color: #2196F3; color: #fff; fill: #2196F3} .btn-blue:hover, .btn-blue:active, .btn-blue:focus { background-color: #e91b1f }
 .btn-pink, .bg-pink { background-color: #E91E63; color: #fff; fill: #E91E63} .btn-pink:hover, .btn-pink:active, .btn-pink:focus { background-color: #2196F3 }
 .btn-orange, .bg-orange { background-color: #FF5722; color: #fff; fill: #FF5722} .btn-orange:hover, .btn-orange:active, .btn-orange:focus { background-color: #4CAF50 }
@@ -305,7 +315,7 @@ hr {
 
 .btn-group { position: relative; display: inline-block }
 .btn-group ul {
-    background: #555; max-height: 300px; width: 200px;
+    background: #555; max-height: 300px; width: 200px; color: #ccc;
     position: absolute; bottom: -9999em; left: 0; list-style: none; 
     overflow: auto; padding: 0; z-index: 5
 }

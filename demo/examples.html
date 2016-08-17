@@ -418,104 +418,56 @@ var myMultiTween2 = KUTE.allFromTo(
 
         
 		<h3>Easing Functions</h3>
-		<p>We've talked about KUTE.js featuring many easing functions, so let's go ahead and create some examples. The first box below will animate with <code>linear</code> easing function and the second will use another function you choose. The example also features some predefined easing functions from the additional plugins: cubic bezier easing and physics based easing functions.</p>
+		<p>We've talked about KUTE.js featuring many easing functions, so let's go ahead and create some examples. The first box below will animate with <code>linear</code> easing function and the second will use another function you choose. The example features the core easing functions from the Robert Penner's easing functions.</p>
 		<div class="featurettes">
 			<div class="example-item easing-example example-box bg-green">Linear</div>
 			<div class="example-item easing-example example-box bg-pink"></div>
 				
 			<div class="example-buttons">
-                <div class="btn-group">
+					<div class="btn-group">
 				    <a id="easingSelectButton" class="btn btn-red" data-function="toggle" href="#">Select</a>
-                    <ul id="easings">
-                        <li class="titlef">Core Functions</li>
-                        <li>easingSinusoidalIn</li>
-                        <li>easingSinusoidalOut</li>
-                        <li>easingSinusoidalInOut</li>
-                        <li>easingQuadraticIn</li>
-                        <li>easingQuadraticOut</li>
-                        <li>easingQuadraticInOut</li>
-                        <li>easingCubicIn</li>
-                        <li>easingCubicOut</li>
-                        <li>easingCubicInOut</li>
-                        <li>easingQuarticIn</li>
-                        <li>easingQuarticOut</li>
-                        <li>easingQuarticInOut</li>
-                        <li>easingQuinticIn</li>
-                        <li>easingQuinticOut</li>
-                        <li>easingQuinticInOut</li>
-                        <li>easingCircularIn</li>
-                        <li>easingCircularOut</li>
-                        <li>easingCircularInOut</li>
-                        <li>easingExponentialIn</li>
-                        <li>easingExponentialOut</li>
-                        <li>easingExponentialInOut</li>
-                        <li>easingBackIn</li>
-                        <li>easingBackOut</li>
-                        <li>easingBackInOut</li>
-                        <li>easingElasticIn</li>               
-                        <li>easingElasticOut</li>               
-                        <li>easingElasticInOut</li>  
-                        <li class="titlef">Bezier Functions</li>
-                        <li>bezier(0.15, 0.7, 0.2, 0.9)</li>
-                        <li>bezier(0.25, 0.5, 0.6, 0.7)</li>
-                        <li>bezier(0.35, 0.2, 0.9, 0.2)</li>
-                        <li>easeIn</li>
-                        <li>easeOut</li>
-                        <li>easeInOut</li>
-                        <li>easeInSine</li>
-                        <li>easeOutSine</li>
-                        <li>easeInOutSine</li>
-                        <li>easeInQuad</li>
-                        <li>easeOutQuad</li>
-                        <li>easeInOutQuad</li>
-                        <li>easeInCubic</li>
-                        <li>easeOutCubic</li>
-                        <li>easeInOutCubic</li>
-                        <li>easeInQuart</li>
-                        <li>easeOutQuart</li>
-                        <li>easeInOutQuart</li>
-                        <li>easeInQuint</li>
-                        <li>easeOutQuint</li>
-                        <li>easeInOutQuint</li>
-                        <li>easeInExpo</li>
-                        <li>easeOutExpo</li>
-                        <li>easeInOutExpo</li>
-                        <li>easeInCirc</li>
-                        <li>easeOutCirc</li>
-                        <li>easeInOutCirc</li>
-                        <li>easeInBack</li>
-                        <li>easeOutBack</li>
-                        <li>easeInOutBack</li>
-                        <li>slowMo</li>
-                        <li>slowMo1</li>
-                        <li>slowMo2</li>
-                        <li class="titlef">Physics Functions</li>  
-                        <li>physicsIn</li> 
-                        <li>physicsOut</li>  
-                        <li>physicsInOut</li>  
-                        <li>physicsBackIn</li>  
-                        <li>physicsBackOut</li>  
-                        <li>physicsBackInOut</li>  
-                        <li>spring</li>  
-                        <li>bounce</li>  
-                        <li>gravity</li>  
-                        <li>forceWithGravity</li>  
-                        <li>bezier</li>  
-                        <li>multiPointBezier</li>  
-                    </ul>
-                </div>
+						<ul id="easings">
+							<li>easingSinusoidalIn</li>
+							<li>easingSinusoidalOut</li>
+							<li>easingSinusoidalInOut</li>
+							<li>easingQuadraticIn</li>
+							<li>easingQuadraticOut</li>
+							<li>easingQuadraticInOut</li>
+							<li>easingCubicIn</li>
+							<li>easingCubicOut</li>
+							<li>easingCubicInOut</li>
+							<li>easingQuarticIn</li>
+							<li>easingQuarticOut</li>
+							<li>easingQuarticInOut</li>
+							<li>easingQuinticIn</li>
+							<li>easingQuinticOut</li>
+							<li>easingQuinticInOut</li>
+							<li>easingCircularIn</li>
+							<li>easingCircularOut</li>
+							<li>easingCircularInOut</li>
+							<li>easingExponentialIn</li>
+							<li>easingExponentialOut</li>
+							<li>easingExponentialInOut</li>
+							<li>easingBackIn</li>
+							<li>easingBackOut</li>
+							<li>easingBackInOut</li>
+							<li>easingElasticIn</li>               
+							<li>easingElasticOut</li>               
+							<li>easingElasticInOut</li>
+						</ul>
+				</div>
 				<a id="startEasingTween" class="btn btn-blue" href="#">Start</a>	
 			</div>
 		</div>
-        <p>As you can see, the cubic-bezier easing functions can be used with both presets and as well as strings such as <code>bezier(0.15, 0.7, 0.2, 0.9)</code>. The physics based easing functions have their own presets, but the last 6 are all the examples shown in the <a href="easing.html">API documentation</a>, so make sure to check.</p>   	
+		<p>For more examples and info about the other easing functions, head over to the <a href="easing.html">easing examples</a> page.</p>   	
 	</div>
 
-	<ul id="share" class="nav">
-		<li>Share </li>
-		<li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
-		<li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute_js animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></a></li>
-		<li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
-	</ul>
+    <ul id="share" class="nav">
+        <li>Share </li>
+        <li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
+				<li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute_js animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></li>
+        <li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
+    </ul>
 
 		<!-- FOOTER -->
 		<footer>

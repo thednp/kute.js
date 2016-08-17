@@ -117,7 +117,7 @@ var tween = KUTE.to('#rectangle', { path: 'M301.113,12.011l99.25,179.996l201.864
 
         <div class="featurettes">
           <svg class="example-box-model example-box" id="morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" >
-              <path id="rectangle" class="bg-lime" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
+              <path id="rectangle" class="bg-red" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
                   c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>
               <path id="star" style="visibility:hidden" d="M301.113,12.011l99.25,179.996l201.864,38.778L461.706,380.808
                   l25.508,203.958l-186.101-87.287L115.01,584.766l25.507-203.958L0,230.785l201.86-38.778L301.113,12.011"/>
@@ -252,18 +252,22 @@ var morph2 = KUTE.fromTo('#startpath1',       { path: '#startpath1' },         {
 var morph3 = KUTE.fromTo('#startpath1-clone', { path: '#startpath1-clone' },   { path: '#endpath1' });
 var morph4 = KUTE.fromTo('#startpath2',       { path: '#startpath2' },         { path: '#endpath2' });
 </code></pre>
-        <p>As with the previous example, you should change which path will morph to which path so that their points travel the least possible distance and the morph animation looks visually appealing.</p>
+        <p>As with the previous example, you should change which path will morph to which path so that their points travel the least possible distance and the morph animation looks visually appealing. In the next example, we have used a <code>mask</code> where we included the subpaths of both start and end shape, just to get the same visual as the originals.</p>
 		<div class="featurettes">
-            <svg class="example-box-model example-box" id="multi-morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 513">
-                <path id="rectangle-container" class="bg-blue" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"/>
-                <path id="symbol-left" class="bg-light" d="M155.889 333.394h-55.632c-3.351 0-5.854-1.504-7.271-3.792-1.467-2.379-1.542-5.464 0-8.534l59.11-104.313c0.063-0.114 0.063-0.19 0-0.316l-37.615-65.116c-1.556-3.098-1.783-6.157-0.316-8.534 1.417-2.301 4.235-3.477 7.586-3.477h55.632c8.535 0 12.72 5.499 15.489 10.431 0 0 38.020 66.33 38.249 66.696-2.252 3.97-60.059 106.21-60.059 106.21-2.844 5.131-6.852 10.745-15.173 10.745z"/>
-                <path id="symbol-left-clone" class="bg-light" d="M155.889 333.394h-55.632c-3.351 0-5.854-1.504-7.271-3.792-1.467-2.379-1.542-5.464 0-8.534l59.11-104.313c0.063-0.114 0.063-0.19 0-0.316l-37.615-65.116c-1.556-3.098-1.783-6.157-0.316-8.534 1.417-2.301 4.235-3.477 7.586-3.477h55.632c8.535 0 12.72 5.499 15.489 10.431 0 0 38.020 66.33 38.249 66.696-2.252 3.97-60.059 106.21-60.059 106.21-2.844 5.131-6.852 10.745-15.173 10.745z"/>
-                <path id="symbol-right" class="bg-lime" d="M418.956 75.269l-123.176 217.79c-0.075 0.115-0.075 0.255 0 0.367l78.431 143.295c1.556 3.084 1.593 6.221 0.113 8.597-1.415 2.288-4.033 3.552-7.383 3.552h-55.57c-8.522 0-12.783-5.663-15.54-10.596 0 0-78.848-144.646-79.050-145.023 3.944-6.98 123.797-219.523 123.797-219.523 2.984-5.362 6.587-10.596 14.894-10.596h56.203c3.351 0 5.981 1.265 7.396 3.553 1.466 2.376 1.428 5.511-0.115 8.584z"/>
-                     
-                <path id="circle-container" style="visibility: hidden;" d="M256 0c-141.385 0-256 114.614-256 256s114.614 256 256 256c141.385 0 256-114.615 256-256 0-141.386-114.615-256-256-256z"/>
-                <path id="eye-right" style="visibility: hidden;" d="M352 128c17.673 0 32 21.49 32 48s-14.327 48-32 48-32-21.49-32-48 14.327-48 32-48z"/>
-                <path id="eye-left" style="visibility: hidden;" d="M176 156.031c29.823 0 51 11.166 51 28.641 0 3.699 1.906 21.497-0.085 24.797-7.414-12.288-27.405-21.094-50.915-21.094s-43.501 8.806-50.915 21.094c-1.991-3.3-0.085-21.098-0.085-24.797 0-17.475 21.177-28.641 51-28.641z"/>
-                <path id="mouth" style="visibility: hidden;" d="M250.172 416c-59.621 0-111.929-32.14-141.446-80.476 35.205 27.53 97.267 32.905 162.644 19.989 70.124-13.853 124.555-45.771 144.227-88.297-10.827 83.98-80.759 148.784-165.425 148.784z"/>
+            <svg class="example-box-model example-box" id="multi-morph-example-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 513">
+                <defs>
+                    <mask id="symbol">
+                        <rect width="100%" height="100%" fill="#fff"></rect>
+                        <path id="symbol-left" fill="#000" d="M155.889 333.394h-55.632c-3.351 0-5.854-1.504-7.271-3.792-1.467-2.379-1.542-5.464 0-8.534l59.11-104.313c0.063-0.114 0.063-0.19 0-0.316l-37.615-65.116c-1.556-3.098-1.783-6.157-0.316-8.534 1.417-2.301 4.235-3.477 7.586-3.477h55.632c8.535 0 12.72 5.499 15.489 10.431 0 0 38.020 66.33 38.249 66.696-2.252 3.97-60.059 106.21-60.059 106.21-2.844 5.131-6.852 10.745-15.173 10.745z"></path>
+                        <path id="symbol-left-clone" fill="#000" d="M155.889 333.394h-55.632c-3.351 0-5.854-1.504-7.271-3.792-1.467-2.379-1.542-5.464 0-8.534l59.11-104.313c0.063-0.114 0.063-0.19 0-0.316l-37.615-65.116c-1.556-3.098-1.783-6.157-0.316-8.534 1.417-2.301 4.235-3.477 7.586-3.477h55.632c8.535 0 12.72 5.499 15.489 10.431 0 0 38.020 66.33 38.249 66.696-2.252 3.97-60.059 106.21-60.059 106.21-2.844 5.131-6.852 10.745-15.173 10.745z"></path>
+                        <path id="symbol-right" fill="#000" d="M418.956 75.269l-123.176 217.79c-0.075 0.115-0.075 0.255 0 0.367l78.431 143.295c1.556 3.084 1.593 6.221 0.113 8.597-1.415 2.288-4.033 3.552-7.383 3.552h-55.57c-8.522 0-12.783-5.663-15.54-10.596 0 0-78.848-144.646-79.050-145.023 3.944-6.98 123.797-219.523 123.797-219.523 2.984-5.362 6.587-10.596 14.894-10.596h56.203c3.351 0 5.981 1.265 7.396 3.553 1.466 2.376 1.428 5.511-0.115 8.584z"></path>
+                        <path id="eye-right" style="visibility: hidden;" d="M352 128c17.673 0 32 21.49 32 48s-14.327 48-32 48-32-21.49-32-48 14.327-48 32-48z"></path>
+                        <path id="eye-left" style="visibility: hidden;" d="M176 156.031c29.823 0 51 11.166 51 28.641 0 3.699 1.906 21.497-0.085 24.797-7.414-12.288-27.405-21.094-50.915-21.094s-43.501 8.806-50.915 21.094c-1.991-3.3-0.085-21.098-0.085-24.797 0-17.475 21.177-28.641 51-28.641z"></path>
+                        <path id="mouth" style="visibility: hidden;" d="M250.172 416c-59.621 0-111.929-32.14-141.446-80.476 35.205 27.53 97.267 32.905 162.644 19.989 70.124-13.853 124.555-45.771 144.227-88.297-10.827 83.98-80.759 148.784-165.425 148.784z"></path>
+                    </mask>             
+                </defs>
+                <path id="rectangle-container" class="bg-blue" mask="url(#symbol)" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z" style="fill: rgb(33, 150, 243);"></path>
+                <path id="circle-container" style="visibility: hidden;" d="M256 0c-141.385 0-256 114.614-256 256s114.614 256 256 256c141.385 0 256-114.615 256-256 0-141.386-114.615-256-256-256z"></path>
             </svg>
 	
 			<div class="example-buttons">
@@ -392,7 +396,7 @@ var tween7 = KUTE.to('#myStopOpacity',{stopOpacity: 0.2});
     <ul id="share" class="nav">
         <li>Share </li>
         <li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
-        <li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute_js animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></a></li>
+        <li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute_js animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></li>
         <li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
     </ul>
 
