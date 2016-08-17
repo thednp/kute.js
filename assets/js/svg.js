@@ -68,9 +68,9 @@ multiMorphBtn.addEventListener('click', function(){
 // complex multi morph
 var compliMorphBtn = document.getElementById('compliMorphBtn');
 var compliMorph1 = KUTE.fromTo('#rectangle-container', {path: '#rectangle-container', fill: "#2196F3"}, { path: '#circle-container', fill: "#FF5722" }, { morphPrecision: 10, morphIndex: 161, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var compliMorph2 = KUTE.fromTo('#symbol-left', {path: '#symbol-left', fill: "#fff"},  { path: '#eye-left', fill: "#fff" }, { morphPrecision: 10, morphIndex: 20, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var compliMorph3 = KUTE.fromTo('#symbol-left-clone', {path: '#symbol-left-clone', fill: "#fff"},  { path: '#mouth', fill: "#fff" }, { morphPrecision: 10, morphIndex: 8, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var compliMorph4 = KUTE.fromTo('#symbol-right', {path: '#symbol-right', fill: "#CDDC39"},  { path: '#eye-right', fill: "#fff" }, { morphPrecision: 10, morphIndex: 55, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var compliMorph2 = KUTE.fromTo('#symbol-left', {path: '#symbol-left'},  { path: '#eye-left' }, { morphPrecision: 10, morphIndex: 20, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var compliMorph3 = KUTE.fromTo('#symbol-left-clone', {path: '#symbol-left-clone'},  { path: '#mouth' }, { morphPrecision: 10, morphIndex: 8, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var compliMorph4 = KUTE.fromTo('#symbol-right', {path: '#symbol-right'},  { path: '#eye-right' }, { morphPrecision: 10, morphIndex: 55, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
 
 compliMorphBtn.addEventListener('click', function(){
     !compliMorph1.playing && compliMorph1.start();

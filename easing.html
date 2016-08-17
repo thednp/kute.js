@@ -131,6 +131,48 @@
 			<li><kbd>easingBounceIn</kbd> looks like the previous viewed in reverse mode</li>
 			<li><kbd>easingBounceInOut</kbd> is a combination of the other two.</li>
 		</ul>
+
+		<p>Core easing functions examples:</p>
+		<div class="featurettes">
+			<div class="example-item easing-example example-box bg-green">Linear</div>
+			<div class="example-item easing-example example-box bg-pink"></div>
+				
+			<div class="example-buttons">
+					<div class="btn-group">
+				    <a class="btn btn-red easingSelectButton" data-function="toggle" href="#">Select</a>
+						<ul class="easings">
+							<li>easingSinusoidalIn</li>
+							<li>easingSinusoidalOut</li>
+							<li>easingSinusoidalInOut</li>
+							<li>easingQuadraticIn</li>
+							<li>easingQuadraticOut</li>
+							<li>easingQuadraticInOut</li>
+							<li>easingCubicIn</li>
+							<li>easingCubicOut</li>
+							<li>easingCubicInOut</li>
+							<li>easingQuarticIn</li>
+							<li>easingQuarticOut</li>
+							<li>easingQuarticInOut</li>
+							<li>easingQuinticIn</li>
+							<li>easingQuinticOut</li>
+							<li>easingQuinticInOut</li>
+							<li>easingCircularIn</li>
+							<li>easingCircularOut</li>
+							<li>easingCircularInOut</li>
+							<li>easingExponentialIn</li>
+							<li>easingExponentialOut</li>
+							<li>easingExponentialInOut</li>
+							<li>easingBackIn</li>
+							<li>easingBackOut</li>
+							<li>easingBackInOut</li>
+							<li>easingElasticIn</li>               
+							<li>easingElasticOut</li>               
+							<li>easingElasticInOut</li>
+						</ul>
+				</div>
+				<a class="btn btn-blue startEasingTween" href="#">Start</a>	
+			</div>
+		</div>
 		
 		<h3>Cubic Bezier Functions</h3>
 		<p>While modern browsers support CSS3 <code>transition</code> with <code>transition-timing-function: cubic-bezier(0.1,0.5,0.8,0.5)</code>, in Javascript animation we need some specific functions to cover that kind of functionality. As mentioned in the <a href="features.html">features page</a>, we are using a modified version of the <a href="https://github.com/gre/bezier-easing" target="_blank">cubic-bezier</a> by Gaëtan Renaudeau. I believe this must be most accurate easing functions set.</p>
@@ -147,6 +189,54 @@
 			<li><strong>Back</strong> timing functions: <kbd>easeInBack</kbd>, <kbd>easeOutBack</kbd> and <kbd>easeInOutBack</kbd></li>
 			<li><strong>Special slow motion</strong> timing functions look <a href="http://cubic-bezier.com/#0,.58,1,.3" target="_blank">like this</a>: <kbd>slowMo</kbd>, <kbd>slowMo1</kbd> and <kbd>slowMo2</kbd></li>
 		</ul>
+		<p>Cubic-bezier easing functions examples:</p>
+		<div class="featurettes">
+			<div class="example-item easing-example example-box bg-green">Linear</div>
+			<div class="example-item easing-example example-box bg-pink"></div>
+				
+			<div class="example-buttons">
+					<div class="btn-group">
+				    <a class="btn btn-red easingSelectButton" data-function="toggle" href="#">Select</a>
+						<ul class="easings">
+								<li>bezier(0.15, 0.7, 0.2, 0.9)</li>
+								<li>bezier(0.25, 0.5, 0.6, 0.7)</li>
+								<li>bezier(0.35, 0.2, 0.9, 0.2)</li>
+								<li>easeIn</li>
+								<li>easeOut</li>
+								<li>easeInOut</li>
+								<li>easeInSine</li>
+								<li>easeOutSine</li>
+								<li>easeInOutSine</li>
+								<li>easeInQuad</li>
+								<li>easeOutQuad</li>
+								<li>easeInOutQuad</li>
+								<li>easeInCubic</li>
+								<li>easeOutCubic</li>
+								<li>easeInOutCubic</li>
+								<li>easeInQuart</li>
+								<li>easeOutQuart</li>
+								<li>easeInOutQuart</li>
+								<li>easeInQuint</li>
+								<li>easeOutQuint</li>
+								<li>easeInOutQuint</li>
+								<li>easeInExpo</li>
+								<li>easeOutExpo</li>
+								<li>easeInOutExpo</li>
+								<li>easeInCirc</li>
+								<li>easeOutCirc</li>
+								<li>easeInOutCirc</li>
+								<li>easeInBack</li>
+								<li>easeOutBack</li>
+								<li>easeInOutBack</li>
+								<li>slowMo</li>
+								<li>slowMo1</li>
+								<li>slowMo2</li>
+						</ul>
+				</div>
+				<a class="btn btn-blue startEasingTween" href="#">Start</a>	
+			</div>
+		</div>
+
 		
 		<h3>Physics Based Functions</h3>
 		<p>KUTE.js also packs the <a href="http://dynamicsjs.com/" target="_blank">dynamics physics</a> easing functions by Michael Villar and I have to say these functions are amazing in terms of flexibility, control and performance. They allow you to control the friction, bounciness, frequency, elasticity, or multiple bezier points for your animations.</p>
@@ -172,17 +262,43 @@ easing: KUTE.Physics.bezier({points: [{"x":0,"y":0,"cp":[{"x":0.387,"y":0.007}]}
 			<li><strong>curves</strong>: <kbd>physicsIn</kbd>, <kbd>physicsOut</kbd>, <kbd>physicsInOut</kbd> can do all multipliers (from sinusoidal to exponential) via the <code>friction</code> option;</li>
 			<li><strong>back</strong>: <kbd>physicsBackIn</kbd>, <kbd>physicsBackOut</kbd>, <kbd>physicsBackInOut</kbd> also benefit from the <code>friction</code> option.</li>
 		</ul>
+		<p>Physics easing functions examples:</p>
+		<div class="featurettes">
+			<div class="example-item easing-example example-box bg-green">Linear</div>
+			<div class="example-item easing-example example-box bg-pink"></div>
+				
+			<div class="example-buttons">
+				<div class="btn-group">
+					<a class="btn btn-red easingSelectButton" data-function="toggle" href="#">Select</a>
+					<ul class="easings"> 
+						<li>physicsIn</li> 
+						<li>physicsOut</li>  
+						<li>physicsInOut</li>  
+						<li>physicsBackIn</li>  
+						<li>physicsBackOut</li>  
+						<li>physicsBackInOut</li>  
+						<li>spring</li>  
+						<li>bounce</li>  
+						<li>gravity</li>  
+						<li>forceWithGravity</li>  
+						<li>bezier</li>  
+						<li>multiPointBezier</li>  
+					</ul>
+				</div>
+				<a class="btn btn-blue startEasingTween" href="#">Start</a>	
+			</div>
+		</div>		
         
-    </div>
+	</div>
 
 	<div class="content-wrap">		
 
-		<ul id="share" class="nav">
-			<li>Share </li>
-			<li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
-			<li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute.js animation engine by @thednp and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></a></li>
-			<li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
-		</ul>
+    <ul id="share" class="nav">
+        <li>Share </li>
+        <li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
+				<li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute_js animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></li>
+        <li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
+    </ul>
 		
 	</div>
 	  
@@ -208,6 +324,9 @@ easing: KUTE.Physics.bezier({points: [{"x":0,"y":0,"cp":[{"x":0.387,"y":0.007}]}
 <!--<script src="http://cdn.jsdelivr.net/kute.js/1.0.0/kute.full.min.js"></script>  KUTE CDN -->
 
 <script src="./src/kute.js"></script> <!-- KUTE.js core -->
-<script src="./assets/js/scripts.js"></script> <!-- some stuff -->
+<script src="./src/kute-bezier.js"></script> <!-- KUTE.js Bezier Easing -->
+<script src="./src/kute-physics.js"></script> <!-- KUTE.js Physics Easing -->
+<script src="./assets/js/scripts.js"></script> <!-- global scripts stuff -->
+<script src="./assets/js/easing.js"></script> <!-- examples stuff -->
 </body>
 </html>
