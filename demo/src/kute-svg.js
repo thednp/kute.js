@@ -24,7 +24,6 @@
   
   var K = window.KUTE, S = S || {}, p,
     _svg = document.querySelector('path') || document.querySelector('svg'),
-    // _svg = K.selector('path') || K.selector('svg'),
     _ns = _svg && _svg.ownerSVGElement && _svg.ownerSVGElement.namespaceURI || 'http://www.w3.org/2000/svg',
     _nm = ['strokeWidth', 'strokeOpacity', 'fillOpacity', 'stopOpacity'], // numeric SVG CSS props
     _cls = ['fill', 'stroke', 'stopColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
