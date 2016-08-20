@@ -88,10 +88,36 @@ var draw3 = KUTE.fromTo('#drawSVG',{draw:'90% 100%'}, {draw:'100% 100%'}, {durat
 var draw4 = KUTE.fromTo('#drawSVG',{draw:'0% 0%'}, {draw:'0% 100%'}, {duration: 3500, easing: "easingBounceOut"});
 var draw5 = KUTE.fromTo('#drawSVG',{draw:'0% 100%'}, {draw:'50% 50%'}, {duration: 2500, easing: "easingExponentialInOut"});
 
+var draw11 = KUTE.fromTo('#drawSVG1',{draw:'0% 0%'}, {draw:'0% 10%'}, {duration: 1500, easing: "easingCubicIn"}); 
+var draw21 = KUTE.fromTo('#drawSVG1',{draw:'0% 10%'}, {draw:'90% 100%'}, {duration: 2500, easing: "easingCubicOut"}); 
+var draw31 = KUTE.fromTo('#drawSVG1',{draw:'90% 100%'}, {draw:'100% 100%'}, {duration: 1500, easing: "easingCubicIn"}); 
+var draw41 = KUTE.fromTo('#drawSVG1',{draw:'0% 0%'}, {draw:'0% 100%'}, {duration: 3500, easing: "easingBounceOut"});
+var draw51 = KUTE.fromTo('#drawSVG1',{draw:'0% 100%'}, {draw:'50% 50%'}, {duration: 2500, easing: "easingExponentialInOut"});
+
+var draw12 = KUTE.fromTo('#drawSVG2',{draw:'0% 0%'}, {draw:'0% 10%'}, {duration: 1500, easing: "easingCubicIn"}); 
+var draw22 = KUTE.fromTo('#drawSVG2',{draw:'0% 10%'}, {draw:'90% 100%'}, {duration: 2500, easing: "easingCubicOut"}); 
+var draw32 = KUTE.fromTo('#drawSVG2',{draw:'90% 100%'}, {draw:'100% 100%'}, {duration: 1500, easing: "easingCubicIn"}); 
+var draw42 = KUTE.fromTo('#drawSVG2',{draw:'0% 0%'}, {draw:'0% 100%'}, {duration: 3500, easing: "easingBounceOut"});
+var draw52 = KUTE.fromTo('#drawSVG2',{draw:'0% 100%'}, {draw:'50% 50%'}, {duration: 2500, easing: "easingExponentialInOut"});
+
+var draw13 = KUTE.fromTo('#drawSVG3',{draw:'0% 0%'}, {draw:'0% 10%'}, {duration: 1500, easing: "easingCubicIn"}); 
+var draw23 = KUTE.fromTo('#drawSVG3',{draw:'0% 10%'}, {draw:'90% 100%'}, {duration: 2500, easing: "easingCubicOut"}); 
+var draw33 = KUTE.fromTo('#drawSVG3',{draw:'90% 100%'}, {draw:'100% 100%'}, {duration: 1500, easing: "easingCubicIn"}); 
+var draw43 = KUTE.fromTo('#drawSVG3',{draw:'0% 0%'}, {draw:'0% 100%'}, {duration: 3500, easing: "easingBounceOut"});
+var draw53 = KUTE.fromTo('#drawSVG3',{draw:'0% 100%'}, {draw:'50% 50%'}, {duration: 2500, easing: "easingExponentialInOut"});
+
 draw1.chain(draw2); draw2.chain(draw3); draw3.chain(draw4); draw4.chain(draw5);
+draw11.chain(draw21); draw21.chain(draw31); draw31.chain(draw41); draw41.chain(draw51);
+draw12.chain(draw22); draw22.chain(draw32); draw32.chain(draw42); draw42.chain(draw52);
+draw13.chain(draw23); draw23.chain(draw33); draw33.chain(draw43); draw43.chain(draw53);
 
 drawBtn.addEventListener('click', function(){
-    !draw1.playing && !draw2.playing && !draw3.playing && !draw4.playing && !draw5.playing && draw1.start();
+    if ( !draw1.playing && !draw2.playing && !draw3.playing && !draw4.playing && !draw5.playing ) {
+        draw1.start();
+        draw11.start();
+        draw12.start();
+        draw13.start();
+    }
 }, false);
 
 

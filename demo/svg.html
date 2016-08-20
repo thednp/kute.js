@@ -288,7 +288,7 @@ var morph4 = KUTE.fromTo('#startpath2',       { path: '#startpath2' },         {
         </ul>
         
 		<h3>Drawing Stroke</h3>
-		<p>Next, we're going to animate the stroke of a <code>&lt;path></code> element, as this type of animation only works with this kind of SVG elements because it's the only one that supports the <code>.getTotalLength()</code> method. Here some code examples:</p>
+		<p>Next, we're going to animate the stroke of some elements. Starting with KUTE.js version 1.5.2, along <code>&lt;path></code> element, <code>&lt;circle></code>, <code>&lt;rect></code>, <code>&lt;line></code>, <code>&lt;polyline></code> and <code>&lt;polygon></code> elements are supported, as <code>&lt;path></code> uses the SVG standard <code>.getTotalLength()</code> method, while the others use some helper methods. Here some code examples:</p>
 <pre><code class="language-javascript">// draw the stroke from 0-10% to 90-100%
 var tween1 = KUTE.fromTo('selector1',{draw:'0% 10%'}, {draw:'90% 100%'});
     
@@ -300,10 +300,12 @@ var tween3 = KUTE.fromTo('selector1',{draw:'0% 100%'}, {draw:'50% 50%'});
 </code></pre>
 		<p>We're gonna chain these tweens and start the animation real quick.</p>		
 		<div class="featurettes">
-            <svg class="example-box-model example-box" id="draw-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 513">
+            <svg style="width:600px" class="example-box-model example-box" id="draw-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2046 513">
                 <path fill="none" style="stroke:#2196F3; stroke-width:10; stroke-dashoffset: -724.077px; stroke-dasharray: 0px, 1448.15px" id="drawSVG" d="M432 64l-240 240-112-112-80 80 192 192 320-320z"/>            
-            </svg>
-	
+                <circle fill="none" r="220" cx="780" cy="255" style="stroke:#4CAF50; stroke-width:10; stroke-dashoffset: -690.8px; stroke-dasharray: 0px, 1381.6px" id="drawSVG1"/>            
+                <rect fill="none" width="430" height="430" x="1070" y="30" style="stroke:#FF5722; stroke-width:10; stroke-dashoffset: -860px; stroke-dasharray: 0px, 1720px" id="drawSVG2"/>            
+                <polygon fill="none" points="1579,307 1623,117 1801,33 1978,117 2022,307 1899,460 1702,460 1579,307" style="stroke:#673AB7; stroke-width:10; stroke-dashoffset: -860px; stroke-dasharray: 0px, 1720px" id="drawSVG3"/>            
+            </svg>	
 			<div class="example-buttons">
 				<a id="drawBtn" class="btn btn-blue" href="javascript:void(0)">Start</a>	
 			</div>
