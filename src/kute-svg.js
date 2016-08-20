@@ -258,7 +258,7 @@
 
   // SVG DRAW
   S.gDr = function(e,v){
-    var l = e.getTotalLength(), start, end, d, o;
+    var l = /path|glyph/.test(e.tagName) ? e.getTotalLength() : S.gL(e), start, end, d, o;
     if ( v instanceof Object ) {
       return v;
     } else if (typeof v === 'string') { 
@@ -352,9 +352,72 @@
       }
     } 
     K.prS[p] = function(el,p,v){
-       return K.gCS(el,p) || 0;
+      return K.gCS(el,p) || 0;
     }
   }
+
+  // SVG DRAW UTILITITES
+  S.gL = function(el){ // getLength - returns the result of any of the below functions
+    if (/rect/.test(el.tagName)) {
+      return S.gRL(el);
+    } else if (/circle/.test(el.tagName)) {
+      return S.gCL(el);
+    } else if (/polygon|polyline/.test(el.tagName)) {
+      return S.gPL(el);
+    } else if (/line/.test(el.tagName)) {
+      return S.gLL(el);
+    }
+  }
+
+  S.gRL = function(el){ // getRectLength - return the length of a Rect
+    var w = el.getAttribute('width');
+    var h = el.getAttribute('height');
+    return (w*2)+(h*2);
+  }
+
+  S.gPL = function(el){ // getPolygonLength - return the length of the Polygon / Polyline
+    var points = el.getAttribute('points').split(' '), len = 0;
+    if (points.length > 1) {
+      function coord(p) {
+        var c = p.split(',');
+        if (c.length != 2) {
+          return; // return undefined
+        }
+        if (isNaN(c[0]) || isNaN(c[1])) {
+          return;
+        }
+        return [parseFloat(c[0]), parseFloat(c[1])];
+      }
+
+      function dist(c1, c2) {
+        if (c1 != undefined && c2 != undefined) {
+          return Math.sqrt(Math.pow((c2[0]-c1[0]), 2) + Math.pow((c2[1]-c1[1]), 2));
+        }
+        return 0;
+      }
+
+      if (points.length > 2) {
+        for (var i=0; i<points.length-1; i++) {
+          len += dist(coord(points[i]), coord(points[i+1]));
+        }
+      }
+      len += dist(coord(points[0]), coord(points[points.length-1]));
+    }
+    return len;
+  }
+
+  S.gLL = function(el){ // getLineLength - return the length of the line
+    var x1 = el.getAttribute('x1');
+    var x2 = el.getAttribute('x2');
+    var y1 = el.getAttribute('y1');
+    var y2 = el.getAttribute('y2');
+    return Math.sqrt(Math.pow((x2-x1), 2)+Math.pow((y2-y1),2));
+  }
+
+  S.gCL = function(el){ // getCircleLength - return the length of the circle
+    var r = el.getAttribute('r');
+    return 2 * Math.PI * r; 
+  } 
   
   return S;
 }));
