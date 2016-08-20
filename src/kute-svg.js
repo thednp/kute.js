@@ -32,8 +32,7 @@
   if (_svg && !_svg.ownerSVGElement) {return;} // if SVG API is not supported, return
     
   // SVG MORPH
-  // get path d attribute or create a path from string value
-  S.gPt = function(e){
+  S.gPt = function(e){ // get path d attribute or create a path from string value
     var p = {}, el = typeof e === 'object' ? e : /^\.|^\#/.test(e) ? document.querySelector(e) : null;
     if ( el && /path|glyph/.test(el.tagName) ) {
       p.e = S.fPt(el);
@@ -205,7 +204,7 @@
     return a;
   }
   
-  S.pTA = function(p) { // simple pathToAbsolute for polygons
+  S.pTA = function(p) { // simple pathToAbsolute for polygons | this is still a work in progress
     var np = p.match(pathReg), wp = [], l = np.length, s, c, r, x = 0, y = 0;
     for (var i = 0; i<l; i++){
       np[i] = np[i]; c = np[i][0]; r = new RegExp(c+'[^\\d|\\-]*','i'); 
@@ -301,8 +300,7 @@
     return S.gDr(el)
   }
   
-  // SVG CSS Properties
-  for ( var i = 0, l = _cls.length; i< l; i++) {
+  for ( var i = 0, l = _cls.length; i< l; i++) { // SVG CSS Color Properties
     p = _cls[i];
     K.pp[p] = function(p,v){
       if (!(p in K.dom)) {
@@ -362,6 +360,8 @@
       return S.gRL(el);
     } else if (/circle/.test(el.tagName)) {
       return S.gCL(el);
+    } else if (/ellipse/.test(el.tagName)) {
+      return S.gEL(el);
     } else if (/polygon|polyline/.test(el.tagName)) {
       return S.gPL(el);
     } else if (/line/.test(el.tagName)) {
@@ -417,6 +417,12 @@
   S.gCL = function(el){ // getCircleLength - return the length of the circle
     var r = el.getAttribute('r');
     return 2 * Math.PI * r; 
+  }
+
+  S.gEL = function(el) { // getEllipseLength - returns the length of an ellipse
+    var rx = el.getAttribute('rx'), ry = el.getAttribute('ry'),
+        len = 2*rx, wid = 2*ry;
+    return ((Math.sqrt(.5 * ((len * len) + (wid * wid)))) * (Math.PI * 2)) / 2;
   } 
   
   return S;

@@ -85,11 +85,11 @@ var drawBtn = document.getElementById('drawBtn');
 var drawExample = document.getElementById('draw-example');
 var drawEls = drawExample.querySelectorAll('*');
 
-var draw1 = KUTE.allFromTo(drawEls,{draw:'0% 0%'}, {draw:'0% 10%'}, {duration: 1500, easing: "easingCubicIn"}); 
-var draw2 = KUTE.allFromTo(drawEls,{draw:'0% 10%'}, {draw:'90% 100%'}, {duration: 2500, easing: "easingCubicOut"}); 
-var draw3 = KUTE.allFromTo(drawEls,{draw:'90% 100%'}, {draw:'100% 100%'}, {duration: 1500, easing: "easingCubicIn"}); 
-var draw4 = KUTE.allFromTo(drawEls,{draw:'0% 0%'}, {draw:'0% 100%'}, {duration: 3500, easing: "easingBounceOut"});
-var draw5 = KUTE.allFromTo(drawEls,{draw:'0% 100%'}, {draw:'50% 50%'}, {duration: 2500, easing: "easingExponentialInOut"});
+var draw1 = KUTE.allFromTo(drawEls,{draw:'0% 0%'}, {draw:'0% 10%'}, {duration: 1500, easing: "easingCubicIn", offset: 250}); 
+var draw2 = KUTE.allFromTo(drawEls,{draw:'0% 10%'}, {draw:'90% 100%'}, {duration: 2500, easing: "easingCubicOut", offset: 250}); 
+var draw3 = KUTE.allFromTo(drawEls,{draw:'90% 100%'}, {draw:'100% 100%'}, {duration: 1500, easing: "easingCubicIn", offset: 250}); 
+var draw4 = KUTE.allFromTo(drawEls,{draw:'0% 0%'}, {draw:'0% 100%'}, {duration: 3500, easing: "easingBounceOut", offset: 250});
+var draw5 = KUTE.allFromTo(drawEls,{draw:'0% 100%'}, {draw:'50% 50%'}, {duration: 2500, easing: "easingExponentialInOut", offset: 250});
 
 draw1.chain(draw2); draw2.chain(draw3); draw3.chain(draw4); draw4.chain(draw5);
 
