@@ -84,7 +84,6 @@ compliMorphBtn.addEventListener('click', function(){
 var drawBtn = document.getElementById('drawBtn');
 var drawExample = document.getElementById('draw-example');
 var drawEls = drawExample.querySelectorAll('*');
-console.log(drawEls);
 
 var draw1 = KUTE.allFromTo(drawEls,{draw:'0% 0%'}, {draw:'0% 10%'}, {duration: 1500, easing: "easingCubicIn"}); 
 var draw2 = KUTE.allFromTo(drawEls,{draw:'0% 10%'}, {draw:'90% 100%'}, {duration: 2500, easing: "easingCubicOut"}); 
