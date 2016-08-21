@@ -88,25 +88,35 @@
 		<h3>2D Transform Properties</h3>
 		<p>The core engine supports all 2D transform properties except <code>matrix</code>.</p>
 		<ul>
-			<li><kbd class="bg-blue">translate</kbd> property can be used for horizontal and / or vertical movement. EG. <code>translate:150</code> to translate an element 150px to the right or <code>translate:[-150,200]</code> to move the element to the left by 150px and to bottom by 200px. Supported on IE9.</li>
-			<li><kbd class="bg-blue">rotate</kbd> is a property used to rotate an element on the Z axis or the plain document. Eg. <code>rotate:250</code> will rotate an element clockwise by 250 degrees. Supported on IE9.</li>
-			<li><kbd class="bg-blue">skewX</kbd> is a property used to apply a skew transformation on the X axis. Eg. <code>skewX:25</code> will skew an element by 25 degrees. Supported on IE9.</li>
-			<li><kbd class="bg-blue">skewY</kbd> is a property used to apply a skew transformation on the Y axis. Eg. <code>skewY:25</code> will skew an element by 25 degrees. Supported on IE9.</li>
-			<li><kbd class="bg-blue">scale</kbd> is a property used to apply a single value size transformation. Eg. <code>scale:2</code> will enlarge an element by a degree of 2. Supported on IE9.</li>
+			<li><kbd class="bg-blue">translate</kbd> property can be used for horizontal and / or vertical movement. EG. <code>translate:150</code> to translate an element 150px to the right or <code>translate:[-150,200]</code> to move the element to the left by 150px and to bottom by 200px. <kbd class="bg-lime">IE9+</kbd></li>
+			<li><kbd class="bg-blue">rotate</kbd> property applies rotation to an element on the Z axis or the plain document. Eg. <code>rotate:250</code> will rotate an element clockwise by 250 degrees. <kbd class="bg-lime">IE9+</kbd></li>
+			<li><kbd class="bg-blue">skewX</kbd> property applies a skew transformation on the X axis. Eg. <code>skewX:25</code> will skew an element by 25 degrees. <kbd class="bg-lime">IE9+</kbd></li>
+			<li><kbd class="bg-blue">skewY</kbd> property applies a skew transformation on the Y axis. Eg. <code>skewY:25</code> will skew an element by 25 degrees. <kbd class="bg-lime">IE9+</kbd></li>
+			<li><kbd class="bg-blue">scale</kbd> property applies a single value size transformation. Eg. <code>scale:2</code> will enlarge an element by a degree of 2. <kbd class="bg-lime">IE9+</kbd></li>
 			<li><kbd class="bg-red">matrix</kbd>, double axis <kbd class="bg-red">skew</kbd> and double axis <kbd class="bg-red">scale</kbd> properties are not supported.</li>
 		</ul>		
 		
 		<h3>3D Transform Properties</h3>
 		<p>The core engine supports all 3D transform properties except <code>matrix3d</code> and <code>rotate3d</code>.</p>
         <ul>
-			<li><kbd class="bg-blue">translateX</kbd> property is for horizontal movement. EG. <code>translateX:150</code> to translate an element 150px to the right. Modern browsers only.</li>
-			<li><kbd class="bg-blue">translateY</kbd> property is for vertical movement. EG. <code>translateY:-250</code> to translate an element 250px towards the top. Modern browsers only.</li>
-			<li><kbd class="bg-blue">translateZ</kbd> property is for movement on the Z axis in a given 3D field. EG. <code>translateZ:-250</code> to translate an element 250px to it's back, making it smaller. Modern browsers only and requires a <code>perspective</code> tween option to be used; the smaller perspective value, the deeper translation.</li>
-			<li><kbd class="bg-blue">translate3d</kbd> property is for movement on all the axis in a given 3D field. EG. <code>translate3d:[-150,200,150]</code> to translate an element 150px to the left, 200px to the bottom and 150px closer to the viewer, making it larger. Modern browsers only and also requires using a <code>perspective</code> tween option.</li>
-			<li><kbd class="bg-blue">rotateX</kbd> property rotates an element on the X axis in a given 3D field. Eg. <code>rotateX:250</code> will rotate an element clockwise by 250 degrees. Modern browsers only and requires perspective.</li>
-			<li><kbd class="bg-blue">rotateY</kbd> property rotates an element on the Y axis in a given 3D field. Eg. <code>rotateY:-150</code> will rotate an element counter-clockwise by 150 degrees. Modern browsers only and also requires perspective.</li>
-			<li><kbd class="bg-blue">rotateZ</kbd> property rotates an element on the Z axis and is the equivalent of the 2D rotation. Eg. <code>rotateZ:-150</code> will rotate an element counter-clockwise by 150 degrees. Modern browsers only and doesn't require perspective.</li>
+			<li><kbd class="bg-blue">translateX</kbd> property is for horizontal translation. EG. <code>translateX:150</code> to translate an element 150px to the right. <kbd class="bg-lime">IE10+</kbd></li>
+			<li><kbd class="bg-blue">translateY</kbd> property is for vertical translation. EG. <code>translateY:-250</code> to translate an element 250px towards the top. <kbd class="bg-lime">IE10+</kbd></li>
+			<li><kbd class="bg-blue">translateZ</kbd> property is for translation on the Z axis in a given 3D field. EG. <code>translateZ:-250</code> to translate an element 250px to it's back, making it smaller. Requires a <code>perspective</code> tween option to be used; the smaller perspective value, the deeper translation. <kbd class="bg-lime">IE10+</kbd></li>
+			<li><kbd class="bg-blue">translate3d</kbd> property is for movement on all the axis in a given 3D field. EG. <code>translate3d:[-150,200,150]</code> to translate an element 150px to the left, 200px to the bottom and 150px closer to the viewer, making it larger. Also requires using a <code>perspective</code> tween option. <kbd class="bg-lime">IE10+</kbd></li>
+			<li><kbd class="bg-blue">rotateX</kbd> property rotates an element on the X axis in a given 3D field. Eg. <code>rotateX:250</code> will rotate an element clockwise by 250 degrees. Requires perspective. <kbd class="bg-lime">IE10+</kbd></li>
+			<li><kbd class="bg-blue">rotateY</kbd> property rotates an element on the Y axis in a given 3D field. Eg. <code>rotateY:-150</code> will rotate an element counter-clockwise by 150 degrees. Requires perspective. <kbd class="bg-lime">IE10+</kbd></li>
+			<li><kbd class="bg-blue">rotateZ</kbd> property rotates an element on the Z axis and is the equivalent of the 2D rotation. Eg. <code>rotateZ:-150</code> will rotate an element counter-clockwise by 150 degrees. <kbd class="bg-lime">IE10+</kbd></li>
 			<li><kbd class="bg-red">matrix3d</kbd>, <kbd class="bg-red">rotate3d</kbd>, and <kbd class="bg-red">scale3d</kbd> properties are not supported.</li>
+		</ul>
+
+		<h3>SVG Transform</h3>
+		<p>The <a href="svg.html">SVG Plugin</a> features cross browser 2D transform animations via the <kbd class="bg-olive">svgTransform</kbd> tween property and the <code>transform</code> presentation attribute, similar in functionality as the Attributes Plugin.</p>
+        <ul>
+			<li><kbd class="bg-olive">translate</kbd> sub-property applies horizontal and / or vertical translation. EG. <code>translate:150</code> to translate a shape 150px to the right or <code>translate:[-150,200]</code> to move the element to the left by 150px and to bottom by 200px. <kbd class="bg-lime">IE9+</kbd></li>
+			<li><kbd class="bg-olive">rotate</kbd> sub-property applies rotation to a shape on the Z axis. Eg. <code>rotate:150</code> will rotate a shape clockwise by 150 degrees or <code>rotate: [45,25,25]</code> to rotate the shape by 45 degrees around the <i>[25,25]</i> coordinate of the parent <code>&lt;svg></code>. <kbd class="bg-lime">IE9+</kbd></li>
+			<li><kbd class="bg-olive">skewX</kbd> sub-property used to apply a skew transformation on the X axis. Eg. <code>skewX:25</code> will skew a shape by 25 degrees. <kbd class="bg-lime">IE9+</kbd></li>
+			<li><kbd class="bg-olive">skewY</kbd> sub-property used to apply a skew transformation on the Y axis. Eg. <code>skewY:25</code> will skew a shape by 25 degrees. <kbd class="bg-lime">IE9+</kbd></li>
+			<li><kbd class="bg-olive">scale</kbd> sub-property used to apply a single value size transformation. When using this sub-property, the <kbd class="bg-olive">translate</kbd> will be automatically adjusted to make sure the animation looks as you would expect it from a regular HTML5 element. Eg. <code>scale:0.5</code> will scale down a shape to half of it's initial size. <kbd class="bg-lime">IE9+</kbd></li>
 		</ul>
 
 		<h3>Box Model Properties</h3>
