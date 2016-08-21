@@ -98,6 +98,56 @@ drawBtn.addEventListener('click', function(){
 }, false);
 
 
+// svgTransform examples
+var svgRotate = document.getElementById('svgRotate');
+var rotateBtn = document.getElementById('rotateBtn');
+var svgr1 = svgRotate.getElementsByTagName('path')[0];
+var svgr2 = svgRotate.getElementsByTagName('path')[1];
+
+var svgTween11 = KUTE.to(svgr1, {svgTransform: { rotate: [-360,0,0] } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+var svgTween12 = KUTE.to(svgr2, {svgTransform: { translate: 580 , rotate: 360 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+
+rotateBtn.addEventListener('click', function(){
+    !svgTween11.playing && svgTween11.start();
+    !svgTween12.playing && svgTween12.start();
+}, false);
+
+var svgTranslate = document.getElementById('svgTranslate');
+var translateBtn = document.getElementById('translateBtn');
+var svgt1 = svgTranslate.getElementsByTagName('path')[0];
+var svgt2 = svgTranslate.getElementsByTagName('path')[1];
+var svgTween21 = KUTE.to(svgt1, {svgTransform: { translate: 580 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+var svgTween22 = KUTE.to(svgt2, {svgTransform: { translate: 0 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+
+translateBtn.addEventListener('click', function(){
+    !svgTween21.playing && svgTween21.start();
+    !svgTween22.playing && svgTween22.start();
+}, false);
+
+var svgSkew = document.getElementById('svgSkew');
+var skewBtn = document.getElementById('skewBtn');
+var svgsk1 = svgSkew.getElementsByTagName('path')[0];
+var svgsk2 = svgSkew.getElementsByTagName('path')[1];
+var svgTween31 = KUTE.to(svgsk1, {svgTransform: { skewX: -15 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+var svgTween32 = KUTE.to(svgsk2, {svgTransform: { translate: 580, skewY: 15 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+
+skewBtn.addEventListener('click', function(){
+    !svgTween31.playing && svgTween31.start();
+    !svgTween32.playing && svgTween32.start();
+}, false);
+
+var svgScale = document.getElementById('svgScale');
+var scaleBtn = document.getElementById('scaleBtn');
+var svgs1 = svgScale.getElementsByTagName('path')[0];
+var svgs2 = svgScale.getElementsByTagName('path')[1];
+var svgTween41 = KUTE.to(svgs1, {svgTransform: { scale: 1.5 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+var svgTween42 = KUTE.to(svgs2, {svgTransform: { translate: 580, scale: 0.5 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+
+scaleBtn.addEventListener('click', function(){
+    !svgTween41.playing && svgTween41.start();
+    !svgTween42.playing && svgTween42.start();
+}, false);
+
 
 // fill HEX/RGBa
 var tween1 = KUTE.to('#fillSVG', {fill: '#069'}, {duration: 1500, yoyo:true, repeat: 1});

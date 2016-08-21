@@ -204,7 +204,7 @@
     return a;
   }
   
-  S.pTA = function(p) { // simple pathToAbsolute for polygons | this is still a work in progress
+  S.pTA = function(p) { // simple pathToAbsolute for polygons | this is still BETA / a work in progress
     var np = p.match(pathReg), wp = [], l = np.length, s, c, r, x = 0, y = 0;
     for (var i = 0; i<l; i++){
       np[i] = np[i]; c = np[i][0]; r = new RegExp(c+'[^\\d|\\-]*','i'); 
@@ -279,8 +279,7 @@
     return parseFloat(v) / 100 * l;
   };
   
-  // register the draw
-  K.pp['draw'] = function(a,o,l){
+  K.pp['draw'] = function(a,o,l){ // register the draw property
     if (!('draw' in K.dom)) {
       K.dom['draw'] = function(w,p,v){
         var l, s, e, o;
@@ -298,60 +297,6 @@
   
   K.prS['draw'] = function(el,p,v){
     return S.gDr(el)
-  }
-  
-  for ( var i = 0, l = _cls.length; i< l; i++) { // SVG CSS Color Properties
-    p = _cls[i];
-    K.pp[p] = function(p,v){
-      if (!(p in K.dom)) {
-        K.dom[p] = function(w,p,v){
-          var _c = {}; 
-          for (var c in w._vE[p]) {
-            if ( c !== 'a' ){
-              _c[c] = parseInt(w._vS[p][c] + (w._vE[p][c] - w._vS[p][c]) * v )||0;            
-            } else {
-              _c[c] = (w._vS[p][c] && w._vE[p][c]) ? parseFloat(w._vS[p][c] + (w._vE[p][c] - w._vS[p][c]) * v) : null;
-            }
-          }
-        
-          if ( w._hex ) {
-            w._el.style[p] = K.rth( _c.r, _c.g, _c.b );
-          } else {
-            w._el.style[p] = !_c.a ? 'rgb(' + _c.r + ',' + _c.g + ',' + _c.b + ')' : 'rgba(' + _c.r + ',' + _c.g + ',' + _c.b + ',' + _c.a + ')';
-          }
-        }
-      }
-      return K.truC(v);
-    } 
-    K.prS[p] = function(el,p,v){
-       return K.gCS(el,p) || 'rgba(0,0,0,0)';
-    }
-  }
-  
-  for ( var i = 0, l = _nm.length; i< l; i++) { // for numeric CSS props for SVG elements
-    p = _nm[i];
-    if (p === 'strokeWidth'){
-      K.pp[p] = function(p,v){
-        if (!(p in K.dom)) {
-          K.dom[p] = function(w,p,v) {
-            w._el.style[p] = (w._vS[p].value + (w._vE[p].value - w._vS[p].value) * v) + w._vS[p].unit;
-          }
-        }
-        return K.pp.box(p,v);
-      }
-    } else {
-      K.pp[p] = function(p,v){
-        if (!(p in K.dom)) {
-          K.dom[p] = function(w,p,v) {
-            w._el.style[p] = w._vS[p] + (w._vE[p] - w._vS[p]) * v;
-          }
-        }
-        return parseFloat(v);
-      }
-    } 
-    K.prS[p] = function(el,p,v){
-      return K.gCS(el,p) || 0;
-    }
   }
 
   // SVG DRAW UTILITITES
@@ -378,7 +323,7 @@
   S.gPL = function(el){ // getPolygonLength - return the length of the Polygon / Polyline
     var points = el.getAttribute('points').split(' '), len = 0;
     if (points.length > 1) {
-      function coord(p) {
+      var coord = function (p) {
         var c = p.split(',');
         if (c.length != 2) {
           return; // return undefined
@@ -387,14 +332,14 @@
           return;
         }
         return [parseFloat(c[0]), parseFloat(c[1])];
-      }
+      };
 
-      function dist(c1, c2) {
+      var dist = function (c1, c2) {
         if (c1 != undefined && c2 != undefined) {
           return Math.sqrt(Math.pow((c2[0]-c1[0]), 2) + Math.pow((c2[1]-c1[1]), 2));
         }
         return 0;
-      }
+      };
 
       if (points.length > 2) {
         for (var i=0; i<points.length-1; i++) {
@@ -424,6 +369,130 @@
         len = 2*rx, wid = 2*ry;
     return ((Math.sqrt(.5 * ((len * len) + (wid * wid)))) * (Math.PI * 2)) / 2;
   } 
+  
+  
+  // SVG CSS Color Properties
+  for ( var i = 0, l = _cls.length; i< l; i++) { 
+    p = _cls[i];
+    K.pp[p] = function(p,v){
+      if (!(p in K.dom)) {
+        K.dom[p] = function(w,p,v){
+          var _c = {}; 
+          for (var c in w._vE[p]) {
+            if ( c !== 'a' ){
+              _c[c] = parseInt(w._vS[p][c] + (w._vE[p][c] - w._vS[p][c]) * v )||0;            
+            } else {
+              _c[c] = (w._vS[p][c] && w._vE[p][c]) ? parseFloat(w._vS[p][c] + (w._vE[p][c] - w._vS[p][c]) * v) : null;
+            }
+          }
+        
+          if ( w._hex ) {
+            w._el.style[p] = K.rth( _c.r, _c.g, _c.b );
+          } else {
+            w._el.style[p] = !_c.a ? 'rgb(' + _c.r + ',' + _c.g + ',' + _c.b + ')' : 'rgba(' + _c.r + ',' + _c.g + ',' + _c.b + ',' + _c.a + ')';
+          }
+        }
+      }
+      return K.truC(v);
+    } 
+    K.prS[p] = function(el,p,v){
+       return K.gCS(el,p) || 'rgba(0,0,0,0)';
+    }
+  }
+  
+  for ( var i = 0, l = _nm.length; i< l; i++) { // for numeric CSS props from any type of SVG shape
+    p = _nm[i];
+    if (p === 'strokeWidth'){
+      K.pp[p] = function(p,v){
+        if (!(p in K.dom)) {
+          K.dom[p] = function(w,p,v) {
+            w._el.style[p] = (w._vS[p].value + (w._vE[p].value - w._vS[p].value) * v) + w._vS[p].unit;
+          }
+        }
+        return K.pp.box(p,v);
+      }
+    } else {
+      K.pp[p] = function(p,v){
+        if (!(p in K.dom)) {
+          K.dom[p] = function(w,p,v) {
+            w._el.style[p] = w._vS[p] + (w._vE[p] - w._vS[p]) * v;
+          }
+        }
+        return parseFloat(v);
+      }
+    } 
+    K.prS[p] = function(el,p,v){
+      return K.gCS(el,p) || 0;
+    }
+  }
+
+  // SVG Transform
+  K.pp['svgTransform'] = function(p,v,l){
+    // register the render function
+    if (!('svgTransform' in K.dom)) {
+      K.dom['svgTransform'] = function(w,p,v) {
+        var tr = '', i;
+        for (i in w._vE[p]){
+          tr += i + '('; // start string
+          if ( i === 'translate'){ // translate
+            tr += (w._vS[p][i][1] === w._vE[p][i][1] && w._vE[p][i][1] === 0 ) 
+            ? (w._vS[p][i][0] + (w._vE[p][i][0] - w._vS[p][i][0]) * v )
+            : (w._vS[p][i][0] + (w._vE[p][i][0] - w._vS[p][i][0]) * v ) + ' ' + (w._vS[p][i][1] + (w._vE[p][i][1] - w._vS[p][i][1]) * v );
+          } else if ( i === 'rotate'){ // rotate
+            tr += w._vS[p][i][0] + (w._vE[p][i][0] - w._vS[p][i][0]) * v + ' ';
+            tr += !w.reversed ? w._vE[p][i][1] + ',' + w._vE[p][i][2] : w._vS[p][i][1] + ',' + w._vS[p][i][2]; // make sure to always use the right transform-origin
+          } else { // scale, skewX or skewY
+            tr +=  w._vS[p][i] + (w._vE[p][i] - w._vS[p][i]) * v;
+          }
+          tr += ') '; // end string
+        }
+        w._el.setAttributeNS(null,'transform', tr.replace(/\)\s$/,')') );
+      }
+    }
+
+    // return transform object
+    var tf = {}, bb = l.getBBox(), cx = bb.x + bb.width/2, cy = bb.y + bb.height/2, i, r, t;
+    for ( i in v ) {
+      if (i === 'rotate'){
+        r = v[i] instanceof Array ? v[i] 
+        : /\s/.test(v[i]) ? [v[i].split(' ')[0]*1, v[i].split(' ')[1].split(',')[0]*1, v[i].split(' ')[1].split(',')[1]*1] 
+        : [v[i],cx,cy];
+        tf[i] = r;
+      } else if (i === 'translate'){
+        t = v[i] instanceof Array ? v[i] : /\s/.test(v[i]) ? v[i].split(' ') : [v[i],0];
+        tf[i] = [t[0] * 1||0, t[1] * 1];
+      } else if (i === 'scale'){
+        tf[i] = v[i] * 1||1;
+      } else {
+        tf[i] = v[i] * 1||0;
+      }
+    }
+
+    // http://www.petercollingridge.co.uk/interactive-svg-components/pan-and-zoom-control
+    // try to adjust translation when scale is used
+    if ('scale' in tf) {
+      tf['translate'] = !( 'translate' in tf ) ? [0,0] : tf['translate'];
+      tf['translate'][0] += (1-tf['scale']) * bb.width/2; 
+      tf['translate'][1] += (1-tf['scale']) * bb.height/2;
+    }
+    return tf;
+  }
+
+  // KUTE.prepareStart K.prS[p](el,p,to[p])
+  // returns an obect with current transform attribute value
+  K.prS['svgTransform'] = function(l,p,t) {
+    var tr = {}, cta = l.getAttributeNS(null,'transform'), 
+        ct = cta && /\)/.test(cta) ? cta.split(')') : 'none', i, j, ctr ={}, pr;
+    if (ct instanceof Array) {
+      for (j=0; j<ct.length; j++){
+        pr = ct[j].split('(');
+        pr[0] !== '' && (ctr[pr[0].replace(/\s/,'')] = pr[1] );
+      }
+    }
+    // find a value in current attribute value or add a default value
+    for (i in t) { tr[i] = i in ctr ? ctr[i] : 0; }
+    return tr;
+  }
   
   return S;
 }));
