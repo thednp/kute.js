@@ -30,7 +30,7 @@
   K.selector = function(el,multi){ // a selector utility
     var nl;
     if (multi){
-      nl = typeof el === 'object' && el.length ? el : document.querySelectorAll(el);
+      nl = el instanceof NodeList ? el : document.querySelectorAll(el);
     } else {
       nl = typeof el === 'object' ? el : /^#/.test(el) ? document.getElementById(el.replace('#','')) : document.querySelector(el);       
     }
