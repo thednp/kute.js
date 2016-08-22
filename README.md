@@ -17,6 +17,7 @@ For documentation, examples and other cool tips, check the <a href="http://thedn
  
 # SVG Plugin - [visit page](http://thednp.github.io/kute.js/svg.html)
 * morphs SVGs with the `path` tween property, updating the `d` attribute of `<path>` or `<glyph>` elements
+* crows-browser SVG `transform` via the `svgTransform` property and the `transform` presentation attribute
 * draws SVGs with the `draw` tween property for `<path>` elements
 * SVG related color CSS properties such as: `fill`, `stroke`, `stopColor`
 * other SVG CSS properties: `strokeWidth`, `stopOpacity`
