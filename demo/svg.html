@@ -167,19 +167,19 @@ var tween2 = KUTE.to('#triangle', { path: '#square' }).start();
 
         <p>In the example below the triangle shape will morph into a square, then the square will morph into a star, so 2 tweens chained with a third that will morph back to the original triangle shape. For each tween the morph will use the number of points from the shape with most points as a sample size for the other shape. Let's have a look at the demo.</p>			
         <div class="featurettes">
-                <svg class="example-box-model example-box" id="morph-example2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" >
-                    <path id="square" style="visibility:hidden" d="M25.508,12.011 L576.715,12.011 L576.715,584.766 L25.508,584.766 L25.508,12.011 z"/>
-                        
-                    <path id="square2" style="visibility:hidden" d="M25.508,12.011 H576.715 V584.766 H25.508 V12.011z"/>
-                    <path id="square3" style="visibility:hidden" d="M25.508,12.011 L576.715,12.011 V584.766 L25.508,584.766 V12.011 z"/>
-                    
-                    <path id="triangle" class="bg-indigo" d="M301.113,12.011L576.715,584.766L25.508,584.766L301.113,12.011z"/>
-      
-                    <path id="star2" style="visibility:hidden" d="M301.113,12.011l99.25,179.996l201.864,38.778L461.706,380.808
-                        l25.508,203.958l-186.101-87.287L115.01,584.766l25.507-203.958L0,230.785l201.86-38.778L301.113,12.011z"/>
-                        
-                </svg>            
 
+          <svg class="example-box-model example-box" id="morph-example2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" >
+            
+            <path id="square" style="visibility:hidden" d="M25.508,12.011 L576.715,12.011 L576.715,584.766 L25.508,584.766 L25.508,12.011 z"/>
+                
+            <path id="square2" style="visibility:hidden" d="M25.508,12.011 H576.715 V584.766 H25.508 V12.011z"/>
+            <path id="square3" style="visibility:hidden" d="M25.508,12.011 L576.715,12.011 V584.766 L25.508,584.766 V12.011 z"/>
+            
+            <path id="triangle" class="bg-indigo" d="M301.113,12.011L576.715,584.766L25.508,584.766L301.113,12.011z"/>
+
+            <path id="star2" style="visibility:hidden" d="M301.113,12.011l99.25,179.996l201.864,38.778L461.706,380.808
+                l25.508,203.958l-186.101-87.287L115.01,584.766l25.507-203.958L0,230.785l201.86-38.778L301.113,12.011z"/>
+          </svg>
       
           <div class="example-buttons">
             <a id="morphBtn2" class="btn btn-green" href="javascript:void(0)">Start</a>	
