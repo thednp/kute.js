@@ -72,19 +72,24 @@
         arr = S.gSegs(s,e,this._mpr); 
         s1 = arr[0]; e1 = arr[1]; arL = e1.length;
     } else {
-      s = S.pTA(s); e = S.pTA(e); 
-      arL = Math.max(s.length,e.length);
-      if ( arL === e.length) { sm = s; lg = e; } else { sm = e; lg = s; }
-      sml = sm.length;
+      s = S.pTA(s); e = S.pTA(e);
 
-      smp = S.cP('M'+sm.join('L')+'z'); len = smp.getTotalLength() / arL;
-      for (var i=0; i<arL; i++){
-        tl = smp.getPointAtLength(len*i);
-        cs = S.gCP(len,tl,sm);
-        nsm.push( [ cs[0], cs[1] ] );
+      if ( s.length !== e.length ){
+        arL = Math.max(s.length,e.length);
+        if ( arL === e.length) { sm = s; lg = e; } else { sm = e; lg = s; }
+        sml = sm.length;
+
+        smp = S.cP('M'+sm.join('L')+'z'); len = smp.getTotalLength() / arL;
+        for (var i=0; i<arL; i++){
+          tl = smp.getPointAtLength(len*i);
+          cs = S.gCP(len,tl,sm);
+          nsm.push( [ cs[0], cs[1] ] );
+        }
+
+        if (arL === e.length) { e1 = lg; s1 = nsm; } else { s1 = lg; e1 = nsm; }
+      } else {
+        s1 = s; e1 = e;
       }
-
-      if (arL === e.length) { e1 = lg; s1 = nsm; } else { s1 = lg; e1 = nsm; }
     }
 
     // reverse arrays
