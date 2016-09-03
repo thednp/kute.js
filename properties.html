@@ -119,6 +119,21 @@
 			<li><kbd class="bg-olive">scale</kbd> sub-property used to apply a single value size transformation. When using this sub-property, the <kbd class="bg-olive">translate</kbd> will be automatically adjusted to make sure the animation looks as you would expect it from a regular HTML5 element. Eg. <code>scale:0.5</code> will scale down a shape to half of it's initial size. <kbd class="bg-lime">IE9+</kbd></li>
 		</ul>
 
+		<h3>SVG Properties</h3>
+		<p>The <a href="svg.html">SVG Plugin</a> can animate the <code>d</code> attribute of a given <code>&lt;path&gt;</code> or <code>&lt;glyph&gt;</code> element with the tween property called <kbd class="bg-olive">path</kbd>. The animation effect is widelly known as morph SVG and implemented in various scripts, but the KUTE.js implementation is similar to <a href="http://bl.ocks.org/mbostock/3081153" target="_blank">the D3.js examples</a> for wider usability.</p>
+
+		<p>Further more, the SVG Plugin can animate the stroke in a way that you probably know as <code>drawSVG</code>. KUTE.js implements it as <kbd class="bg-olive">draw</kbd> tween property that deals with the well known CSS properties: <kbd>strokeDasharray</kbd> and <kbd>strokeDashoffset</kbd>.
+		<p>The SVG Plugin also manages animation for most useful CSS properties that are specific to SVG elements, since SMIL animations tend to go extinct, this plugin can get quite useful.</p>
+        <ul>
+			<li><kbd class="bg-olive">strokeWidth</kbd> allows you to animate the <code>stroke-width</code> for a given SVG element.</li>
+			<li><kbd class="bg-olive">strokeOpacity</kbd> allows you to animate the <code>stroke-opacity</code> for a given SVG element.</li>
+			<li><kbd class="bg-olive">fillOpacity</kbd> allows you to animate the <code>fill-opacity</code> for a given SVG element.</li>
+			<li><kbd class="bg-olive">stopOpacity</kbd> allows you to animate the <code>stop-opacity</code> for a given gradient SVG element.</li>
+			<li><kbd class="bg-olive">fill</kbd> allows you to animate the <code>fill</code> color property for a given SVG element.</li>
+			<li><kbd class="bg-olive">stroke</kbd> allows you to animate the <code>stroke</code> color for a given SVG element.</li>
+			<li><kbd class="bg-olive">stopColor</kbd> allows you to animate the <code>stop-color</code> for a given gradient SVG element.</li>
+		</ul>
+
 		<h3>Box Model Properties</h3>
 		<p>The core engine supports <code>width</code>, <code>height</code>, <code>left</code> and <code>top</code> while the <a href="css.html">CSS Plugin</a> adds support for all other box-model properties.</p>
 		<ul>
@@ -152,21 +167,6 @@
 			<li><kbd class="bg-olive">borderTopColor</kbd>, <kbd class="bg-olive">borderRightColor</kbd>, <kbd class="bg-olive">borderBottomColor</kbd> and <kbd class="bg-olive">borderLeftColor</kbd> properties allow you to animate the color of the border on each side of a given element.</li>
 		</ul>			
 		<p><strong>Remember</strong>: shorthands for <code>borderColor</code> property are not supported.</p>
-
-		<h3>SVG Properties</h3>
-		<p>The <a href="svg.html">SVG Plugin</a> can animate the <code>d</code> attribute of a given <code>&lt;path&gt;</code> or <code>&lt;glyph&gt;</code> element with the tween property called <kbd class="bg-olive">path</kbd>. The animation effect is widelly known as morph SVG and implemented in various scripts, but the KUTE.js implementation is similar to <a href="http://bl.ocks.org/mbostock/3081153" target="_blank">the D3.js examples</a> for wider usability.</p>
-
-		<p>Further more, the SVG Plugin can animate the stroke in a way that you probably know as <code>drawSVG</code>. KUTE.js implements it as <kbd class="bg-olive">draw</kbd> tween property that deals with the well known CSS properties: <kbd>strokeDasharray</kbd> and <kbd>strokeDashoffset</kbd>.
-		<p>The SVG Plugin also manages animation for most useful CSS properties that are specific to SVG elements, since SMIL animations tend to go extinct, this plugin can get quite useful.</p>
-        <ul>
-			<li><kbd class="bg-olive">strokeWidth</kbd> allows you to animate the <code>stroke-width</code> for a given SVG element.</li>
-			<li><kbd class="bg-olive">strokeOpacity</kbd> allows you to animate the <code>stroke-opacity</code> for a given SVG element.</li>
-			<li><kbd class="bg-olive">fillOpacity</kbd> allows you to animate the <code>fill-opacity</code> for a given SVG element.</li>
-			<li><kbd class="bg-olive">stopOpacity</kbd> allows you to animate the <code>stop-opacity</code> for a given gradient SVG element.</li>
-			<li><kbd class="bg-olive">fill</kbd> allows you to animate the <code>fill</code> color property for a given SVG element.</li>
-			<li><kbd class="bg-olive">stroke</kbd> allows you to animate the <code>stroke</code> color for a given SVG element.</li>
-			<li><kbd class="bg-olive">stopColor</kbd> allows you to animate the <code>stop-color</code> for a given gradient SVG element.</li>
-		</ul>
         
 		<h3>Presentation Attributes</h3>
 		<p>The <a href="attr.html">Attributes Plugin</a> can animate any numerical presentation attribute such as <kbd class="bg-olive">width</kbd>, <kbd class="bg-olive">cx</kbd> or <kbd class="bg-olive">stop-opacity</kbd>, but the values can be also suffixed: <code>150px</code> or <code>50%</code>, and for that you must always provide a string value that include the measurement unit, and that, of course, depends on the attribute. This plugin can be a great addition to the above SVG Plugin for specific gradient attributes or specific geometric shapes' attributes.</p>

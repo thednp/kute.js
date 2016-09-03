@@ -13,7 +13,7 @@ numBtn.addEventListener('click', function(){
 // write text
 var headText = document.getElementById('headText'),
     headBtn = document.getElementById('headBtn'),
-    headTween = KUTE.to(headText, {text: "This is a <strong>super simple</strong> write text demo."}, {duration: 3000, easing: 'easingBounceOut'});
+    headTween = KUTE.to(headText, {text: "This is a <strong>super simple</strong> write text demo."}, {repeat: 1, yoyo: true, duration: 5000, easing: 'easingBounceOut'});
 headBtn.addEventListener('click', function(){
     !headTween.playing && headTween.start();
 }, false);   

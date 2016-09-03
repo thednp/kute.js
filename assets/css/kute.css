@@ -96,16 +96,17 @@ footer p {margin: 0 0 10px}
 /* example box */
 .example-box {
 	font-size: 40px; line-height: 150px; text-align:center; font-weight: bold; 
-	width: 150px; height: 150px; float: left; position:relative; 
+	float: left; position:relative; 
+	width: 150px; height: 150px; 
 	border-radius: 5px; margin: 0 20px 20px 0;
-/* easy hack to improve box model properties performance on modern browsers only ofc */
-	transform: translate3d(0px,0px,0px); -webkit-transform: translate3d(0px,0px,0px); 
 }
-.example-box-model {
-    font-size: 40px; text-align:center; font-weight: bold; 
+/*.example-box-model {
+	font-size: 40px; text-align:center; font-weight: bold; 
 	float: left; position:relative; 
 	border-radius: 5px; margin: 0 20px 20px 0;
 }
+
+svg.example-box { width: auto; height: auto; }*/
 
 .easing-example {float: none; font-size: 24px; width: 320px}
 .example-buttons {position: absolute; top: 18px; right:0}
@@ -114,7 +115,7 @@ footer p {margin: 0 0 10px}
 h1.example-item {
     font-size: 50px;
     line-height:50px;
-    color: #fff;
+    color: #333;
 }
 
 h1.example-item span {
