@@ -60,8 +60,8 @@ var mixTransforms = document.getElementById('mixTransforms'),
     mt1Tween = KUTE.to(mt1, {translateX:200,rotateX:360,rotateY:15,rotateZ:5}, { perspective:400, easing:'easingCubicInOut', yoyo:true, repeat: 1, duration:1500}),
     mt2Tween = KUTE.to(mt2, {translateX:-200,rotateX:360,rotateY:15,rotateZ:5}, { easing:'easingCubicInOut', yoyo:true, repeat: 1, duration:1500});
     
-mt1.style[tfo] = '50% 50% 50px'; mt1.style[tfp] = 'perspective(400px) translateX(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)';
-mt2.style[tfo] = '50% 50% 50px'; mt2.parentNode.style[pp] = '400px';
+mt1.style[tfo] = '50% 50% 0px'; mt1.style[tfp] = 'perspective(400px) translateX(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)';
+mt2.style[tfo] = '50% 50% -200px'; mt2.parentNode.style[pp] = '400px';
 skewBtn.addEventListener('click', function(){
     !mt1Tween.playing && mt1Tween.start();
     !mt2Tween.playing && mt2Tween.start();
@@ -151,9 +151,9 @@ var colBox = document.getElementById('colBox'),
 	colbtn = colBox.querySelector('.btn');	
 
 var colTween1 = KUTE.to(colBoxElement, {color: '#9C27B0'}, {duration: 1000});
-var colTween2 = KUTE.to(colBoxElement, {backgroundColor: '#069'}, {duration: 1000});
+var colTween2 = KUTE.to(colBoxElement, {backgroundColor: '#069'}, {duration: 1000, keepHex: true});
 var colTween3 = KUTE.to(colBoxElement, {color: '#fff'}, {duration: 1000});
-var colTween4 = KUTE.to(colBoxElement, {backgroundColor: '#9C27B0'}, {duration: 1000});
+var colTween4 = KUTE.to(colBoxElement, {backgroundColor: '#9C27B0'}, {duration: 1000, keepHex: true});
 
 colTween1.chain(colTween2);
 colTween2.chain(colTween3);
@@ -272,7 +272,7 @@ easings.addEventListener('click',function(e){
         } else if (es === 'multiPointBezier') {
             tweenEasing2._e = KUTE.Physics.bezier({points: [{"x":0,"y":0,"cp":[{"x":0.387,"y":0.007}]},{"x":0.509,"y":0.48,"cp":[{"x":0.069,"y":0.874},{"x":0.928,"y":0.139}]},{"x":1,"y":1,"cp":[{"x":0.639,"y":0.988}]}] });
         } else {
-            tweenEasing2._e = KUTE.pe(es); 
+            tweenEasing2._e = KUTE.Easing[es] || KUTE.Easing.linear; 
         }       
     }
 },false);

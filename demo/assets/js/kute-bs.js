@@ -24,9 +24,8 @@
   
   // filter unsupported browsers
   if (!('boxShadow' in document.body.style)) {return;}
-  
   // add a reference to KUTE object
-  var K = window.KUTE;
+  var K = window.KUTE, unit = K.Interpolate.unit, colr = K.Interpolate.color;
 
   // the preffixed boxShadow property, mostly for legacy browsers
   // maybe the browser is supporting the property with its vendor preffix
@@ -37,8 +36,8 @@
   // for the .to() method, you need to prepareStart the boxShadow property
   // which means you need to read the current computed value
   K.prS['boxShadow'] = function(element,property,value){
-      var cssBoxShadow = K.gCS(element,'boxShadow');
-      return /^none$|^initial$|^inherit$|^inset$/.test(cssBoxShadow) ? '0px 0px 0px 0px rgb(0,0,0)' : cssBoxShadow;
+    var cssBoxShadow = K.gCS(element,_boxShadow);
+    return /^none$|^initial$|^inherit$|^inset$/.test(cssBoxShadow) ? '0px 0px 0px 0px rgb(0,0,0)' : cssBoxShadow;
   }
 
   // the processProperty for boxShadow 
@@ -50,23 +49,20 @@
       
       // the DOM update function for boxShadow registers here
       // we only enqueue it if the boxShadow property is used to tween
-      K.dom['boxShadow'] = function(w,p,v) {
+      K.dom['boxShadow'] = function(l,p,a,b,v) {
+
         // let's start with the numbers | set unit | also determine inset
-        var numbers = [], unit = 'px', // the unit is always px
-          inset = w._vS[p][5] !== 'none' || w._vE[p][5] !== 'none' ? ' inset' : false; 
+        var numbers = [], px = 'px', // the unit is always px
+          inset = a[5] !== 'none' || b[5] !== 'none' ? ' inset' : false; 
         for (var i=0; i<4; i++){
-          numbers.push( (w._vS[p][i] + (w._vE[p][i] - w._vS[p][i]) * v ) + unit);
+          numbers.push( unit( a[i], b[i], px, v ) );
         }
 
         // now we handle the color
-        var color, _color = {}; 
-        for (var c in w._vE[p][4]) {
-          _color[c] = parseInt(w._vS[p][4][c] + (w._vE[p][4][c] - w._vS[p][4][c]) * v )||0;            
-        }
-        color = 'rgb(' + _color.r + ',' + _color.g + ',' + _color.b + ') ';          
+        var colorValue = colr(a[4],b[4],v);          
         
         // the final piece of the puzzle, the DOM update
-        w._el.style[_boxShadow] = inset ? color + numbers.join(' ') + inset : color + numbers.join(' ');
+        l.style[_boxShadow] = inset ? colorValue + numbers.join(' ') + inset : colorValue + numbers.join(' ');
       };
     }
     

@@ -16,42 +16,44 @@
     throw new Error("Text-Plugin requires KUTE.js.");
   }
 }( function () {
-  var K = window.KUTE,
+  var K = window.KUTE, DOM = K.dom, PP = K.pp, number = K.Interpolate.number,
     _s = String("abcdefghijklmnopqrstuvwxyz").split(""), // lowercase
     _S = String("abcdefghijklmnopqrstuvwxyz".toUpperCase()).split(""), // uppercase
     _sb = String("~!@#$%^&*()_+{}[];'<>,./?\=-").split(""), // symbols
     _n = String("0123456789").split(""), // numeric
     _a = _s.concat(_S,_n), // alpha numeric
     _all = _a.concat(_sb), // all caracters
-    _r = Math.random, _f = Math.floor, _m = Math.min;
+    random = Math.random, floor = Math.floor, min = Math.min;
 
   K.prS['text'] = K.prS['number'] = function(l,p,v){
     return l.innerHTML;
   }
     
-  K.pp['text'] = function(p,v,l) {
-    if ( !( 'text' in K.dom ) ) {
-      K.dom['text'] = function(w,p,v) {
-        var tp = tp || w.textChars === 'alpha' ? _s // textChars is alpha
-            : w.textChars === 'upper' ? _S  // textChars is numeric
-            : w.textChars === 'numeric' ? _n  // textChars is numeric
-            : w.textChars === 'alphanumeric' ? _a // textChars is alphanumeric
-            : w.textChars === 'symbols' ? _sb // textChars is symbols
-            : w.textChars ? w.textChars.split('') // textChars is a custom text
-            : _s, l = tp.length, s = w._vE[p], 
-            t = tp[_f((_r() * l))], tx = '', f = s.substring(0); 
+  PP['text'] = function(p,v,l) {
+    if ( !( 'text' in DOM ) ) {
+      DOM['text'] = function(l,p,a,b,v,o) {
+        var tp = tp || o.textChars === 'alpha' ? _s // textChars is alpha
+            : o.textChars === 'upper' ? _S  // textChars is numeric
+            : o.textChars === 'numeric' ? _n  // textChars is numeric
+            : o.textChars === 'alphanumeric' ? _a // textChars is alphanumeric
+            : o.textChars === 'symbols' ? _sb // textChars is symbols
+            : o.textChars ? o.textChars.split('') // textChars is a custom text
+            : _s, ll = tp.length,
+            t = tp[floor((random() * ll))], ix = '', tx = '', fi = a.substring(0), f = b.substring(0); 
 
-        tx = f.substring(0,_f(_m(v * f.length, f.length)));
-        w._el.innerHTML = v < 1 ? tx+t : tx;
+        // use string.replace(/<\/?[^>]+(>|$)/g, "") to strip HTML tags while animating ?
+        ix = a !== '' ? fi.substring(fi.length,floor(min(v * fi.length, fi.length))) : ''; // initial text, A value 
+        tx = f.substring(0,floor(min(v * f.length, f.length))); // end text, B value
+        l.innerHTML = v < 1 ? tx + t + ix : b;
       }
     }
     return v;
   }
     
-  K.pp['number'] = function(p,v,l) {
-    if ( !( 'number' in K.dom ) ) {
-      K.dom['number'] = function(w,p,v) {
-        w._el.innerHTML = parseInt(w._vS[p] + (w._vE[p] - w._vS[p]) * v);
+  PP['number'] = function(p,v,l) {
+    if ( !( 'number' in DOM ) ) {
+      DOM['number'] = function(l,p,a,b,v) {
+        l.innerHTML = parseInt( number(a, b, v));
       }
     }
     return parseInt(v) || 0;

@@ -21,7 +21,8 @@
   }
 }( function (KUTE) {
   'use strict';
-  var K = window.KUTE;
+
+  var K = window.KUTE, DOM = K.dom, PP = K.pp, unit = K.Interpolate.unit, number = K.Interpolate.number;
   
   // get current attribute value
   K.gCA = function(e,a){
@@ -35,35 +36,35 @@
     }
     return f;
   };
-  
   // register the render attributes object
-  if (!('attr' in K.dom)) {
-    K.dom.attr = function(w,p,v){
-      for ( var o in w._vE[p] ){
-        K.dom.attr.prototype[o](w,o,v);
+  if (!('attr' in DOM)) {
+    DOM.attr = function(l,p,a,b,v) { 
+      for ( var o in b ){
+        DOM.attr.prototype[o](l,o,a[o],b[o],v);
       }
     }; 
   }
   
-  var ra = K.dom.attr.prototype;
-  
+  var ra = DOM.attr.prototype;
+
   // process attributes object K.pp.attr(t[x]) 
   // and also register their render functions
-  K.pp['attr'] = function(a,o){
+  PP['attr'] = function(a,o){
     var ats = {}, p;
     for ( p in o ) {
       if ( /%|px/.test(o[p]) ) {
         var u = K.truD(o[p]).u, s = /%/.test(u) ? '_percent' : '_'+u;
         if (!(p+s in ra)) {
-          ra[p+s] = function(w,p,v){
-            w._el.setAttribute(p.replace(s,''), (w._vS.attr[p].v + (w._vE.attr[p].v - w._vS.attr[p].v) * v) + w._vE.attr[p].u);
+          ra[p+s] = function(l,p,a,b,v) {
+            var _p = p.replace(s,'');
+            l.setAttribute(_p, unit(a.v,b.v,b.u,v) );
           }
         }
         ats[p+s] = K.truD(o[p]);       
       } else {
         if (!(p in ra)) {
-          ra[p] = function(w,p,v){
-            w._el.setAttribute(p, w._vS.attr[p] + (w._vE.attr[p]- w._vS.attr[p]) * v);
+          ra[p] = function(l,o,a,b,v) {
+            l.setAttribute(o, number(a,b,v));
           }
         }
         ats[p] = o[p] * 1;     

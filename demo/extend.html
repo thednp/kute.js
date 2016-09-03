@@ -213,23 +213,29 @@ K.pp['boxShadow'] = function(property,value,element){
   // the DOM update function for boxShadow registers here
   // we only enqueue it if the boxShadow property is used to tween
   if ( !('boxShadow' in K.dom) ) {
-    K.dom['boxShadow'] = function(w,p,v) {       
+    K.dom['boxShadow'] = function(l,p,a,b,v) { // element, propertyName, valuesStart.boxShadow, valuesEnd.boxShadow, progress 
+
       // let's start with the numbers | set unit | also determine inset
-      var numbers = [], unit = 'px', // the unit is always px
-        inset = w._vS[p][5] !== 'none' || w._vE[p][5] !== 'none' ? ' inset' : false; 
-      for (var i=0; i&lt;4; i++){
-        numbers.push( (w._vS[p][i] + (w._vE[p][i] - w._vS[p][i]) * v ) + unit);
+      var numbers = [], px = 'px', // the unit is always px
+        inset = a[5] !== 'none' || w._vE[p][5] !== 'none' ? ' inset' : false; 
+
+      for (var i=0; i&lt;4; i++){ // for boxShadow coordinates we do the math for an array of numbers 
+        numbers.push( (a[i] + (b[i] - a[i]) * v ) + px);
+        // we can also write this like this now, starting 1.5.3
+        // numbers.push( K.Interpolate.unit(a[i], b[i], px, v) );
       }
 
       // now we handle the color
-      var color, _color = {}; 
+      var colorValue, _color = {}; 
       for (var c in w._vE[p][4]) {
         _color[c] = parseInt(w._vS[p][4][c] + (w._vE[p][4][c] - w._vS[p][4][c]) * v )||0;
       }
-      color = 'rgb(' + _color.r + ',' + _color.g + ',' + _color.b + ') ';          
+      colorValue = 'rgb(' + _color.r + ',' + _color.g + ',' + _color.b + ') ';
+      // for color interpolation, starting with v1.5.3 we can cut it short to this
+      // var colorValue = K.Interpolate.color(a[5],b[5],v);
       
       // last piece of the puzzle, the DOM update
-      w._el.style[_boxShadow] = inset ? color + numbers.join(' ') + inset : color + numbers.join(' ');
+      l.style[_boxShadow] = inset ? colorValue + numbers.join(' ') + inset : colorValue + numbers.join(' ');
     };
   }
 
@@ -305,12 +311,15 @@ var myBSTween3 = KUTE.fromTo('selector', {boxShadow: [5, 5, 0, '#069', 'inset']}
             <li><kbd class="bg-lime">KUTE.property(propertyName)</kbd> is the <strong>autoPrefix</strong> function that returns the property with the right vendor prefix, but only if required; on legacy browsers that don't support the property, the function returns <strong>undefinedPropertyName</strong> and that would be an easy way to detect support for that property on most legacy browsers: <pre><code class="language-javascript">if (/undefined/.test(KUTE.property('propertyName')) ) { /* legacy browsers */ } else { /* modern browsers */ }</code></pre></li>
             <li><kbd class="bg-lime">KUTE.getPrefix()</kbd> returns a vendor preffix even if the browser supports a specific preffixed property or not.</li>
             <li><kbd class="bg-lime">KUTE.gCS(element,property)</kbd> a hybrid <code>getComputedStyle</code> function to get the current value of the property required for the <code>.to()</code> method; it actually checks in <code>element.style</code>, <code>element.currentStyle</code> and <code>window.getComputedStyle(element,null)</code> to make sure it won't miss the property value;</li>
-            <li><kbd class="bg-lime">KUTE.gIS()</kbd> a <code>getInlineStyle</code> function to read the current inline style, very useful for transform, because decomposing a computed <strong>matrix</strong> would require a ton lot more code;</li>
-            <li><kbd class="bg-lime">KUTE.truD(value)</kbd> a function that accepts String and Number and returns a <code>{v: 150, u: 'px'}</code> object for any box model or a single numeric value based property and make it ready to tween.</li>
+            <li><kbd class="bg-lime">KUTE.truD(value)</kbd> a function that accepts String and Number and returns a <code>{v: 150, u: 'px'}</code> object for any box model or a single numeric value based property and make it ready to tween. When a second parameter is set to <i>true</i> it will return an object with value and unit specific for rotation angles and skews.</li>
             <li><kbd class="bg-lime">KUTE.truC(color)</kbd> a function that returns an <code>{r: 150, g: 150, b: 0}</code> color object ready to tween; if the color value is a <a href="http://www.w3schools.com/colors/colors_names.asp" target="_blank">web safe color</a>, the IE9+ browsers will be able to return the rgb object we need.</li>
             <li><kbd class="bg-lime">KUTE.htr(hex)</kbd> a function that accepts HEX formatted colors and returns an <code>{r: 150, g: 150, b: 0}</code> color object;</li>
             <li><kbd class="bg-lime">KUTE.rth(r,g,b)</kbd> a function that accepts numeric values for red, blue and green and returns a HEX format <code>#006699</code> color string.</li>
-        </ul>       
+            <li><kbd class="bg-lime">KUTE.Interpolate.number</kbd> is most essential interpolation tool when developing plugins for various properties not supported in the core.</li>
+            <li><kbd class="bg-lime">KUTE.Interpolate.unit</kbd> is used mainly for box model properties, text properties, and generally anything that's a string based valued. Like <code>width: 250px</code></li>
+            <li><kbd class="bg-lime">KUTE.Interpolate.color</kbd> is a very fast interpolation function for colors, as used in the above example.</li>
+            <li><kbd class="bg-lime">KUTE.Interpolate.array</kbd> and <kbd class="bg-lime">KUTE.Interpolate.coords</kbd> are SVG Plugin only, but you can have a look anytime when you're out of ideas.</li>
+        </ul>
 
         <ul id="share" class="nav">
             <li>Share </li>

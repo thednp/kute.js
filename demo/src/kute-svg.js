@@ -21,13 +21,24 @@
   }
 }( function (KUTE) {
   'use strict';
-  
-  var K = window.KUTE, S = S || {}, p,
+  var K = window.KUTE, S = S || {}, p, DOM = K.dom, PP = K.pp,
     _svg = document.querySelector('path') || document.querySelector('svg'),
     _ns = _svg && _svg.ownerSVGElement && _svg.ownerSVGElement.namespaceURI || 'http://www.w3.org/2000/svg',
     _nm = ['strokeWidth', 'strokeOpacity', 'fillOpacity', 'stopOpacity'], // numeric SVG CSS props
     _cls = ['fill', 'stroke', 'stopColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
-    pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi;
+    pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi,
+    // interpolate functions
+    number = K.Interpolate.number, color = K.Interpolate.color,
+    array = function array(a,b,l,v) { // array1, array2, array2.length, progress
+      var na = [], i;
+      for(i=0;i<l;i++) { na.push( a[i] === b[i] ? b[i] : number(a[i],b[i],v) ); } // don't do math if not needed
+      return na;
+    },
+    coords = function coords(a,b,l,ll,o,v) { // array1, array2, array2.length, coordinates.length, joiner, progress for SVG stuff
+      var s = [], i;
+      for(i=0;i<l;i++) { s.push( array( a[i],b[i],ll,v ) ); }
+      return s.join(o);
+    };
   
   if (_svg && !_svg.ownerSVGElement) {return;} // if SVG API is not supported, return
     
@@ -39,8 +50,7 @@
       p.o = el.getAttribute('d');
 
     } else if (!el && /[a-z][^a-z]*/ig.test(e)) { // maybe it's a string path already
-      var np = S.cP(e.trim());
-      p.e = np;
+      p.e = S.cP(e.trim());
       p.o = e;
     }
     return p;
@@ -48,11 +58,11 @@
   
   S.pCr = function(w){ // pathCross
     // path tween options
-    this._mpr = w.morphPrecision || 25;  
-    this._midx = w.morphIndex; 
-    this._smi = w.showMorphInfo;
-    this._rv1 = w.reverseFirstPath;
-    this._rv2 = w.reverseSecondPath;
+    this._mpr = w._ops.morphPrecision || 25;  
+    this._midx = w._ops.morphIndex; 
+    this._smi = w._ops.showMorphInfo;
+    this._rv1 = w._ops.reverseFirstPath;
+    this._rv2 = w._ops.reverseSecondPath;
     
     var p1 = S.gOp(w._vS.path.o), p2 = S.gOp(w._vE.path.o), arr;
     this._isp = !/[CSQTA]/i.test(p1) && !/[CSQTA]/i.test(p2); // both shapes are polygons
@@ -179,10 +189,7 @@
   }
   
   S.gOp = function(p){ // getOnePath, first path only
-    var a = p.split(/z/i);
-    if (a.length > 2) {
-       return a[0].trim() + 'z';
-    } else { return p.trim(); }
+    return p.split(/z/i).shift() + 'z';
   }
 
   S.cP = function (p){ // createPath
@@ -216,7 +223,7 @@
       np[i] = np[i].replace(/(^|[^,])\s*-/g, '$1,-').replace(/(\s+\,|\s|\,)/g,',').replace(r,'').split(',');
       np[i][0] = parseFloat(np[i][0]);
       np[i][1] = parseFloat(np[i][1]);
-      if (i === 0) { x+=np[i][0]; y +=np[i][1]; } 
+      if (i === 0) { x+=np[i][0]; y +=np[i][1]; }
       else {
         x = np[i-1][0]; 
         y = np[i-1][1]; 
@@ -234,23 +241,16 @@
     }
     return np;
   }
-  
-  // a shortHand pathCross
-  K.svq = function(w){ if ( w._vE.path ) S.pCr(w); }
+
+  // a shortHand pathCross && SVG transform stack
+  K.svq = function(w){ if ( w._vE.path ) S.pCr(w); if ( w._vE.svgTransform ) S.sT(w); }
   
   // register the render SVG path object  
   // process path object and also register the render function
   K.pp['path'] = function(a,o,l) { // K.pp['path']('path',value,element);
-    if (!('path' in K.dom)) {
-      K.dom['path'] = function(w,p,v){
-        var points =[], i, l;
-        for(i=0,l=w._vE.path.d.length;i<l;i++) { // for each point
-          points[i] = [];
-          for(var j=0;j<2;j++) { // each point coordinate
-            points[i].push(w._vS.path.d[i][j]+(w._vE.path.d[i][j]-w._vS.path.d[i][j])*v);
-          }
-        }
-        w._el.setAttribute("d", v === 1 ? w._vE.path.o : 'M' + points.join('L') + 'Z' );       
+    if (!('path' in DOM)) {
+      DOM['path'] = function(l,p,a,b,v){
+        l.setAttribute("d", v === 1 ? b.o : 'M' + coords( a['d'],b['d'],b['d'].length,2,'L',v ) + 'Z' );       
       }
     }
     return S.gPt(o);
@@ -270,8 +270,8 @@
       start = /%/.test(v[0]) ? S.pc(v[0].trim(),l) : parseFloat(v[0]);
       end = /%/.test(v[1]) ? S.pc(v[1].trim(),l) : parseFloat(v[1]);
     } else if (typeof v === 'undefined') {
-      o = parseFloat(K.gCS(e,'strokeDashoffset'));
-      d = K.gCS(e,'strokeDasharray').split(/\,/);
+      o = parseFloat(K.gCS(e,'stroke-dashoffset'));
+      d = K.gCS(e,'stroke-dasharray').split(/\,/);
       
       start = 0-o;
       end = parseFloat(d[0]) + start || l;
@@ -280,31 +280,27 @@
     return { s: start, e: end, l: l } 
   };
   
-  S.pc = function(v,l){
+  S.pc = function(v,l){ // percent
     return parseFloat(v) / 100 * l;
   };
   
-  K.pp['draw'] = function(a,o,l){ // register the draw property
-    if (!('draw' in K.dom)) {
-      K.dom['draw'] = function(w,p,v){
-        var l, s, e, o;
-        l = w._vS.draw.l;
-        s = w._vS.draw.s+(w._vE.draw.s-w._vS.draw.s)*v;
-        e = w._vS.draw.e+(w._vE.draw.e-w._vS.draw.e)*v;
-        o = 0 - s;
-        
-        w._el.style.strokeDashoffset = o +'px';
-        w._el.style.strokeDasharray = e+o<1 ? '0px, ' + l + 'px' : (e+o) + 'px, ' + l + 'px';
+  PP['draw'] = function(a,o,f){ // register the draw property
+    if (!('draw' in DOM)) {
+      DOM['draw'] = function(l,p,a,b,v){
+        var ll = a.l, s = number(a.s,b.s,v), e = number(a.e,b.e,v), o = 0 - s;
+        l.style.strokeDashoffset = o +'px';
+        l.style.strokeDasharray = e+o<1 ? '0px, ' + ll + 'px' : (e+o) + 'px, ' + ll + 'px';
       }
     }
-    return S.gDr(l,o);
+    return S.gDr(f,o);
   }
   
   K.prS['draw'] = function(el,p,v){
-    return S.gDr(el)
+    return S.gDr(el);
   }
 
   // SVG DRAW UTILITITES
+  // http://stackoverflow.com/a/30376660
   S.gL = function(el){ // getLength - returns the result of any of the below functions
     if (/rect/.test(el.tagName)) {
       return S.gRL(el);
@@ -325,7 +321,7 @@
     return (w*2)+(h*2);
   }
 
-  S.gPL = function(el){ // getPolygonLength - return the length of the Polygon / Polyline
+  S.gPL = function(el){ // getPolygonLength / getPolylineLength - return the length of the Polygon / Polyline
     var points = el.getAttribute('points').split(' '), len = 0;
     if (points.length > 1) {
       var coord = function (p) {
@@ -373,30 +369,16 @@
     var rx = el.getAttribute('rx'), ry = el.getAttribute('ry'),
         len = 2*rx, wid = 2*ry;
     return ((Math.sqrt(.5 * ((len * len) + (wid * wid)))) * (Math.PI * 2)) / 2;
-  } 
-  
+  }
   
   // SVG CSS Color Properties
   for ( var i = 0, l = _cls.length; i< l; i++) { 
     p = _cls[i];
-    K.pp[p] = function(p,v){
-      if (!(p in K.dom)) {
-        K.dom[p] = function(w,p,v){
-          var _c = {}; 
-          for (var c in w._vE[p]) {
-            if ( c !== 'a' ){
-              _c[c] = parseInt(w._vS[p][c] + (w._vE[p][c] - w._vS[p][c]) * v )||0;            
-            } else {
-              _c[c] = (w._vS[p][c] && w._vE[p][c]) ? parseFloat(w._vS[p][c] + (w._vE[p][c] - w._vS[p][c]) * v) : null;
-            }
-          }
-        
-          if ( w._hex ) {
-            w._el.style[p] = K.rth( _c.r, _c.g, _c.b );
-          } else {
-            w._el.style[p] = !_c.a ? 'rgb(' + _c.r + ',' + _c.g + ',' + _c.b + ')' : 'rgba(' + _c.r + ',' + _c.g + ',' + _c.b + ',' + _c.a + ')';
-          }
-        }
+    PP[p] = function(p,v){
+      if (!(p in DOM)) {
+        DOM[p] = function(l,p,a,b,v,o) {
+          l.style[p] = color(a,b,v,o.keepHex);
+        };
       }
       return K.truC(v);
     } 
@@ -404,23 +386,25 @@
        return K.gCS(el,p) || 'rgba(0,0,0,0)';
     }
   }
+
   
   for ( var i = 0, l = _nm.length; i< l; i++) { // for numeric CSS props from any type of SVG shape
     p = _nm[i];
-    if (p === 'strokeWidth'){
-      K.pp[p] = function(p,v){
-        if (!(p in K.dom)) {
-          K.dom[p] = function(w,p,v) {
-            w._el.style[p] = (w._vS[p].value + (w._vE[p].value - w._vS[p].value) * v) + w._vS[p].unit;
+    if (p === 'strokeWidth'){ // stroke can be unitless or unit | http://stackoverflow.com/questions/1301685/fixed-stroke-width-in-svg
+      PP[p] = function(p,v){
+        if (!(p in DOM)) {
+          DOM[p] = function(l,p,a,b,v) {
+            var _u = _u || typeof b === 'number';
+            l.style[p] = !_u ? unit(a.value,b.value,b.unit,v) : number(a,b,v);
           }
         }
-        return K.pp.box(p,v);
+        return /px|%|em|vh|vw/.test(v) ? PP.box(p,v) : parseFloat(v);
       }
     } else {
-      K.pp[p] = function(p,v){
-        if (!(p in K.dom)) {
-          K.dom[p] = function(w,p,v) {
-            w._el.style[p] = w._vS[p] + (w._vE[p] - w._vS[p]) * v;
+      PP[p] = function(p,v){
+        if (!(p in DOM)) {
+          DOM[p] = function(l,p,a,b,v) {
+            l.style[p] = number(a,b,v);
           }
         }
         return parseFloat(v);
@@ -432,72 +416,115 @@
   }
 
   // SVG Transform
-  K.pp['svgTransform'] = function(p,v,l){
+  PP['svgTransform'] = function(p,v,l){
     // register the render function
-    if (!('svgTransform' in K.dom)) {
-      K.dom['svgTransform'] = function(w,p,v) {
+    if (!('svgTransform' in DOM)) {
+      DOM['svgTransform'] = function(l,p,a,b,v){
         var tr = '', i;
-        for (i in w._vE[p]){
+        for (i in b){
           tr += i + '('; // start string
           if ( i === 'translate'){ // translate
-            tr += (w._vS[p][i][1] === w._vE[p][i][1] && w._vE[p][i][1] === 0 ) 
-            ? (w._vS[p][i][0] + (w._vE[p][i][0] - w._vS[p][i][0]) * v )
-            : (w._vS[p][i][0] + (w._vE[p][i][0] - w._vS[p][i][0]) * v ) + ' ' + (w._vS[p][i][1] + (w._vE[p][i][1] - w._vS[p][i][1]) * v );
+            tr += (a[i][1] === b[i][1] && b[i][1] === 0 ) 
+            ? number(a[i][0],b[i][0],v)
+            : number(a[i][0],b[i][0],v) + ' ' + number(a[i][1],b[i][1],v);
           } else if ( i === 'rotate'){ // rotate
-            tr += w._vS[p][i][0] + (w._vE[p][i][0] - w._vS[p][i][0]) * v + ' ';
-            tr += !w.reversed ? w._vE[p][i][1] + ',' + w._vE[p][i][2] : w._vS[p][i][1] + ',' + w._vS[p][i][2]; // make sure to always use the right transform-origin
+            tr += number(a[i][0],b[i][0],v) + ' ';
+            tr += b[i][1] + ',' + b[i][2];
           } else { // scale, skewX or skewY
-            tr +=  w._vS[p][i] + (w._vE[p][i] - w._vS[p][i]) * v;
+            tr +=  number(a[i],b[i],v);
           }
           tr += ') '; // end string
         }
-        w._el.setAttributeNS(null,'transform', tr.replace(/\)\s$/,')') );
+        l.setAttribute('transform', tr.trim() );
       }
     }
 
-    // return transform object
-    var tf = {}, bb = l.getBBox(), cx = bb.x + bb.width/2, cy = bb.y + bb.height/2, i, r, t;
-    for ( i in v ) {
+    // now prepare transform
+    var tf = {}, bb = l.getBBox(), cx = bb.x + bb.width/2, cy = bb.y + bb.height/2, r, cr, t, ct;
+
+    for ( i in v ) { // populate the valuesStart and / or valuesEnd
       if (i === 'rotate'){
-        r = v[i] instanceof Array ? v[i] 
+        r = v[i] instanceof Array ? v[i]
         : /\s/.test(v[i]) ? [v[i].split(' ')[0]*1, v[i].split(' ')[1].split(',')[0]*1, v[i].split(' ')[1].split(',')[1]*1] 
-        : [v[i],cx,cy];
+        : [v[i]*1,cx,cy];
         tf[i] = r;
       } else if (i === 'translate'){
-        t = v[i] instanceof Array ? v[i] : /\s/.test(v[i]) ? v[i].split(' ') : [v[i],0];
-        tf[i] = [t[0] * 1||0, t[1] * 1];
+        t = v[i] instanceof Array ? v[i] : /\,|\s/.test(v[i]) ? v[i].split(/\,|\s/) : [v[i]*1,0];
+        tf[i] = [t[0] * 1||0, t[1] * 1||0];
       } else if (i === 'scale'){
         tf[i] = v[i] * 1||1;
-      } else {
+      } else if (/skew/.test(i)) {
         tf[i] = v[i] * 1||0;
       }
     }
 
+    // try to adjust translation when scale is used, probably we should do the same when using skews, but I think it's a waste of time
     // http://www.petercollingridge.co.uk/interactive-svg-components/pan-and-zoom-control
-    // try to adjust translation when scale is used
     if ('scale' in tf) {
-      tf['translate'] = !( 'translate' in tf ) ? [0,0] : tf['translate'];
-      tf['translate'][0] += (1-tf['scale']) * bb.width/2; 
+      !('translate' in tf) && ( tf['translate'] = [0,0] ); // if no translate is found in current value or next value, we default to 0
+      tf['translate'][0] += (1-tf['scale']) * bb.width/2;
       tf['translate'][1] += (1-tf['scale']) * bb.height/2;
-    }
+      // adjust rotation transform origin and translation when skews are used, to make the animation look exactly the same as if we were't using svgTransform
+      // http://stackoverflow.com/questions/39191054/how-to-compensate-translate-when-skewx-and-skewy-are-used-on-svg/39192565#39192565
+      if ('rotate' in tf) {
+        tf['rotate'][1] -= 'skewX' in tf ? Math.tan(tf['skewX']) * bb.height : 0;
+        tf['rotate'][2] -= 'skewY' in tf ? Math.tan(tf['skewY']) * bb.width : 0;
+      }
+      tf['translate'][0] += 'skewX' in tf ? Math.tan(tf['skewX']) * bb.height*2 : 0;
+      tf['translate'][1] += 'skewY' in tf ? Math.tan(tf['skewY']) * bb.width*2 : 0;
+    } // more variations here https://gist.github.com/thednp/0b93068e20adb84658b5840ead0a07f8
+
     return tf;
   }
 
   // KUTE.prepareStart K.prS[p](el,p,to[p])
   // returns an obect with current transform attribute value
   K.prS['svgTransform'] = function(l,p,t) {
-    var tr = {}, cta = l.getAttributeNS(null,'transform'), 
-        ct = cta && /\)/.test(cta) ? cta.split(')') : 'none', i, j, ctr ={}, pr;
-    if (ct instanceof Array) {
-      for (j=0; j<ct.length; j++){
-        pr = ct[j].split('(');
-        pr[0] !== '' && (ctr[pr[0].replace(/\s/,'')] = pr[1] );
-      }
-    }
-    // find a value in current attribute value or add a default value
-    for (i in t) { tr[i] = i in ctr ? ctr[i] : 0; }
+    var tr = {}, i, ctr = S.pT(l.getAttribute('transform'));
+    for (i in t) { tr[i] = i in ctr ? ctr[i] : (i==='scale'?1:0); } // find a value in current attribute value or add a default value
     return tr;
   }
-  
+
+  S.sT = function (w){ // stackTransform - helper function that helps preserve current transform properties into the objects
+    var bb = w._el.getBBox(), ctr = S.pT(w._el.getAttribute('transform')), r, t, i,
+      cx = bb.x + bb.width/2, cy = bb.y + bb.height/2;
+    
+    for ( i in ctr ) { // populate the valuesStart
+      if (i === 'translate'){
+        t = ctr[i] instanceof Array ? ctr[i] : /\,|\s/.test(ctr[i]) ? ctr[i].split(/\,|\s/) : [ctr[i]*1,0];
+        w._vS.svgTransform[i] = [t[0] * 1||0, t[1] * 1||0];
+      } else if (i === 'scale'){
+        w._vS.svgTransform[i] = ctr[i] * 1||1;
+      } else if (i === 'rotate'){
+        r = ctr[i] instanceof Array ? ctr[i]
+        : /\s/.test(ctr[i]) ? [ctr[i].split(' ')[0]*1, ctr[i].split(' ')[1].split(',')[0]*1, ctr[i].split(' ')[1].split(',')[1]*1] 
+        : [ctr[i]*1,cx,cy];
+        w._vS.svgTransform[i] = r;
+      } else if (/skew/.test(i)) {
+        w._vS.svgTransform[i] = ctr[i] * 1||0;
+      }
+    }
+
+    for (var i in w._vS.svgTransform) {
+      if (!(i in w._vE.svgTransform)) { // copy existing and unused properties to the valuesEnd
+        w._vE.svgTransform[i] = w._vS.svgTransform[i];
+      }
+      if (i === 'rotate' in w._vS.svgTransform && 'rotate' in w._vE.svgTransform){ // make sure to use the right transform origin when rotation is used
+        w._vE.svgTransform.rotate[1] = w._vS.svgTransform.rotate[1] = cx;
+        w._vE.svgTransform.rotate[2] = w._vS.svgTransform.rotate[2] = cy;
+      }
+    }
+  } 
+  S.pT = function (a){ // parseTransform - helper function that turns transform value from string to object
+    var d = a && /\)/.test(a) ? a.split(')') : 'none', j, c ={}, p;
+
+    if (d instanceof Array) {
+      for (j=0; j<d.length; j++){
+        p = d[j].split('('); p[0] !== '' && (c[p[0].replace(/\s/,'')] = p[1] );
+      }
+    }
+    return c;
+  }
+
   return S;
 }));

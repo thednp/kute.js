@@ -5,26 +5,6 @@
  * optimized by dnp_theme 2015 – MIT License
  * Licensed under MIT-License
 */
-
-// /* THIS IS THE OLD CODE */
-// (function(kute_ea){
-//   // Obtain a reference to the base KUTE.
-//   // Since KUTE supports a variety of module systems,
-//   // we need to pick up which one to use.
-//   if(define == "function") {
-//     define(["./kute.js"], function(KUTE){ kute_ea(KUTE); return KUTE; });
-//   } else if(typeof module == "object" && typeof require == "function") {
-//     // We assume, that require() is sync.
-//     var KUTE = require("./kute.js");
-//     kute_ea(KUTE);
-//     // Export the modified one. Not really required, but convenient.
-//     module.exports = KUTE;
-//   } else if(typeof window.KUTE != "undefined") {
-//     kute_ea(window.KUTE);
-//   } else {
-//     throw new Error("KUTE.js Bezier/Easing depends on KUTE.js. Read the docs for more info.")
-//   }
-// })(function(KUTE){
   
 (function (factory) {
   if (typeof define === 'function' && define.amd) {

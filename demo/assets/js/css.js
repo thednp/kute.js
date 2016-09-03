@@ -25,7 +25,7 @@ var boxModel = document.getElementById('boxModel'),
 // built the tween objects
 var bm1 = KUTE.to(box,{marginTop:50},{ yoyo: true, repeat: 1, duration: 1500, update: onMarginTop});
 var bm2 = KUTE.to(box,{marginBottom:50},{ yoyo: true, repeat: 1, duration: 1500, update: onMarginBottom});
-var bm3 = KUTE.to(box,{padding:30},{ yoyo: true, repeat: 1, duration: 1500, update: onPadding});
+var bm3 = KUTE.to(box,{paddingTop:15},{ yoyo: true, repeat: 1, duration: 1500, update: onPadding});
 var bm4 = KUTE.to(box,{marginTop:50,marginLeft:50,marginBottom:70},{ yoyo: true, repeat: 1, duration: 1500, update: onMargin, complete: onComplete});
 
 // chain the bms
@@ -37,7 +37,7 @@ bm3.chain(bm4);
 //callback functions
 function onMarginTop() { var css = KUTE.gCS(box,'marginTop'); box.innerHTML = parseInt(css)+'px'+'<br>MARGIN'; }
 function onMarginBottom() { var css = KUTE.gCS(box,'marginBottom'); box.innerHTML = 'MARGIN<br>'+parseInt(css)+'px'; }
-function onPadding() { var css = KUTE.gCS(box,'paddingTop'); box.innerHTML = 'PADDING<br>'+parseInt(css)+'px'; }
+function onPadding() { var css = KUTE.gCS(box,'paddingTop'); box.innerHTML = parseInt(css)+'px<br>PADDING'; }
 function onMargin() { var css = KUTE.gCS(box,'marginTop'); box.innerHTML = 'MARGIN<br>'+parseInt(css)+'px'; }
 function onComplete() { box.innerHTML = 'BOX<br>&nbsp;MODEL&nbsp;'; }
 
@@ -115,16 +115,18 @@ var colTween2 = KUTE.to(colBoxElement, {borderTopColor: '#9C27B0'}, {duration: 1
 var colTween3 = KUTE.to(colBoxElement, {borderRightColor: '#9C27B0'}, {duration: 1000});
 var colTween4 = KUTE.to(colBoxElement, {borderBottomColor: '#9C27B0'}, {duration: 1000});
 var colTween5 = KUTE.to(colBoxElement, {borderLeftColor: '#9C27B0'}, {duration: 1000});
+var colTween6 = KUTE.to(colBoxElement, {outlineColor: '#9C27B0'}, {duration: 1000, repeat: 1, yoyo: true});
 
 colTween1.chain(colTween2);
 colTween2.chain(colTween3);
 colTween3.chain(colTween4);
 colTween4.chain(colTween5);
+colTween5.chain(colTween6);
 
 
 colbtn.addEventListener('click', function(e){
 	e.preventDefault();
-	!colTween1.playing && !colTween2.playing && !colTween3.playing && !colTween4.playing && !colTween5.playing && colTween1.start();
+	!colTween1.playing && !colTween2.playing && !colTween3.playing && !colTween4.playing && !colTween5.playing && !colTween6.playing && colTween1.start();
 },false);
 /*  COLORS EXAMPLE  */
 

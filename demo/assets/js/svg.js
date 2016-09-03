@@ -98,14 +98,14 @@ drawBtn.addEventListener('click', function(){
 }, false);
 
 
-// svgTransform examples
+// // svgTransform examples
 var svgRotate = document.getElementById('svgRotate');
 var rotateBtn = document.getElementById('rotateBtn');
 var svgr1 = svgRotate.getElementsByTagName('path')[0];
 var svgr2 = svgRotate.getElementsByTagName('path')[1];
 
-var svgTween11 = KUTE.to(svgr1, {svgTransform: { rotate: [-360,0,0] } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
-var svgTween12 = KUTE.to(svgr2, {svgTransform: { translate: 580 , rotate: 360 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+var svgTween11 = KUTE.to(svgr1, { rotate: 360 }, {transformOrigin: '50% 50%', yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+var svgTween12 = KUTE.to(svgr2, { svgTransform: { translate: 580, rotate: 360 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
 
 rotateBtn.addEventListener('click', function(){
     !svgTween11.playing && svgTween11.start();
@@ -116,8 +116,8 @@ var svgTranslate = document.getElementById('svgTranslate');
 var translateBtn = document.getElementById('translateBtn');
 var svgt1 = svgTranslate.getElementsByTagName('path')[0];
 var svgt2 = svgTranslate.getElementsByTagName('path')[1];
-var svgTween21 = KUTE.to(svgt1, {svgTransform: { translate: 580 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
-var svgTween22 = KUTE.to(svgt2, {svgTransform: { translate: 0 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+var svgTween21 = KUTE.to(svgt1, { translate: 580 }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+var svgTween22 = KUTE.to(svgt2, {svgTransform: { translate: [0,0] } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
 
 translateBtn.addEventListener('click', function(){
     !svgTween21.playing && svgTween21.start();
@@ -128,24 +128,79 @@ var svgSkew = document.getElementById('svgSkew');
 var skewBtn = document.getElementById('skewBtn');
 var svgsk1 = svgSkew.getElementsByTagName('path')[0];
 var svgsk2 = svgSkew.getElementsByTagName('path')[1];
-var svgTween31 = KUTE.to(svgsk1, {svgTransform: { skewX: -15 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
-var svgTween32 = KUTE.to(svgsk2, {svgTransform: { translate: 580, skewY: 15 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+var svgTween31 = KUTE.to(svgsk1, { skewX: -15 }, {transformOrigin: '0px 0px 0px', 
+    // yoyo: true, repeat: 1,
+    duration: 1500, easing: "easingCubicOut"});
+var svgTween311 = KUTE.to(svgsk1, { skewY: 15 }, {
+    // yoyo: true, repeat: 1,
+    duration: 1500, easing: "easingCubicOut"});
+var svgTween313 = KUTE.to(svgsk1, { skewX: 0, skewY: 0 }, {
+    // yoyo: true, repeat: 1,
+    duration: 1500, easing: "easingCubicOut"});
+
+var svgTween32 = KUTE.to(svgsk2, {svgTransform: { translate: 580, skewX: -15 } }, {
+    // yoyo: true, repeat: 1,
+    duration: 1500, easing: "easingCubicOut"});
+var svgTween322 = KUTE.to(svgsk2, {svgTransform: { translate: 580, skewY: 15 } }, {
+    // yoyo: true, repeat: 1, 
+    duration: 1500, easing: "easingCubicOut"});
+var svgTween323 = KUTE.to(svgsk2, {svgTransform: { translate: 580, skewY: 0, skewX: 0 } }, {
+    // yoyo: true, repeat: 1,
+    duration: 1500, easing: "easingCubicOut"});
+
+svgTween31.chain(svgTween311);
+svgTween311.chain(svgTween313);
+
+svgTween32.chain(svgTween322);
+svgTween322.chain(svgTween323);
 
 skewBtn.addEventListener('click', function(){
-    !svgTween31.playing && svgTween31.start();
-    !svgTween32.playing && svgTween32.start();
+    !svgTween31.playing && !svgTween311.playing && !svgTween313.playing && svgTween31.start();
+    !svgTween32.playing && !svgTween322.playing && !svgTween323.playing && svgTween32.start();
 }, false);
 
 var svgScale = document.getElementById('svgScale');
 var scaleBtn = document.getElementById('scaleBtn');
 var svgs1 = svgScale.getElementsByTagName('path')[0];
 var svgs2 = svgScale.getElementsByTagName('path')[1];
-var svgTween41 = KUTE.to(svgs1, {svgTransform: { scale: 1.5 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
-var svgTween42 = KUTE.to(svgs2, {svgTransform: { translate: 580, scale: 0.5 } }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+var svgTween41 = KUTE.to(svgs1, { scale: 1.5 }, {transformOrigin: '50% 50%', yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+var svgTween42 = KUTE.to(svgs2, {svgTransform: { 
+    translate: 580,
+    scale: 0.5, 
+} }, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
 
 scaleBtn.addEventListener('click', function(){
     !svgTween41.playing && svgTween41.start();
     !svgTween42.playing && svgTween42.start();
+}, false);
+
+var svgMixed = document.getElementById('svgMixed');
+var mixedBtn = document.getElementById('mixedBtn');
+var svgm1 = svgMixed.getElementsByTagName('path')[0];
+var svgm2 = svgMixed.getElementsByTagName('path')[1];
+var svgTween51 = KUTE.to(svgm1, { // a regular transform without svg plugin
+//     svgTransform: { 
+        translate: 250,
+        rotate: 360,
+        skewX: -25,
+        // skewY: 25,
+        scale: 1.5,
+//     } 
+}, {transformOrigin: "50% 50%", yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+
+var svgTween52 = KUTE.to(svgm2, {
+    svgTransform: {
+        translate: 580+250,
+        scale: 1.5,
+        rotate: 360,
+        skewX: -25,
+        // skewY: 25,
+    }
+}, {yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+
+mixedBtn.addEventListener('click', function(){
+    !svgTween51.playing && svgTween51.start();
+    !svgTween52.playing && svgTween52.start();
 }, false);
 
 
@@ -162,7 +217,7 @@ var tween3 = KUTE.to('#fillSVG',{strokeOpacity: 0.6}, {duration: 1500, yoyo:true
 var tween4 = KUTE.to('#fillSVG',{fillOpacity: 0.2}, {yoyo:true, repeat: 1});
     
 // strokeWidth Number
-var tween5 = KUTE.to('#fillSVG',{strokeWidth: 0}, {duration: 1500, yoyo:true, repeat: 1});
+var tween5 = KUTE.to('#fillSVG',{strokeWidth: '0px'}, {duration: 1500, yoyo:true, repeat: 1});
 
 tween1.chain(tween4);
 tween2.chain(tween3,tween5);

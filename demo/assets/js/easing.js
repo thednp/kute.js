@@ -39,7 +39,7 @@ for (var j=0; j<l; j++) {
     } else if (es === 'multiPointBezier') {
       tweenEasing2[_j]._e = KUTE.Physics.bezier({points: [{"x":0,"y":0,"cp":[{"x":0.387,"y":0.007}]},{"x":0.509,"y":0.48,"cp":[{"x":0.069,"y":0.874},{"x":0.928,"y":0.139}]},{"x":1,"y":1,"cp":[{"x":0.639,"y":0.988}]}] });
     } else {
-      tweenEasing2[_j]._e = KUTE.pe(es); 
+      tweenEasing2[_j]._e = KUTE.pe(es) || KUTE.Easing.linear; 
     }
     
   }
