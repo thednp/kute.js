@@ -217,7 +217,7 @@ K.pp['boxShadow'] = function(property,value,element){
 
       // let's start with the numbers | set unit | also determine inset
       var numbers = [], px = 'px', // the unit is always px
-        inset = a[5] !== 'none' || w._vE[p][5] !== 'none' ? ' inset' : false; 
+        inset = a[5] !== 'none' || b[5] !== 'none' ? ' inset' : false; 
 
       for (var i=0; i&lt;4; i++){ // for boxShadow coordinates we do the math for an array of numbers 
         numbers.push( (a[i] + (b[i] - a[i]) * v ) + px);
@@ -227,12 +227,12 @@ K.pp['boxShadow'] = function(property,value,element){
 
       // now we handle the color
       var colorValue, _color = {}; 
-      for (var c in w._vE[p][4]) {
-        _color[c] = parseInt(w._vS[p][4][c] + (w._vE[p][4][c] - w._vS[p][4][c]) * v )||0;
+      for (var c in b[4]) {
+        _color[c] = parseInt(a[4][c] + (b[4][c] - a[4][c]) * v )||0;
       }
       colorValue = 'rgb(' + _color.r + ',' + _color.g + ',' + _color.b + ') ';
       // for color interpolation, starting with v1.5.3 we can cut it short to this
-      // var colorValue = K.Interpolate.color(a[5],b[5],v);
+      // var colorValue = K.Interpolate.color(a[4],b[4],v);
       
       // last piece of the puzzle, the DOM update
       l.style[_boxShadow] = inset ? colorValue + numbers.join(' ') + inset : colorValue + numbers.join(' ');
