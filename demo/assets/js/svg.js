@@ -23,7 +23,7 @@ var morphTween21 = KUTE.fromTo('#triangle', {path: '#triangle', fill: '#673AB7'}
     duration: 1500, easing: 'easingCubicOut',
 }); 
 var morphTween22 = KUTE.fromTo('#triangle', {path: '#square', fill: '#2196F3'}, { path: '#star2', fill: 'deeppink' }, {
-    morphIndex: 9, 
+    morphIndex: 9,
     delay: 500, duration: 1500, easing: 'easingCubicOut'
 }); 
 var morphTween23 = KUTE.fromTo('#triangle', {path: '#star2', fill: 'deeppink'}, { path: '#triangle', fill: '#673AB7' }, {

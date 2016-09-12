@@ -28,7 +28,7 @@
     selector = function(el,multi){ // a selector utility
       var nl;
       if (multi){
-        nl = el instanceof NodeList ? el : document.querySelectorAll(el);
+        nl = typeof el === 'object' ? el : document.querySelectorAll(el);
       } else {
         nl = typeof el === 'object' ? el 
            : /^#/.test(el) ? document.getElementById(el.replace('#','')) : document.querySelector(el);       
