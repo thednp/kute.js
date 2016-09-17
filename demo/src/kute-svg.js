@@ -58,7 +58,7 @@
   
   S.pCr = function(w){ // pathCross
     // path tween options
-    this._mpr = w._ops.morphPrecision || 25;  
+    this._mpr = w._ops.morphPrecision || 15;  
     this._midx = w._ops.morphIndex; 
     this._smi = w._ops.showMorphInfo;
     this._rv1 = w._ops.reverseFirstPath;
