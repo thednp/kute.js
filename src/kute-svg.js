@@ -21,7 +21,7 @@
   }
 }( function (KUTE) {
   'use strict';
-  var K = window.KUTE, S = S || {}, p, DOM = K.dom, PP = K.pp,
+  var K = window.KUTE, S = K.svg = {}, p, DOM = K.dom, PP = K.pp,
     _svg = document.querySelector('path') || document.querySelector('svg'),
     _ns = _svg && _svg.ownerSVGElement && _svg.ownerSVGElement.namespaceURI || 'http://www.w3.org/2000/svg',
     _nm = ['strokeWidth', 'strokeOpacity', 'fillOpacity', 'stopOpacity'], // numeric SVG CSS props
@@ -526,5 +526,4 @@
     return c;
   }
 
-  return S;
 }));
