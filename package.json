@@ -4,7 +4,8 @@
   "description": "A minimal Native Javascript animation engine.",
   "main": "kute.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "min": "node build.js"
   },
   "repository": {
     "type": "git",
