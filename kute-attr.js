@@ -52,9 +52,9 @@
 
     var ats = {}, p;
     for ( p in o ) {
-      var prop = replaceUppercase(p);
-      if ( /%|px/.test(o[p]) || /%|px/.test(getCurrentValue(l,prop.replace(/_+[a-z]+/,''))) ) {
-        var u = K.truD(o[p]).u, s = /%/.test(u) ? '_percent' : '_'+u; prop = prop.replace(s,'');
+      var prop = replaceUppercase(p), cv = getCurrentValue(l,prop.replace(/_+[a-z]+/,''));
+      if ( /%|[a-z]/.test(o[p]) || /%|[a-z]/.test(cv) ) {
+        var u = K.truD(cv).u || K.truD(o[p]).u, s = /%/.test(u) ? '_percent' : '_'+u; prop = prop.replace(s,'');
         if (!(p+s in atts)) {
           atts[p+s] = function(l,p,a,b,v) {
             l.setAttribute(prop, unit(a.v,b.v,b.u,v) );
