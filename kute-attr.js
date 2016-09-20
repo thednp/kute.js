@@ -54,17 +54,19 @@
     for ( p in o ) {
       var prop = replaceUppercase(p), cv = getCurrentValue(l,prop.replace(/_+[a-z]+/,''));
       if ( /%|[a-z]/.test(o[p]) || /%|[a-z]/.test(cv) ) {
-        var u = K.truD(cv).u || K.truD(o[p]).u, s = /%/.test(u) ? '_percent' : '_'+u; prop = prop.replace(s,'');
+        var u = K.truD(cv).u || K.truD(o[p]).u, s = /%/.test(u) ? '_percent' : '_'+u;
         if (!(p+s in atts)) {
           atts[p+s] = function(l,p,a,b,v) {
-            l.setAttribute(prop, unit(a.v,b.v,b.u,v) );
+            var _p = _p || replaceUppercase(p).replace(s,'');
+            l.setAttribute(_p, unit(a.v,b.v,b.u,v) );
           }
         }
         ats[p+s] = K.truD(o[p]);       
       } else {
         if (!(p in atts)) {
           atts[p] = function(l,o,a,b,v) {
-            l.setAttribute(prop, number(a,b,v));
+            var _o = _o || replaceUppercase(o);
+            l.setAttribute(_o, number(a,b,v));
           }
         }
         ats[p] = parseFloat(o[p]);     
