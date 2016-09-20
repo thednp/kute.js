@@ -36,6 +36,8 @@ For documentation, examples and other cool tips, check the <a href="http://thedn
 # Attributes Plugin - [visit page](http://thednp.github.io/kute.js/attr.html)
 * animates any numeric presentation attribute with suffixed value
 * animates any other non-suffixed numeric presentation attribute
+* handles attributes namespaces properly with `stroke-opacity` or `strokeOpacity`
+* properly handles the suffixes for you
 
 # Easing Functions - [visit page](http://thednp.github.io/kute.js/easing.html)
 * optimized dynamics easing functions
@@ -49,9 +51,9 @@ The plugin is just a few bits of code to bridge all of the the awesome `kute.js`
 # NPM/Bower
 You can install this through NPM or bower respectively:
 ```
-    $ npm install kute.js
-    # or
-    $ bower install kute.js
+$ npm install kute.js
+# or
+$ bower install kute.js
 ```
 
 # CommonJS/AMD support

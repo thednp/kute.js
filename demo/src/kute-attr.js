@@ -53,7 +53,7 @@
     var ats = {}, p;
     for ( p in o ) {
       var prop = replaceUppercase(p), cv = getCurrentValue(l,prop.replace(/_+[a-z]+/,''));
-      if ( /%|[a-z]/.test(o[p]) || /%|[a-z]/.test(cv) ) {
+				if ( /(%|[a-z]+)$/.test(o[p]) || /(%|[a-z]+)$/.test(cv) ) {
         var u = K.truD(cv).u || K.truD(o[p]).u, s = /%/.test(u) ? '_percent' : '_'+u;
         if (!(p+s in atts)) {
           atts[p+s] = function(l,p,a,b,v) {
