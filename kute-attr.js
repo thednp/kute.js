@@ -23,21 +23,24 @@
   'use strict';
 
   var K = window.KUTE, DOM = K.dom, PP = K.pp, unit = K.Interpolate.unit, number = K.Interpolate.number, atts,
-    gCA = function(e,a){ // get current attribute value
-      return e.getAttribute(a);
-    };
+    getCurrentValue = function(e,a){ return e.getAttribute(a); }, // get current attribute value
+    replaceUppercase = function(a) {
+      return /[A-Z]/g.test(a) ? a.replace(a.match(/[A-Z]/g)[0],'-'+a.match(/[A-Z]/g)[0].toLowerCase()) : a;
+    }; 
   
   K.prS['attr'] = function(el,p,v){
     var f = {};
     for (var a in v){
-      f[a.replace(/_+[a-z]+/,'')] = gCA(el,a.replace(/_+[a-z]+/,''));
+      var _a = replaceUppercase(a).replace(/_+[a-z]+/,''),
+        _v = getCurrentValue(el,_a); // get the value for 'fill-opacity' not fillOpacity
+      f[_a] = _v || (/opacity/i.test(a) ? 1 : 0);
     }
     return f;
   };
   
   // process attributes object K.pp.attr(t[x]) 
   // and also register their render functions
-  PP['attr'] = function(a,o){
+  PP['attr'] = function(a,o,l){
     if (!('attr' in DOM)) {
       DOM.attr = function(l,p,a,b,v) { 
         for ( var o in b ){
@@ -49,19 +52,19 @@
 
     var ats = {}, p;
     for ( p in o ) {
-      if ( /%|px/.test(o[p]) ) {
-        var u = K.truD(o[p]).u, s = /%/.test(u) ? '_percent' : '_'+u;
+      var prop = replaceUppercase(p);
+      if ( /%|px/.test(o[p]) || /%|px/.test(getCurrentValue(l,prop.replace(/_+[a-z]+/,''))) ) {
+        var u = K.truD(o[p]).u, s = /%/.test(u) ? '_percent' : '_'+u; prop = prop.replace(s,'');
         if (!(p+s in atts)) {
           atts[p+s] = function(l,p,a,b,v) {
-            var _p = p.replace(s,'');
-            l.setAttribute(_p, unit(a.v,b.v,b.u,v) );
+            l.setAttribute(prop, unit(a.v,b.v,b.u,v) );
           }
         }
         ats[p+s] = K.truD(o[p]);       
       } else {
         if (!(p in atts)) {
           atts[p] = function(l,o,a,b,v) {
-            l.setAttribute(o, number(a,b,v));
+            l.setAttribute(prop, number(a,b,v));
           }
         }
         ats[p] = parseFloat(o[p]);     
