@@ -23,5 +23,7 @@
     "url": "https://github.com/thednp/kute.js/issues"
   },
   "homepage": "http://thednp.github.io/kute.js",
-  "dependencies": {}
+  "dependencies": {
+    "uglify-js": "^2.7.3"
+  }
 }
