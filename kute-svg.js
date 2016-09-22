@@ -28,12 +28,12 @@
     pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi, ns = 'http://www.w3.org/2000/svg',
     // interpolate functions
     number = K.Interpolate.number, color = K.Interpolate.color,
-    array = function array(a,b,l,v) { // array1, array2, array2.length, progress
+    array = K.Interpolate.array = function array(a,b,l,v) { // array1, array2, array2.length, progress
       var na = [], i;
       for(i=0;i<l;i++) { na.push( a[i] === b[i] ? b[i] : number(a[i],b[i],v) ); } // don't do math if not needed
       return na;
     },
-    coords = function coords(a,b,l,ll,o,v) { // array1, array2, array2.length, coordinates.length, joiner, progress for SVG stuff
+    coords = K.Interpolate.coords = function(a,b,l,ll,o,v) { // array1, array2, array2.length, coordinates.length, joiner, progress for SVG stuff
       var s = [], i;
       for(i=0;i<l;i++) { s.push( array( a[i],b[i],ll,v ) ); }
       return s.join(o);
