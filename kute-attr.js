@@ -22,7 +22,8 @@
 }( function (KUTE) {
   'use strict';
 
-  var K = window.KUTE, DOM = K.dom, prepareStart = K.prS, parseProperty = K.pp, unit = K.Interpolate.unit, number = K.Interpolate.number, atts,
+  var g = window, K = g.KUTE, DOM = K.dom, prepareStart = K.prS, parseProperty = K.pp, 
+    unit = g.unit, number = g.number, atts,
     getCurrentValue = function(e,a){ return e.getAttribute(a); }, // get current attribute value
     replaceUppercase = function(a) {
       return /[A-Z]/g.test(a) ? a.replace(a.match(/[A-Z]/g)[0],'-'+a.match(/[A-Z]/g)[0].toLowerCase()) : a;

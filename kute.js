@@ -13,7 +13,7 @@
   }
 }( function () {
   "use strict";
-  var K = K || {}, _tws = [], _t = null,
+  var g = window, K = g.KUTE = {}, _tws = g.tweens = [], _t = g.tick = null, time = g.performance,
   
     getPrefix = function() { //returns browser prefix
       var div = document.createElement('div'), i = 0,  pf = ['Moz', 'moz', 'Webkit', 'webkit', 'O', 'o', 'Ms', 'ms'], pl = pf.length,
@@ -64,7 +64,7 @@
         return { r: 0, g: 0, b: 0, a: 0 };
       } 
       if (!/#|rgb/.test(v) ) { // maybe we can check for web safe colors
-          var h = document.getElementsByTagName('head')[0]; h.style.color = v; vrgb = window.getComputedStyle(h,null).color;
+          var h = document.getElementsByTagName('head')[0]; h.style.color = v; vrgb = g.getComputedStyle(h,null).color;
           h.style.color = ''; return v !== vrgb ? trueColor(vrgb) : {r:0,g:0,b:0};
       }
     },
@@ -107,7 +107,7 @@
       return trsf;
     },
     getComputedStyle = function (el,p) { // gCS = get style property for element from computedStyle for .to() method
-      var es = el.style, cs = window.getComputedStyle(el,null) || el.currentStyle, pp = property(p), //the computed style | prefixed property
+      var es = el.style, cs = g.getComputedStyle(el,null) || el.currentStyle, pp = property(p), //the computed style | prefixed property
         s = es[p] && !/auto|initial|none|unset/.test(es[p]) ? es[p] : cs[pp]; // s the property style value
       if ( p !== 'transform' && (pp in cs || pp in es) ) {
         if ( s ){
@@ -138,14 +138,14 @@
         }
       }
     },
-    _tch = ('ontouchstart' in window || navigator.msMaxTouchPoints) || false, // support Touch?
+    _tch = ('ontouchstart' in g || navigator.msMaxTouchPoints) || false, // support Touch?
     _ev = _tch ? 'touchstart' : 'mousewheel', _evh = 'mouseenter', //events to prevent on scroll
     _pfto = property('transformOrigin'), //assign preffix to DOM properties
     _pfp = property('perspective'),
     _pfo = property('perspectiveOrigin'),
-    _tr = property('transform'),
-    _raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || function (c) { return setTimeout(c, 16) },
-    _caf = window.cancelAnimationFrame || window.webkitCancelRequestAnimationFrame || function (c) { return clearTimeout(c) },
+    _tr = g._tr = property('transform'),
+    _raf = g.requestAnimationFrame || g.webkitRequestAnimationFrame || function (c) { return setTimeout(c, 16) },
+    _caf = g.cancelAnimationFrame || g.webkitCancelRequestAnimationFrame || function (c) { return clearTimeout(c) },
     
     //true scroll container
     _bd = document.body, _htm = document.getElementsByTagName('HTML')[0],
@@ -204,21 +204,21 @@
   },
 
   // KUTE.js INTERPOLATORS
-  number = function number(a,b,v) { // number1, number2, progress
+  number = g.number = function(a,b,v) { // number1, number2, progress
     a = +a; b -= a; return a + b * v;
   },
-  unit = window.unit = function unit(a,b,u,v) { // number1, number2, unit, progress
+  unit = g.unit = function(a,b,u,v) { // number1, number2, unit, progress
     a = +a; b -= a; return (a + b * v)+u;
   },
-  color = function color(a,b,v,h){ // rgba1, rgba2, progress, convertToHex(true/false)
+  color = g.color = function(a,b,v,h){ // rgba1, rgba2, progress, convertToHex(true/false)
     var _c = {}, c, n = number, rt = rgbToHex, ep = ')', cm =',', r = 'rgb(', ra = 'rgba(';
     for (c in b) { _c[c] = c !== 'a' ? (parseInt( number(a[c],b[c],v) ) || 0) : (a[c] && b[c]) ? parseFloat( number(a[c],b[c],v) ) : null; }
     return h ? rt( _c.r, _c.g, _c.b ) : !_c.a ? r + _c.r + cm + _c.g + cm + _c.b + ep : ra + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
   },
 
   // KUTE.js DOM update functions
-  DOM = {},
-  _tk = function _tk(t) {
+  DOM = g.dom = {},
+  _tk = g.ticker = function(t) {
     var i = 0; 
     while ( i < _tws.length ) {
       if ( _u(_tws[i],t) ) {
@@ -230,8 +230,8 @@
     _t = _raf(_tk);
   },
 
-  _u = function _u(w,t) {
-    t = t || window.performance.now();
+  _u = g.update = function(w,t) {
+    t = t || time.now();
     if (t < w._sT && w.playing && !w.paused) { return true; }
 
     // element/node, method, (prefixed)property, startValue, endValue, progress
@@ -331,6 +331,41 @@
     }
     return _st;
   },
+  translate = g.translate = function (a,b,v){
+    var ts = {};
+
+    for (var ax in b){
+      var x1 = a[ax].value || 0, x2 = b[ax].value || 0, xu = b[ax].unit || 'px';
+      ts[ax] = x1===x2 ? x2+xu : (x1 + ( x2 - x1 ) * v) + xu;  
+    }
+    return b.x ? 'translate(' + ts.x + ',' + ts.y + ')' :
+      'translate3d(' + ts.translateX + ',' + ts.translateY + ',' + ts.translateZ + ')';
+  },
+  rotate = g.rotate = function (a,b,v){
+    var rS = {};
+    for ( var rx in b ){
+      if ( a[rx] ) {
+        var a1 = a[rx].value, a2 = b[rx].value, au = b[rx].unit||'deg', 
+          av = a1 + (a2 - a1) * v;
+        rS[rx] = rx === 'z' ? 'rotate('+av+au+')' : rx + '(' + av + au + ')';
+      }
+    }
+    return b.z ?  rS.z  : (rS.rotateX||'') + (rS.rotateY||'') + (rS.rotateZ||'');
+  },
+  skew = g.skew = function (a,b,v){
+    var sS = {};
+    for ( var sx in b ){
+      if ( a[sx] ) {
+        var s1 = a[sx].value, s2 = b[sx].value, su = b[sx].unit||'deg';
+        sS[sx] = sx + '(' + (s1 + (s2 - s1) * v) + su + ')';
+      }
+    }
+    return (sS.skewX||'') + (sS.skewY||'');
+  },
+  scale = g.scale = function(a,b,v){
+    var sc1 = a.value, sc2 = b.value; 
+    return 'scale(' + (sc1 + (sc2 - sc1) * v) + ')';             
+  },
   // process properties object | registers the plugins prepareStart functions
   // string parsing and property specific value processing
   parseProperty = {
@@ -343,53 +378,24 @@
       return { value: trueDimension(v).v, unit: trueDimension(v).u }; 
     },
     tf : function(p,v){ // transform prop / value
-      if (!('transform' in DOM)) {
-        DOM['transform'] = function(l,p,a,b,v,o){
-          var _tS = '', tP, pp = pp || o.perspective && parseInt(o.perspective) !== 0 ? 'perspective('+parseInt(o.perspective)+'px) ' : false;
-          for (tP in b) {
-            var t1 = a[tP], t2 = b[tP]; 
+      if (!('transform' in DOM)) { 
+        DOM.transform = function(l,p,a,b,v,o){
+          var _tS = '', t = '', r = '', sk = '', s = '', pp = pp || o.perspective && parseInt(o.perspective) !== 0 ? 'perspective('+parseInt(o.perspective)+'px) ' : false;
 
-            if ( tP === 'translate' ) {
-              var tls = '', ts = {}, ax;
-
-              for (ax in t2){
-                var x1 = t1[ax].value || 0, x2 = t2[ax].value || 0, xu = t2[ax].unit || 'px';
-                ts[ax] = x1===x2 ? x2+xu : (x1 + ( x2 - x1 ) * v) + xu;  
-              }
-              tls = t2.x ? 'translate(' + ts.x + ',' + ts.y + ')' :
-                'translate3d(' + ts.translateX + ',' + ts.translateY + ',' + ts.translateZ + ')';                  
-
-              _tS = (_tS === '') ? tls : (tls + ' ' + _tS);              
-            } else if ( tP === 'rotate' ) {
-              var rt = '', rS = {}, rx;
-
-              for ( rx in t2 ){
-                if ( t1[rx] ) {
-                  var a1 = t1[rx].value, a2 = t2[rx].value, au = t2[rx].unit||'deg', 
-                    av = a1 + (a2 - a1) * v;
-                  rS[rx] = rx ==='z' ? 'rotate('+av+au+')' : rx + '(' + av + au + ') ';
-                }
-              }
-              rt = t2.z ?  rS.z  : (rS.rotateX||'') + (rS.rotateY||'') + (rS.rotateZ||'');
-
-              _tS = (_tS === '') ? rt : (_tS + ' ' + rt);  
-            } else if (tP==='skew') {
-              var sk = '', sS = {};
-              for ( var sx in t2 ){
-                if ( t1[sx] ) {
-                  var s1 = t1[sx].value, s2 = t2[sx].value, su = t2[sx].unit||'deg', 
-                    sv = s1 + (s2 - s1) * v;
-                  sS[sx] = sx + '(' + sv + su + ') ';
-                }
-              }
-              sk = (sS.skewX||'') + (sS.skewY||'');
-              _tS = (_tS === '') ? sk : (_tS + ' ' + sk);          
-            } else if (tP === 'scale') {
-              var sc1 = t1.value, sc2 = t2.value,
-                s = sc1 + (sc2 - sc1) * v, scS = tP + '(' + s + ')';                  
-              _tS = (_tS === '') ? scS : (_tS + ' ' + scS);
+          for (var tp in b){
+            if (tp === 'translate'){
+              t += translate(a[tp],b[tp],v);
+            } else if (tp === 'rotate'){
+              r += rotate(a[tp],b[tp],v);
+            } else if (tp === 'skew'){
+              sk += skew(a[tp],b[tp],v);
+            } else if (tp === 'scale'){
+              s += scale(a[tp],b[tp],v);
             }
+            // _tS = _tS ? _tS + ' ' + DOM[tp](a[tp],b[tp],v) : DOM[tp](a[tp],b[tp],v);
           }
+          _tS = t + r + sk + s;
+
           l.style[_tr] = pp ? pp + _tS : _tS;
         }
       }
@@ -458,59 +464,59 @@
   prepareStart = {},
 
   // core easing functions  
-  easing = {}, _PI = Math.PI, _2PI = Math.PI * 2, _hPI = Math.PI / 2, _kea = 0.1, _kep = 0.4;
-  easing.linear = function (t) { return t; };
-  easing.easingSinusoidalIn = function(t) { return -Math.cos(t * _hPI) + 1; };
-  easing.easingSinusoidalOut = function(t) { return Math.sin(t * _hPI); };
-  easing.easingSinusoidalInOut = function(t) { return -0.5 * (Math.cos(_PI * t) - 1); };
-  easing.easingQuadraticIn = function (t) { return t*t; };
-  easing.easingQuadraticOut = function (t) { return t*(2-t); };
-  easing.easingQuadraticInOut = function (t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t; };
-  easing.easingCubicIn = function (t) { return t*t*t; };
-  easing.easingCubicOut = function (t) { return (--t)*t*t+1; };
-  easing.easingCubicInOut = function (t) { return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1; };
-  easing.easingQuarticIn = function (t) { return t*t*t*t; };
-  easing.easingQuarticOut = function (t) { return 1-(--t)*t*t*t; };
-  easing.easingQuarticInOut = function (t) { return t<.5 ? 8*t*t*t*t : 1-8*(--t)*t*t*t; };
-  easing.easingQuinticIn = function (t) { return t*t*t*t*t; };
-  easing.easingQuinticOut = function (t) { return 1+(--t)*t*t*t*t; };
-  easing.easingQuinticInOut = function (t) { return t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t; };
-  easing.easingCircularIn = function(t) { return -(Math.sqrt(1 - (t * t)) - 1); };
-  easing.easingCircularOut = function(t) { return Math.sqrt(1 - (t = t - 1) * t); };
-  easing.easingCircularInOut = function(t) {  return ((t*=2) < 1) ? -0.5 * (Math.sqrt(1 - t * t) - 1) : 0.5 * (Math.sqrt(1 - (t -= 2) * t) + 1); };
-  easing.easingExponentialIn = function(t) { return Math.pow(2, 10 * (t - 1)) - 0.001; };
-  easing.easingExponentialOut = function(t) { return 1 - Math.pow(2, -10 * t); };
-  easing.easingExponentialInOut = function(t) { return (t *= 2) < 1 ? 0.5 * Math.pow(2, 10 * (t - 1)) : 0.5 * (2 - Math.pow(2, -10 * (t - 1))); };
-  easing.easingBackIn = function(t) { var s = 1.70158; return t * t * ((s + 1) * t - s); };
-  easing.easingBackOut = function(t) { var s = 1.70158; return --t * t * ((s + 1) * t + s) + 1; };
-  easing.easingBackInOut = function(t) { var s = 1.70158 * 1.525;  if ((t *= 2) < 1) return 0.5 * (t * t * ((s + 1) * t - s));  return 0.5 * ((t -= 2) * t * ((s + 1) * t + s) + 2); };
-  easing.easingElasticIn = function(t) {
-    var s;
+  easing = {};
+  easing.linear = g.linear = function (t) { return t; };
+  easing.easingSinusoidalIn = g.easingSinusoidalIn = function(t) { return -Math.cos(t * Math.PI / 2) + 1; };
+  easing.easingSinusoidalOut = g.easingSinusoidalOut = function(t) { return Math.sin(t * Math.PI / 2); };
+  easing.easingSinusoidalInOut = g.easingSinusoidalInOut = function(t) { return -0.5 * (Math.cos(Math.PI * t) - 1); };
+  easing.easingQuadraticIn = g.easingQuadraticIn = function (t) { return t*t; };
+  easing.easingQuadraticOut = g.easingQuadraticOut = function (t) { return t*(2-t); };
+  easing.easingQuadraticInOut = g.easingQuadraticInOut = function (t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t; };
+  easing.easingCubicIn = g.easingCubicIn = function (t) { return t*t*t; };
+  easing.easingCubicOut = g.easingCubicOut = function (t) { return (--t)*t*t+1; };
+  easing.easingCubicInOut = g.easingCubicInOut = function (t) { return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1; };
+  easing.easingQuarticIn = g.easingQuarticIn = function (t) { return t*t*t*t; };
+  easing.easingQuarticOut = g.easingQuarticOut = function (t) { return 1-(--t)*t*t*t; };
+  easing.easingQuarticInOut = g.easingQuarticInOut = function (t) { return t<.5 ? 8*t*t*t*t : 1-8*(--t)*t*t*t; };
+  easing.easingQuinticIn = g.easingQuinticIn = function (t) { return t*t*t*t*t; };
+  easing.easingQuinticOut = g.easingQuinticOut = function (t) { return 1+(--t)*t*t*t*t; };
+  easing.easingQuinticInOut = g.easingQuinticInOut = function (t) { return t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t; };
+  easing.easingCircularIn = g.easingCircularIn = function(t) { return -(Math.sqrt(1 - (t * t)) - 1); };
+  easing.easingCircularOut = g.easingCircularOut = function(t) { return Math.sqrt(1 - (t = t - 1) * t); };
+  easing.easingCircularInOut = g.easingCircularInOut = function(t) {  return ((t*=2) < 1) ? -0.5 * (Math.sqrt(1 - t * t) - 1) : 0.5 * (Math.sqrt(1 - (t -= 2) * t) + 1); };
+  easing.easingExponentialIn = g.easingExponentialIn = function(t) { return Math.pow(2, 10 * (t - 1)) - 0.001; };
+  easing.easingExponentialOut = g.easingExponentialOut = function(t) { return 1 - Math.pow(2, -10 * t); };
+  easing.easingExponentialInOut = g.easingExponentialInOut = function(t) { return (t *= 2) < 1 ? 0.5 * Math.pow(2, 10 * (t - 1)) : 0.5 * (2 - Math.pow(2, -10 * (t - 1))); };
+  easing.easingBackIn = g.easingBackIn = function(t) { var s = 1.70158; return t * t * ((s + 1) * t - s); };
+  easing.easingBackOut = g.easingBackOut = function(t) { var s = 1.70158; return --t * t * ((s + 1) * t + s) + 1; };
+  easing.easingBackInOut = g.easingBackInOut = function(t) { var s = 1.70158 * 1.525;  if ((t *= 2) < 1) return 0.5 * (t * t * ((s + 1) * t - s));  return 0.5 * ((t -= 2) * t * ((s + 1) * t + s) + 2); };
+  easing.easingElasticIn = g.easingElasticIn = function(t) {
+    var s, _kea = 0.1, _kep = 0.4;
     if ( t === 0 ) return 0; if ( t === 1 ) return 1;
-    if ( !_kea || _kea < 1 ) { _kea = 1; s = _kep / 4; } else s = _kep * Math.asin( 1 / _kea ) / _2PI;
-    return - ( _kea * Math.pow( 2, 10 * ( t -= 1 ) ) * Math.sin( ( t - s ) * _2PI / _kep ) );
+    if ( !_kea || _kea < 1 ) { _kea = 1; s = _kep / 4; } else s = _kep * Math.asin( 1 / _kea ) / Math.PI * 2;
+    return - ( _kea * Math.pow( 2, 10 * ( t -= 1 ) ) * Math.sin( ( t - s ) * Math.PI * 2 / _kep ) );
   };
-  easing.easingElasticOut = function(t) {
-    var s;
+  easing.easingElasticOut = g.easingElasticOut = function(t) {
+    var s, _kea = 0.1, _kep = 0.4;
     if ( t === 0 ) return 0; if ( t === 1 ) return 1;
-    if ( !_kea || _kea < 1 ) { _kea = 1; s = _kep / 4; } else s = _kep * Math.asin( 1 / _kea ) / _2PI ;
-    return ( _kea * Math.pow( 2, - 10 * t) * Math.sin( ( t - s ) * _2PI  / _kep ) + 1 );
+    if ( !_kea || _kea < 1 ) { _kea = 1; s = _kep / 4; } else s = _kep * Math.asin( 1 / _kea ) / Math.PI * 2 ;
+    return ( _kea * Math.pow( 2, - 10 * t) * Math.sin( ( t - s ) * Math.PI * 2  / _kep ) + 1 );
   };
-  easing.easingElasticInOut = function(t) {
-    var s;
+  easing.easingElasticInOut = g.easingElasticInOut = function(t) {
+    var s, _kea = 0.1, _kep = 0.4;
     if ( t === 0 ) return 0; if ( t === 1 ) return 1;
-    if ( !_kea || _kea < 1 ) { _kea = 1; s = _kep / 4; } else s = _kep * Math.asin( 1 / _kea ) / _2PI ;
-    if ( ( t *= 2 ) < 1 ) return - 0.5 * ( _kea * Math.pow( 2, 10 * ( t -= 1 ) ) * Math.sin( ( t - s ) * _2PI  / _kep ) );
-    return _kea * Math.pow( 2, -10 * ( t -= 1 ) ) * Math.sin( ( t - s ) * _2PI  / _kep ) * 0.5 + 1;
+    if ( !_kea || _kea < 1 ) { _kea = 1; s = _kep / 4; } else s = _kep * Math.asin( 1 / _kea ) / Math.PI * 2 ;
+    if ( ( t *= 2 ) < 1 ) return - 0.5 * ( _kea * Math.pow( 2, 10 * ( t -= 1 ) ) * Math.sin( ( t - s ) * Math.PI * 2  / _kep ) );
+    return _kea * Math.pow( 2, -10 * ( t -= 1 ) ) * Math.sin( ( t - s ) * Math.PI * 2  / _kep ) * 0.5 + 1;
   };
-  easing.easingBounceIn = function(t) { return 1 - easing.easingBounceOut( 1 - t ); };
-  easing.easingBounceOut = function(t) {
+  easing.easingBounceIn = g.easingBounceIn = function(t) { return 1 - easing.easingBounceOut( 1 - t ); };
+  easing.easingBounceOut = g.easingBounceOut = function(t) {
     if ( t < ( 1 / 2.75 ) ) { return 7.5625 * t * t; } 
     else if ( t < ( 2 / 2.75 ) ) { return 7.5625 * ( t -= ( 1.5 / 2.75 ) ) * t + 0.75; } 
     else if ( t < ( 2.5 / 2.75 ) ) { return 7.5625 * ( t -= ( 2.25 / 2.75 ) ) * t + 0.9375; } 
     else {return 7.5625 * ( t -= ( 2.625 / 2.75 ) ) * t + 0.984375; }
   };
-  easing.easingBounceInOut = function(t) { if ( t < 0.5 ) return easing.easingBounceIn( t * 2 ) * 0.5; return easing.easingBounceOut( t * 2 - 1 ) * 0.5 + 0.5;};
+  easing.easingBounceInOut = g.easingBounceInOut = function(t) { if ( t < 0.5 ) return easing.easingBounceIn( t * 2 ) * 0.5; return easing.easingBounceOut( t * 2 - 1 ) * 0.5 + 0.5;};
 
   var start = function (t) { // move functions that use the ticker outside the prototype to be in the same scope with it
     this.scrollIn();
@@ -527,7 +533,7 @@
     this.playing = true;
     this.paused = false;
     this._sCF = false;
-    this._sT = t || window.performance.now();
+    this._sT = t || time.now();
     this._sT += this._dl;
     
     if (!this._sCF) {
@@ -541,7 +547,7 @@
     if (this.paused && this.playing) {
       this.paused = false;
       if (this._rC !== null) { this._rC.call(); }        
-      this._sT += window.performance.now() - this._pST;    
+      this._sT += time.now() - this._pST;    
       add(this);
       if (!_t) _tk();  // restart ticking if stopped
     }
@@ -566,7 +572,7 @@
     this._rD = _o.repeatDelay || 0; // _repeatDelay
     this._dl = _o.delay || 0; //delay
     this._to = _o.transformOrigin; // transform-origin    
-    this._pp = _o.perspective && parseInt(_o.perspective) !== 0 ? 'perspective('+parseInt(_o.perspective)+'px) ' : false; // perspective    
+    // this._pp = _o.perspective && parseInt(_o.perspective) !== 0 ? 'perspective('+parseInt(_o.perspective)+'px) ' : false; // perspective    
     this._ppo = _o.perspectiveOrigin; // perspective origin  
     this._ppp = _o.parentPerspective; // parent perspective    
     this._pppo = _o.parentPerspectiveOrigin; // parent perspective origin    
@@ -591,7 +597,7 @@
       if (!this.paused && this.playing) {
         remove(this);
         this.paused = true;    
-        this._pST = window.performance.now();    
+        this._pST = time.now();    
         if (this._pC !== null) {
           this._pC.call();
         }
@@ -714,7 +720,7 @@
               }
             }
           } else {
-            f[p] = (el === null || el === undefined) ? (window.pageYOffset || _sct.scrollTop) : el.scrollTop;
+            f[p] = (el === null || el === undefined) ? (g.pageYOffset || _sct.scrollTop) : el.scrollTop;
           }      
         }
       }
@@ -757,7 +763,7 @@
   },
   ws = TweensTO.prototype = TweensFT.prototype = {
     start : function(t){
-      t = t || window.performance.now(); 
+      t = t || time.now(); 
       var i, tl = this.tweens.length;
       for ( i = 0; i < tl; i++ ) { 
         this.tweens[i].start(t);
@@ -779,6 +785,5 @@
     pp: parseProperty, prS: prepareStart, // init
     truD: trueDimension, truC: trueColor, rth: rgbToHex, htr: hexToRGB, gCS: getComputedStyle, // property parsing
     Easing: easing,
-    ticker: _tk, tick : _t, tweens: _tws, update: _u,  // experiment 
   };
 }));

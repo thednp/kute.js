@@ -17,7 +17,7 @@
   }
 })(function(KUTE){
   'use strict';
-  var K = window.KUTE, p, DOM = K.dom, parseProperty = K.pp, prepareStart = K.prS, getComputedStyle = K.gCS,
+  var g = window, K = g.KUTE, p, DOM = K.dom, parseProperty = K.pp, prepareStart = K.prS, getComputedStyle = K.gCS,
     _br = K.property('borderRadius'), _brtl = K.property('borderTopLeftRadius'), _brtr = K.property('borderTopRightRadius'), // all radius props prefixed
     _brbl = K.property('borderBottomLeftRadius'), _brbr = K.property('borderBottomRightRadius'),
     _cls = ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
@@ -30,7 +30,7 @@
      
     _mg = _rd.concat(_bm,_tp), // a merge of all properties with px|%|em|rem|etc unit
     _all = _cls.concat(_clp, _rd, _bm, _tp, _bg), al = _all.length, 
-    number = K.Interpolate.number, unit = K.Interpolate.unit, color = K.Interpolate.color,
+    number = g.number, unit = g.unit, color = g.color,
     _d = _d || {}; //all properties default values  
  
   //populate default values object
