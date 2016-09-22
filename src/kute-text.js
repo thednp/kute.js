@@ -9,31 +9,33 @@
     define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
   } else if(typeof module == "object" && typeof require == "function") {
     var KUTE = require("./kute.js");   
-    module.exports = factory(KUTE);
+    module.exports = factory();
   } else if ( typeof window.KUTE !== 'undefined' ) {		
     factory();
   } else {
     throw new Error("Text-Plugin requires KUTE.js.");
   }
-}( function () {
-  var K = window.KUTE, DOM = K.dom, PP = K.pp, number = K.Interpolate.number,
+}( function (KUTE) {
+  'use strict';
+  var K = window.KUTE, DOM = K.dom, prepareStart = K.prS, 
+    parseProperty = K.pp, number = K.Interpolate.number,
     _s = String("abcdefghijklmnopqrstuvwxyz").split(""), // lowercase
-    _S = String("abcdefghijklmnopqrstuvwxyz".toUpperCase()).split(""), // uppercase
+    _S = String("abcdefghijklmnopqrstuvwxyz".toUpperCase()).split(""), // uparsePropertyercase
     _sb = String("~!@#$%^&*()_+{}[];'<>,./?\=-").split(""), // symbols
     _n = String("0123456789").split(""), // numeric
     _a = _s.concat(_S,_n), // alpha numeric
     _all = _a.concat(_sb), // all caracters
     random = Math.random, floor = Math.floor, min = Math.min;
 
-  K.prS['text'] = K.prS['number'] = function(l,p,v){
+  prepareStart['text'] = prepareStart['number'] = function(l,p,v){
     return l.innerHTML;
   }
     
-  PP['text'] = function(p,v,l) {
+  parseProperty['text'] = function(p,v,l) {
     if ( !( 'text' in DOM ) ) {
       DOM['text'] = function(l,p,a,b,v,o) {
         var tp = tp || o.textChars === 'alpha' ? _s // textChars is alpha
-            : o.textChars === 'upper' ? _S  // textChars is numeric
+            : o.textChars === 'uparsePropertyer' ? _S  // textChars is numeric
             : o.textChars === 'numeric' ? _n  // textChars is numeric
             : o.textChars === 'alphanumeric' ? _a // textChars is alphanumeric
             : o.textChars === 'symbols' ? _sb // textChars is symbols
@@ -50,7 +52,7 @@
     return v;
   }
     
-  PP['number'] = function(p,v,l) {
+  parseProperty['number'] = function(p,v,l) {
     if ( !( 'number' in DOM ) ) {
       DOM['number'] = function(l,p,a,b,v) {
         l.innerHTML = parseInt( number(a, b, v));

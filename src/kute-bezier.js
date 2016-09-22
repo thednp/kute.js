@@ -97,10 +97,10 @@
   };
 
   _bz.csv = function (mX1, mX2) { // calc Sample Values
-  var i = 0, j = _bz.ksts;
-      for (i; i < j; ++i) {
-          _bz.msv[i] = _bz.cB(i * _bz.ksss, mX1, mX2);
-      }
+    var i = 0, j = _bz.ksts;
+    for (i; i < j; ++i) {
+        _bz.msv[i] = _bz.cB(i * _bz.ksss, mX1, mX2);
+    }
   };
 
   _bz.gx = function (aX,mX1,mX2) { //get to X

@@ -22,13 +22,13 @@
 }( function (KUTE) {
   'use strict';
 
-  var K = window.KUTE, DOM = K.dom, PP = K.pp, unit = K.Interpolate.unit, number = K.Interpolate.number, atts,
+  var K = window.KUTE, DOM = K.dom, prepareStart = K.prS, parseProperty = K.pp, unit = K.Interpolate.unit, number = K.Interpolate.number, atts,
     getCurrentValue = function(e,a){ return e.getAttribute(a); }, // get current attribute value
     replaceUppercase = function(a) {
       return /[A-Z]/g.test(a) ? a.replace(a.match(/[A-Z]/g)[0],'-'+a.match(/[A-Z]/g)[0].toLowerCase()) : a;
     }; 
   
-  K.prS['attr'] = function(el,p,v){
+  prepareStart['attr'] = function(el,p,v){
     var f = {};
     for (var a in v){
       var _a = replaceUppercase(a).replace(/_+[a-z]+/,''),
@@ -40,7 +40,7 @@
   
   // process attributes object K.pp.attr(t[x]) 
   // and also register their render functions
-  PP['attr'] = function(a,o,l){
+  parseProperty['attr'] = function(a,o,l){
     if (!('attr' in DOM)) {
       DOM.attr = function(l,p,a,b,v) { 
         for ( var o in b ){
