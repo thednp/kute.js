@@ -35,7 +35,7 @@
     if ( !( 'text' in DOM ) ) {
       DOM['text'] = function(l,p,a,b,v,o) {
         var tp = tp || o.textChars === 'alpha' ? _s // textChars is alpha
-            : o.textChars === 'uparsePropertyer' ? _S  // textChars is numeric
+            : o.textChars === 'upper' ? _S  // textChars is numeric
             : o.textChars === 'numeric' ? _n  // textChars is numeric
             : o.textChars === 'alphanumeric' ? _a // textChars is alphanumeric
             : o.textChars === 'symbols' ? _sb // textChars is symbols

@@ -36,7 +36,7 @@
       if (nl === null && el !== 'window') throw new TypeError('Element not found or incorrect selector: '+el); 
       return nl;   
     },
-    trueDimendion = function (d,p) { //true dimension returns { v = value, u = unit }
+    trueDimension = function (d,p) { //true dimension returns { v = value, u = unit }
       var x = parseInt(d) || 0, mu = ['px','%','deg','rad','em','rem','vh','vw'], l = mu.length, 
         y = getU();
       function getU() {
@@ -340,7 +340,7 @@
           l.style[p] = unit(a.value,b.value,b.unit,v);
         }
       }
-      return { value: trueDimendion(v).v, unit: trueDimendion(v).u }; 
+      return { value: trueDimension(v).v, unit: trueDimension(v).u }; 
     },
     tf : function(p,v){ // transform prop / value
       if (!('transform' in DOM)) {
@@ -398,27 +398,27 @@
       if (p === 'translate3d') {
         var t3d = v.split(','); 
         return {
-          translateX : { value: trueDimendion(t3d[0]).v, unit: trueDimendion(t3d[0]).u },
-          translateY : { value: trueDimendion(t3d[1]).v, unit: trueDimendion(t3d[1]).u },
-          translateZ : { value: trueDimendion(t3d[2]).v, unit: trueDimendion(t3d[2]).u }
+          translateX : { value: trueDimension(t3d[0]).v, unit: trueDimension(t3d[0]).u },
+          translateY : { value: trueDimension(t3d[1]).v, unit: trueDimension(t3d[1]).u },
+          translateZ : { value: trueDimension(t3d[2]).v, unit: trueDimension(t3d[2]).u }
         };
       } else if (/^translate(?:[XYZ])$/.test(p)) {
-        return { value: trueDimendion(v).v, unit: (trueDimendion(v).u||'px') };
+        return { value: trueDimension(v).v, unit: (trueDimension(v).u||'px') };
       } else if (/^rotate(?:[XYZ])$|skew(?:[XY])$/.test(p)) {
-        return { value: trueDimendion(v,true).v, unit: (trueDimendion(v,true).u||'deg') };
+        return { value: trueDimension(v,true).v, unit: (trueDimension(v,true).u||'deg') };
       } else if (p === 'translate') {
         var tv = typeof v === 'string' ? v.split(',') : v, t2d = {};
         if (tv instanceof Array) {
-          t2d.x = { value: trueDimendion(tv[0]).v, unit: trueDimendion(tv[0]).u },
-          t2d.y = { value: trueDimendion(tv[1]).v, unit: trueDimendion(tv[1]).u }
+          t2d.x = { value: trueDimension(tv[0]).v, unit: trueDimension(tv[0]).u },
+          t2d.y = { value: trueDimension(tv[1]).v, unit: trueDimension(tv[1]).u }
         } else {
-          t2d.x = { value: trueDimendion(tv).v, unit: trueDimendion(tv).u },
+          t2d.x = { value: trueDimension(tv).v, unit: trueDimension(tv).u },
           t2d.y = { value: 0, unit: 'px' }        
         }
         return t2d;
       } else if (p === 'rotate') {
         var r2d = {};
-        r2d.z = { value: trueDimendion(v,true).v, unit: (trueDimendion(v,true).u||'deg') };
+        r2d.z = { value: trueDimension(v,true).v, unit: (trueDimension(v,true).u||'deg') };
         return r2d;
       } else if (p === 'scale') {
         return { value: parseFloat(v) }; // this must be parseFloat(v)
@@ -777,8 +777,9 @@
     Interpolate: {number: number, unit: unit, color: color }, // interpolators ?? move array & coords to svg and leave color
     dom: DOM, // DOM manipulation
     pp: parseProperty, prS: prepareStart, // init
-    truD: trueDimendion, truC: trueColor, rth: rgbToHex, htr: hexToRGB, gCS: getComputedStyle, // property parsing
+    truD: trueDimension, truC: trueColor, rth: rgbToHex, htr: hexToRGB, gCS: getComputedStyle, // property parsing
     Easing: easing,
-    Tween: Tween, TweensTO: TweensTO, TweensFT: TweensFT // constructors
+    // Tween: Tween, TweensTO: TweensTO, TweensFT: TweensFT // constructors
+    tick : _t, tweens : _tws // experiment
   };
 }));
