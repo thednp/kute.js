@@ -122,7 +122,7 @@
         }
       }
     },
-    pe = function (es) { //process easing
+    processEasing = function (es) { //process easing
       if ( typeof es === 'function') {
         return es;
       } else if ( typeof es === 'string' ) {
@@ -570,7 +570,7 @@
     this._ppo = _o.perspectiveOrigin; // perspective origin  
     this._ppp = _o.parentPerspective; // parent perspective    
     this._pppo = _o.parentPerspectiveOrigin; // parent perspective origin    
-    this._e = _o && _o.easing && typeof pe(_o.easing) === 'function' ? pe(_o.easing) : easing.linear; // _easing function
+    this._e = _o && _o.easing && typeof processEasing(_o.easing) === 'function' ? processEasing(_o.easing) : easing.linear; // _easing function
     this._cT = []; //_chainedTweens
     this._sCF = false; //_on StartCallbackFIRED
     this._sC = _o.start || null; // _on StartCallback
@@ -772,14 +772,13 @@
   };
 
   return K = { // export core methods to public for plugins
-    property: property, getPrefix: getPrefix, selector: selector, pe : pe, // utils
+    property: property, getPrefix: getPrefix, selector: selector, pe : processEasing, // utils
     to: to, fromTo: fromTo, allTo: allTo, allFromTo: allFromTo, // main methods
     Interpolate: {number: number, unit: unit, color: color }, // interpolators ?? move array & coords to svg and leave color
     dom: DOM, // DOM manipulation
     pp: parseProperty, prS: prepareStart, // init
     truD: trueDimension, truC: trueColor, rth: rgbToHex, htr: hexToRGB, gCS: getComputedStyle, // property parsing
     Easing: easing,
-    // Tween: Tween, TweensTO: TweensTO, TweensFT: TweensFT // constructors
-    tick : _t, tweens : _tws // experiment
+    ticker: _tk, tick : _t, tweens: _tws, update: _u,  // experiment 
   };
 }));
