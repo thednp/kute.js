@@ -512,8 +512,43 @@
   };
   easing.easingBounceInOut = function(t) { if ( t < 0.5 ) return easing.easingBounceIn( t * 2 ) * 0.5; return easing.easingBounceOut( t * 2 - 1 ) * 0.5 + 0.5;};
 
+  var start = function (t) { // move functions that use the ticker outside the prototype to be in the same scope with it
+    this.scrollIn();
+      
+    perspective(this._el,this); // apply the perspective and transform origin
+    if ( this._rpr ) { this.stack(); } // on start we reprocess the valuesStart for TO() method
+        
+    for ( var e in this._vE ) {
+      this._vSR[e] = this._vS[e];      
+    }
+
+    // now it's a good time to start
+    add(this);
+    this.playing = true;
+    this.paused = false;
+    this._sCF = false;
+    this._sT = t || window.performance.now();
+    this._sT += this._dl;
+    
+    if (!this._sCF) {
+      if (this._sC) { this._sC.call(); }
+      this._sCF = true;
+    }
+    if (!_t) _tk();
+    return this;
+  },
+  play = function () {
+    if (this.paused && this.playing) {
+      this.paused = false;
+      if (this._rC !== null) { this._rC.call(); }        
+      this._sT += window.performance.now() - this._pST;    
+      add(this);
+      if (!_t) _tk();  // restart ticking if stopped
+    }
+    return this;
+  },
   // single Tween object construct
-  var Tween = function (_el, _vS, _vE, _o) {
+  Tween = function (_el, _vS, _vE, _o) {
     this._el = _el; // element animation is applied to
     this._vSR = {}; // internal valuesStartRepeat
     this._vS = _vS; // valuesStart
@@ -546,6 +581,8 @@
     this._stC = _o.stop || null; // _on StopCallback    
     this.repeat = this._r; // we cache the number of repeats to be able to put it back after all cycles finish
     this._ops = {};
+    this.start = Tween.prototype.start = start;
+    this.play = Tween.prototype.play = this.resume = Tween.prototype.resume = play;
 
     //also add plugins options or transform perspective
     for (var o in _o) { if (!(o in this) && !/delay|duration|repeat|origin|start|stop|update|complete|pause|play|yoyo|easing/i.test(o) ) { this._ops[o] = _o[o]; } }
@@ -717,61 +754,24 @@
       _o[i].delay = i>0 ? o.delay + (o.offset||0) : o.delay;
       this.tweens.push( fromTo(els[i], vS, vE, _o[i]) );
     }
-  };
-
-  var ws = TweensTO.prototype = TweensFT.prototype;
-  ws.start = function(t){
-    t = t || window.performance.now(); 
-    var i, tl = this.tweens.length;
-    for ( i = 0; i < tl; i++ ) { 
-      this.tweens[i].start(t);
-    }
-    return this;
-  }
-  ws.stop = function(){ for ( var i = 0; i < this.tweens.length; i++ ) { this.tweens[i].stop(); } return this; }
-  ws.pause = function(){ for ( var i = 0; i < this.tweens.length; i++ ) { this.tweens[i].pause(); } return this; }
-  ws.chain = function(){ this.tweens[this.tweens.length-1]._cT = arguments; return this; }
-  ws.play = ws.resume = function(){ for ( var i = 0; i < this.tweens.length; i++ ) { this.tweens[i].play(); } return this; }
-
-  var start = function (t) { // move functions that use the ticker outside the prototype to be in the same scope with it
-    this.scrollIn();
-      
-    perspective(this._el,this); // apply the perspective and transform origin
-    if ( this._rpr ) { this.stack(); } // on start we reprocess the valuesStart for TO() method
-        
-    for ( var e in this._vE ) {
-      this._vSR[e] = this._vS[e];      
-    }
-
-    // now it's a good time to start
-    add(this);
-    this.playing = true;
-    this.paused = false;
-    this._sCF = false;
-    this._sT = t || window.performance.now();
-    this._sT += this._dl;
-    
-    if (!this._sCF) {
-      if (this._sC) { this._sC.call(); }
-      this._sCF = true;
-    }
-    if (!_t) _tk();
-    return this;
   },
-  play = function () {
-    if (this.paused && this.playing) {
-      this.paused = false;
-      if (this._rC !== null) { this._rC.call(); }        
-      this._sT += window.performance.now() - this._pST;    
-      add(this);
-      if (!_t) _tk();  // restart ticking if stopped
-    }
-    return this;
+  ws = TweensTO.prototype = TweensFT.prototype = {
+    start : function(t){
+      t = t || window.performance.now(); 
+      var i, tl = this.tweens.length;
+      for ( i = 0; i < tl; i++ ) { 
+        this.tweens[i].start(t);
+      }
+      return this;
+    },
+    stop : function(){ for ( var i = 0; i < this.tweens.length; i++ ) { this.tweens[i].stop(); } return this; },
+    pause : function(){ for ( var i = 0; i < this.tweens.length; i++ ) { this.tweens[i].pause(); } return this; },
+    chain : function(){ this.tweens[this.tweens.length-1]._cT = arguments; return this; },
+    play : function(){ for ( var i = 0; i < this.tweens.length; i++ ) { this.tweens[i].play(); } return this; },
+    resume :function() {return this.play()}
   };
-  Tween.prototype.start = start;
-  Tween.prototype.play = Tween.prototype.resume = play;
 
-  K = { // export core methods to public for plugins
+  return K = { // export core methods to public for plugins
     property: property, getPrefix: getPrefix, selector: selector, pe : pe, // utils
     to: to, fromTo: fromTo, allTo: allTo, allFromTo: allFromTo, // main methods
     Interpolate: {number: number, unit: unit, color: color }, // interpolators ?? move array & coords to svg and leave color
@@ -781,5 +781,4 @@
     Easing: easing,
     Tween: Tween, TweensTO: TweensTO, TweensFT: TweensFT // constructors
   };
-  return K;
 }));

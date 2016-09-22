@@ -1,6 +1,6 @@
 {
   "name": "KUTE.js",
-  "version": "1.5.6",
+  "version": "1.5.7",
   "homepage": "http://thednp.github.io/kute.js",
   "authors": [
     "thednp"
@@ -15,7 +15,8 @@
   "keywords": [
     "animations",
     "animation engine",
-    "native-javascript",
+    "javascript animation engine",
+    "native javascript",
     "kute.js",
     "tweening",
     "engine"
@@ -28,5 +29,7 @@
     "test",
     "tests"
   ],
-  "dependencies": {}
+  "dependencies": {
+    "uglify-js": "^2.7.3"
+  }
 }

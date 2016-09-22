@@ -16,7 +16,8 @@
     throw new Error("CSS Plugin require KUTE.js.")
   }
 })(function(KUTE){
-  var K = window.KUTE, p, DOM = K.dom, PP = K.pp,
+  'use strict';
+  var K = window.KUTE, p, DOM = K.dom, parseProperty = K.pp, prepareStart = K.prS, getComputedStyle = K.gCS,
     _br = K.property('borderRadius'), _brtl = K.property('borderTopLeftRadius'), _brtr = K.property('borderTopRightRadius'), // all radius props prefixed
     _brbl = K.property('borderBottomLeftRadius'), _brbr = K.property('borderBottomRightRadius'),
     _cls = ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
@@ -49,39 +50,39 @@
   // create prepare/process/render functions for additional colors properties
   for (var i = 0, l = _cls.length; i<l; i++) {
     p = _cls[i];
-    PP[p] = function(p,v) {
+    parseProperty[p] = function(p,v) {
       if (!(p in DOM)) {
         DOM[p] = function(l,p,a,b,v,o) {
           l.style[p] = color(a,b,v,o.keepHex);
         };
       }
-      return PP.cls(p,v);
+      return parseProperty.cls(p,v);
     };
-    K.prS[p] = function(el,p,v){
-      return K.gCS(el,p) || _d[p];
+    prepareStart[p] = function(el,p,v){
+      return getComputedStyle(el,p) || _d[p];
     };
   }
   
   // create prepare/process/render functions for additional box model properties
   for (var i = 0, l = _mg.length; i<l; i++) {
     p = _mg[i];
-    PP[p] = function(p,v){
+    parseProperty[p] = function(p,v){
       if (!(p in DOM)){
         DOM[p] = function(l,p,a,b,v){
           l.style[p] = unit(a.value,b.value,b.unit,v);
         }
       }
-      return PP.box(p,v);
+      return parseProperty.box(p,v);
     };
-    K.prS[p] = function(el,p,v){
-      return K.gCS(el,p) || _d[p];
+    prepareStart[p] = function(el,p,v){
+      return getComputedStyle(el,p) || _d[p];
     };
   }
   
   //create prepare/process/render functions for radius properties
   for (var i = 0, l = _rd.length; i<l; i++) {
     p = _rd[i];
-    PP[p] = function(p,v){
+    parseProperty[p] = function(p,v){
       if ( (!(p in DOM)) ) {
         if (p === 'borderRadius') {
           DOM[p] = function(l,p,a,b,v){
@@ -105,15 +106,15 @@
           }
         }
       }      
-      return PP.box(p,v);
+      return parseProperty.box(p,v);
     };
-    K.prS[p] = function(el,p,v){
-      return K.gCS(el,p) || _d[p];
+    prepareStart[p] = function(el,p,v){
+      return getComputedStyle(el,p) || _d[p];
     };
   }
   
   // clip
-  PP['clip'] = function(p,v){
+  parseProperty['clip'] = function(p,v){
     if ( !(p in DOM) ) {
       DOM[p] = function(l,p,a,b,v) {
         var h = 0, cl = [];
@@ -133,13 +134,13 @@
     }
   };
   
-  K.prS['clip'] = function(el,p,v){
-    var c = K.gCS(el,p), w = K.gCS(el,'width'), h = K.gCS(el,'height');      
+  prepareStart['clip'] = function(el,p,v){
+    var c = getComputedStyle(el,p), w = getComputedStyle(el,'width'), h = getComputedStyle(el,'height');      
     return !/rect/.test(c) ? [0, w, h, 0] : c;
   };
     
   // background position
-  PP['backgroundPosition'] = function(p,v) {
+  parseProperty['backgroundPosition'] = function(p,v) {
     if ( !(p in DOM) ) {        
       DOM[p] = function(l,p,a,b,v) {
         l.style[p] = unit(a.x.v,b.x.v,'%',v) + ' ' + unit(a.y.v,b.y.v,'%',v);
@@ -154,8 +155,8 @@
       return { x: xp, y: yp };
     }
   }
-  K.prS['backgroundPosition'] = function(el,p,v){
-    return K.gCS(el,p) || _d[p];
+  prepareStart['backgroundPosition'] = function(el,p,v){
+    return getComputedStyle(el,p) || _d[p];
   }
   
   return this;

@@ -1,6 +1,6 @@
 {
   "name": "kute.js",
-  "version": "1.5.6",
+  "version": "1.5.7",
   "description": "A minimal Native Javascript animation engine.",
   "main": "kute.js",
   "scripts": {
@@ -14,8 +14,9 @@
   "keywords": [
     "kute.js",
     "animation engine",
+    "javascript animation engine",
     "animations",
-    "native-javascript"
+    "native javascript"
   ],
   "author": "thednp",
   "license": "MIT",
