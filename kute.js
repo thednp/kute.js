@@ -13,7 +13,7 @@
   }
 }( function () {
   "use strict";
-  var g = window, K = g.KUTE = {}, _tws = g.tweens = [], _t = g.tick = null, time = g.performance,
+  var g = window, K = g.KUTE = {}, _tws = g.tweens = [], tick = g.tick = null, time = g.performance,
   
     getPrefix = function() { //returns browser prefix
       var div = document.createElement('div'), i = 0,  pf = ['Moz', 'moz', 'Webkit', 'webkit', 'O', 'o', 'Ms', 'ms'], pl = pf.length,
@@ -87,7 +87,7 @@
         b: parseInt(result[3], 16)
       } : null;
     },
-    gIS = function(el,p) { // gIS = get transform style for element from cssText for .to() method, the sp is for transform property
+    getInlineStyle = function(el,p) { // getInlineStyle = get transform style for element from cssText for .to() method, the sp is for transform property
       if (!el) return; // if the scroll applies to `window` it returns as it has no styling
       var cst = el.style.cssText,//the cssText  
         trsf = {}; //the transform object
@@ -182,29 +182,8 @@
     }
   }
   
-  // main methods
-  var to = function (el, to, o) {
-    var _el = selector(el),
-        _vS = to, _vE = preparePropertiesObject(to, {}, _el)[0]; o = o || {}; o.rpr = true;  
-    return new Tween(_el, _vS, _vE, o);
-  },
-  fromTo = function (el, f, to, o) {
-    var _el = selector(el), ft = preparePropertiesObject(f, to, _el), _vS = ft[0], _vE = ft[1]; o = o || {};
-    var tw = new Tween(_el, _vS, _vE, o); K.svg && K.svq(tw); // on init we process the SVG paths
-    return tw;
-  },
-  // multiple elements tweening
-  allTo = function (els, to, o) {
-    var _els = selector(els,true);
-    return new TweensTO(_els, to, o);
-  },
-  allFromTo = function (els, f, to, o) {
-    var _els = selector(els,true);
-    return new TweensFT(_els, f, to, o); 
-  },
-
   // KUTE.js INTERPOLATORS
-  number = g.number = function(a,b,v) { // number1, number2, progress
+  var number = g.number = function(a,b,v) { // number1, number2, progress
     a = +a; b -= a; return a + b * v;
   },
   unit = g.unit = function(a,b,u,v) { // number1, number2, unit, progress
@@ -218,19 +197,19 @@
 
   // KUTE.js DOM update functions
   DOM = g.dom = {},
-  _tk = g.ticker = function(t) {
+  ticker = g.ticker = function(t) {
     var i = 0; 
     while ( i < _tws.length ) {
-      if ( _u(_tws[i],t) ) {
+      if ( update(_tws[i],t) ) {
         i++;
       } else {
         _tws.splice(i, 1);
       }
     }
-    _t = _raf(_tk);
+    tick = _raf(ticker);
   },
 
-  _u = g.update = function(w,t) {
+  update = g.update = function(w,t) {
     t = t || time.now();
     if (t < w._sT && w.playing && !w.paused) { return true; }
 
@@ -258,7 +237,8 @@
         // start animating chained tweens
         var i = 0, ctl = w._cT.length;
         for (i; i < ctl; i++) {
-          w._cT[i].start(w._sT + w._dr);
+          // w._cT[i].start(w._sT + w._dr);
+          w._cT[i].start();
         }
         
         //stop ticking when finished
@@ -282,7 +262,7 @@
   removeAll = function () {  _tws = []; },
   add = function (tw) {  _tws.push(tw); },
   remove = function (tw) { var i = _tws.indexOf(tw); if (i !== -1) { _tws.splice(i, 1); }}, 
-  stop = function () { _t && _caf(_t);  _t = null; },
+  stop = function () { tick && _caf(tick);  tick = null; },
     
   // process properties for _vE and _vS or one of them
   preparePropertiesObject = function (e, s, l) {
@@ -378,7 +358,7 @@
       return { value: trueDimension(v).v, unit: trueDimension(v).u }; 
     },
     tf : function(p,v){ // transform prop / value
-      if (!('transform' in DOM)) { 
+      if (!('transform' in DOM)) {
         DOM.transform = function(l,p,a,b,v,o){
           var _tS = '', t = '', r = '', sk = '', s = '', pp = pp || o.perspective && parseInt(o.perspective) !== 0 ? 'perspective('+parseInt(o.perspective)+'px) ' : false;
 
@@ -392,7 +372,6 @@
             } else if (tp === 'scale'){
               s += scale(a[tp],b[tp],v);
             }
-            // _tS = _tS ? _tS + ' ' + DOM[tp](a[tp],b[tp],v) : DOM[tp](a[tp],b[tp],v);
           }
           _tS = t + r + sk + s;
 
@@ -540,7 +519,7 @@
       if (this._sC) { this._sC.call(); }
       this._sCF = true;
     }
-    if (!_t) _tk();
+    if (!tick) ticker();
     return this;
   },
   play = function () {
@@ -549,7 +528,7 @@
       if (this._rC !== null) { this._rC.call(); }        
       this._sT += time.now() - this._pST;    
       add(this);
-      if (!_t) _tk();  // restart ticking if stopped
+      if (!tick) ticker();  // restart ticking if stopped
     }
     return this;
   },
@@ -690,7 +669,7 @@
     }
     //prepare valuesStart for .to() method
     this.prS = function () { 
-      var f = {}, el = this._el, to = this._vS, cs = gIS(el,'transform'), deg = ['rotate','skew'], ax = ['X','Y','Z'];
+      var f = {}, el = this._el, to = this._vS, cs = getInlineStyle(el,'transform'), deg = ['rotate','skew'], ax = ['X','Y','Z'];
           
       for (var p in to){
         if ( _tf.indexOf(p) !== -1 ) {
@@ -775,6 +754,26 @@
     chain : function(){ this.tweens[this.tweens.length-1]._cT = arguments; return this; },
     play : function(){ for ( var i = 0; i < this.tweens.length; i++ ) { this.tweens[i].play(); } return this; },
     resume :function() {return this.play()}
+  },
+  // main methods
+  to = function (el, to, o) {
+    var _el = selector(el),
+        _vS = to, _vE = preparePropertiesObject(to, {}, _el)[0]; o = o || {}; o.rpr = true;  
+    return new Tween(_el, _vS, _vE, o);
+  },
+  fromTo = function (el, f, to, o) {
+    var _el = selector(el), ft = preparePropertiesObject(f, to, _el), _vS = ft[0], _vE = ft[1]; o = o || {};
+    var tw = new Tween(_el, _vS, _vE, o); K.svg && K.svq(tw); // on init we process the SVG paths
+    return tw;
+  },
+  // multiple elements tweening
+  allTo = function (els, to, o) {
+    var _els = selector(els,true);
+    return new TweensTO(_els, to, o);
+  },
+  allFromTo = function (els, f, to, o) {
+    var _els = selector(els,true);
+    return new TweensFT(_els, f, to, o); 
   };
 
   return K = { // export core methods to public for plugins

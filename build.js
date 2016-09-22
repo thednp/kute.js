@@ -6,11 +6,30 @@
 var fs = require('fs');
 var path = require('path');
 var uglify = require('uglify-js');
-console.log('Minifying..');
+var pack = require('./package.json');
+var version = 'v'+pack.version;
+var license = pack.license+'-License';
+
+console.log('Minifying KUTE.js ' + version + '..');
 
 // Helper Functions:
+function replaceK(s) {
+  if (/-/.test(s)) {
+    if (/attr/.test(s)) { return 'Attributes Plugin'}
+    if (/svg/.test(s)) { return 'SVG Plugin'}
+    if (/css/.test(s)) { return 'CSS Plugin'}
+    if (/bez/.test(s)) { return 'Bezier Plugin'}
+    if (/phy/.test(s)) { return 'Physics Plugin'}
+    if (/jq/.test(s)) { return 'jQuery Plugin'}
+    if (/text/.test(s)) { return 'Text Plugin'}
+  } else {
+    return 'Core Engine';
+  }
+}
 function minify(srcPath, writePath) {
-  fs.writeFile(writePath, ('// KUTE.js by dnp_theme | ' + srcPath.replace('.js','') + '\n' + uglify.minify(srcPath).code), function (err) {
+  fs.writeFile(writePath, 
+    ('// KUTE.js ' + version + ' | © dnp_theme | ' + replaceK(srcPath)  + ' | ' + license + '\n' 
+    + uglify.minify(srcPath).code), function (err) {
     if (err) return handleError(err);
     console.log(srcPath+' is done.');
   });
