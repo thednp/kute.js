@@ -10,7 +10,7 @@ console.log('Minifying..');
 
 // Helper Functions:
 function minify(srcPath, writePath) {
-  fs.writeFile(writePath, (uglify.minify(srcPath).code + '\n'), function (err) {
+  fs.writeFile(writePath, ('// KUTE.js by dnp_theme | ' + srcPath.replace('.js','') + '\n' + uglify.minify(srcPath).code), function (err) {
     if (err) return handleError(err);
     console.log(srcPath+' is done.');
   });
