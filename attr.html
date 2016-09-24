@@ -101,8 +101,30 @@ var myDashedAttrStringTween = KUTE.to('selector', {attr: {'stroke-width': 75}});
 var myNonDashedAttrStringTween = KUTE.to('selector', {attr:{strokeWidth: '15px'}});
 </code></pre>
         <p>The <code>strokeWidth</code> example is very interesting because this attribute along with many others can work with <code>px</code>, <code>%</code> or with no unit/suffix.</p>
+        
+		<h3>Color Attributes</h3>
+        <p>Starting with KUTE.js version 1.5.7, the Attributes Plugin can also animate color attributes: <code>fill</code>, <code>stroke</code> and <code>stopColor</code>. If the elements are affected by their CSS counterparts, the effect is not visible, so always make sure you know what you're doing.</p>
+<pre><code class="language-javascript">// some fill rgb, rgba, hex
+var fillTween = KUTE.to('#element-to-fill', {attr: { fill: 'red' }});
+    
+// some stopColor or 'stop-color'
+var stopColorTween = KUTE.to('#element-to-do-stop-color', {attr: {stopColor: 'rgb(0,66,99)'}});
+</code></pre>
+        
+		<div class="featurettes">
+            <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 615 615">
 
-		<h3>Unitless Properties</h3>
+                <path id="fill" fill="#673AB7" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
+                    c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>            
+            </svg>
+	
+			<div class="example-buttons">
+				<a id="fillBtn" class="btn btn-blue" href="javascript:void(0)">Start</a>	
+			</div>
+		</div>
+        <p>If in this example the <code>fill</code> attribute value would reference a gradient, then <i>rgba(0,0,0,0)</i> is used.</p>
+
+		<h3>Unitless Attributes</h3>
 		<p>In the first example, let's play with the attributes of a <code>&lt;circle&gt;</code> element: radius and center coordinates.</p>
 <pre><code class="language-javascript">// radius attribute
 var radiusTween = KUTE.to('#circle', {attr: {r: 75}});
@@ -121,7 +143,7 @@ var coordinatesTween = KUTE.to('#circle', {attr:{cx:0,cy:0}});
 			</div>
 		</div>
         
-		<h3>Suffixed Properties</h3>
+		<h3>Suffixed Attributes</h3>
         <p>Similar to the example on gradients with <a href="svg.html">SVG Plugin</a>, we can also animate the gradient positions, and the plugin will make sure to always include the suffix for you, as in this example the <code>%</code> unit is found in the current value and used as unit for the DOM update:</p>
 <pre><code class="language-javascript">// gradient positions to middle
 var closingGradient = KUTE.to('#gradient', {attr: {x1:'49%', x2:'49%', y1:'49%', y2:'49%'}});
@@ -147,6 +169,7 @@ var rotatingGradient = KUTE.to('#gradient', {attr: {x1:'49%', x2:'51%', y1:'51%'
 			</div>
 		</div>
         <p>This plugin is quite handy and a great addition to the <a href="svg.html">SVG Plugin</a>.</p>
+
 	</div>
 
     <ul id="share" class="nav">
