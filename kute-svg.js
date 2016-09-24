@@ -410,7 +410,7 @@
     rotate = g.Interpolate.rotateSVG = function (s,e,a,b,v){
        return s + (number(a[0],b[0],v) + ' ' + b[1] + ',' + b[2]) + e;
     },
-    scaleOrSkew = g.Interpolate.stfSVG = function (s,e,a,b,v){ // scale / skew
+    scaleOrSkew = g.Interpolate.scaleOrSkewSVG = function (s,e,a,b,v){ // scale / skew
       return s + number(a,b,v) + e;
     },
     stackTransform = function (w){ // helper function that helps preserve current transform properties into the objects
