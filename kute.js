@@ -7,7 +7,7 @@
     define([], factory); // AMD. Register as an anonymous module.
   } else if (typeof exports == 'object') {
     module.exports = factory(); // Node, not strict CommonJS
-  } else {
+  } else if (typeof window !== 'undefined') {
     // Browser globals    
     window.KUTE = factory();
   }
@@ -143,7 +143,7 @@
     _pfto = property('transformOrigin'), //assign preffix to DOM properties
     _pfp = property('perspective'),
     _pfo = property('perspectiveOrigin'),
-    _tr = g.pfTransform = property('transform'),
+    _tr = g.transformProperty = property('transform'),
     _raf = g.requestAnimationFrame || g.webkitRequestAnimationFrame || function (c) { return setTimeout(c, 16) },
     _caf = g.cancelAnimationFrame || g.webkitCancelRequestAnimationFrame || function (c) { return clearTimeout(c) },
     
@@ -534,7 +534,7 @@
       return this;
     },
     // single Tween object construct
-    Tween = function (_el, _vS, _vE, _o) {
+    Tween = g.Tween = function (_el, _vS, _vE, _o) {
       this._el = _el; // element animation is applied to
       this._vSR = {}; // internal valuesStartRepeat
       this._vS = _vS; // valuesStart

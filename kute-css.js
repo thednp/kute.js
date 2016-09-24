@@ -10,7 +10,7 @@
     var KUTE = require("./kute.js");
     // Export the modified one. Not really required, but convenient.
     module.exports = factory(KUTE);
-  } else if(typeof window.KUTE != "undefined") {
+  } else if (typeof window.KUTE !== "undefined") {
     factory(KUTE);
   } else {
     throw new Error("CSS Plugin require KUTE.js.")
