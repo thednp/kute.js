@@ -170,12 +170,15 @@ K.Tween.prototype.onUpdate = function(){
         <ul>
             <li><code>KUTE.prS['propertyName']</code> a <strong>prepareStart</strong> function to get the current value of the property required for the <code>.to()</code> method;</li>
             <li><code>KUTE.pp['propertyName']</code> a <strong>processProperty</strong> function to process the user value / current value to have it ready to tween;</li>
-            <li><code>KUTE.dom['propertyName']</code> a <strong>domUpdate</strong> function that will update the property value into the DOM;</li>
+            <li><code>window.dom['propertyName']</code> a <strong>domUpdate</strong> function that will update the property value into the DOM;</li>
             <li><strong>optional</strong> a function that will work as an utility for your value processing.</li>
         </ul>
         <p>So let's add support for <kbd class="bg-olive">boxShadow</kbd>! It should be a medium difficulty guide most developers can follow and the purpose of this guide is to showcase how easy it actually is to extend KUTE.js. So grab the above template and let's break it down to pieces:</p>
-<pre><code class="language-javascript">// add a reference to KUTE object
-var K = window.KUTE;
+<pre><code class="language-javascript">// add a reference to global and KUTE object
+var g = window, K = g.KUTE, 
+    // add a reference to KUTE utilities
+    prepareStart = K.prS, DOM = g.dom, parseProperty = K.pp, trueColor = K.truC,
+    color = g.Interpolate.color, unit = g.Interpolate.unit, getComputedStyle = K.gCS;
 
 // filter unsupported browsers
 if (!('boxShadow' in document.body.style)) {return;}
@@ -189,8 +192,8 @@ var colRegEx = /(\s?(?:#(?:[\da-f]{3}){1,2}|rgba?\(\d{1,3},\s*\d{1,3},\s*\d{1,3}
         <p>Now we have access to the KUTE object, prototypes and it's utility functions, let's write a <code>prepareStart</code> function that will read the current <code>boxShadow</code> value:</p>
 <pre><code class="language-javascript">// for the .to() method, you need to prepareStart the boxShadow property
 // which means you need to read the current computed value
-K.prS['boxShadow'] = function(element,property,value){
-    var cssBoxShadow = K.gCS(element,'boxShadow'); // where K.gCS() is an accurate getComputedStyle() core method
+prepareStart['boxShadow'] = function(element,property,value){
+    var cssBoxShadow = getComputedStyle(element,'boxShadow'); // where K.gCS()/getComputedStyle is an accurate getComputedStyle() core method
     return /^none$|^initial$|^inherit$|^inset$/.test(cssBoxShadow) ? '0px 0px 0px 0px rgb(0,0,0)' : cssBoxShadow;
 }
 
@@ -201,67 +204,12 @@ K.prS['boxShadow'] = function(element,property,value){
 // also to read the current value of an attribute, replace first line of the above function body with this
 // var attrValue = element.getAttribute(property);
 // and return the value or a default value, mostly rgb(0,0,0) for colors or 0 for other types  
-</code></pre>   
+</code></pre> 
 
-        <p>Next we'll need to write a <code>processProperty</code> function that will prepare the property value and build an Object or Array of values ready to tween. This function also registers the <code>K.dom['boxShadow']</code> function into the KUTE object, and this way we avoid filling the main object with unnecessary functions, just to keep performance tight.</p>
-        
-<pre><code class="language-javascript">// the processProperty for boxShadow 
-// registers the K.dom['boxShadow'] function 
-// returns an array of 6 values in the following format
-// [horizontal, vertical, blur, spread, color: {r:0,g:0,b:0}, inset]
-K.pp['boxShadow'] = function(property,value,element){
-  // the DOM update function for boxShadow registers here
-  // we only enqueue it if the boxShadow property is used to tween
-  if ( !('boxShadow' in K.dom) ) {
-    K.dom['boxShadow'] = function(l,p,a,b,v) { // element, propertyName, valuesStart.boxShadow, valuesEnd.boxShadow, progress 
-
-      // let's start with the numbers | set unit | also determine inset
-      var numbers = [], px = 'px', // the unit is always px
-        inset = a[5] !== 'none' || b[5] !== 'none' ? ' inset' : false; 
-
-      for (var i=0; i&lt;4; i++){ // for boxShadow coordinates we do the math for an array of numbers 
-        numbers.push( (a[i] + (b[i] - a[i]) * v ) + px);
-        // we can also write this like this now, starting 1.5.3
-        // numbers.push( K.Interpolate.unit(a[i], b[i], px, v) );
-      }
-
-      // now we handle the color
-      var colorValue, _color = {}; 
-      for (var c in b[4]) {
-        _color[c] = parseInt(a[4][c] + (b[4][c] - a[4][c]) * v )||0;
-      }
-      colorValue = 'rgb(' + _color.r + ',' + _color.g + ',' + _color.b + ') ';
-      // for color interpolation, starting with v1.5.3 we can cut it short to this
-      // var colorValue = K.Interpolate.color(a[4],b[4],v);
-      
-      // last piece of the puzzle, the DOM update
-      l.style[_boxShadow] = inset ? colorValue + numbers.join(' ') + inset : colorValue + numbers.join(' ');
-    };
-  }
-
-  // processProperty for boxShadow, builds basic structure with ready to tween values
-  if (typeof value === 'string'){
-    var color, inset = 'none';
-    // make sure to always have the inset last if possible
-    inset = /inset/.test(value) ? 'inset' : inset;
-    value = /inset/.test(value) ? value.replace(/(\s+inset|inset+\s)/g,'') : value;
-
-    // also getComputedStyle often returns color first "rgb(0, 0, 0) 15px 15px 6px 0px inset"
-    color = value.match(colRegEx); 
-    value = value.replace(color[0],'').split(' ').concat([color[0].replace(/\s/g,'')],[inset]);
-    
-    value = K.processBoxShadowArray(value);
-  } else if (value instanceof Array){
-    value = K.processBoxShadowArray(value);
-  }
-  return value;
-}
-</code></pre>
-
-        <p>Notice we've used an utility function that fixes the Array values and makes sure the structure is right.</p>
+        <p>Now we need an utility function that makes sure the structure looks right for the DOM update function.</p>
 <pre><code class="language-javascript">// utility function to process values accordingly
 // numbers must be floats/integers and color must be rgb object
-K.processBoxShadowArray = function(shadow){
+var processBoxShadowArray = function(shadow){
   var newShadow, i;
   // properly process the shadow based on amount of values
   if (shadow.length === 3) { // [h-shadow, v-shadow, color]
@@ -279,8 +227,56 @@ K.processBoxShadowArray = function(shadow){
     newShadow[i] = parseFloat(newShadow[i]);  
   }
   // make sure color is an rgb object
-  newShadow[4] = K.truC(newShadow[4]); // where K.truC() is a core method to return the true color in rgb object format
+  newShadow[4] = trueColor(newShadow[4]); // where K.truC()/trueColor is a core method to return the true color in rgb object format
   return newShadow;
+};
+</code></pre>  
+
+        <p>Next we'll need to write a <code>processProperty</code> function that will prepare the property value and build an Object or Array of values ready to tween. This function also registers the <code>K.dom['boxShadow']</code> function into the KUTE object, and this way we avoid filling the main object with unnecessary functions, just to keep performance tight.</p>
+        
+<pre><code class="language-javascript">// the processProperty for boxShadow 
+// registers the window.dom['boxShadow'] function 
+// returns an array of 6 values in the following format
+// [horizontal, vertical, blur, spread, color: {r:0,g:0,b:0}, inset]
+parseProperty['boxShadow'] = function(property,value,element){
+  // the DOM update function for boxShadow registers here
+  // we only enqueue it if the boxShadow property is used to tween
+  if ( !('boxShadow' in DOM) ) {
+    DOM['boxShadow'] = function(l,p,a,b,v) { // element, propertyName, valuesStart.boxShadow, valuesEnd.boxShadow, progress 
+
+      // let's start with the numbers | set unit | also determine inset
+      var numbers = [], px = 'px', // the unit is always px
+        inset = a[5] !== 'none' || b[5] !== 'none' ? ' inset' : false; 
+
+      for (var i=0; i&lt;4; i++){ // for boxShadow coordinates we do the math for an array of numbers 
+        numbers.push( unit(a[i], b[i], px, v) );
+      }
+
+      // now we handle the color
+      var colorValue = color(a[4],b[4],v);
+      
+      // last piece of the puzzle, the DOM update
+      l.style[_boxShadow] = inset ? colorValue + numbers.join(' ') + inset : colorValue + numbers.join(' ');
+    };
+  }
+
+  // processProperty for boxShadow, builds basic structure with ready to tween values
+  if (typeof value === 'string'){
+    var color, inset = 'none';
+    // make sure to always have the inset last if possible
+    inset = /inset/.test(value) ? 'inset' : inset;
+    value = /inset/.test(value) ? value.replace(/(\s+inset|inset+\s)/g,'') : value;
+
+    // also getComputedStyle often returns color first "rgb(0, 0, 0) 15px 15px 6px 0px inset"
+    color = value.match(colRegEx); 
+    value = value.replace(color[0],'').split(' ').concat([color[0].replace(/\s/g,'')],[inset]);
+    
+    // now we can use the above specific utitlity
+    value = processBoxShadowArray(value);
+  } else if (value instanceof Array){
+    value = processBoxShadowArray(value);
+  }
+  return value;
 }
 </code></pre>
 
@@ -315,10 +311,10 @@ var myBSTween3 = KUTE.fromTo('selector', {boxShadow: [5, 5, 0, '#069', 'inset']}
             <li><kbd class="bg-lime">KUTE.truC(color)</kbd> a function that returns an <code>{r: 150, g: 150, b: 0}</code> color object ready to tween; if the color value is a <a href="http://www.w3schools.com/colors/colors_names.asp" target="_blank">web safe color</a>, the IE9+ browsers will be able to return the rgb object we need.</li>
             <li><kbd class="bg-lime">KUTE.htr(hex)</kbd> a function that accepts HEX formatted colors and returns an <code>{r: 150, g: 150, b: 0}</code> color object;</li>
             <li><kbd class="bg-lime">KUTE.rth(r,g,b)</kbd> a function that accepts numeric values for red, blue and green and returns a HEX format <code>#006699</code> color string.</li>
-            <li><kbd class="bg-lime">KUTE.Interpolate.number</kbd> is most essential interpolation tool when developing plugins for various properties not supported in the core.</li>
-            <li><kbd class="bg-lime">KUTE.Interpolate.unit</kbd> is used mainly for box model properties, text properties, and generally anything that's a string based valued. Like <code>width: 250px</code></li>
-            <li><kbd class="bg-lime">KUTE.Interpolate.color</kbd> is a very fast interpolation function for colors, as used in the above example.</li>
-            <li><kbd class="bg-lime">KUTE.Interpolate.array</kbd> and <kbd class="bg-lime">KUTE.Interpolate.coords</kbd> are SVG Plugin only, but you can have a look anytime when you're out of ideas.</li>
+            <li><kbd class="bg-lime">Interpolate.number</kbd> is most essential interpolation tool when developing plugins for various properties not supported in the core.</li>
+            <li><kbd class="bg-lime">Interpolate.unit</kbd> is used mainly for box model properties, text properties, and generally anything that's a string based valued. Like <code>width: 250px</code></li>
+            <li><kbd class="bg-lime">Interpolate.color</kbd> is a very fast interpolation function for colors, as used in the above example.</li>
+            <li><kbd class="bg-lime">Interpolate.array</kbd> and <kbd class="bg-lime">Interpolate.coords</kbd> are SVG Plugin only, but you can have a look anytime when you're out of ideas.</li>
         </ul>
 
         <ul id="share" class="nav">
