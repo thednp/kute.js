@@ -780,9 +780,7 @@
   return K = { // export core methods to public for plugins
     property: property, getPrefix: getPrefix, selector: selector, pe : processEasing, // utils
     to: to, fromTo: fromTo, allTo: allTo, allFromTo: allFromTo, // main methods
-    Interpolate: Interpolate, // interpolators
-    dom: DOM, // DOM manipulation
-    pp: parseProperty, prS: prepareStart, // property parsing & preparation
+    pp: parseProperty, prS: prepareStart, Tween : Tween, // property parsing & preparation | Tween
     truD: trueDimension, truC: trueColor, rth: rgbToHex, htr: hexToRGB, gCS: getComputedStyle, // property parsing
   };
 }));
