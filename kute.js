@@ -340,7 +340,7 @@
               _st[i][x] = parseProperty.unl(x,t[x]); 
             } else if (_cls.indexOf(x) !== -1) { 
               _st[i][x] = parseProperty.cls(x,t[x]);
-            } else if (x in K.pp) { _st[i][x] = K.pp[x](x,t[x],l); } // or any other property from css/ attr / svg / third party plugins
+            } else if (x in parseProperty) { _st[i][x] = parseProperty[x](x,t[x],l); } // or any other property from css/ attr / svg / third party plugins
           }
         }
       }
@@ -445,7 +445,7 @@
 
     // core easing functions  
     easing = g.Easing = {};
-  easing.linear = g.linear = function (t) { return t; };
+  easing.linear = function (t) { return t; };
   easing.easingSinusoidalIn = function(t) { return -Math.cos(t * Math.PI / 2) + 1; };
   easing.easingSinusoidalOut = function(t) { return Math.sin(t * Math.PI / 2); };
   easing.easingSinusoidalInOut = function(t) { return -0.5 * (Math.cos(Math.PI * t) - 1); };
@@ -545,7 +545,7 @@
       this.paused = false; //_paused
       this._sT = null; // startTime
       this._pST = null; //_pauseStartTime    
-      this._hex = _o.keepHex || false; // option to keep hex for color tweens true/false
+      // this._hex = _o.keepHex || false; // option to keep hex for color tweens true/false
       this._rpr = _o.rpr || false; // internal option to process inline/computed style at start instead of init true/false
       this._dr = _o.duration || 700; //duration
       this._r = _o.repeat || 0; // _repeat
