@@ -176,7 +176,7 @@
 		
 		<h3>Cubic Bezier Functions</h3>
 		<p>While modern browsers support CSS3 <code>transition</code> with <code>transition-timing-function: cubic-bezier(0.1,0.5,0.8,0.5)</code>, in Javascript animation we need some specific functions to cover that kind of functionality. As mentioned in the <a href="features.html">features page</a>, we are using a modified version of the <a href="https://github.com/gre/bezier-easing" target="_blank">cubic-bezier</a> by Gaëtan Renaudeau. I believe this must be most accurate easing functions set.</p>
-		<p>You can use them either with <code>easing: KUTE.Ease.bezier(mX1, mY1, mX2, mY2)</code> or <code>easing: 'bezier(mX1, mY1, mX2, mY2)'</code>, where mX1, mY1, mX2, mY2 are <em>Float</em> values from 0 to 1. You can find the right values you need <a href="http://cubic-bezier.com/" target="_blank">right here</a>.</p>
+		<p>You can use them either with <code>easing: Bezier(mX1, mY1, mX2, mY2)</code> or <code>easing: 'bezier(mX1, mY1, mX2, mY2)'</code>, where mX1, mY1, mX2, mY2 are <em>Float</em> values from 0 to 1. You can find the right values you need <a href="http://cubic-bezier.com/" target="_blank">right here</a>.</p>
 		<p>There is also a pack of presets, and the keywords look very similar if you have used jQuery.Easing plugin before:</p>
 		<ul>
 			<li>Equivalents of the browser's <strong>generic</strong> timing functions: <kbd>easeIn</kbd>, <kbd>easeOut</kbd> and <kbd>easeInOut</kbd></li>
@@ -257,7 +257,7 @@ easing: BezierMultiPoint({points: [{"x":0,"y":0,"cp":[{"x":0.387,"y":0.007}]},{"
 </code></pre>            
 			</li>
 		</ul>
-		<p>The presets can be used both as a string <code>easing:'physicsIn'</code> or <code>easing:physicsIn(friction:200)</code>. The list is:</p>
+		<p>The presets can be used both as a string <code>easing:'physicsIn'</code> or <code>easing: Physics.physicsIn(friction:200)</code>. The list is:</p>
 		<ul>
 			<li><strong>curves</strong>: <kbd>physicsIn</kbd>, <kbd>physicsOut</kbd>, <kbd>physicsInOut</kbd> can do all multipliers (from sinusoidal to exponential) via the <code>friction</code> option;</li>
 			<li><strong>back</strong>: <kbd>physicsBackIn</kbd>, <kbd>physicsBackOut</kbd>, <kbd>physicsBackInOut</kbd> also benefit from the <code>friction</code> option.</li>

@@ -15,7 +15,7 @@
     module.exports = factory(KUTE);
   } else if ( typeof window.KUTE !== 'undefined' ) {
     // Browser globals		
-    window.KUTE.svg = window.KUTE.svg || factory(KUTE);
+    window.KUTE.svg = factory(KUTE);
   } else {
     throw new Error("SVG Plugin require KUTE.js.");
   }
@@ -141,7 +141,7 @@
       return p;
     },
     showCircles = 1,
-    S = K.svg = {
+    S = {
       showStartingPoints : function(s,e,v){ // showPoints helper function to visualize the points on the path
         if (showCircles){
           var c, a = arguments, cl, p, l;
@@ -404,6 +404,15 @@
       }
       return c;
     },
+    translate = g.Interpolate.translateSVG = function (s,e,a,b,v){ // translate(i+'(',')',a[i],b[i],v)
+      return s + ((a[1] === b[1] && b[1] === 0 ) ? number(a[0],b[0],v) : number(a[0],b[0],v) + ' ' + number(a[1],b[1],v)) + e;
+    },
+    rotate = g.Interpolate.rotateSVG = function (s,e,a,b,v){
+       return s + (number(a[0],b[0],v) + ' ' + b[1] + ',' + b[2]) + e;
+    },
+    scaleOrSkew = g.Interpolate.stfSVG = function (s,e,a,b,v){ // scale / skew
+      return s + number(a,b,v) + e;
+    },
     stackTransform = function (w){ // helper function that helps preserve current transform properties into the objects
       var bb = w._el.getBBox(), ctr = parseTransform(w._el.getAttribute('transform')), r, t, i,
         cx = bb.x + bb.width/2, cy = bb.y + bb.height/2;
@@ -439,22 +448,23 @@
     // register the render function
     if (!('svgTransform' in DOM)) {
       DOM['svgTransform'] = function(l,p,a,b,v){
-        var tr = '', i;
-        for (i in b){
-          tr += i + '('; // start string
+        var tl = '', rt = '', sx = '', sy = '', s = '';
+
+        for (var i in b){
           if ( i === 'translate'){ // translate
-            tr += (a[i][1] === b[i][1] && b[i][1] === 0 ) 
-            ? number(a[i][0],b[i][0],v)
-            : number(a[i][0],b[i][0],v) + ' ' + number(a[i][1],b[i][1],v);
+            tl += translate(i+'(',')',a[i],b[i],v);
           } else if ( i === 'rotate'){ // rotate
-            tr += number(a[i][0],b[i][0],v) + ' ';
-            tr += b[i][1] + ',' + b[i][2];
-          } else { // scale, skewX or skewY
-            tr +=  number(a[i],b[i],v);
+            rt += rotate(i+'(',')',a[i],b[i],v);
+          } else if ( i === 'scale'){ // scale
+            s += scaleOrSkew(i+'(',')',a[i],b[i],v);
+          } else if ( i === 'skewX'){ // skewX
+            sx += scaleOrSkew(i+'(',')',a[i],b[i],v);
+          } else if ( i === 'skewY'){ // skewY
+            sy += scaleOrSkew(i+'(',')',a[i],b[i],v);
           }
-          tr += ') '; // end string
         }
-        l.setAttribute('transform', tr.trim() );
+
+        l.setAttribute('transform', (tl+s+rt+sx+sy) );
       }
     }
 

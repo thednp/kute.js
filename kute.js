@@ -57,13 +57,13 @@
           return { r: parseInt(vrgb[0]), g: parseInt(vrgb[1]), b: parseInt(vrgb[2]), a: y*1 };
         }
       }
-      if (/#/.test(v)) {
+      if (/^#/.test(v)) {
         vrgb = hexToRGB(v); return { r: vrgb.r, g: vrgb.g, b: vrgb.b };
       }
       if (/transparent|none|initial|inherit/.test(v)) {
         return { r: 0, g: 0, b: 0, a: 0 };
       } 
-      if (!/#|rgb/.test(v) ) { // maybe we can check for web safe colors
+      if (!/^#|^rgb/.test(v) ) { // maybe we can check for web safe colors
           var h = document.getElementsByTagName('head')[0]; h.style.color = v; vrgb = g.getComputedStyle(h,null).color;
           h.style.color = ''; return v !== vrgb ? trueColor(vrgb) : {r:0,g:0,b:0};
       }

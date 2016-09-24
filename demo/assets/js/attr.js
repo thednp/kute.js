@@ -16,7 +16,7 @@ circleBtn.addEventListener('click', function(){
 });
 
 
-// coordinatea of gradient
+// coordinates of gradient
 var gradBtn = document.getElementById('gradBtn');
 var closingGradient = KUTE.to('#gradient',{attr: {x1:'49%', x2:'49%', y1:'49%', y2:'51%'}}, {easing: 'easingCubicInOut'});
 var rotatingGradient1 = KUTE.to('#gradient',{attr: {x1:'49%', x2:'51%', y1:'51%', y2:'51%'}}, {easing: 'easingCubicInOut'});
@@ -27,4 +27,11 @@ rotatingGradient1.chain(rotatingGradient2);
 rotatingGradient2.chain(openingGradient);
 gradBtn.addEventListener('click', function(){
     !closingGradient.playing && !rotatingGradient1.playing && !rotatingGradient2.playing && !openingGradient.playing && closingGradient.start();
+});
+
+// fill color
+var fillBtn = document.getElementById('fillBtn');
+var fillAttribute = KUTE.to('#fill',{attr: {fill: 'red'}}, {duration: 1500, repeat: 1, yoyo: true });
+fillBtn.addEventListener('click', function(){
+    !fillAttribute.playing && fillAttribute.start();
 });
