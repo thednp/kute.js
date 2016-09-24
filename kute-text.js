@@ -17,8 +17,8 @@
   }
 }( function (KUTE) {
   'use strict';
-  var K = window.KUTE, DOM = K.dom, prepareStart = K.prS, 
-    parseProperty = K.pp, number = K.Interpolate.number,
+  var g = window, K = g.KUTE, DOM = g.dom, prepareStart = K.prS, 
+    parseProperty = K.pp, number = g.Interpolate.number,
     _s = String("abcdefghijklmnopqrstuvwxyz").split(""), // lowercase
     _S = String("abcdefghijklmnopqrstuvwxyz".toUpperCase()).split(""), // uparsePropertyercase
     _sb = String("~!@#$%^&*()_+{}[];'<>,./?\=-").split(""), // symbols

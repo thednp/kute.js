@@ -18,17 +18,17 @@
     
     // Export the modified one. Not really required, but convenient.
     module.exports = factory(KUTE);
-  } else if(typeof window.KUTE != "undefined") {
+  } else if(typeof window.KUTE !== "undefined") {
     window.KUTE.Physics = window.KUTE.Physics || factory(KUTE);
   } else {
-    throw new Error("Physics Easing functions for KUTE.js depend on KUTE.js. Read the docs for more info.")
+    throw new Error("Physics Easing functions for KUTE.js depend on KUTE.js")
   }
 })(function(KUTE){
   'use strict';
-  var P = P || {}, _hPI = Math.PI / 2;
+  var g = window, P = P || {};
 
   // spring easing
-  P.spring = function(options) {
+  P.spring = g.spring = function(options) {
     options = options || {};
 
     var fq = Math.max(1, (options.frequency || 300 ) / 20),
@@ -36,7 +36,7 @@
         aSt = options.anticipationStrength || 0,
         aS = (options.anticipationSize || 0) / 1000;
 
-    _kps.run = function(t) {
+    return function(t) {
       var A, At, a, angle, b, frictionT, y0, yS;
 
       frictionT = (t / (1 - aS)) - (aS / (1 - aS));
@@ -55,12 +55,9 @@
       angle = fq * (t - aS) * a + b;
       return 1 - (At * Math.cos(angle));
     };
-
-    return _kps.run;
   };
 
-  var _kps = P.spring.prototype;
-  _kps.run = {};
+  var _kps = P.spring.prototype = g.spring.prototype;
   _kps.A1 = function(t,aS,aSt) {
     var a, b, x0, x1;
     x0 = aS / (1 - aS);
@@ -75,26 +72,21 @@
 
 
   // bounce
-  P.bounce = function(options) {
+  P.bounce = g.bounce = function(options) {
     options = options || {};
     var fq = Math.max(1, (options.frequency || 300) / 20),
         f = Math.pow(20, (options.friction || 200) / 100);
 
-    _kpo.run = function(t) {
+    return function(t) {
       var At = Math.pow(f / 10, -t) * (1 - t),
-          angle = fq * t * 1 + _hPI;
+          angle = fq * t * 1 + Math.PI / 2;
       return At * Math.cos(angle);
     };
-    return _kpo.run;
   };
 
-  var _kpo = P.bounce.prototype;
-  _kpo.run = {};
-
-
   // gravity
-  P.gravity = function(options) {
-    var bounciness, curves, elasticity, gravity, initialForce;
+  P.gravity = g.gravity = function(options) {
+    var bounciness, curves, elasticity, gravity, initialForce, L;
 
     options = options || {};
     bounciness = ( options.bounciness || 400 ) / 1250;
@@ -103,7 +95,7 @@
 
     gravity = 100;
     curves = [];
-    _kpg.L = (function() {
+    L = (function() {
       var b, curve;
       b = Math.sqrt(2 / gravity);
       curve = {
@@ -116,10 +108,10 @@
         curve.b = curve.b * 2;
       }
       while (curve.H > 0.001) {
-        _kpg.L = curve.b - curve.a;
+        L = curve.b - curve.a;
         curve = {
           a: curve.b,
-          b: curve.b + _kpg.L * bounciness,
+          b: curve.b + L * bounciness,
           H: curve.H * bounciness * bounciness
         };
       }
@@ -128,7 +120,7 @@
 
     (function() {
       var L2, b, curve, _results;
-      b = Math.sqrt(2 / (gravity * _kpg.L * _kpg.L));
+      b = Math.sqrt(2 / (gravity * L * L));
       curve = {
         a: -b,
         b: b,
@@ -139,7 +131,7 @@
         curve.b = curve.b * 2;
       }
       curves.push(curve);
-      L2 = _kpg.L;
+      L2 = L;
       _results = [];
       while (curve.b < 1 && curve.H > 0.001) {
         L2 = curve.b - curve.a;
@@ -152,7 +144,7 @@
       }
       return _results;
     })();
-    _kpg.fn = function(t) {
+    return function(t) {
       var curve, i, v;
       i = 0;
       curve = curves[i];
@@ -166,17 +158,13 @@
       if (!curve) {
         v = initialForce ? 0 : 1;
       } else {
-        v = _kpg.getPointInCurve(curve.a, curve.b, curve.H, t, options, _kpg.L);
+        v = _kpg.getPointInCurve(curve.a, curve.b, curve.H, t, options, L);
       }
       return v;
     };
-
-    return _kpg.fn;
   };
 
-  var _kpg = P.gravity.prototype;
-  _kpg.L = {};
-  _kpg.fn = {};
+  var _kpg = P.gravity.prototype = g.gravity.prototype;
   _kpg.getPointInCurve = function(a, b, H, t, o, L) {
     var c, t2;
     L = b - a;
@@ -189,15 +177,14 @@
   };
 
   //throw up and pull down by gravity
-  P.forceWithGravity = function(o) {
+  P.forceWithGravity = g.forceWithGravity = function(o) {
     var ops = o || {};
     ops.initialForce = true;
     return P.gravity(ops);
   };
 
-
   // multi point bezier
-  P.bezier = function(options) {
+  P.bezier = g.BezierMultiPoint = function(options) {
     options = options || {};
     var points = options.points,
     returnsToSelf = false, Bs = [];
@@ -215,7 +202,7 @@
       return Bs;
     })();
 
-    _kpb.run = function(t) {
+    return function(t) {
       if (t === 0) {
         return 0;
       } else if (t === 1) {
@@ -224,12 +211,9 @@
         return _kpb.yForX(t, Bs, returnsToSelf);
       }
     };
-    return _kpb.run;
   };
 
-  var _kpb = P.bezier.prototype;
-  _kpb.B2 = {};
-  _kpb.run = {};
+  var _kpb = P.bezier.prototype = g.BezierMultiPoint.prototype;
 
   _kpb.fn = function(pointA, pointB, Bs) {
     var B2 = function(t) {
@@ -277,46 +261,45 @@
     return B(percent).y;
   };
 
-  P.physicsInOut = function(options) {
-    var friction;
-    options = options || {};
-    friction = options.friction|| 500;
-    return P.bezier({ points: [ { x: 0, y: 0, cp: [ { x: 0.92 - (friction / 1000), y: 0 } ] }, { x: 1, y: 1, cp: [ { x: 0.08 + (friction / 1000), y: 1 } ] } ] });
+  // export predefined BezierMultiPoint functions to window
+  g.Physics = {
+    physicsInOut : function(options) {
+      var friction;
+      options = options || {};
+      friction = options.friction|| 200;
+      return g.BezierMultiPoint({ points: [ { x: 0, y: 0, cp: [ { x: 0.92 - (friction / 1000), y: 0 } ] }, { x: 1, y: 1, cp: [ { x: 0.08 + (friction / 1000), y: 1 } ] } ] });
+    },
+    physicsIn : function(options) {
+      var friction;
+      options = options || {};
+      friction = options.friction|| 200;
+      return g.BezierMultiPoint({ points: [ { x: 0, y: 0, cp: [ { x: 0.92 - (friction / 1000), y: 0 } ] }, { x: 1, y: 1, cp: [ { x: 1, y: 1 } ] } ] });
+    },
+    physicsOut : function(options) {
+      var friction;
+      options = options || {};
+      friction = options.friction|| 200;
+      return g.BezierMultiPoint({ points: [ { x: 0, y: 0, cp: [ { x: 0, y: 0 } ] }, { x: 1, y: 1, cp: [ { x: 0.08 + (friction / 1000), y: 1 } ] }]  });
+    },
+    physicsBackOut : function(options) {
+      var friction;
+      options = options || {};
+      friction = options.friction|| 200;
+      return g.BezierMultiPoint({ points: [{x:0,y:0,cp:[{x:0,y:0}]},{x:1,y:1,cp:[{x:0.735+(friction/1000),y:1.3}]}]  });
+    },
+    physicsBackIn : function(options) {
+      var friction;
+      options = options || {};
+      friction = options.friction|| 200;
+      return g.BezierMultiPoint({ points: [{x:0,y:0,cp:[{x:0.28-(friction / 1000),y:-0.6}]},{x:1,y:1,cp:[{x:1,y:1}]}]  });
+    },
+    physicsBackInOut : function(options) {
+      var friction;
+      options = options || {};
+      friction = options.friction|| 200;
+      return g.BezierMultiPoint({ points: [{x:0,y:0,cp:[{x:0.68-(friction / 1000),y:-0.55}]},{x:1,y:1,cp:[{x:0.265+(friction / 1000),y:1.45}]}]  });
+    }
   };
 
-  P.physicsIn = function(options) {
-    var friction;
-    options = options || {};
-    friction = options.friction|| 500;
-    return P.bezier({ points: [ { x: 0, y: 0, cp: [ { x: 0.92 - (friction / 1000), y: 0 } ] }, { x: 1, y: 1, cp: [ { x: 1, y: 1 } ] } ] });
-  };
-
-  P.physicsOut = function(options) {
-    var friction;
-    options = options || {};
-    friction = options.friction|| 500;
-    return P.bezier({ points: [ { x: 0, y: 0, cp: [ { x: 0, y: 0 } ] }, { x: 1, y: 1, cp: [ { x: 0.08 + (friction / 1000), y: 1 } ] }]  });
-  };
-
-  P.physicsBackOut = function(options) {
-    var friction;
-    options = options || {};
-    friction = options.friction|| 500;
-    return P.bezier({ points: [{"x":0,"y":0,"cp":[{"x":0,"y":0}]},{"x":1,"y":1,"cp":[{"x":0.735+(friction/1000),"y":1.3}]}]  });
-  };
-
-  P.physicsBackIn = function(options) {
-    var friction;
-    options = options || {};
-    friction = options.friction|| 500;
-    return P.bezier({ points: [{"x":0,"y":0,"cp":[{"x":0.28-(friction / 1000),"y":-0.6}]},{"x":1,"y":1,"cp":[{"x":1,"y":1}]}]  });
-  };
-
-  P.physicsBackInOut = function(options) {
-    var friction;
-    options = options || {};
-    friction = options.friction|| 500;
-    return P.bezier({ points: [{"x":0,"y":0,"cp":[{"x":0.68-(friction / 1000),"y":-0.55}]},{"x":1,"y":1,"cp":[{"x":0.265+(friction / 1000),"y":1.45}]}]  });
-  };
   return P;
 });

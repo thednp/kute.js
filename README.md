@@ -98,7 +98,7 @@ At a glance, you can write one line and you're done.
 KUTE.fromTo('selector', fromValues, toValues, options).start();
 
 //with jQuery plugin
-var tween = $('selector').KUTE('fromTo', fromValues, toValues, options);
+var tween = $('selector').fromTo(fromValues, toValues, options);
 $(tween).KUTE('start');
 ```
 
@@ -128,7 +128,7 @@ KUTE.fromTo(el,
 Here's a KUTE.js jQuery Plugin example that showcases most common usage in future apps:
 ```javascript
 // first we define the object(s)
-var tween = $('selector').KUTE('fromTo', // apply fromTo() method to selector
+var tween = $('selector').fromTo( // apply fromTo() method to selector
   
     { translate: 0, opacity: 1 }, // fromValues
     { translate: 150, opacity: 0 }, // toValues
@@ -147,8 +147,9 @@ var tween = $('selector').KUTE('fromTo', // apply fromTo() method to selector
 );
 
 // then we apply the tween control methods, like start
-$(tween).KUTE('start');
+tween.start();
 ```
+Starting with KUTE.js 1.5.7, the jQuery Plugin got lighter and uses the proper method automatically based on how many elements are returned from selector. If one element the proper single object method is used `fromTo()` or `to()` but if more than one elements are returned it will use `allFromTo()` or `allTo()`.
 
 ## Alternative usage in jQuery powered applications
 When size matters, you can handle animations inside jQuery applications without the plugin. Here's how:
@@ -160,7 +161,7 @@ var tween = KUTE.fromTo('#myElement', fromValues, toValues, options);
 
 tween.start();
 ```
-Pay attention to that `$('selector')[0]` as jQuery always creates an array of selected objects and not a single object, that is why we need to target a single HTML object for out tween object and not a colection of objects. 
+Pay attention to that `$('selector')[0]` as jQuery always creates an array of selected objects and not a single object, that is why we need to target a single HTML object for our tween object and not a colection of objects. 
 
 HTMLCollection objects should be handled with `allFromTo()` or `allTo()` methods.
 
@@ -168,6 +169,7 @@ HTMLCollection objects should be handled with `allFromTo()` or `allTo()` methods
 var tween = KUTE.allFromTo($('selector'), fromValues, toValues, options);
 tween.start();
 ```
+
 
 
 # How it works

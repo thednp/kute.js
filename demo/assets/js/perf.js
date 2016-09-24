@@ -106,7 +106,7 @@ function createTest(count, property, engine, repeat) {
 	
 		// perf test
 		if (engine==='kute') {
-			tws.push(KUTE.fromTo(div, fromValues, toValues, { easing: easingQuadraticInOut, repeat: repeat, yoyo: true, duration: 1000, complete: fn }));
+			tws.push(KUTE.fromTo(div, fromValues, toValues, { easing: 'easingQuadraticInOut', repeat: repeat, yoyo: true, duration: 1000, complete: fn }));
 		} else if (engine==='gsap') {
 			if (property==="left"){
 				TweenMax.fromTo(div, 1, fromValues, {left : toValues.left, repeat : repeat, yoyo : true, ease : Quad.easeInOut, onComplete: fn });							

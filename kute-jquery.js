@@ -23,27 +23,22 @@
     var $ = window.jQuery || window.$, KUTE = window.KUTE;
     $.fn.KUTE = factory($, KUTE);
   } else {
-    throw new Error("jQuery plugin for KUTE.js depends on KUTE.js and jQuery. Read the docs for more info.");
+    throw new Error("jQuery Plugin for KUTE.js depend on KUTE.js and jQuery");
   }
  })(function($, KUTE) {
   'use strict';
-  var $K = function( method, start, end, ops ) { // method can be fromTo(), to(), stop(), start(), chain(), pause()
-    var tws = [], i, l = this.length;
 
-    for (i=0;i<l;i++){
-      var mt = this[i][method];
-      if ( typeof mt === 'function' ) {
-        mt.apply(this[i]);
-      }
-      if ( method === 'to' ) {
-        tws.push( new KUTE[method]( this[i], start, end ) ); // here start is end and end is ops
-      } else if ( method === 'fromTo' || method === 'Animate' ) {
-        tws.push( new KUTE[method]( this[i], start, end, ops ) );
-      } else if ( method === 'chain' ) {
-        this[i].chain.apply(this[i],start);
-      }
-    }
-    return tws;
+  $.fn.fromTo = function(from,to,ops) {
+    var el = this.length > 1 ? this : this[0],
+        method = this.length > 1 ? 'allFromTo' : 'fromTo';
+    return KUTE[method](el,from,to,ops);
   };
-  return $K;
+
+  $.fn.to = function(to,ops) {
+    var el = this.length > 1 ? this : this[0],
+        method = this.length > 1 ? 'allTo' : 'to';
+    return KUTE[method](el,to,ops);
+  };
+
+  return this;
 });

@@ -21,19 +21,21 @@
   }
 }( function (KUTE) {
   'use strict';
-  var g = window, K = g.KUTE, p, DOM = K.dom, parseProperty = K.pp, prepareStart = K.prS, getComputedStyle = K.gCS,
+
+  // variables, reference global objects, prepare properties
+  var g = window, K = g.KUTE, p, DOM = g.dom, parseProperty = K.pp, prepareStart = K.prS, getComputedStyle = K.gCS,
     _isIE = (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) != null) ? parseFloat( RegExp.$1 ) : false,
     _nm = ['strokeWidth', 'strokeOpacity', 'fillOpacity', 'stopOpacity'], // numeric SVG CSS props
     _cls = ['fill', 'stroke', 'stopColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
     pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi, ns = 'http://www.w3.org/2000/svg',
     // interpolate functions
-    number = g.number, color = g.color,
-    array = K.Interpolate.array = g.array = function array(a,b,l,v) { // array1, array2, array2.length, progress
+    number = g.Interpolate.number, color = g.Interpolate.color, unit = g.Interpolate.unit,
+    array = g.Interpolate.array = function array(a,b,l,v) { // array1, array2, array2.length, progress
       var na = [], i;
       for(i=0;i<l;i++) { na.push( a[i] === b[i] ? b[i] : number(a[i],b[i],v) ); } // don't do math if not needed
       return na;
     },
-    coords = K.Interpolate.coords = g.coords = function(a,b,l,ll,o,v) { // array1, array2, array2.length, coordinates.length, joiner, progress for SVG stuff
+    coords = g.Interpolate.coords = function(a,b,l,ll,o,v) { // function(array1, array2, array2.length, coordinates.length, joiner, progress) for SVG morph
       var s = [], i;
       for(i=0;i<l;i++) { s.push( array( a[i],b[i],ll,v ) ); }
       return s.join(o);

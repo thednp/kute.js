@@ -97,23 +97,24 @@ tween.stop(); // stops current tween and all chained tweens animating
 tween.pause(); // pauses current tween animation
 tween.play(); // or tween.resume(); resumes current tween animation
 tween.chain(tween2); // when tween animation finished, you can trigger the start of another tween
+tween.playing // checks if the tween is currenlty active so we prevent start() when not needed
+tween.paused // checks if the tween is currenlty active so we can prevent pausing or resume if needed
 </code></pre>
 
 		<p>The demo for the above example is  <a href="http://codepen.io/thednp/pen/Bozbgg" target="_blank">here</a>.</p>
 		
 		<h3>Basic jQuery Example</h3>
-		<p>KUTE.js includes a jQuery plugin to help you easily implement KUTE.js in your jQuery applications. When using jQuery, the syntax is familiar but works a bit different than plain Javascript due to jQuery's specific code standards. Let's have a look:</p>
-<pre><code class="language-javascript">// this is the tween object, basically $('selector').KUTE(method, from, to, options);
-var tween = $('selector').KUTE('fromTo', {top: 20}, {top: 100}, {yoyo: true});
+		<p>KUTE.js includes a jQuery Plugin to help you easily implement KUTE.js in your jQuery applications. When using jQuery, the syntax is familiar but works a bit different than plain Javascript due to jQuery's specific code standards. Let's have a look:</p>
+<pre><code class="language-javascript">// this is the tween object, basically $('selector').method(fromValues, toValue, options)
+var tween = $('selector').fromTo({top: 20}, {top: 100}, {delay: 500});
 </code></pre>
-		<p>We mentioned that the KUTE jQuery plugin is different, and here's why: the above code creates an <code>Array</code> of objects for each <code>HTML</code> element of chosen selector, while the Native Javascript creates a single object. For these objects we can now apply the tween control methods as follows:</p>
-<pre><code class="language-javascript">$(tween).KUTE('start'); // starts the animation
-$(tween).KUTE('stop'); // stops current tween and all chained tweens animating
-$(tween).KUTE('pause'); // pauses current tween animation
-$(tween).KUTE('play'); // or $(myTween).KUTE('resume'); resumes current tween animation
-$(tween).KUTE('chain',myTween2); // when tween animation finished, you can trigger the start of another tween
+		<p>We mentioned that the jQuery Plugin is different, and here's why: the above function call uses the <code>allFromTo</code> method to create an <code>Array</code> of objects for each <code>HTML</code> element of chosen selector, but if the selector only returns one element the call returns a single tween object built with <code>fromTo</code> method. For the array of objects we can now apply the exact same tween control methods, except these:</p>
+<pre><code class="language-javascript">tween.length // check if the tween is an array of objects
+tween.length && tween.tweens[0].playing && tween.tweens[tween.length-1].playing // now we know that one of the tweens is playing
+tween.length && tween.tweens[0].paused && tween.tweens[tween.length-1].paused // now we know that one of the tweens is paused
 </code></pre>
-		<p>The demo for the above example is <a href="http://codepen.io/thednp/pen/dYXLyj" target="_blank">here</a>.</p>
+
+		<p>The demo for the above example is <a href="http://codepen.io/thednp/pen/rryWZQ" target="_blank">here</a>.</p>
 		
 		<h3>Transform Properties Examples</h3>
 		<p>KUTE.js supports almost all about <code>transform</code> as described in the <a href="http://www.w3.org/TR/css3-transforms/" target="_blank">spec</a>: the 2D <code>translate</code>, <code>rotate</code>, <code>skewX</code>, <code>skewY</code> and <code>scale</code>, as well as the 3D <code>translateX</code>, <code>translateY</code>, <code>translateZ</code>, <code>translate3d</code>, <code>rotateX</code>, <code>rotateY</code>, <code>rotateZ</code> properties. Additionally it allows you to set a <code>perspective</code> for the element or it's parent as well as a <code>perpective-origin</code> for the element or it's parent.</p>

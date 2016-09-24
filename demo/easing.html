@@ -243,21 +243,21 @@
 		<p>You can use them either with regular Javascript invocation as shown below and configure / visualize them on the <a href="http://dynamicsjs.com/" target="_blank">author's website</a>, while you can also use the pack of presets featuring mostly <kbd>bezier</kbd> based functions. Ok now, let's get to it:</p>
 	
 		<ul>
-			<li><strong>spring</strong> function is basically an <strong>elastic</strong> type of easing that allows you to set <code>frequency:1-1000</code>, <code>friction:1-1000</code>, <code>anticipationSize:0-1000</code> (a kind of delay in miliseconds) and <code>anticipationStrength:0-1000</code> (a kind of a new curve to add to the function while waiting the anticipationSize). Usage: <code>easing: KUTE.Physics.spring({friction:100,frequency:600})</code>.</li>
-			<li><strong>bounce</strong> function is also an <strong>elastic</strong> easing function, but it works different than Robert Penner's version that's basically a <kbd>gravity</kbd> based function. This one here will always come back to the starting values. This function allows you to set <code>frequency:0-1000</code> and <code>friction:0-1000</code>. Usage: <code>easing: KUTE.Physics.bounce({friction:100,frequency:600})</code>.</li>
-			<li><strong>gravity</strong> function does what a ball dropped on the ground does, bounces until it stops. It allows you to set: <code>elasticity:1-1000</code> and <code>bounciness:0-1000</code>. Usage: <code>easing: KUTE.Physics.gravity({elasticity:100,bounciness:600})</code>.</li>
-			<li><strong>forceWithGravity</strong> function acts just like <code>gravity</code> except that the ball instead of being dropped it's thrown into the air. This allows you to set same options: <code>elasticity:1-1000</code> and <code>bounciness:0-1000</code>. Usage: <code>easing: KUTE.Physics.forceWithGravity({elasticity:100,bounciness:600})</code>.</li>
-			<li><strong>bezier</strong> easing function is a bit more complicated as it allows you to set multiple points of bezier curves.  Usage: <code>easing: KUTE.Physics.bezier({points:POINTS_ARRAY_COMES HERE})</code>, again use the author's website, edit the bezier curve as you wish and copy paste the points array into this function. Here's how a basic <em>easeIn</em> looks like: 
+			<li><strong>spring</strong> function is basically an <strong>elastic</strong> type of easing that allows you to set <code>frequency:1-1000</code>, <code>friction:1-1000</code>, <code>anticipationSize:0-1000</code> (a kind of delay in miliseconds) and <code>anticipationStrength:0-1000</code> (a kind of a new curve to add to the function while waiting the anticipationSize). Usage: <code>easing: spring({friction:100,frequency:600})</code>.</li>
+			<li><strong>bounce</strong> function is also an <strong>elastic</strong> easing function, but it works different than Robert Penner's version that's basically a <kbd>gravity</kbd> based function. This one here will always come back to the starting values. This function allows you to set <code>frequency:0-1000</code> and <code>friction:0-1000</code>. Usage: <code>easing: bounce({friction:100,frequency:600})</code>.</li>
+			<li><strong>gravity</strong> function does what a ball dropped on the ground does, bounces until it stops. It allows you to set: <code>elasticity:1-1000</code> and <code>bounciness:0-1000</code>. Usage: <code>easing: gravity({elasticity:100,bounciness:600})</code>.</li>
+			<li><strong>forceWithGravity</strong> function acts just like <code>gravity</code> except that the ball instead of being dropped it's thrown into the air. This allows you to set same options: <code>elasticity:1-1000</code> and <code>bounciness:0-1000</code>. Usage: <code>easing: forceWithGravity({elasticity:100,bounciness:600})</code>.</li>
+			<li><strong>bezier</strong> easing function is a bit more complicated as it allows you to set multiple points of bezier curves.  Usage: <code>easing: BezierMultiPoint({points:POINTS_ARRAY_COMES HERE})</code>, again use the author's website, edit the bezier curve as you wish and copy paste the points array into this function. Here's how a basic <em>easeIn</em> looks like: 
 <pre><code class="language-javascript">// sample bezier based easing
-easing: KUTE.Physics.bezier({points: [{"x":0,"y":0,"cp":[{"x":0.483,"y":0.445}]},{"x":1,"y":1,"cp":[{"x":0.009,"y":0.997}]}] });
+easing: BezierMultiPoint({points: [{"x":0,"y":0,"cp":[{"x":0.483,"y":0.445}]},{"x":1,"y":1,"cp":[{"x":0.009,"y":0.997}]}] });
 </code></pre>
             In other cases, the bezier can handle multiple points as well, basically unlimited:
 <pre><code class="language-javascript">// multi point bezier easing
-easing: KUTE.Physics.bezier({points: [{"x":0,"y":0,"cp":[{"x":0.387,"y":0.007}]},{"x":0.509,"y":0.48,"cp":[{"x":0.069,"y":0.874},{"x":0.928,"y":0.139}]},{"x":1,"y":1,"cp":[{"x":0.639,"y":0.988}]}] });
+easing: BezierMultiPoint({points: [{"x":0,"y":0,"cp":[{"x":0.387,"y":0.007}]},{"x":0.509,"y":0.48,"cp":[{"x":0.069,"y":0.874},{"x":0.928,"y":0.139}]},{"x":1,"y":1,"cp":[{"x":0.639,"y":0.988}]}] });
 </code></pre>            
 			</li>
 		</ul>
-		<p>The presets can be used both as a string <code>easing:'physicsIn'</code> or <code>easing:KUTE.Physics.physicsIn(friction:200)</code>. The list is:</p>
+		<p>The presets can be used both as a string <code>easing:'physicsIn'</code> or <code>easing:physicsIn(friction:200)</code>. The list is:</p>
 		<ul>
 			<li><strong>curves</strong>: <kbd>physicsIn</kbd>, <kbd>physicsOut</kbd>, <kbd>physicsInOut</kbd> can do all multipliers (from sinusoidal to exponential) via the <code>friction</code> option;</li>
 			<li><strong>back</strong>: <kbd>physicsBackIn</kbd>, <kbd>physicsBackOut</kbd>, <kbd>physicsBackInOut</kbd> also benefit from the <code>friction</code> option.</li>
