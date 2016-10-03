@@ -95,18 +95,18 @@
  * Licensed under MIT-License
  */
 
-(function (factory) {
+(function (root,factory) {
   if (typeof define === 'function' && define.amd) {
     define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
   } else if(typeof module == "object" && typeof require == "function") {
     var KUTE = require("./kute.js");   
     module.exports = factory(KUTE);
-  } else if ( typeof window.KUTE !== 'undefined' ) {		
+  } else if ( typeof root.KUTE !== 'undefined' ) {		
     factory(KUTE);
   } else {
     throw new Error("pluginName require KUTE.js.");
   }
-}( function (KUTE) {
+}(this, function (KUTE) {
     // your code goes here
     
     // in this function body
@@ -311,10 +311,10 @@ var myBSTween3 = KUTE.fromTo('selector', {boxShadow: [5, 5, 0, '#069', 'inset']}
             <li><kbd class="bg-lime">KUTE.truC(color)</kbd> a function that returns an <code>{r: 150, g: 150, b: 0}</code> color object ready to tween; if the color value is a <a href="http://www.w3schools.com/colors/colors_names.asp" target="_blank">web safe color</a>, the IE9+ browsers will be able to return the rgb object we need.</li>
             <li><kbd class="bg-lime">KUTE.htr(hex)</kbd> a function that accepts HEX formatted colors and returns an <code>{r: 150, g: 150, b: 0}</code> color object;</li>
             <li><kbd class="bg-lime">KUTE.rth(r,g,b)</kbd> a function that accepts numeric values for red, blue and green and returns a HEX format <code>#006699</code> color string.</li>
-            <li><kbd class="bg-lime">Interpolate.number</kbd> is most essential interpolation tool when developing plugins for various properties not supported in the core.</li>
-            <li><kbd class="bg-lime">Interpolate.unit</kbd> is used mainly for box model properties, text properties, and generally anything that's a string based valued. Like <code>width: 250px</code></li>
-            <li><kbd class="bg-lime">Interpolate.color</kbd> is a very fast interpolation function for colors, as used in the above example.</li>
-            <li><kbd class="bg-lime">Interpolate.array</kbd> and <kbd class="bg-lime">Interpolate.coords</kbd> are SVG Plugin only, but you can have a look anytime when you're out of ideas.</li>
+            <li><kbd class="bg-lime">KUTE.Interpolate.number</kbd> is most essential interpolation tool when developing plugins for various properties not supported in the core.</li>
+            <li><kbd class="bg-lime">KUTE.Interpolate.unit</kbd> is used mainly for box model properties, text properties, and generally anything that's a string based valued. Like <code>width: 250px</code></li>
+            <li><kbd class="bg-lime">KUTE.Interpolate.color</kbd> is a very fast interpolation function for colors, as used in the above example.</li>
+            <li><kbd class="bg-lime">KUTE.Interpolate.array</kbd> and <kbd class="bg-lime">KUTE.Interpolate.coords</kbd> are SVG Plugin only, but you can have a look anytime when you're out of ideas.</li>
         </ul>
 
         <ul id="share" class="nav">
@@ -345,7 +345,7 @@ var myBSTween3 = KUTE.fromTo('selector', {boxShadow: [5, 5, 0, '#069', 'inset']}
 <!-- highlighter -->
 <script src="./assets/js/prism.js" type="text/javascript"></script>	
 
-<!--<script src="http://cdn.jsdelivr.net/kute.js/1.0.0/kute.full.min.js"></script>  KUTE CDN -->
+<!--<script src="http://cdn.jsdelivr.net/kute.js/1.5.9/kute.min.js"></script>  KUTE CDN -->
 
 <script src="./src/kute.min.js"></script> <!-- KUTE.js core -->
 <script src="./assets/js/scripts.js"></script> <!-- some stuff -->
