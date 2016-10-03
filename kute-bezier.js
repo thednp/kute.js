@@ -6,7 +6,7 @@
  * Licensed under MIT-License
 */
   
-(function (factory) {
+(function (root,factory) {
   if (typeof define === 'function' && define.amd) {
     define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
   } else if(typeof module == "object" && typeof require == "function") {
@@ -14,13 +14,13 @@
     var KUTE = require("./kute.js");   
     // Export the modified one. Not really required, but convenient.
     module.exports = factory(KUTE);
-  } else if ( typeof window.KUTE !== 'undefined' ) {
+  } else if ( typeof root.KUTE !== 'undefined' ) {
     // Browser globals		
-    window.KUTE.Ease = window.KUTE.Ease || factory(KUTE);
+    root.KUTE.Ease = factory(KUTE);
   } else {
-    throw new Error("Bezier Easing functions depend on KUTE.js. Read the docs for more info.");
+    throw new Error("Bezier Easing functions depend on KUTE.js");
   }
-}( function (KUTE) {
+}(this, function (KUTE) {
   'use strict';
   var g = window, E = E || {};
 
@@ -136,7 +136,7 @@
   // _easings = ["linear","easeInQuad","easeOutQuad","easeInOutQuad","easeInCubic","easeOutCubic","easeInOutCubic","easeInQuart","easeInQuart","easeOutQuart","easeInOutQuart","easeInQuint","easeOutQuint","easeInOutQuint","easeInExpo","easeOutExpo","easeInOutExpo","slowMo","slowMo1","slowMo2"],
   g.Ease.easeIn = function(){ return _bz.pB(0.42, 0.0, 1.00, 1.0); };
   g.Ease.easeOut = function(){ return _bz.pB(0.00, 0.0, 0.58, 1.0); };
-  g.easeInOut = function(){ return _bz.pB(0.50, 0.16, 0.49, 0.86); };
+  g.Ease.easeInOut = function(){ return _bz.pB(0.50, 0.16, 0.49, 0.86); };
 
   g.Ease.easeInSine = function(){ return _bz.pB(0.47, 0, 0.745, 0.715); };
   g.Ease.easeOutSine = function(){ return _bz.pB(0.39, 0.575, 0.565, 1); };

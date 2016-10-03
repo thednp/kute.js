@@ -2,23 +2,24 @@
  * by dnp_theme
  * Licensed under MIT-License
  */
-(function (factory) {
+(function (root,factory) {
   if (typeof define === 'function' && define.amd) {
     define([], factory); // AMD. Register as an anonymous module.
   } else if (typeof exports == 'object') {
     module.exports = factory(); // Node, not strict CommonJS
-  } else if (typeof window !== 'undefined') {
+  } else {
     // Browser globals    
-    window.KUTE = factory();
+    root.KUTE = factory();
   }
-}( function () {
-  "use strict";
-  var g = window, K = K || {}, _tws = g._tweens = [], tick = g._tick = null, time = g.performance,
-  
+}(this, function () {
+  "use strict"; 
+
+  // set a custom scope for KUTE.js
+  var g = window, K = K || {}, _tws = g._tweens = [], tick = 0, time = g.performance,
     getPrefix = function() { //returns browser prefix
-      var div = document.createElement('div'), i = 0,  pf = ['Moz', 'moz', 'Webkit', 'webkit', 'O', 'o', 'Ms', 'ms'], pl = pf.length,
+      var div = document.createElement('div'), i = 0,  pf = ['Moz', 'moz', 'Webkit', 'webkit', 'O', 'o', 'Ms', 'ms'],
         s = ['MozTransform', 'mozTransform', 'WebkitTransform', 'webkitTransform', 'OTransform', 'oTransform', 'MsTransform', 'msTransform'];
-      for (i; i < pl; i++) { if (s[i] in div.style) { return pf[i]; }  }
+      for (var i = 0, pl = pf.length; i < pl; i++) { if (s[i] in div.style) { return pf[i]; }  }
       div = null;
     },
     property = function(p){ // returns prefixed property | property
@@ -40,8 +41,8 @@
       var x = parseInt(d) || 0, mu = ['px','%','deg','rad','em','rem','vh','vw'], l = mu.length, 
         y = getU();
       function getU() {
-        var u,i=0;
-        for (i;i<l;i++) { if ( typeof d === 'string' && d.indexOf(mu[i]) !== -1 ) u = mu[i]; }
+        var u;
+        for (var i=0;i<l;i++) { if ( typeof d === 'string' && d.indexOf(mu[i]) !== -1 ) u = mu[i]; }
         u = u !== undefined ? u : (p ? 'deg' : 'px')
         return u;
       }
@@ -89,17 +90,16 @@
     },
     getInlineStyle = function(el,p) { // getInlineStyle = get transform style for element from cssText for .to() method, the sp is for transform property
       if (!el) return; // if the scroll applies to `window` it returns as it has no styling
-      var cst = el.style.cssText,//the cssText  
+      var css = el.style.cssText.replace(/\s/g,'').split(';'),//the cssText  
         trsf = {}; //the transform object
       // if we have any inline style in the cssText attribute, usually it has higher priority
-      var css = cst.replace(/\s/g,'').split(';'), i=0, csl = css.length;    
-      for ( i; i<csl; i++ ){
+      for ( var i=0, csl = css.length; i<csl; i++ ){
         if ( /transform/.test(css[i])) {
-          var tps = css[i].split(':')[1].split(')'), k=0, tpl = tps.length; //all transform properties        
-          for ( k; k< tpl; k++){
-            var tp = tps[k].split('('); //each transform property          
-            if ( tp[0] !== '' && _tf.indexOf(tp) ){
-              trsf[tp[0]] = /translate3d/.test(tp[0]) ? tp[1].split(',') : tp[1];
+          var tps = css[i].split(':')[1].split(')'); //all transform properties        
+          for ( var k=0, tpl = tps.length-1; k< tpl; k++){
+            var tpv = tps[k].split('('), tp = tpv[0], tv = tpv[1]; //each transform property          
+            if ( _tf.indexOf(tp) !== -1 ){
+              trsf[tp] = /translate3d/.test(tp) ? tv.split(',') : tv;
             }
           }
         }
@@ -122,28 +122,17 @@
         }
       }
     },
-    processEasing = function (es) { //process easing
-      if ( typeof es === 'function') {
-        return es;
-      } else if ( typeof es === 'string' ) {
-        if ( /easing|linear/.test(es) ) {
-          return easing[es]; // regular Robert Penner Easing Functions
-        } else if ( /bezier/.test(es) )  { 
-          var bz = es.replace(/bezier|\s|\(|\)/g,'').split(',');
-          return g.Bezier( bz[0]*1,bz[1]*1,bz[2]*1,bz[3]*1 ); //bezier easing            
-        } else if ( /physics/.test(es) )  {
-          return g.Physics[es](); // predefined physics bezier based easing functions
-        } else {
-          return g.Ease[es](); // predefined bezier based easing functions
-        }
-      }
-    },
+    
+    //more internals
+    getAll = function () { return _tws; },
+    removeAll = function () { _tws = []; },
+    add = g._addTween = function (tw) { _tws.push(tw); },
+    remove = function (tw) { var i = _tws.indexOf(tw); if (i !== -1) { _tws.splice(i, 1); }}, 
+    stop = function () { if (tick) { _caf(tick); tick = 0; } },    
+
     _tch = ('ontouchstart' in g || navigator.msMaxTouchPoints) || false, // support Touch?
     _ev = _tch ? 'touchstart' : 'mousewheel', _evh = 'mouseenter', //events to prevent on scroll
-    _pfto = property('transformOrigin'), //assign preffix to DOM properties
-    _pfp = property('perspective'),
-    _pfo = property('perspectiveOrigin'),
-    _tr = g.transformProperty = property('transform'),
+    _tr = property('transform'),
     _raf = g.requestAnimationFrame || g.webkitRequestAnimationFrame || function (c) { return setTimeout(c, 16) },
     _caf = g.cancelAnimationFrame || g.webkitCancelRequestAnimationFrame || function (c) { return clearTimeout(c) },
     
@@ -165,7 +154,7 @@
     _d = _d || {}; //all properties default values
    
   //populate default values object
-  for ( var i=0; i< al; i++ ){
+  for ( var i=0; i<al; i++ ){
     var p = _all[i];
     if (_cls.indexOf(p) !== -1){
       _d[p] = 'rgba(0,0,0,0)'; // _d[p] = {r:0,g:0,b:0,a:1};
@@ -184,18 +173,18 @@
   
   // KUTE.js INTERPOLATORS
   var Interpolate = g.Interpolate = {},
-    number = g.Interpolate.number = function(a,b,v) { // number1, number2, progress
+    number = Interpolate.number = function(a,b,v) { // number1, number2, progress
       a = +a; b -= a; return a + b * v;
     },
-    unit = g.Interpolate.unit = function(a,b,u,v) { // number1, number2, unit, progress
+    unit = Interpolate.unit = function(a,b,u,v) { // number1, number2, unit, progress
       a = +a; b -= a; return (a + b * v)+u;
     },
-    color = g.Interpolate.color = function(a,b,v,h){ // rgba1, rgba2, progress, convertToHex(true/false)
-      var _c = {}, c, n = number, rt = rgbToHex, ep = ')', cm =',', r = 'rgb(', ra = 'rgba(';
+    color = Interpolate.color = function(a,b,v,h){ // rgba1, rgba2, progress, convertToHex(true/false)
+      var _c = {}, c, n = number, ep = ')', cm =',', r = 'rgb(', ra = 'rgba(';
       for (c in b) { _c[c] = c !== 'a' ? (parseInt( number(a[c],b[c],v) ) || 0) : (a[c] && b[c]) ? parseFloat( number(a[c],b[c],v) ) : null; }
-      return h ? rt( _c.r, _c.g, _c.b ) : !_c.a ? r + _c.r + cm + _c.g + cm + _c.b + ep : ra + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
+      return h ? rgbToHex( _c.r, _c.g, _c.b ) : !_c.a ? r + _c.r + cm + _c.g + cm + _c.b + ep : ra + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
     },
-    translate = g.Interpolate.translate = function (a,b,v){
+    translate = Interpolate.translate = function (a,b,v){
       var ts = {};
 
       for (var ax in b){
@@ -205,7 +194,7 @@
       return b.x ? 'translate(' + ts.x + ',' + ts.y + ')' :
         'translate3d(' + ts.translateX + ',' + ts.translateY + ',' + ts.translateZ + ')';
     },
-    rotate = g.Interpolate.rotate = function (a,b,v){
+    rotate = Interpolate.rotate = function (a,b,v){
       var rS = {};
       for ( var rx in b ){
         if ( a[rx] ) {
@@ -215,7 +204,7 @@
       }
       return b.z ?  rS.z  : (rS.rotateX||'') + (rS.rotateY||'') + (rS.rotateZ||'');
     },
-    skew = g.Interpolate.skew = function (a,b,v){
+    skew = Interpolate.skew = function (a,b,v){
       var sS = {};
       for ( var sx in b ){
         if ( a[sx] ) {
@@ -225,7 +214,7 @@
       }
       return (sS.skewX||'') + (sS.skewY||'');
     },
-    scale = g.Interpolate.scale = function(a,b,v){
+    scale = Interpolate.scale = function(a,b,v){
       var sc1 = a.value, sc2 = b.value; 
       return 'scale(' + (sc1 + (sc2 - sc1) * v) + ')';             
     },
@@ -233,8 +222,8 @@
     // KUTE.js DOM update functions
     DOM = g.dom = {},
     ticker = g._ticker = function(t) {
-      var i = 0; 
-      while ( i < _tws.length ) {
+      var i = 0, l;
+      while ( i < (l=_tws.length) ) {
         if ( update(_tws[i],t) ) {
           i++;
         } else {
@@ -243,23 +232,23 @@
       }
       tick = _raf(ticker);
     },
-
     update = g._update = function(w,t) {
       t = t || time.now();
       if (t < w._sT && w.playing && !w.paused) { return true; }
 
       // element/node, method, (prefixed)property, startValue, endValue, progress
-      var p, e = Math.min(( t - w._sT ) / w._dr, 1); // calculate progress
+      var elapsed = Math.min(( t - w._sT ) / w._dr, 1); // calculate progress
 
-      for (p in w._vE){ DOM[p].call(this,w._el,p,w._vS[p],w._vE[p],w._e(e),w._ops); } //render the CSS update
+      for (var p in w._vE){ DOM[p].call(w,w._el,p,w._vS[p],w._vE[p],w._e(elapsed),w._ops); } //render the CSS update
+      // for (var p in w._vE){ DOM[p].call(this,w._el,p,w._vS[p],w._vE[p],w._e(elapsed),w._ops); } //render the CSS update
 
       if (w._uC) { w._uC.call(); } // fire the updateCallback
 
-      if (e === 1) {
+      if (elapsed === 1) {
         if (w._r > 0) {
-          if ( w._r < 9999 ) { w._r--; } // we have to make it stop somewhere, infinity is too damn much
+          if ( w._r < 9999 ) { w._r--; } else { w._r = 9998; } // we have to make it stop somewhere, infinity is too damn much
           
-          if (w._y) { w.reversed = !w.reversed; w.rvs(); } // handle yoyo
+          if (w._y) { w.reversed = !w.reversed; reverse.call(w); } // handle yoyo
             
           w._sT = (w._y && !w.reversed) ? t + w._rD : t; //set the right time for delay
           return true;        
@@ -267,70 +256,60 @@
           
           if (w._cC) { w._cC.call(); }
           
-          w.scrollOut(); // unbind preventing scroll when scroll tween finished 
+          scrollOut.call(w); // unbind preventing scroll when scroll tween finished 
           
           // start animating chained tweens
-          var i = 0, ctl = w._cT.length;
-          for (i; i < ctl; i++) {
-            // w._cT[i].start(w._sT + w._dr);
+          for (var i = 0, ctl = w._cT.length; i < ctl; i++) {
             w._cT[i].start();
           }
-          
           //stop ticking when finished
-          w.close();          
-          return false;
+          close.call(w);
         }
+        return false;
       }
       return true;
     },
   
     // applies the transform origin and perspective
-    perspective = function (l,w) {
-      if ( w._to !== undefined ) { l.style[_pfto] = w._to; } // element transform origin    
-      if ( w._ppo !== undefined ) { l.style[_pfo] = w._ppo; } // element perspective origin
-      if ( w._ppp !== undefined ) { l.parentNode.style[_pfp] = w._ppp + 'px'; } // parent perspective  
-      if ( w._pppo !== undefined ) { l.parentNode.style[_pfo] = w._pppo; } // parent perspective origin
+    perspective = function (l,o) {
+      if ( o.transformOrigin !== undefined ) { l.style[property('transformOrigin')] = o.transformOrigin; } // element transform origin    
+      if ( o.perspectiveOrigin !== undefined ) { l.style[property('perspectiveOrigin')] = o.perspectiveOrigin; } // element perspective origin
+      if ( o.parentPerspective !== undefined ) { l.parentNode.style[property('perspective')] = o.parentPerspective + 'px'; } // parent perspective  
+      if ( o.parentPerspectiveOrigin !== undefined ) { l.parentNode.style[property('perspectiveOrigin')] = o.parentPerspectiveOrigin; } // parent perspective origin
     },
-    
-    //more internals
-    getAll = function () { return _tws; },
-    removeAll = function () {  _tws = []; },
-    add = function (tw) {  _tws.push(tw); },
-    remove = function (tw) { var i = _tws.indexOf(tw); if (i !== -1) { _tws.splice(i, 1); }}, 
-    stop = function () { tick && _caf(tick);  tick = null; },
       
     // process properties for _vE and _vS or one of them
     preparePropertiesObject = function (e, s, l) {
-      var i, pl = arguments.length, _st = []; pl = pl > 2 ? 2 : pl;
+      var pl = arguments.length, _st = []; pl = pl > 2 ? 2 : pl;
 
-      for (i=0; i<pl; i++) {
+      for (var i=0; i<pl; i++) {
         var t = arguments[i], x, sk = {}, rt = {}, tl = {}, tr = {}; _st[i] = {};
         for (x in t) {
           if (_tf.indexOf(x) !== -1) { // transform object gets built here
             if ( /^translate(?:[XYZ]|3d)$/.test(x) ) { //process translate3d
-              var ta = ['X', 'Y', 'Z'], f = 0; //coordinates //   translate[x] = pp(x, t[x]);  
+              var ta = ['X', 'Y', 'Z']; //coordinates //   translate[x] = pp(x, t[x]);  
               
-              for (f; f < 3; f++) {        
+              for (var f = 0; f < 3; f++) {        
                 var a = ta[f];
                 if ( /3d/.test(x) ) {
-                  tl['translate' + a] = parseProperty.tf('translate' + a, t[x][f]);                
+                  tl['translate' + a] = parseProperty.transform('translate' + a, t[x][f]);                
                 } else {
-                  tl['translate' + a] = ('translate' + a in t) ? parseProperty.tf('translate' + a, t['translate' + a]) : { value: 0, unit: 'px' };
+                  tl['translate' + a] = ('translate' + a in t) ? parseProperty.transform('translate' + a, t['translate' + a]) : { value: 0, unit: 'px' };
                 }
               }
               tr['translate'] = tl;
             } else if ( /^rotate(?:[XYZ])$|^skew(?:[XY])$/.test(x) ) { //process rotation/skew
-              var ap = /rotate/.test(x) ? 'rotate' : 'skew', ra = ['X', 'Y', 'Z'], r = 0, 
+              var ap = /rotate/.test(x) ? 'rotate' : 'skew', ra = ['X', 'Y', 'Z'], 
                 rtp = ap === 'rotate' ? rt : sk; 
-              for (r; r < 3; r++) {
+              for (var r = 0; r < 3; r++) {
                 var v = ra[r];
                 if ( t[ap+v] !== undefined && x !== 'skewZ' ) {
-                  rtp[ap+v] = parseProperty.tf(ap+v, t[ap+v]);
+                  rtp[ap+v] = parseProperty.transform(ap+v, t[ap+v]);
                 }
               }
               tr[ap] = rtp;
             } else if ( /(rotate|translate|scale)$/.test(x) ) { //process 2d translation / rotation
-              tr[x] = parseProperty.tf(x, t[x]);
+              tr[x] = parseProperty.transform(x, t[x]);
             }
             _st[i]['transform'] = tr;
           } else if ( x !== 'transform') {
@@ -358,10 +337,10 @@
         }
         return { value: trueDimension(v).v, unit: trueDimension(v).u }; 
       },
-      tf : function(p,v){ // transform prop / value
+      transform : function(p,v){ // transform prop / value
         if (!('transform' in DOM)) {
           DOM.transform = function(l,p,a,b,v,o){
-            var _tS = '', t = '', r = '', sk = '', s = '', pp = pp = pp || o.perspective && parseInt(o.perspective) !== 0 ? 'perspective('+parseInt(o.perspective)+'px) ' : false;
+            var _tS = '', t = '', r = '', sk = '', s = '', pp = pp || o.perspective && parseInt(o.perspective) !== 0 ? 'perspective('+parseInt(o.perspective)+'px) ' : 0;
 
             for (var tp in b){
               if (tp === 'translate'){
@@ -381,31 +360,35 @@
         }
 
         // process each transform property
-        if (p === 'translate3d') {
-          var t3d = v.split(','); 
-          return {
-            translateX : { value: trueDimension(t3d[0]).v, unit: trueDimension(t3d[0]).u },
-            translateY : { value: trueDimension(t3d[1]).v, unit: trueDimension(t3d[1]).u },
-            translateZ : { value: trueDimension(t3d[2]).v, unit: trueDimension(t3d[2]).u }
-          };
-        } else if (/^translate(?:[XYZ])$/.test(p)) {
-          return { value: trueDimension(v).v, unit: (trueDimension(v).u||'px') };
-        } else if (/^rotate(?:[XYZ])$|skew(?:[XY])$/.test(p)) {
-          return { value: trueDimension(v,true).v, unit: (trueDimension(v,true).u||'deg') };
-        } else if (p === 'translate') {
-          var tv = typeof v === 'string' ? v.split(',') : v, t2d = {};
-          if (tv instanceof Array) {
-            t2d.x = { value: trueDimension(tv[0]).v, unit: trueDimension(tv[0]).u },
-            t2d.y = { value: trueDimension(tv[1]).v, unit: trueDimension(tv[1]).u }
-          } else {
-            t2d.x = { value: trueDimension(tv).v, unit: trueDimension(tv).u },
-            t2d.y = { value: 0, unit: 'px' }        
+        if (/translate/.test(p)) {
+          if (p === 'translate3d') {
+            var t3d = v.split(','); 
+            return {
+              translateX : { value: trueDimension(t3d[0]).v, unit: trueDimension(t3d[0]).u },
+              translateY : { value: trueDimension(t3d[1]).v, unit: trueDimension(t3d[1]).u },
+              translateZ : { value: trueDimension(t3d[2]).v, unit: trueDimension(t3d[2]).u }
+            };
+          } else if (/^translate(?:[XYZ])$/.test(p)) {
+            return { value: trueDimension(v).v, unit: (trueDimension(v).u||'px') };
+          } else if (p === 'translate') {
+            var tv = typeof v === 'string' ? v.split(',') : v, t2d = {};
+            if (tv instanceof Array) {
+              t2d.x = { value: trueDimension(tv[0]).v, unit: trueDimension(tv[0]).u },
+              t2d.y = { value: trueDimension(tv[1]).v, unit: trueDimension(tv[1]).u }
+            } else {
+              t2d.x = { value: trueDimension(tv).v, unit: trueDimension(tv).u },
+              t2d.y = { value: 0, unit: 'px' }        
+            }
+            return t2d;
           }
-          return t2d;
-        } else if (p === 'rotate') {
-          var r2d = {};
-          r2d.z = { value: trueDimension(v,true).v, unit: (trueDimension(v,true).u||'deg') };
-          return r2d;
+        } else if (/rotate|skew/.test(p)) {
+          if (/^rotate(?:[XYZ])$|skew(?:[XY])$/.test(p)) {
+            return { value: trueDimension(v,true).v, unit: (trueDimension(v,true).u||'deg') };
+          } else if (p === 'rotate') {
+            var r2d = {};
+            r2d.z = { value: trueDimension(v,true).v, unit: (trueDimension(v,true).u||'deg') };
+            return r2d;
+          } 
         } else if (p === 'scale') {
           return { value: parseFloat(v) }; // this must be parseFloat(v)
         }
@@ -440,7 +423,93 @@
         }
         return trueColor(v); 
       }
-    },  
+    },
+    reverse = function () {
+      if (this._y) {
+        for (var p in this._vE) {
+          var tmp = this._vSR[p];
+          this._vSR[p] = this._vE[p];
+          this._vE[p] = tmp;  
+          this._vS[p] = this._vSR[p];    
+        }
+      }
+    },
+    close = function () { //  when animation is finished reset repeat, yoyo&reversed tweens
+      // if (_tws.length-1 === _tws.indexOf(this)) { setTimeout(function(){stop()}, 48); } // when all animations are finished, stop ticking after ~3 frames
+      if (_tws.length === 0) { setTimeout(function(){stop()}, 48); } // when all animations are finished, stop ticking after ~3 frames
+      if (this.repeat > 0) { this._r = this.repeat; }
+      if (this._y && this.reversed===true) { reverse.call(this); this.reversed = false; }
+      this.playing = false;
+    },
+    scrollOut = function(){ //prevent scroll when tweening scroll    
+      if ( 'scroll' in this._vE || 'scrollTop' in this._vE ) {
+        document.removeEventListener(_ev, preventScroll, false);
+        document.removeEventListener(_evh, preventScroll, false);
+        document.body.removeAttribute('data-tweening');
+      }
+    },
+    scrollIn = function(){
+      if ( 'scroll' in this._vE || 'scrollTop' in this._vE ) {
+        if (!document.body.getAttribute('data-tweening') ) {
+          document.addEventListener(_ev, preventScroll, false);
+          document.addEventListener(_evh, preventScroll, false);
+          document.body.setAttribute('data-tweening', 'scroll');
+        }
+      }
+    },
+    start = function (t) { // move functions that use the ticker outside the prototype to be in the same scope with it
+      scrollIn.call(this);
+        
+      perspective(this._el,this._ops); // apply the perspective and transform origin
+      if ( this._rpr ) { this.stackTransform(); } // on start we reprocess the valuesStart for TO() method
+
+      K.svg && K.svq(this); // SVG Plugin | on start we process the SVG paths and SVG transforms
+
+      for ( var e in this._vE ) {
+        this._vSR[e] = this._vS[e];      
+      }
+
+      // now it's a good time to start
+      add(this);
+      this.playing = true;
+      this.paused = false;
+      this._sCF = false;
+      this._sT = t || time.now();
+      this._sT += this._dl;
+      
+      if (!this._sCF) {
+        if (this._sC) { this._sC.call(); }
+        this._sCF = true;
+      }
+      !tick && ticker();
+      return this;
+    },
+    play = function () {
+      if (this.paused && this.playing) {
+        this.paused = false;
+        if (this._rC !== null) { this._rC.call(); }        
+        this._sT += time.now() - this._pST;    
+        add(this);
+        !tick && ticker();  // restart ticking if stopped
+      }
+      return this;
+    },    
+    processEasing = function (es) { //process easing
+      if ( typeof es === 'function') {
+        return es;
+      } else if ( typeof es === 'string' ) {
+        if ( /easing|linear/.test(es) ) {
+          return easing[es]; // regular Robert Penner Easing Functions
+        } else if ( /bezier/.test(es) )  { 
+          var bz = es.replace(/bezier|\s|\(|\)/g,'').split(',');
+          return g.Bezier( bz[0]*1,bz[1]*1,bz[2]*1,bz[3]*1 ); //bezier easing            
+        } else if ( /physics/.test(es) )  {
+          return g.Physics[es](); // predefined physics bezier based easing functions
+        } else {
+          return g.Ease[es](); // predefined bezier based easing functions
+        }
+      }
+    },
     prepareStart = {},
 
     // core easing functions  
@@ -498,43 +567,8 @@
   };
   easing.easingBounceInOut = function(t) { if ( t < 0.5 ) return easing.easingBounceIn( t * 2 ) * 0.5; return easing.easingBounceOut( t * 2 - 1 ) * 0.5 + 0.5;};
 
-  var start = function (t) { // move functions that use the ticker outside the prototype to be in the same scope with it
-      this.scrollIn();
-        
-      perspective(this._el,this); // apply the perspective and transform origin
-      if ( this._rpr ) { this.stack(); } // on start we reprocess the valuesStart for TO() method
-          
-      for ( var e in this._vE ) {
-        this._vSR[e] = this._vS[e];      
-      }
-
-      // now it's a good time to start
-      add(this);
-      this.playing = true;
-      this.paused = false;
-      this._sCF = false;
-      this._sT = t || time.now();
-      this._sT += this._dl;
-      
-      if (!this._sCF) {
-        if (this._sC) { this._sC.call(); }
-        this._sCF = true;
-      }
-      if (!tick) ticker();
-      return this;
-    },
-    play = function () {
-      if (this.paused && this.playing) {
-        this.paused = false;
-        if (this._rC !== null) { this._rC.call(); }        
-        this._sT += time.now() - this._pST;    
-        add(this);
-        if (!tick) ticker();  // restart ticking if stopped
-      }
-      return this;
-    },
     // single Tween object construct
-    Tween = g.Tween = function (_el, _vS, _vE, _o) {
+  var Tween = g._tween = function (_el, _vS, _vE, _o) {
       this._el = _el; // element animation is applied to
       this._vSR = {}; // internal valuesStartRepeat
       this._vS = _vS; // valuesStart
@@ -545,17 +579,11 @@
       this.paused = false; //_paused
       this._sT = null; // startTime
       this._pST = null; //_pauseStartTime    
-      // this._hex = _o.keepHex || false; // option to keep hex for color tweens true/false
       this._rpr = _o.rpr || false; // internal option to process inline/computed style at start instead of init true/false
       this._dr = _o.duration || 700; //duration
       this._r = _o.repeat || 0; // _repeat
       this._rD = _o.repeatDelay || 0; // _repeatDelay
       this._dl = _o.delay || 0; //delay
-      this._to = _o.transformOrigin; // transform-origin    
-      // this._pp = _o.perspective && parseInt(_o.perspective) !== 0 ? 'perspective('+parseInt(_o.perspective)+'px) ' : false; // perspective    
-      this._ppo = _o.perspectiveOrigin; // perspective origin  
-      this._ppp = _o.parentPerspective; // parent perspective    
-      this._pppo = _o.parentPerspectiveOrigin; // parent perspective origin    
       this._e = _o && _o.easing && typeof processEasing(_o.easing) === 'function' ? processEasing(_o.easing) : easing.linear; // _easing function
       this._cT = []; //_chainedTweens
       this._sCF = false; //_on StartCallbackFIRED
@@ -567,11 +595,11 @@
       this._stC = _o.stop || null; // _on StopCallback    
       this.repeat = this._r; // we cache the number of repeats to be able to put it back after all cycles finish
       this._ops = {};
-      this.start = Tween.prototype.start = start;
-      this.play = Tween.prototype.play = this.resume = Tween.prototype.resume = play;
+      this.start = start;
+      this.play = this.resume = play;
 
-      //also add plugins options or transform perspective
-      for (var o in _o) { if (!(o in this) && !/delay|duration|repeat|origin|start|stop|update|complete|pause|play|yoyo|easing/i.test(o) ) { this._ops[o] = _o[o]; } }
+      //also add plugins options or transform perspective TO DO : split this damn regex into an array and do an indexOf or a simple ||
+      for (var o in _o) { if (!(o in this) && !/delay|duration|repeat|start|stop|update|complete|pause|play|yoyo|easing/i.test(o) ) { this._ops[o] = _o[o]; } }
 
       this.pause = function() {
         if (!this.paused && this.playing) {
@@ -589,59 +617,68 @@
           remove(this);
           this.playing = false;
           this.paused = false;
-          this.scrollOut();
+          scrollOut.call(this);
             
           if (this._stC !== null) {
             this._stC.call();
           }    
           this.stopChainedTweens();
-          this.close();
+          close.call(this);
         }
         return this;
       }
-      this.rvs = function () {
-        if (this._y) {
-          for (var p in this._vE) {
-            var tmp = this._vSR[p];
-            this._vSR[p] = this._vE[p];
-            this._vE[p] = tmp;  
-            this._vS[p] = this._vSR[p];    
-          }
-        }
-      }
       this.chain = function () {  this._cT = arguments; return this; };
       this.stopChainedTweens = function () {
-        var i = 0, ctl =this._cT.length;
-        for (i; i < ctl; i++) {
+        for (var i = 0, ctl =this._cT.length; i < ctl; i++) {
           this._cT[i].stop();
         }
-      }
-      this.scrollOut = function(){ //prevent scroll when tweening scroll    
-        if ( 'scroll' in this._vE || 'scrollTop' in this._vE ) {
-          this.removeListeners();
-          document.body.removeAttribute('data-tweening');
-        }
-      }
-      this.scrollIn = function(){
-        if ( 'scroll' in this._vE || 'scrollTop' in this._vE ) {
-          if (!document.body.getAttribute('data-tweening') ) {
-            document.body.setAttribute('data-tweening', 'scroll');
-            this.addListeners();
+      };
+      this.getStartValues = function () { // read current value to populate valuesStart for the .to() method
+        var startValues = {}, endValues = _vS;
+            
+        for (var p in endValues){
+          if ( _tf.indexOf(p) !== -1 ) {
+            var r2d = (/(rotate|translate|scale)$/.test(p)), cs = getInlineStyle(this._el,'transform'), deg = ['rotate','skew'], ax = ['X','Y','Z'];
+            if ( /translate/.test(p) && p !== 'translate' ) {
+              startValues['translate3d'] = cs['translate3d'] || _d[p];           
+            } else if ( r2d ) { // 2d transforms
+              startValues[p] = cs[p] || _d[p]; 
+            } else if ( !r2d && /rotate|skew/.test(p) ) { // all angles
+              for (var d=0; d<2; d++) {
+                for (var a = 0; a<3; a++) {
+                  var s = deg[d]+ax[a];                
+                  if (_tf.indexOf(s) !== -1 && (s in endValues) ) { startValues[s] =  cs[s] || _d[s]; }
+                }
+              }
+            }
+          } else {
+            if ( _sc.indexOf(p) === -1 ) {
+              if (p === 'opacity' && _isIE8 ) { // handle IE8 opacity  
+                var co = getComputedStyle(this._el,'filter');          
+                startValues['opacity'] = typeof co === 'number' ? co : _d['opacity'];
+              } else {
+                if ( _all.indexOf(p) !== -1 ) {
+                  startValues[p] = getComputedStyle(this._el,p) || d[p];
+                } else { // plugins register here
+                  startValues[p] = p in prepareStart ? prepareStart[p](this._el,p,endValues[p]) : 0;
+                }
+              }
+            } else {
+              startValues[p] = (this._el === null || this._el === undefined) ? (g.pageYOffset || _sct.scrollTop) : this._el.scrollTop;
+            }      
           }
         }
-      }
-      this.addListeners = function () {
-        document.addEventListener(_ev, preventScroll, false);
-        document.addEventListener(_evh, preventScroll, false);
-      }
-      this.removeListeners = function () {
-        document.removeEventListener(_ev, preventScroll, false);
-        document.removeEventListener(_evh, preventScroll, false);
-      }
-      this.stack = function () { // stack transform props for .to() chains
-        var f = this.prS();
+        for ( var p in cs ){ // also add to _vS values from previous tweens  
+          if ( _tf.indexOf(p) !== -1 && (!( p in endValues )) ) {
+            startValues[p] = cs[p] || _d[p]; 
+          }
+        }
+        return startValues;  
+      };
+      this.stackTransform = function () { // stack transform props for .to() chains
+        var startValues = this.getStartValues();
         this._vS = {};
-        this._vS = preparePropertiesObject(f,{},this._el)[0]; 
+        this._vS = preparePropertiesObject(startValues,{},this._el)[0]; 
         for ( var p in this._vS ) {
           if ( p === 'transform' && (p in this._vE) ){
             for ( var sp in this._vS[p]) {
@@ -666,76 +703,21 @@
             }
           }
         }
-        K.svg && K.svq(this); // SVG Plugin | on start we process the SVG paths and transforms
-      }
-      //prepare valuesStart for .to() method
-      this.prS = function () { 
-        var f = {}, el = this._el, to = this._vS, cs = getInlineStyle(el,'transform'), deg = ['rotate','skew'], ax = ['X','Y','Z'];
-            
-        for (var p in to){
-          if ( _tf.indexOf(p) !== -1 ) {
-            var r2d = (/(rotate|translate|scale)$/.test(p));
-            if ( /translate/.test(p) && p !== 'translate' ) {
-              f['translate3d'] = cs['translate3d'] || _d[p];           
-            } else if ( r2d ) { // 2d transforms
-              f[p] = cs[p] || _d[p]; 
-            } else if ( !r2d && /rotate|skew/.test(p) ) { // all angles
-              for (var d=0; d<2; d++) {
-                for (var a = 0; a<3; a++) {
-                  var s = deg[d]+ax[a];                
-                  if (_tf.indexOf(s) !== -1 && (s in to) ) { f[s] =  cs[s] || _d[s]; }
-                }
-              }
-            }
-          } else {
-            if ( _sc.indexOf(p) === -1 ) {
-              if (p === 'opacity' && _isIE8 ) { // handle IE8 opacity  
-                var co = getComputedStyle(el,'filter');          
-                f['opacity'] = typeof co === 'number' ? co : _d['opacity'];
-              } else {
-                if ( _all.indexOf(p) !== -1 ) {
-                  f[p] = getComputedStyle(el,p) || d[p];
-                } else { // plugins register here
-                  f[p] = p in K.prS ? K.prS[p](el,p,to[p]) : 0;
-                }
-              }
-            } else {
-              f[p] = (el === null || el === undefined) ? (g.pageYOffset || _sct.scrollTop) : el.scrollTop;
-            }      
-          }
-        }
-        for ( var p in cs ){ // also add to _vS values from previous tweens  
-          if ( _tf.indexOf(p) !== -1 && (!( p in to )) ) {
-            f[p] = cs[p] || _d[p]; 
-          }
-        }
-        return f;  
-      }
-      
-      this.close = function () {
-        var self = this;
-        setTimeout(function(){
-          var i = _tws.indexOf(self);
-          if (i === _tws.length-1) { stop(); }  
-          if (self.repeat > 0) { self._r = self.repeat; }
-          if (self._y && self.reversed===true) { self.rvs(); self.reversed = false; }
-          self.playing = false;
-        },64)
       }
     },
 
     // the multi elements Tween constructs
     TweensTO = function (els, vE, o) { // .to
-      this.tweens = []; var i, tl = els.length, _o = []; 
-      for ( i = 0; i < tl; i++ ) {
+      this.tweens = []; var _o = []; 
+      for ( var i = 0, tl = els.length; i < tl; i++ ) {
         _o[i] = o || {}; o.delay = o.delay || 0;
         _o[i].delay = i>0 ? o.delay + (o.offset||0) : o.delay;
         this.tweens.push( to(els[i], vE, _o[i]) );
       }
     },
     TweensFT = function (els, vS, vE, o) { // .fromTo
-      this.tweens = []; var tl = els.length, _o = [], self = this; 
-      for ( var i = 0; i < tl; i++ ) {
+      this.tweens = []; var _o = []; 
+      for ( var i = 0, l = els.length; i < l; i++ ) {
         _o[i] = o || {}; o.delay = o.delay || 0;
         _o[i].delay = i>0 ? o.delay + (o.offset||0) : o.delay;
         this.tweens.push( fromTo(els[i], vS, vE, _o[i]) );
@@ -743,18 +725,17 @@
     },
     ws = TweensTO.prototype = TweensFT.prototype = {
       start : function(t){
-        t = t || time.now(); 
-        var i, tl = this.tweens.length;
-        for ( i = 0; i < tl; i++ ) { 
+        t = t || time.now();
+        for ( var i = 0, tl = this.tweens.length; i < tl; i++ ) { 
           this.tweens[i].start(t);
         }
         return this;
       },
-      stop : function(){ for ( var i = 0; i < this.tweens.length; i++ ) { this.tweens[i].stop(); } return this; },
-      pause : function(){ for ( var i = 0; i < this.tweens.length; i++ ) { this.tweens[i].pause(); } return this; },
+      stop : function(){ for ( var i = 0, tl = this.tweens.length; i < tl; i++ ) { this.tweens[i].stop(); } return this; },
+      pause : function(){ for ( var i = 0, tl = this.tweens.length; i < tl; i++ ) { this.tweens[i].pause(); } return this; },
       chain : function(){ this.tweens[this.tweens.length-1]._cT = arguments; return this; },
-      play : function(){ for ( var i = 0; i < this.tweens.length; i++ ) { this.tweens[i].play(); } return this; },
-      resume :function() {return this.play()}
+      play : function(){ for ( var i = 0, tl = this.tweens.length; i < tl; i++ ) { this.tweens[i].play(); } return this; },
+      resume : function() {return this.play()}
     },
     // main methods
     to = function (el, to, o) {

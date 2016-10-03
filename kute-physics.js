@@ -6,7 +6,7 @@
  * Licensed under MIT-License
  */
 
-(function(factory){
+(function(root,factory){
   // Obtain a reference to the base KUTE.
   // Since KUTE supports a variety of module systems,
   // we need to pick up which one to use.
@@ -18,12 +18,12 @@
     
     // Export the modified one. Not really required, but convenient.
     module.exports = factory(KUTE);
-  } else if(typeof window.KUTE !== "undefined") {
-    window.KUTE.Physics = window.KUTE.Physics || factory(KUTE);
+  } else if(typeof root.KUTE !== "undefined") {
+    root.KUTE.Physics = factory(KUTE);
   } else {
     throw new Error("Physics Easing functions for KUTE.js depend on KUTE.js")
   }
-})(function(KUTE){
+})(this, function(KUTE){
   'use strict';
   var g = window, P = P || {};
 

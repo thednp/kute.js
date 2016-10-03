@@ -26,7 +26,7 @@ For documentation, examples and other cool tips, check the <a href="http://thedn
 * all box model properties: `margin`, `padding`, with all their variations like `marginTop`, all variations for `width` or `height` like `maxHeight` or `minWidth`, `outlineWidth`, `borderWidth` with all side variations, except short-hand notations
 * `borderRadius` properties radius
 * color properties: `outlineColor`, `borderColor` with all side variations except shorthands, etc
-*`clip` property only for `rect` type of values
+* `clip` property only for `rect` type of values
 * text properties: `fontSize`, `lineHeight`,  `lettersSpacing` and `wordSpacing` 
 
 # Text Plugin - [visit page](http://thednp.github.io/kute.js/text.html)

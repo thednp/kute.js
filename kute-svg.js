@@ -5,7 +5,7 @@
  * Licensed under MIT-License
  */
 
-(function (factory) {
+(function (root,factory) {
   if (typeof define === 'function' && define.amd) {
     define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
   } else if(typeof module == "object" && typeof require == "function") {
@@ -13,13 +13,13 @@
     var KUTE = require("./kute.js");   
     // Export the modified one. Not really required, but convenient.
     module.exports = factory(KUTE);
-  } else if ( typeof window.KUTE !== 'undefined' ) {
+  } else if ( typeof root.KUTE !== 'undefined' ) {
     // Browser globals		
-    window.KUTE.svg = factory(KUTE);
+    root.KUTE.svg = factory(KUTE);
   } else {
     throw new Error("SVG Plugin require KUTE.js.");
   }
-}( function (KUTE) {
+}(this, function (KUTE) {
   'use strict';
 
   // variables, reference global objects, prepare properties
@@ -28,8 +28,7 @@
     _nm = ['strokeWidth', 'strokeOpacity', 'fillOpacity', 'stopOpacity'], // numeric SVG CSS props
     _cls = ['fill', 'stroke', 'stopColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
     pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi, ns = 'http://www.w3.org/2000/svg',
-    // interpolate functions
-    number = g.Interpolate.number, color = g.Interpolate.color, unit = g.Interpolate.unit,
+    number = g.Interpolate.number, unit = g.Interpolate.unit, // interpolate functions
     array = g.Interpolate.array = function array(a,b,l,v) { // array1, array2, array2.length, progress
       var na = [], i;
       for(i=0;i<l;i++) { na.push( a[i] === b[i] ? b[i] : number(a[i],b[i],v) ); } // don't do math if not needed
@@ -353,15 +352,10 @@
   for ( var i = 0, l = _cls.length; i< l; i++) { 
     p = _cls[i];
     parseProperty[p] = function(p,v){
-      if (!(p in DOM)) {
-        DOM[p] = function(l,p,a,b,v,o) {
-          l.style[p] = color(a,b,v,o.keepHex);
-        };
-      }
-      return K.truC(v);
+      return parseProperty.cls(p,v);
     } 
     prepareStart[p] = function(el,p,v){
-       return getComputedStyle(el,p) || 'rgba(0,0,0,0)';
+      return getComputedStyle(el,p) || 'rgba(0,0,0,0)';
     }
   }
 
@@ -404,10 +398,10 @@
       }
       return c;
     },
-    translate = g.Interpolate.translateSVG = function (s,e,a,b,v){ // translate(i+'(',')',a[i],b[i],v)
+    translateSVG = g.Interpolate.translateSVG = function (s,e,a,b,v){ // translate(i+'(',')',a[i],b[i],v)
       return s + ((a[1] === b[1] && b[1] === 0 ) ? number(a[0],b[0],v) : number(a[0],b[0],v) + ' ' + number(a[1],b[1],v)) + e;
     },
-    rotate = g.Interpolate.rotateSVG = function (s,e,a,b,v){
+    rotateSVG = g.Interpolate.rotateSVG = function (s,e,a,b,v){
        return s + (number(a[0],b[0],v) + ' ' + b[1] + ',' + b[2]) + e;
     },
     scaleOrSkew = g.Interpolate.scaleOrSkewSVG = function (s,e,a,b,v){ // scale / skew
@@ -447,14 +441,15 @@
   parseProperty['svgTransform'] = function(p,v,l){
     // register the render function
     if (!('svgTransform' in DOM)) {
+      
       DOM['svgTransform'] = function(l,p,a,b,v){
         var tl = '', rt = '', sx = '', sy = '', s = '';
 
         for (var i in b){
           if ( i === 'translate'){ // translate
-            tl += translate(i+'(',')',a[i],b[i],v);
+            tl += translateSVG(i+'(',')',a[i],b[i],v);
           } else if ( i === 'rotate'){ // rotate
-            rt += rotate(i+'(',')',a[i],b[i],v);
+            rt += rotateSVG(i+'(',')',a[i],b[i],v);
           } else if ( i === 'scale'){ // scale
             s += scaleOrSkew(i+'(',')',a[i],b[i],v);
           } else if ( i === 'skewX'){ // skewX

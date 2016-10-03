@@ -8,18 +8,18 @@
  * Licensed under MIT-License
  */
 
-(function (factory) {
+(function (root,factory) {
   if (typeof define === 'function' && define.amd) {
     define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
   } else if(typeof module == "object" && typeof require == "function") {
     var KUTE = require("./kute.js");   
     module.exports = factory(KUTE);
-  } else if ( typeof window.KUTE !== 'undefined' ) {
+  } else if ( typeof root.KUTE !== 'undefined' ) {
     factory(KUTE);
   } else {
     throw new Error("Box Shadow Plugin require KUTE.js.");
   }
-}( function (KUTE) {
+}(this, function (KUTE) {
   'use strict';
   
   // filter unsupported browsers

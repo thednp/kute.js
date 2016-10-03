@@ -5,7 +5,7 @@
  * Licensed under MIT-License
  */
 
-(function (factory) {
+(function (root,factory) {
   if (typeof define === 'function' && define.amd) {
     define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
   } else if(typeof module == "object" && typeof require == "function") {
@@ -13,13 +13,13 @@
     var KUTE = require("./kute.js");   
     // Export the modified one. Not really required, but convenient.
     module.exports = factory(KUTE);
-  } else if ( typeof window.KUTE !== 'undefined' ) {
+  } else if ( typeof root.KUTE !== 'undefined' ) {
     // Browser globals		
     factory(KUTE);
   } else {
     throw new Error("Attributes Plugin requires KUTE.js.");
   }
-}( function (KUTE) {
+}(this, function (KUTE) {
   'use strict';
 
   var g = window, K = g.KUTE, DOM = g.dom, prepareStart = K.prS, parseProperty = K.pp,
@@ -27,7 +27,7 @@
     getCurrentValue = function(e,a){ return e.getAttribute(a); }, // get current attribute value
     svgColors = ['fill','stroke','stop-color'], trueColor = K.truC, trueDimension = K.truD, atts,
     replaceUppercase = function(a) {
-      return /[A-Z]/g.test(a) ? a.replace(a.match(/[A-Z]/g)[0],'-'+a.match(/[A-Z]/g)[0].toLowerCase()) : a;
+      return a.replace(/[A-Z]/g, "-$&").toLowerCase();
     }; 
   
   prepareStart['attr'] = function(el,p,v){

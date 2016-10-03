@@ -4,20 +4,20 @@
  * by dnp_theme & @dalisoft
  * Licensed under MIT-License
  */
-(function (factory) {
+(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
   } else if(typeof module == "object" && typeof require == "function") {
     var KUTE = require("./kute.js");   
     module.exports = factory();
-  } else if ( typeof window.KUTE !== 'undefined' ) {		
+  } else if ( typeof root.KUTE !== 'undefined' ) {		
     factory();
   } else {
-    throw new Error("Text-Plugin requires KUTE.js.");
+    throw new Error("Text-Plugin require KUTE.js.");
   }
-}( function (KUTE) {
+}(this, function (KUTE) {
   'use strict';
-  var g = window, K = g.KUTE, DOM = g.dom, prepareStart = K.prS, 
+  var g = window, K = g.KUTE, DOM = g.dom, prepareStart = K.prS,
     parseProperty = K.pp, number = g.Interpolate.number,
     _s = String("abcdefghijklmnopqrstuvwxyz").split(""), // lowercase
     _S = String("abcdefghijklmnopqrstuvwxyz".toUpperCase()).split(""), // uparsePropertyercase
@@ -43,7 +43,7 @@
             : _s, ll = tp.length,
             t = tp[floor((random() * ll))], ix = '', tx = '', fi = a.substring(0), f = b.substring(0); 
 
-        // use string.replace(/<\/?[^>]+(>|$)/g, "") to strip HTML tags while animating ?
+        // use string.replace(/<\/?[^>]+(>|$)/g, "") to strip HTML tags while animating ? this is definatelly a to do
         ix = a !== '' ? fi.substring(fi.length,floor(min(v * fi.length, fi.length))) : ''; // initial text, A value 
         tx = f.substring(0,floor(min(v * f.length, f.length))); // end text, B value
         l.innerHTML = v < 1 ? tx + t + ix : b;
