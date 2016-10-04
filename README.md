@@ -36,6 +36,7 @@ For documentation, examples and other cool tips, check the <a href="http://thedn
 # Attributes Plugin - [visit page](http://thednp.github.io/kute.js/attr.html)
 * animates any numeric presentation attribute with suffixed value
 * animates any other non-suffixed numeric presentation attribute
+* animates `fill`, `stroke` and `stop-color` color properties
 * handles attributes namespaces properly with `stroke-opacity` or `strokeOpacity`
 * properly handles the suffixes for you
 
