@@ -8,14 +8,13 @@
   } else if (typeof exports == 'object') {
     module.exports = factory(); // Node, not strict CommonJS
   } else {
-    // Browser globals    
     root.KUTE = factory();
   }
 }(this, function () {
   "use strict"; 
 
   // set a custom scope for KUTE.js
-  var g = window, K = K || {}, _tws = g._tweens = [], tick = 0, time = g.performance,
+  var g = typeof global !== 'undefined' ? global : window, K = {}, _tws = g._tweens = [], tick = 0, time = g.performance,
     getPrefix = function() { //returns browser prefix
       var div = document.createElement('div'), i = 0,  pf = ['Moz', 'moz', 'Webkit', 'webkit', 'O', 'o', 'Ms', 'ms'],
         s = ['MozTransform', 'mozTransform', 'WebkitTransform', 'webkitTransform', 'OTransform', 'oTransform', 'MsTransform', 'msTransform'];
@@ -435,8 +434,8 @@
       }
     },
     close = function () { //  when animation is finished reset repeat, yoyo&reversed tweens
-      // if (_tws.length-1 === _tws.indexOf(this)) { setTimeout(function(){stop()}, 48); } // when all animations are finished, stop ticking after ~3 frames
-      if (_tws.length === 0) { setTimeout(function(){stop()}, 48); } // when all animations are finished, stop ticking after ~3 frames
+      if (_tws.length-1 === _tws.indexOf(this)) { setTimeout(function(){stop()}, 48); } // when all animations are finished, stop ticking after ~3 frames
+      // if (_tws.length === 0) { setTimeout(function(){stop()}, 48); } // when all animations are finished, stop ticking after ~3 frames
       if (this.repeat > 0) { this._r = this.repeat; }
       if (this._y && this.reversed===true) { reverse.call(this); this.reversed = false; }
       this.playing = false;

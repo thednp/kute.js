@@ -5,20 +5,18 @@
  */
 (function(root,factory){
   if (typeof define === 'function' && define.amd) {
-    define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
+    define(["kute.js"], factory);
   } else if(typeof module == "object" && typeof require == "function") {
-    var KUTE = require("./kute.js");
-    // Export the modified one. Not really required, but convenient.
-    module.exports = factory(KUTE);
-  } else if (typeof root.KUTE !== "undefined") {
-    factory(KUTE);
+    module.exports = factory(require("./kute.js"));
+  } else if ( typeof root.KUTE !== 'undefined' ) {
+    factory(root.KUTE);
   } else {
     throw new Error("CSS Plugin require KUTE.js.")
   }
 })(this, function(KUTE){
   'use strict';
 
-  var g = window, K = g.KUTE, DOM = g.dom, parseProperty = K.pp, prepareStart = K.prS, getComputedStyle = K.gCS, trueDimension = K.truD,
+  var g = typeof global !== 'undefined' ? global : window, K = KUTE, DOM = g.dom, parseProperty = K.pp, prepareStart = K.prS, getComputedStyle = K.gCS, trueDimension = K.truD,
     _br = K.property('borderRadius'), _brtl = K.property('borderTopLeftRadius'), _brtr = K.property('borderTopRightRadius'), // all radius props prefixed
     _brbl = K.property('borderBottomLeftRadius'), _brbr = K.property('borderBottomRightRadius'),
     _cls = ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)

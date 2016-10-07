@@ -8,22 +8,19 @@
   
 (function (root,factory) {
   if (typeof define === 'function' && define.amd) {
-    define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
+    define(["kute.js"], factory);
   } else if(typeof module == "object" && typeof require == "function") {
-    // We assume, that require() is sync.
-    var KUTE = require("./kute.js");   
-    // Export the modified one. Not really required, but convenient.
-    module.exports = factory(KUTE);
+    module.exports = factory(require("./kute.js"));
   } else if ( typeof root.KUTE !== 'undefined' ) {
     // Browser globals		
-    root.KUTE.Ease = factory(KUTE);
+    root.Ease = factory(root.KUTE);
   } else {
     throw new Error("Bezier Easing functions depend on KUTE.js");
   }
 }(this, function (KUTE) {
   'use strict';
-  var g = window, E = E || {};
 
+  var g = typeof global !== 'undefined' ? global : window, E = {};
   E.Bezier = g.Bezier = function(mX1, mY1, mX2, mY2) {
     return _bz.pB(mX1, mY1, mX2, mY2);
   };

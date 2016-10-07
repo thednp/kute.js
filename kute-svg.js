@@ -7,23 +7,19 @@
 
 (function (root,factory) {
   if (typeof define === 'function' && define.amd) {
-    define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
+    define(["kute.js"], factory);
   } else if(typeof module == "object" && typeof require == "function") {
-    // We assume, that require() is sync.
-    var KUTE = require("./kute.js");   
-    // Export the modified one. Not really required, but convenient.
-    module.exports = factory(KUTE);
+    module.exports = factory(require("./kute.js"));
   } else if ( typeof root.KUTE !== 'undefined' ) {
-    // Browser globals		
-    root.KUTE.svg = factory(KUTE);
+    root.KUTE.svg = factory(root.KUTE);
   } else {
     throw new Error("SVG Plugin require KUTE.js.");
   }
-}(this, function (KUTE) {
-  'use strict';
-
+}(this, function(KUTE) {
+  'use strict'; 
+// console.log(KUTE)
   // variables, reference global objects, prepare properties
-  var g = window, K = g.KUTE, p, DOM = g.dom, parseProperty = K.pp, prepareStart = K.prS, getComputedStyle = K.gCS,
+  var g = typeof global !== 'undefined' ? global : window, K = KUTE, p, DOM = g.dom, parseProperty = K.pp, prepareStart = K.prS, getComputedStyle = K.gCS,
     _isIE = (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) != null) ? parseFloat( RegExp.$1 ) : false,
     _nm = ['strokeWidth', 'strokeOpacity', 'fillOpacity', 'stopOpacity'], // numeric SVG CSS props
     _cls = ['fill', 'stroke', 'stopColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)

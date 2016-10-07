@@ -6,18 +6,17 @@
  */
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
+    define(["kute.js"], factory);
   } else if(typeof module == "object" && typeof require == "function") {
-    var KUTE = require("./kute.js");   
-    module.exports = factory();
-  } else if ( typeof root.KUTE !== 'undefined' ) {		
-    factory();
+    module.exports = factory(require("./kute.js"));
+  } else if ( typeof root.KUTE !== 'undefined' ) {	
+    factory(root.KUTE);
   } else {
     throw new Error("Text-Plugin require KUTE.js.");
   }
 }(this, function (KUTE) {
   'use strict';
-  var g = window, K = g.KUTE, DOM = g.dom, prepareStart = K.prS,
+  var g = typeof global !== 'undefined' ? global : window, K = KUTE, DOM = g.dom, prepareStart = K.prS,
     parseProperty = K.pp, number = g.Interpolate.number,
     _s = String("abcdefghijklmnopqrstuvwxyz").split(""), // lowercase
     _S = String("abcdefghijklmnopqrstuvwxyz".toUpperCase()).split(""), // uparsePropertyercase

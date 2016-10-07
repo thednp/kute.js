@@ -7,25 +7,18 @@
  */
 
 (function(root,factory){
-  // Obtain a reference to the base KUTE.
-  // Since KUTE supports a variety of module systems,
-  // we need to pick up which one to use.
   if (typeof define === 'function' && define.amd) {
-    define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
+    define(["kute.js"], factory);
   } else if(typeof module == "object" && typeof require == "function") {
-    // We assume, that require() is sync.
-    var KUTE = require("./kute.js");
-    
-    // Export the modified one. Not really required, but convenient.
-    module.exports = factory(KUTE);
-  } else if(typeof root.KUTE !== "undefined") {
-    root.KUTE.Physics = factory(KUTE);
+    module.exports = factory(require("./kute.js"));
+  } else if ( typeof root.KUTE !== 'undefined' ) {
+    root.Physics = factory(root.KUTE);
   } else {
     throw new Error("Physics Easing functions for KUTE.js depend on KUTE.js")
   }
 })(this, function(KUTE){
   'use strict';
-  var g = window, P = P || {};
+  var g = typeof global !== 'undefined' ? global : window, P = {};
 
   // spring easing
   P.spring = g.spring = function(options) {
