@@ -8,9 +8,9 @@
 
 (function(root,factory){
   if (typeof define === 'function' && define.amd) {
-    define(["kute.js"], factory);
-  } else if(typeof module == "object" && typeof require == "function") {
-    module.exports = factory(require("./kute.js"));
+    define(['kute.js'], factory);
+  } else if(typeof module == 'object' && typeof require == 'function') {
+    module.exports = factory(require('kute.js'));
   } else if ( typeof root.KUTE !== 'undefined' ) {
     root.Physics = factory(root.KUTE);
   } else {
