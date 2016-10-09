@@ -124,61 +124,61 @@
       }
       return p;
     },
+    computePathCross = function(s,e){ // pathCross
+      var s1, e1, pointsArray, largerPathLength, smallerPath, largerPath, simluatedSmallerPath, nsm = [], sml, cl = [], len, tl, cs;
+
+      if (!this._isP) {
+        s = createPath(s); e = createPath(e);  
+        pointsArray = getSegments(s,e,this._mpr); 
+        s1 = pointsArray[0]; e1 = pointsArray[1]; largerPathLength = e1.length;
+      } else {
+        s = pathToAbsolute(s); e = pathToAbsolute(e);
+
+        if ( s.length !== e.length ){
+          largerPathLength = Math.max(s.length,e.length);
+          if ( largerPathLength === e.length) { smallerPath = s; largerPath = e; } else { smallerPath = e; largerPath = s; }
+          sml = smallerPath.length;
+
+          simluatedSmallerPath = createPath('M'+smallerPath.join('L')+'z'); len = simluatedSmallerPath.getTotalLength() / largerPathLength;
+          for (var i=0; i<largerPathLength; i++){
+            tl = simluatedSmallerPath.getPointAtLength(len*i);
+            cs = getClosestPoint(len,tl,smallerPath);
+            nsm.push( [ cs[0], cs[1] ] );
+          }
+
+          if (largerPathLength === e.length) { e1 = largerPath; s1 = nsm; } else { s1 = largerPath; e1 = nsm; }
+        } else {
+          s1 = s; e1 = e;
+        }
+      }
+
+      // reverse arrays
+      if (this._rv1) { s1.reverse(); }
+      if (this._rv2) { e1.reverse(); }
+      
+      // shift second array to for smallest tween distance
+      if (this._idx) {
+        var e11 = e1.splice(this._idx,largerPathLength-this._idx);
+        e1 = e11.concat(e1);
+      }
+
+      s = e = null;
+      return [s1,e1]
+    },
     SVG = {
       pathCross : function(w){ // pathCross
+        var p1 = getOnePath(w._vS.path.o), p2 = getOnePath(w._vE.path.o), paths;
+
         // path tween options
-        var morphPrecision = w._ops.morphPrecision || 15, 
-          morphIndex = w._ops.morphIndex,
-          reverseFirst = w._ops.reverseFirstPath,
-          reverseSecond = w._ops.reverseSecondPath,
+        this._mpr = w._ops.morphPrecision || 15;
+        this._idx = w._ops.morphIndex;
+        this._rv1 = w._ops.reverseFirstPath;
+        this._rv2 = w._ops.reverseSecondPath;
           
-          // begin processing paths
-          p1 = getOnePath(w._vS.path.o), p2 = getOnePath(w._vE.path.o), paths,
-          isPolygon = !/[CSQTA]/i.test(p1) && !/[CSQTA]/i.test(p2), // check if both shapes are polygons
+        // begin processing paths
+        this._isP = !/[CSQTA]/i.test(p1) && !/[CSQTA]/i.test(p2); // check if both shapes are polygons
 
-          pathCross = function(s,e){ // pathCross
-            var s1, e1, pointsArray, largerPathLength, smallerPath, largerPath, simluatedSmallerPath, nsm = [], sml, cl = [], len, tl, cs;
-
-            if (!isPolygon) {
-              s = createPath(s); e = createPath(e);  
-              pointsArray = getSegments(s,e,morphPrecision); 
-              s1 = pointsArray[0]; e1 = pointsArray[1]; largerPathLength = e1.length;
-            } else {
-              s = pathToAbsolute(s); e = pathToAbsolute(e);
-
-              if ( s.length !== e.length ){
-                largerPathLength = Math.max(s.length,e.length);
-                if ( largerPathLength === e.length) { smallerPath = s; largerPath = e; } else { smallerPath = e; largerPath = s; }
-                sml = smallerPath.length;
-
-                simluatedSmallerPath = createPath('M'+smallerPath.join('L')+'z'); len = simluatedSmallerPath.getTotalLength() / largerPathLength;
-                for (var i=0; i<largerPathLength; i++){
-                  tl = simluatedSmallerPath.getPointAtLength(len*i);
-                  cs = getClosestPoint(len,tl,smallerPath);
-                  nsm.push( [ cs[0], cs[1] ] );
-                }
-
-                if (largerPathLength === e.length) { e1 = largerPath; s1 = nsm; } else { s1 = largerPath; e1 = nsm; }
-              } else {
-                s1 = s; e1 = e;
-              }
-            }
-
-            // reverse arrays
-            if (reverseFirst) { s1.reverse(); }
-            if (reverseSecond) { e1.reverse(); }
-            
-            // shift second array to for smallest tween distance
-            if (morphIndex) {
-              var e11 = e1.splice(morphIndex,largerPathLength-morphIndex);
-              e1 = e11.concat(e1);
-            }
-
-            s = e = null;
-            return [s1,e1]
-          };
-        
-        paths = pathCross(p1,p2);
+        paths = computePathCross.apply(this,[p1,p2]);
 
         w._vS.path.d = paths[0];
         w._vE.path.d = paths[1];
