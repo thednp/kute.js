@@ -17,10 +17,10 @@
   }
 }(this, function(KUTE) {
   'use strict'; 
-// console.log(KUTE)
+
   // variables, reference global objects, prepare properties
   var g = typeof global !== 'undefined' ? global : window, K = KUTE, p, DOM = g.dom, parseProperty = K.pp, prepareStart = K.prS, getComputedStyle = K.gCS,
-    _isIE = (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) != null) ? parseFloat( RegExp.$1 ) : false,
+    _isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false,
     _nm = ['strokeWidth', 'strokeOpacity', 'fillOpacity', 'stopOpacity'], // numeric SVG CSS props
     _cls = ['fill', 'stroke', 'stopColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
     pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi, ns = 'http://www.w3.org/2000/svg',
@@ -64,17 +64,6 @@
       : Math.abs(s[nx][0] - t.x) < p && Math.abs(s[nx][1] - t.y) < p ? s[nx] 
       : Math.abs(s[dx][0] - t.x) < p && Math.abs(s[dx][1] - t.y) < p ? s[dx] 
       : [t.x,t.y];
-    },
-    getBestIndex = function(s,e){ // getBestIndex for shape rotation
-      var s1 = clone(s), e1 = clone(e), d = [], i, l = e.length, t, ax, ay;
-      for (i=0; i<l; i++){
-        t = e1.splice(i,l-i); e1 = t.concat(e1);
-        ax = Math.abs(s1[i][0] - e1[i][0]);
-        ay = Math.abs(s1[i][1] - e1[i][1]);
-        d.push( Math.sqrt( ax * ax + ay * ay ) );
-        e1 = []; e1 = clone(e); t = null;
-      }
-      return d.indexOf(Math.min.apply(null,d));
     },
     pathToAbsolute = function(p) { // simple pathToAbsolute for polygons | this is still BETA / a work in progress
       var np = p.match(pathReg), wp = [], l = np.length, s, c, r, x = 0, y = 0;
@@ -135,101 +124,69 @@
       }
       return p;
     },
-    showCircles = 1,
-    S = {
-      showStartingPoints : function(s,e,v){ // showPoints helper function to visualize the points on the path
-        if (showCircles){
-          var c, a = arguments, cl, p, l;
-          for (var i=0; i<2; i++){
-            p = a[i]; l = p.length; cl = i=== 0 ? { f: 'DeepPink', o: 'HotPink' } : { f: 'Lime', o: 'LimeGreen' };
-            for (var j=0; j<l; j++) {
-              c = document.createElementNS(ns,'circle');
-              c.setAttribute('cx',p[j][0]); c.setAttribute('cy',p[j][1]);
-              c.setAttribute('r', j===0 ? 20 : 10 ); c.setAttribute('fill', j===0 ? cl.f : cl.o);
-              if (this._isp) { v.appendChild(c); } else if (!this._isp && j===0 ) { v.appendChild(c);}
-            }
-          }
-          showCircles = 0; c = null;
-        }      
-      },
-      _pathCross : function(s,e,svg){ // pathCross
-        var s1, e1, arr, idx, arL, sm, lg, smp, lgp, nsm = [], sml, cl = [], len, tl, cs;
-
-        if (!this._isp) {
-            s = createPath(s); e = createPath(e);  
-            arr = getSegments(s,e,this._mpr); 
-            s1 = arr[0]; e1 = arr[1]; arL = e1.length;
-        } else {
-          s = pathToAbsolute(s); e = pathToAbsolute(e);
-
-          if ( s.length !== e.length ){
-            arL = Math.max(s.length,e.length);
-            if ( arL === e.length) { sm = s; lg = e; } else { sm = e; lg = s; }
-            sml = sm.length;
-
-            smp = createPath('M'+sm.join('L')+'z'); len = smp.getTotalLength() / arL;
-            for (var i=0; i<arL; i++){
-              tl = smp.getPointAtLength(len*i);
-              cs = getClosestPoint(len,tl,sm);
-              nsm.push( [ cs[0], cs[1] ] );
-            }
-
-            if (arL === e.length) { e1 = lg; s1 = nsm; } else { s1 = lg; e1 = nsm; }
-          } else {
-            s1 = s; e1 = e;
-          }
-        }
-
-        // reverse arrays
-        if (this._rv1) { s1.reverse(); }
-        if (this._rv2) { e1.reverse(); }
-
-        // determine index for best/minimum distance between points
-        if (this._smi) { idx = getBestIndex(s1,e1); }
-        
-        // shift second array to for smallest tween distance
-        if (this._midx) {
-          var e11 = e1.splice(this._midx,arL-this._midx);
-          e1 = e11.concat(e1);
-        }
-
-        // the console.log helper utility
-        if (this._smi) {
-          // also show the points
-          this.showStartingPoints(s1,e1,svg);
-          var mpi = this._isp ? 'the polygon with the most points.\n' : (this._mpr === 25 ? 'the default' : 'your') +' morphPrecision value of '+this._mpr+'.\n';
-          console.log( 'KUTE.js Path Morph Log\nThe morph used ' + arL + ' points to draw both paths based on '+mpi 
-            + (this._midx ? 'You\'ve configured the morphIndex to ' + this._midx + ' while the recommended is ' + idx+ '.\n' : 'You may also consider a morphIndex for the second path. Currently the best index seems to be ' + idx + '.\n')
-            + (
-                !this._rv1 && !this._rv2 ? 'If the current animation is not satisfactory, consider reversing one of the paths. Maybe the paths do not intersect or they really have different draw directions.' :
-                'You\'ve chosen that the first path to have ' + ( this._rv1  ? 'REVERSED draw direction, ' : 'UNCHANGED draw direction, ') + 'while second path is to be ' + (this._rv2 ? 'REVERSED.\n' : 'UNCHANGED.\n')
-              )
-          );
-        }
-        s = e = null;
-        return [s1,e1]
-      },
+    SVG = {
       pathCross : function(w){ // pathCross
         // path tween options
-        this._mpr = w._ops.morphPrecision || 15;  
-        this._midx = w._ops.morphIndex; 
-        this._smi = w._ops.showMorphInfo;
-        this._rv1 = w._ops.reverseFirstPath;
-        this._rv2 = w._ops.reverseSecondPath;
-        
-        var p1 = getOnePath(w._vS.path.o), p2 = getOnePath(w._vE.path.o), arr;
-        this._isp = !/[CSQTA]/i.test(p1) && !/[CSQTA]/i.test(p2); // both shapes are polygons
-        
-        arr = this._pathCross(p1,p2,w._el.ownerSVGElement);
-        // arr = this._pathCross(p1,p2,w._el.parentNode);
+        var morphPrecision = w._ops.morphPrecision || 15, 
+          morphIndex = w._ops.morphIndex,
+          reverseFirst = w._ops.reverseFirstPath,
+          reverseSecond = w._ops.reverseSecondPath,
+          
+          // begin processing paths
+          p1 = getOnePath(w._vS.path.o), p2 = getOnePath(w._vE.path.o), paths,
+          isPolygon = !/[CSQTA]/i.test(p1) && !/[CSQTA]/i.test(p2), // check if both shapes are polygons
 
-        w._vS.path.d = arr[0];
-        w._vE.path.d = arr[1];
+          pathCross = function(s,e){ // pathCross
+            var s1, e1, pointsArray, largerPathLength, smallerPath, largerPath, simluatedSmallerPath, nsm = [], sml, cl = [], len, tl, cs;
+
+            if (!isPolygon) {
+              s = createPath(s); e = createPath(e);  
+              pointsArray = getSegments(s,e,morphPrecision); 
+              s1 = pointsArray[0]; e1 = pointsArray[1]; largerPathLength = e1.length;
+            } else {
+              s = pathToAbsolute(s); e = pathToAbsolute(e);
+
+              if ( s.length !== e.length ){
+                largerPathLength = Math.max(s.length,e.length);
+                if ( largerPathLength === e.length) { smallerPath = s; largerPath = e; } else { smallerPath = e; largerPath = s; }
+                sml = smallerPath.length;
+
+                simluatedSmallerPath = createPath('M'+smallerPath.join('L')+'z'); len = simluatedSmallerPath.getTotalLength() / largerPathLength;
+                for (var i=0; i<largerPathLength; i++){
+                  tl = simluatedSmallerPath.getPointAtLength(len*i);
+                  cs = getClosestPoint(len,tl,smallerPath);
+                  nsm.push( [ cs[0], cs[1] ] );
+                }
+
+                if (largerPathLength === e.length) { e1 = largerPath; s1 = nsm; } else { s1 = largerPath; e1 = nsm; }
+              } else {
+                s1 = s; e1 = e;
+              }
+            }
+
+            // reverse arrays
+            if (reverseFirst) { s1.reverse(); }
+            if (reverseSecond) { e1.reverse(); }
+            
+            // shift second array to for smallest tween distance
+            if (morphIndex) {
+              var e11 = e1.splice(morphIndex,largerPathLength-morphIndex);
+              e1 = e11.concat(e1);
+            }
+
+            s = e = null;
+            return [s1,e1]
+          };
+        
+        paths = pathCross(p1,p2);
+
+        w._vS.path.d = paths[0];
+        w._vE.path.d = paths[1];
       }
     };
 
   // a shortHand pathCross && SVG transform stack
-  K.svq = function(w){ if ( w._vE.path ) S.pathCross(w); if ( w._vE.svgTransform ) stackTransform(w); }
+  K.svq = function(w){ if ( w._vE.path ) SVG.pathCross(w); if ( w._vE.svgTransform ) stackTransform(w); }
   
   // process path object and also register the render function
   parseProperty['path'] = function(a,o,l) { // K.pp['path']('path',value,element);
@@ -505,6 +462,6 @@
     return tr;
   }
 
-  return S;
+  return SVG;
 
 }));

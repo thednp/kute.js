@@ -9,7 +9,7 @@ morphBtn.addEventListener('click', function(){
 }, false);
 
 var morphTween1 = KUTE.to('#rectangle1', { path: '#star1' }, {
-    showMorphInfo: true, morphIndex: 127,
+    morphIndex: 127,
     duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'
 }); 
 
