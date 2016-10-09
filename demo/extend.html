@@ -97,12 +97,11 @@
 
 (function (root,factory) {
   if (typeof define === 'function' && define.amd) {
-    define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
-  } else if(typeof module == "object" && typeof require == "function") {
-    var KUTE = require("./kute.js");   
-    module.exports = factory(KUTE);
-  } else if ( typeof root.KUTE !== 'undefined' ) {		
-    factory(KUTE);
+    define(['kute.js'], factory);
+  } else if(typeof module == 'object' && typeof require == 'function') {
+    module.exports = factory(require('kute.js'));
+  } else if ( typeof root.KUTE !== 'undefined' ) {	
+    factory(root.KUTE);
   } else {
     throw new Error("pluginName require KUTE.js.");
   }
@@ -175,7 +174,7 @@ K.Tween.prototype.onUpdate = function(){
         </ul>
         <p>So let's add support for <kbd class="bg-olive">boxShadow</kbd>! It should be a medium difficulty guide most developers can follow and the purpose of this guide is to showcase how easy it actually is to extend KUTE.js. So grab the above template and let's break it down to pieces:</p>
 <pre><code class="language-javascript">// add a reference to global and KUTE object
-var g = window, K = g.KUTE, 
+var g = window, K = KUTE, 
     // add a reference to KUTE utilities
     prepareStart = K.prS, DOM = g.dom, parseProperty = K.pp, trueColor = K.truC,
     color = g.Interpolate.color, unit = g.Interpolate.unit, getComputedStyle = K.gCS;

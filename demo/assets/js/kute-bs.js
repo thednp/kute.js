@@ -10,12 +10,11 @@
 
 (function (root,factory) {
   if (typeof define === 'function' && define.amd) {
-    define(["./kute.js"], function(KUTE){ factory(KUTE); return KUTE; });
-  } else if(typeof module == "object" && typeof require == "function") {
-    var KUTE = require("./kute.js");   
-    module.exports = factory(KUTE);
+    define(['kute.js'], factory);
+  } else if(typeof module == 'object' && typeof require == 'function') {
+    module.exports = factory(require('kute.js'));
   } else if ( typeof root.KUTE !== 'undefined' ) {
-    factory(KUTE);
+    factory(root.KUTE);
   } else {
     throw new Error("Box Shadow Plugin require KUTE.js.");
   }
@@ -25,7 +24,7 @@
   // filter unsupported browsers
   if (!('boxShadow' in document.body.style)) {return;}
   // add a reference to KUTE object
-  var g = window, K = g.KUTE, getComputedStyle = K.gCS,
+  var g = window, K = KUTE, getComputedStyle = K.gCS,
     trueColor = K.truC, prepareStart = K.prS, parseProperty = K.pp, DOM = g.dom,
     unit = g.Interpolate.unit, color = g.Interpolate.color,
 
