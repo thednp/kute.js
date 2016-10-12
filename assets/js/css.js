@@ -35,10 +35,11 @@ bm3.chain(bm4);
 
 
 //callback functions
-function onMarginTop() { var css = KUTE.gCS(box,'marginTop'); box.innerHTML = parseInt(css)+'px'+'<br>MARGIN'; }
-function onMarginBottom() { var css = KUTE.gCS(box,'marginBottom'); box.innerHTML = 'MARGIN<br>'+parseInt(css)+'px'; }
-function onPadding() { var css = KUTE.gCS(box,'paddingTop'); box.innerHTML = parseInt(css)+'px<br>PADDING'; }
-function onMargin() { var css = KUTE.gCS(box,'marginTop'); box.innerHTML = 'MARGIN<br>'+parseInt(css)+'px'; }
+function onMarginTop() { box.innerHTML = parseInt(box.style.marginTop)+'px'+'<br>MARGIN'; }
+function onMarginBottom() { box.innerHTML = 'MARGIN<br>'+parseInt(box.style.marginBottom)+'px'; }
+function onPadding() { box.innerHTML = parseInt(box.style.paddingTop)+'px<br>PADDING'; }
+function onMargin() { box.innerHTML = 'MARGIN<br>'+parseInt(box.style.marginTop)+'px'; }
+
 function onComplete() { box.innerHTML = 'BOX<br>&nbsp;MODEL&nbsp;'; }
 
 btb.addEventListener('click', function(e){
