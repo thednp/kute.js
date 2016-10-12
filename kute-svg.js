@@ -19,7 +19,7 @@
   'use strict'; 
 
   // variables, reference global objects, prepare properties
-  var g = typeof global !== 'undefined' ? global : window, K = KUTE, p, DOM = g.dom, parseProperty = K.pp, prepareStart = K.prS, getComputedStyle = K.gCS,
+  var g = typeof global !== 'undefined' ? global : window, K = KUTE, p, DOM = g.dom, parseProperty = K.pp, prepareStart = K.prS, getCurrentStyle = K.gCS,
     _isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false,
     _nm = ['strokeWidth', 'strokeOpacity', 'fillOpacity', 'stopOpacity'], // numeric SVG CSS props
     _cls = ['fill', 'stroke', 'stopColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
@@ -276,8 +276,8 @@
         start = /%/.test(v[0]) ? percent(v[0].trim(),l) : parseFloat(v[0]);
         end = /%/.test(v[1]) ? percent(v[1].trim(),l) : parseFloat(v[1]);
       } else if (typeof v === 'undefined') {
-        o = parseFloat(getComputedStyle(e,'stroke-dashoffset'));
-        d = getComputedStyle(e,'stroke-dasharray').split(/\,/);
+        o = parseFloat(getCurrentStyle(e,'stroke-dashoffset'));
+        d = getCurrentStyle(e,'stroke-dasharray').split(/\,/);
         
         start = 0-o;
         end = parseFloat(d[0]) + start || l;
@@ -308,7 +308,7 @@
       return parseProperty.cls(p,v);
     } 
     prepareStart[p] = function(el,p,v){
-      return getComputedStyle(el,p) || 'rgba(0,0,0,0)';
+      return getCurrentStyle(el,p) || 'rgb(0,0,0)';
     }
   }
 
@@ -336,7 +336,7 @@
       }
     } 
     prepareStart[p] = function(el,p,v){
-      return getComputedStyle(el,p) || 0;
+      return getCurrentStyle(el,p) || 0;
     }
   }
 

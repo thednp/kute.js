@@ -14,7 +14,7 @@
   "use strict"; 
 
   // set a custom scope for KUTE.js
-  var g = typeof global !== 'undefined' ? global : window, K = {}, _tws = g._tweens = [], tick = 0, time = g.performance,
+  var g = typeof global !== 'undefined' ? global : window, K = {}, _tws = g._tweens = [], tick = null, time = g.performance,
     getPrefix = function() { //returns browser prefix
       var div = document.createElement('div'), i = 0,  pf = ['Moz', 'moz', 'Webkit', 'webkit', 'O', 'o', 'Ms', 'ms'],
         s = ['MozTransform', 'mozTransform', 'WebkitTransform', 'webkitTransform', 'OTransform', 'oTransform', 'MsTransform', 'msTransform'];
@@ -37,35 +37,26 @@
       return nl;   
     },
     trueDimension = function (d,p) { //true dimension returns { v = value, u = unit }
-      var x = parseInt(d) || 0, mu = ['px','%','deg','rad','em','rem','vh','vw'], l = mu.length, 
-        y = getU();
-      function getU() {
-        var u;
-        for (var i=0;i<l;i++) { if ( typeof d === 'string' && d.indexOf(mu[i]) !== -1 ) u = mu[i]; }
-        u = u !== undefined ? u : (p ? 'deg' : 'px')
-        return u;
-      }
+      var x = parseInt(d) || 0, mu = ['px','%','deg','rad','em','rem','vh','vw'], y;
+      for (var i=0, l = mu.length; i<l; i++) { if ( typeof d === 'string' && d.indexOf(mu[i]) !== -1 ) { y = mu[i]; break; } }
+      y = y !== undefined ? y : (p ? 'deg' : 'px');
       return { v: x, u: y };
     },
     trueColor = function (v) { // replace transparent and transform any color to rgba()/rgb()
-      var vrgb, y;
       if (/rgb|rgba/.test(v)) { //rgb will be fastest initialized
-        vrgb = v.replace(/[^\d,]/g, '').split(','); y = vrgb[3] ? vrgb[3] : null;
+        var vrgb = v.replace(/[^\d,]/g, '').split(','), y = vrgb[3] ? vrgb[3] : null;
         if (!y) {
           return { r: parseInt(vrgb[0]), g: parseInt(vrgb[1]), b: parseInt(vrgb[2]) };
         } else {
           return { r: parseInt(vrgb[0]), g: parseInt(vrgb[1]), b: parseInt(vrgb[2]), a: y*1 };
         }
-      }
-      if (/^#/.test(v)) {
-        vrgb = hexToRGB(v); return { r: vrgb.r, g: vrgb.g, b: vrgb.b };
-      }
-      if (/transparent|none|initial|inherit/.test(v)) {
+      } else if (/^#/.test(v)) {
+        var fromHex = hexToRGB(v); return { r: fromHex.r, g: fromHex.g, b: fromHex.b };
+      } else if (/transparent|none|initial|inherit/.test(v)) {
         return { r: 0, g: 0, b: 0, a: 0 };
-      } 
-      if (!/^#|^rgb/.test(v) ) { // maybe we can check for web safe colors
-          var h = document.getElementsByTagName('head')[0]; h.style.color = v; vrgb = g.getComputedStyle(h,null).color;
-          h.style.color = ''; return v !== vrgb ? trueColor(vrgb) : {r:0,g:0,b:0};
+      } else if (!/^#|^rgb/.test(v) ) { // maybe we can check for web safe colors
+        var h = document.getElementsByTagName('head')[0]; h.style.color = v; var webColor = g.getComputedStyle(h,null).color;
+        h.style.color = ''; return v !== webColor ? { r: parseInt(webColor[0]), g: parseInt(webColor[1]), b: parseInt(webColor[2]) } : {r:0,g:0,b:0};
       }
     },
     preventScroll = function (e) { // prevent mousewheel or touch events while tweening scroll
@@ -89,7 +80,7 @@
     },
     getInlineStyle = function(el,p) { // getInlineStyle = get transform style for element from cssText for .to() method, the sp is for transform property
       if (!el) return; // if the scroll applies to `window` it returns as it has no styling
-      var css = el.style.cssText.replace(/\s/g,'').split(';'),//the cssText  
+      var css = css || el.style.cssText.replace(/\s/g,'').split(';'),//the cssText  
         trsf = {}; //the transform object
       // if we have any inline style in the cssText attribute, usually it has higher priority
       for ( var i=0, csl = css.length; i<csl; i++ ){
@@ -105,7 +96,7 @@
       }
       return trsf;
     },
-    getComputedStyle = function (el,p) { // gCS = get style property for element from computedStyle for .to() method
+    getCurrentStyle = function (el,p) { // gCS = get style property for element from computedStyle for .to() method
       var es = el.style, cs = g.getComputedStyle(el,null) || el.currentStyle, pp = property(p), //the computed style | prefixed property
         s = es[p] && !/auto|initial|none|unset/.test(es[p]) ? es[p] : cs[pp]; // s the property style value
       if ( p !== 'transform' && (pp in cs || pp in es) ) {
@@ -125,19 +116,19 @@
     //more internals
     getAll = function () { return _tws; },
     removeAll = function () { _tws = []; },
-    add = g._addTween = function (tw) { _tws.push(tw); },
+    add = function (tw) { _tws.push(tw); },
     remove = function (tw) { var i = _tws.indexOf(tw); if (i !== -1) { _tws.splice(i, 1); }}, 
-    stop = function () { if (tick) { _caf(tick); tick = 0; } },    
+    stop = function () { if (tick) { _caf(tick); tick = null; } },    
 
-    _tch = ('ontouchstart' in g || navigator.msMaxTouchPoints) || false, // support Touch?
-    _ev = _tch ? 'touchstart' : 'mousewheel', _evh = 'mouseenter', //events to prevent on scroll
+    canTouch = ('ontouchstart' in g || navigator.msMaxTouchPoints) || false, // support Touch?
+    touchOrWheel = canTouch ? 'touchstart' : 'mousewheel', mouseEnter = 'mouseenter', //events to prevent on scroll
     _tr = property('transform'),
     _raf = g.requestAnimationFrame || g.webkitRequestAnimationFrame || function (c) { return setTimeout(c, 16) },
     _caf = g.cancelAnimationFrame || g.webkitCancelRequestAnimationFrame || function (c) { return clearTimeout(c) },
     
     //true scroll container
-    _bd = document.body, _htm = document.getElementsByTagName('HTML')[0],
-    _sct = /webkit/i.test(navigator.userAgent) || document.compatMode == 'BackCompat' ? _bd : _htm,
+    body = document.body, html = document.getElementsByTagName('HTML')[0],
+    scrollContainer = /webkit/i.test(navigator.userAgent) || document.compatMode == 'BackCompat' ? body : html,
 
     _isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false,
     _isIE8 = _isIE === 8, // check IE8/IE
@@ -238,10 +229,9 @@
       // element/node, method, (prefixed)property, startValue, endValue, progress
       var elapsed = Math.min(( t - w._sT ) / w._dr, 1); // calculate progress
 
-      for (var p in w._vE){ DOM[p].call(w,w._el,p,w._vS[p],w._vE[p],w._e(elapsed),w._ops); } //render the CSS update
-      // for (var p in w._vE){ DOM[p].call(this,w._el,p,w._vS[p],w._vE[p],w._e(elapsed),w._ops); } //render the CSS update
+      for (var p in w._vE){ DOM[p](w._el,p,w._vS[p],w._vE[p],w._e(elapsed),w._ops); } //render the CSS update
 
-      if (w._uC) { w._uC.call(); } // fire the updateCallback
+      if (w._uC) { w._uC.call(); } // fire the updateCallback, try to minimize recursion
 
       if (elapsed === 1) {
         if (w._r > 0) {
@@ -395,7 +385,7 @@
       unl : function(p,v){  // scroll | opacity | unitless  
         if (/scroll/.test(p) && !(p in DOM) ){
           DOM[p] = function(l,p,a,b,v) {
-            var el = el || (l === undefined || l === null) ? _sct : l;
+            var el = el || (l === undefined || l === null) ? scrollContainer : l;
             el.scrollTop = number(a,b,v);
           };
         } else if (p === 'opacity') {
@@ -441,58 +431,19 @@
       this.playing = false;
     },
     scrollOut = function(){ //prevent scroll when tweening scroll    
-      if ( 'scroll' in this._vE || 'scrollTop' in this._vE ) {
-        document.removeEventListener(_ev, preventScroll, false);
-        document.removeEventListener(_evh, preventScroll, false);
+      if (document.body.getAttribute('data-tweening') && ( 'scroll' in this._vE || 'scrollTop' in this._vE )) {
+        document.removeEventListener(touchOrWheel, preventScroll, false);
+        document.removeEventListener(mouseEnter, preventScroll, false);
         document.body.removeAttribute('data-tweening');
       }
     },
     scrollIn = function(){
-      if ( 'scroll' in this._vE || 'scrollTop' in this._vE ) {
-        if (!document.body.getAttribute('data-tweening') ) {
-          document.addEventListener(_ev, preventScroll, false);
-          document.addEventListener(_evh, preventScroll, false);
-          document.body.setAttribute('data-tweening', 'scroll');
-        }
+      if (!document.body.getAttribute('data-tweening') && ( 'scroll' in this._vE || 'scrollTop' in this._vE )) {
+        document.addEventListener(touchOrWheel, preventScroll, false);
+        document.addEventListener(mouseEnter, preventScroll, false);
+        document.body.setAttribute('data-tweening', 'scroll');
       }
     },
-    start = function (t) { // move functions that use the ticker outside the prototype to be in the same scope with it
-      scrollIn.call(this);
-        
-      perspective(this._el,this._ops); // apply the perspective and transform origin
-      if ( this._rpr ) { this.stackTransform(); } // on start we reprocess the valuesStart for TO() method
-
-      K.svg && K.svq(this); // SVG Plugin | on start we process the SVG paths and SVG transforms
-
-      for ( var e in this._vE ) {
-        this._vSR[e] = this._vS[e];      
-      }
-
-      // now it's a good time to start
-      add(this);
-      this.playing = true;
-      this.paused = false;
-      this._sCF = false;
-      this._sT = t || time.now();
-      this._sT += this._dl;
-      
-      if (!this._sCF) {
-        if (this._sC) { this._sC.call(); }
-        this._sCF = true;
-      }
-      !tick && ticker();
-      return this;
-    },
-    play = function () {
-      if (this.paused && this.playing) {
-        this.paused = false;
-        if (this._rC !== null) { this._rC.call(); }        
-        this._sT += time.now() - this._pST;    
-        add(this);
-        !tick && ticker();  // restart ticking if stopped
-      }
-      return this;
-    },    
     processEasing = function (es) { //process easing
       if ( typeof es === 'function') {
         return es;
@@ -566,8 +517,45 @@
   };
   easing.easingBounceInOut = function(t) { if ( t < 0.5 ) return easing.easingBounceIn( t * 2 ) * 0.5; return easing.easingBounceOut( t * 2 - 1 ) * 0.5 + 0.5;};
 
-    // single Tween object construct
-  var Tween = g._tween = function (_el, _vS, _vE, _o) {
+  // single Tween object construct
+  var start = function (t) { // move functions that use the ticker outside the prototype to be in the same scope with it
+      scrollIn.call(this);
+        
+      perspective(this._el,this._ops); // apply the perspective and transform origin
+      if ( this._rpr ) { this.getStartValues(); } // on start we reprocess the valuesStart for TO() method
+
+      K.svg && K.svq(this); // SVG Plugin | on start we process the SVG paths and SVG transforms
+
+      for ( var e in this._vE ) {
+        this._vSR[e] = this._vS[e];      
+      }
+
+      // now it's a good time to start
+      _tws.push(this);
+      this.playing = true;
+      this.paused = false;
+      this._sCF = false;
+      this._sT = t || time.now();
+      this._sT += this._dl;
+      
+      if (!this._sCF) {
+        if (this._sC) { this._sC.call(); }
+        this._sCF = true;
+      }
+      !tick && ticker();
+      return this;
+    },
+    play = function () {
+      if (this.paused && this.playing) {
+        this.paused = false;
+        if (this._rC !== null) { this._rC.call(); }        
+        this._sT += time.now() - this._pST;    
+        _tws.push(this);
+        !tick && ticker();  // restart ticking if stopped
+      }
+      return this;
+    },
+    Tween = g._tween = function (_el, _vS, _vE, _o) {
       this._el = _el; // element animation is applied to
       this._vSR = {}; // internal valuesStartRepeat
       this._vS = _vS; // valuesStart
@@ -594,11 +582,10 @@
       this._stC = _o.stop || null; // _on StopCallback    
       this.repeat = this._r; // we cache the number of repeats to be able to put it back after all cycles finish
       this._ops = {};
-      this.start = start;
-      this.play = this.resume = play;
+      this.start = start; this.play = play; this.resume = play;
 
       //also add plugins options or transform perspective TO DO : split this damn regex into an array and do an indexOf or a simple ||
-      for (var o in _o) { if (!(o in this) && !/delay|duration|repeat|start|stop|update|complete|pause|play|yoyo|easing/i.test(o) ) { this._ops[o] = _o[o]; } }
+      for (var o in _o) { if (!(o in this) && !/delay|rpr|duration|repeat|start|stop|update|complete|pause|play|yoyo|easing/i.test(o) ) { this._ops[o] = _o[o]; } }
 
       this.pause = function() {
         if (!this.paused && this.playing) {
@@ -610,7 +597,7 @@
           }
         }
         return this;
-      }
+      };
       this.stop = function () {
         if (!this.paused && this.playing) {
           remove(this);
@@ -625,19 +612,20 @@
           close.call(this);
         }
         return this;
-      }
+      };
       this.chain = function () {  this._cT = arguments; return this; };
       this.stopChainedTweens = function () {
         for (var i = 0, ctl =this._cT.length; i < ctl; i++) {
           this._cT[i].stop();
         }
       };
-      this.getStartValues = function () { // read current value to populate valuesStart for the .to() method
-        var startValues = {}, endValues = _vS;
+      this.getStartValues = function () { // stack transform props for .to() chains
+        var startValues = {}, cs = getInlineStyle(this._el,'transform'),
+          deg = ['rotate','skew'], ax = ['X','Y','Z'];
             
-        for (var p in endValues){
+        for (var p in _vS){
           if ( _tf.indexOf(p) !== -1 ) {
-            var r2d = (/(rotate|translate|scale)$/.test(p)), cs = getInlineStyle(this._el,'transform'), deg = ['rotate','skew'], ax = ['X','Y','Z'];
+            var r2d = (/(rotate|translate|scale)$/.test(p));
             if ( /translate/.test(p) && p !== 'translate' ) {
               startValues['translate3d'] = cs['translate3d'] || _d[p];           
             } else if ( r2d ) { // 2d transforms
@@ -646,57 +634,53 @@
               for (var d=0; d<2; d++) {
                 for (var a = 0; a<3; a++) {
                   var s = deg[d]+ax[a];                
-                  if (_tf.indexOf(s) !== -1 && (s in endValues) ) { startValues[s] =  cs[s] || _d[s]; }
+                  if (_tf.indexOf(s) !== -1 && (s in _vS) ) { startValues[s] =  cs[s] || _d[s]; }
                 }
               }
             }
           } else {
             if ( _sc.indexOf(p) === -1 ) {
               if (p === 'opacity' && _isIE8 ) { // handle IE8 opacity  
-                var co = getComputedStyle(this._el,'filter');          
+                var co = getCurrentStyle(this._el,'filter');          
                 startValues['opacity'] = typeof co === 'number' ? co : _d['opacity'];
               } else {
                 if ( _all.indexOf(p) !== -1 ) {
-                  startValues[p] = getComputedStyle(this._el,p) || d[p];
+                  startValues[p] = getCurrentStyle(this._el,p) || d[p];
                 } else { // plugins register here
-                  startValues[p] = p in prepareStart ? prepareStart[p](this._el,p,endValues[p]) : 0;
+                  startValues[p] = p in prepareStart ? prepareStart[p](this._el,p,_vS[p]) : 0;
                 }
               }
             } else {
-              startValues[p] = (this._el === null || this._el === undefined) ? (g.pageYOffset || _sct.scrollTop) : this._el.scrollTop;
+              startValues[p] = (this._el === null || this._el === undefined) ? (g.pageYOffset || scrollContainer.scrollTop) : this._el.scrollTop;
             }      
           }
         }
         for ( var p in cs ){ // also add to _vS values from previous tweens  
-          if ( _tf.indexOf(p) !== -1 && (!( p in endValues )) ) {
+          if ( _tf.indexOf(p) !== -1 && (!( p in _vS )) ) {
             startValues[p] = cs[p] || _d[p]; 
           }
         }
-        return startValues;  
-      };
-      this.stackTransform = function () { // stack transform props for .to() chains
-        var startValues = this.getStartValues();
+
         this._vS = {};
         this._vS = preparePropertiesObject(startValues,{},this._el)[0]; 
-        for ( var p in this._vS ) {
-          if ( p === 'transform' && (p in this._vE) ){
-            for ( var sp in this._vS[p]) {
-              if (!(sp in this._vE[p])) { this._vE[p][sp] = {}; }
-              for ( var spp in this._vS[p][sp] ) { // 3rd level
-                if ( this._vS[p][sp][spp].value !== undefined ) {
-                  if (!(spp in this._vE[p][sp])) { this._vE[p][sp][spp] = {}; }
-                  for ( var sppp in this._vS[p][sp][spp]) { // spp = translateX | rotateX | skewX | rotate2d
-                    if ( !(sppp in this._vE[p][sp][spp])) {
-                      this._vE[p][sp][spp][sppp] = this._vS[p][sp][spp][sppp]; // sppp = unit | value
-                    }
+        if ( 'transform' in this._vE ){ // stack transform
+          var transform = 'transform';
+          for ( var sp in this._vS['transform']) {
+            if (!(sp in this._vE[transform])) { this._vE[transform][sp] = {}; }
+            for ( var spp in this._vS[transform][sp] ) { // 3rd level
+              if ( this._vS[transform][sp][spp].value !== undefined ) {
+                if (!(spp in this._vE[transform][sp])) { this._vE[transform][sp][spp] = {}; }
+                for ( var sppp in this._vS[transform][sp][spp]) { // spp = translateX | rotateX | skewX | rotate2d
+                  if ( !(sppp in this._vE[transform][sp][spp])) {
+                    this._vE[transform][sp][spp][sppp] = this._vS[transform][sp][spp][sppp]; // sppp = unit | value
                   }
                 }
               }
-              if ( 'value' in this._vS[p][sp] && (!('value' in this._vE[p][sp])) ) { // 2nd level                    
-                for ( var spp1 in this._vS[p][sp] ) { // scale
-                  if (!(spp1 in this._vE[p][sp])) {
-                    this._vE[p][sp][spp1] = this._vS[p][sp][spp1]; // spp = unit | value 
-                  }
+            }
+            if ( 'value' in this._vS[transform][sp] && (!('value' in this._vE[transform][sp])) ) { // 2nd level                    
+              for ( var spp1 in this._vS[transform][sp] ) { // scale
+                if (!(spp1 in this._vE[transform][sp])) {
+                  this._vE[transform][sp][spp1] = this._vS[transform][sp][spp1]; // spp = unit | value 
                 }
               }
             }
@@ -736,6 +720,7 @@
       play : function(){ for ( var i = 0, tl = this.tweens.length; i < tl; i++ ) { this.tweens[i].play(); } return this; },
       resume : function() {return this.play()}
     },
+    
     // main methods
     to = function (el, to, o) {
       var _el = selector(el),
@@ -761,6 +746,6 @@
     property: property, getPrefix: getPrefix, selector: selector, pe : processEasing, // utils
     to: to, fromTo: fromTo, allTo: allTo, allFromTo: allFromTo, // main methods
     pp: parseProperty, prS: prepareStart, Tween : Tween, // property parsing & preparation | Tween
-    truD: trueDimension, truC: trueColor, rth: rgbToHex, htr: hexToRGB, gCS: getComputedStyle, // property parsing
+    truD: trueDimension, truC: trueColor, rth: rgbToHex, htr: hexToRGB, gCS: getCurrentStyle, // property parsing
   };
 }));

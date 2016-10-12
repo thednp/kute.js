@@ -16,7 +16,7 @@
 })(this, function(KUTE){
   'use strict';
 
-  var g = typeof global !== 'undefined' ? global : window, K = KUTE, DOM = g.dom, parseProperty = K.pp, prepareStart = K.prS, getComputedStyle = K.gCS, trueDimension = K.truD,
+  var g = typeof global !== 'undefined' ? global : window, K = KUTE, DOM = g.dom, parseProperty = K.pp, prepareStart = K.prS, getCurrentStyle = K.gCS, trueDimension = K.truD,
     _br = K.property('borderRadius'), _brtl = K.property('borderTopLeftRadius'), _brtr = K.property('borderTopRightRadius'), // all radius props prefixed
     _brbl = K.property('borderBottomLeftRadius'), _brbr = K.property('borderBottomRightRadius'),
     _cls = ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
@@ -53,7 +53,7 @@
       return parseProperty.cls(p,v);
     };
     prepareStart[p] = function(el,p,v){
-      return getComputedStyle(el,p) || _d[p];
+      return getCurrentStyle(el,p) || _d[p];
     };
   }
   
@@ -64,7 +64,7 @@
       return parseProperty.box(p,v);
     };
     prepareStart[p] = function(el,p,v){
-      return getComputedStyle(el,p) || _d[p];
+      return getCurrentStyle(el,p) || _d[p];
     };
   }
   
@@ -98,7 +98,7 @@
       return trueDimension(v);
     };
     prepareStart[p] = function(el,p,v){
-      return getComputedStyle(el,p) || _d[p];
+      return getCurrentStyle(el,p) || _d[p];
     };
   }
   
@@ -124,7 +124,7 @@
   };
   
   prepareStart['clip'] = function(el,p,v){
-    var c = getComputedStyle(el,p), w = getComputedStyle(el,'width'), h = getComputedStyle(el,'height');      
+    var c = getCurrentStyle(el,p), w = getCurrentStyle(el,'width'), h = getCurrentStyle(el,'height');      
     return !/rect/.test(c) ? [0, w, h, 0] : c;
   };
     
@@ -145,7 +145,7 @@
     }
   }
   prepareStart['backgroundPosition'] = function(el,p,v){
-    return getComputedStyle(el,p) || _d[p];
+    return getCurrentStyle(el,p) || _d[p];
   }
   
   return this;
