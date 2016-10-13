@@ -21,10 +21,11 @@
   // variables, reference global objects, prepare properties
   var g = typeof global !== 'undefined' ? global : window, K = KUTE, p, DOM = g.dom, parseProperty = K.pp, prepareStart = K.prS, getCurrentStyle = K.gCS,
     _isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false,
+    trueColor = K.truC, trueDimension = K.truD,
     _nm = ['strokeWidth', 'strokeOpacity', 'fillOpacity', 'stopOpacity'], // numeric SVG CSS props
     _cls = ['fill', 'stroke', 'stopColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
     pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi, ns = 'http://www.w3.org/2000/svg',
-    number = g.Interpolate.number, unit = g.Interpolate.unit, // interpolate functions
+    number = g.Interpolate.number, unit = g.Interpolate.unit, color = g.Interpolate.color, // interpolate functions
     array = g.Interpolate.array = function array(a,b,l,v) { // array1, array2, array2.length, progress
       var na = [], i;
       for(i=0;i<l;i++) { na.push( a[i] === b[i] ? b[i] : number(a[i],b[i],v) ); } // don't do math if not needed
@@ -285,7 +286,7 @@
       return { s: start, e: end, l: l } 
     };
   
-  parseProperty['draw'] = function(a,o,f){ // register the draw property
+  parseProperty['draw'] = function(a,o,el){ // register the draw property
     if (!('draw' in DOM)) {
       DOM['draw'] = function(l,p,a,b,v){
         var ll = a.l, s = number(a.s,b.s,v), e = number(a.e,b.e,v), o = 0 - s;
@@ -293,7 +294,7 @@
         l.style.strokeDasharray = e+o<1 ? '0px, ' + ll + 'px' : (e+o) + 'px, ' + ll + 'px';
       }
     }
-    return getDraw(f,o);
+    return getDraw(el,o);
   }
   
   prepareStart['draw'] = function(el,p,v){
@@ -303,30 +304,32 @@
   
   // SVG CSS Color Properties
   for ( var i = 0, l = _cls.length; i< l; i++) { 
-    p = _cls[i];
-    parseProperty[p] = function(p,v){
-      return parseProperty.cls(p,v);
+    parseProperty[_cls[i]] = function(p,v){
+      if (!(p in DOM)) {
+        DOM[p] = function(l,p,a,b,v,o) {
+          l.style[p] = color(a,b,v,o.keepHex);
+        };
+      }
+      return trueColor(v); 
     } 
-    prepareStart[p] = function(el,p,v){
+    prepareStart[_cls[i]] = function(el,p,v){
       return getCurrentStyle(el,p) || 'rgb(0,0,0)';
     }
   }
 
   // Other SVG related CSS props
   for ( var i = 0, l = _nm.length; i< l; i++) { // for numeric CSS props from any type of SVG shape
-    p = _nm[i];
-    if (p === 'strokeWidth'){ // stroke can be unitless or unit | http://stackoverflow.com/questions/1301685/fixed-stroke-width-in-svg
-      parseProperty[p] = function(p,v){
+    if (_nm[i] === 'strokeWidth'){ // stroke can be unitless or unit | http://stackoverflow.com/questions/1301685/fixed-stroke-width-in-svg
+      parseProperty[_nm[i]] = function(p,v){
         if (!(p in DOM)) {
           DOM[p] = function(l,p,a,b,v) {
-            var _u = _u || typeof b === 'number';
-            l.style[p] = !_u ? unit(a.value,b.value,b.unit,v) : number(a,b,v);
+            l.style[p] = typeof b === 'number' ? number(a,b,v) :  unit(a.v,b.v,b.u,v);
           }
         }
-        return /px|%|em|vh|vw/.test(v) ? parseProperty.box(p,v) : parseFloat(v);
+        return /px|%|em|vh|vw/.test(v) ? trueDimension(v) : parseFloat(v);
       }
     } else {
-      parseProperty[p] = function(p,v){
+      parseProperty[_nm[i]] = function(p,v){
         if (!(p in DOM)) {
           DOM[p] = function(l,p,a,b,v) {
             l.style[p] = number(a,b,v);
@@ -335,7 +338,7 @@
         return parseFloat(v);
       }
     } 
-    prepareStart[p] = function(el,p,v){
+    prepareStart[_nm[i]] = function(el,p,v){
       return getCurrentStyle(el,p) || 0;
     }
   }

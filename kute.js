@@ -55,8 +55,9 @@
       } else if (/transparent|none|initial|inherit/.test(v)) {
         return { r: 0, g: 0, b: 0, a: 0 };
       } else if (!/^#|^rgb/.test(v) ) { // maybe we can check for web safe colors
-        var h = document.getElementsByTagName('head')[0]; h.style.color = v; var webColor = g.getComputedStyle(h,null).color.replace(/[^\d,]/g, '').split(',');
-        h.style.color = ''; return v !== webColor ? { r: parseInt(webColor[0]), g: parseInt(webColor[1]), b: parseInt(webColor[2]) } : {r:0,g:0,b:0};
+        var h = document.getElementsByTagName('head')[0]; h.style.color = v; 
+        var webColor = g.getComputedStyle(h,null).color; webColor = /rgb/.test(webColor) ? webColor.replace(/[^\d,]/g, '').split(',') : [0,0,0];
+        h.style.color = ''; return { r: parseInt(webColor[0]), g: parseInt(webColor[1]), b: parseInt(webColor[2]) };
       }
     },
     preventScroll = function (e) { // prevent mousewheel or touch events while tweening scroll
@@ -159,6 +160,7 @@
     } else if ( p === 'scale' || p === 'opacity' ){
       _d[p] = 1;    
     }
+    p = null;
   }
   
   // KUTE.js INTERPOLATORS
@@ -213,7 +215,8 @@
     DOM = g.dom = {},
     ticker = g._ticker = function(t) {
       var i = 0, l;
-      while ( i < (l=_tws.length) ) {
+      // while ( i < (l=_tws.length) ) {
+      while ( i < _tws.length ) {
         if ( update(_tws[i],t) ) {
           i++;
         } else {
@@ -235,7 +238,7 @@
 
       if (elapsed === 1) {
         if (w._r > 0) {
-          if ( w._r < 9999 ) { w._r--; } else { w._r = 9998; } // we have to make it stop somewhere, infinity is too damn much
+          if ( w._r < 9999 ) { w._r--; } else { w._r = 0; } // we have to make it stop somewhere, infinity is too damn much
           
           if (w._y) { w.reversed = !w.reversed; reverse.call(w); } // handle yoyo
             
@@ -268,51 +271,47 @@
     },
       
     // process properties for _vE and _vS or one of them
-    preparePropertiesObject = function (e, s, l) {
-      var pl = arguments.length, _st = []; pl = pl > 2 ? 2 : pl;
-
-      for (var i=0; i<pl; i++) {
-        var t = arguments[i], x, sk = {}, rt = {}, tl = {}, tr = {}; _st[i] = {};
-        for (x in t) {
-          if (_tf.indexOf(x) !== -1) { // transform object gets built here
-            if ( /^translate(?:[XYZ]|3d)$/.test(x) ) { //process translate3d
-              var ta = ['X', 'Y', 'Z']; //coordinates //   translate[x] = pp(x, t[x]);  
-              
-              for (var f = 0; f < 3; f++) {        
-                var a = ta[f];
-                if ( /3d/.test(x) ) {
-                  tl['translate' + a] = parseProperty.transform('translate' + a, t[x][f]);                
-                } else {
-                  tl['translate' + a] = ('translate' + a in t) ? parseProperty.transform('translate' + a, t['translate' + a]) : { value: 0, unit: 'px' };
-                }
+    preparePropertiesObject = function (t, l) {
+      var skewObject = {}, rotateObject = {}, translateObject = {}, transformObject = {}, propertiesObject = {};
+      for (var x in t) {
+        if (_tf.indexOf(x) !== -1) { // transform object gets built here
+          if ( /^translate(?:[XYZ]|3d)$/.test(x) ) { //process translate3d
+            var ta = ['X', 'Y', 'Z']; //coordinates //   translate[x] = pp(x, t[x]);  
+            
+            for (var f = 0; f < 3; f++) {        
+              var a = ta[f];
+              if ( /3d/.test(x) ) {
+                translateObject['translate' + a] = parseProperty.transform('translate' + a, t[x][f]);                
+              } else {
+                translateObject['translate' + a] = ('translate' + a in t) ? parseProperty.transform('translate' + a, t['translate' + a]) : { value: 0, unit: 'px' };
               }
-              tr['translate'] = tl;
-            } else if ( /^rotate(?:[XYZ])$|^skew(?:[XY])$/.test(x) ) { //process rotation/skew
-              var ap = /rotate/.test(x) ? 'rotate' : 'skew', ra = ['X', 'Y', 'Z'], 
-                rtp = ap === 'rotate' ? rt : sk; 
-              for (var r = 0; r < 3; r++) {
-                var v = ra[r];
-                if ( t[ap+v] !== undefined && x !== 'skewZ' ) {
-                  rtp[ap+v] = parseProperty.transform(ap+v, t[ap+v]);
-                }
-              }
-              tr[ap] = rtp;
-            } else if ( /(rotate|translate|scale)$/.test(x) ) { //process 2d translation / rotation
-              tr[x] = parseProperty.transform(x, t[x]);
             }
-            _st[i]['transform'] = tr;
-          } else if ( x !== 'transform') {
-            if ( _bm.indexOf(x) !== -1 ) {
-              _st[i][x] = parseProperty.box(x,t[x]); 
-            } else if (_op.indexOf(x) !== -1 || _sc.indexOf(x) !== -1) { 
-              _st[i][x] = parseProperty.unl(x,t[x]); 
-            } else if (_cls.indexOf(x) !== -1) { 
-              _st[i][x] = parseProperty.cls(x,t[x]);
-            } else if (x in parseProperty) { _st[i][x] = parseProperty[x](x,t[x],l); } // or any other property from css/ attr / svg / third party plugins
+            transformObject['translate'] = translateObject;
+          } else if ( /^rotate(?:[XYZ])$|^skew(?:[XY])$/.test(x) ) { //process rotation/skew
+            var ap = /rotate/.test(x) ? 'rotate' : 'skew', ra = ['X', 'Y', 'Z'], 
+              rtp = ap === 'rotate' ? rotateObject : skewObject; 
+            for (var r = 0; r < 3; r++) {
+              var v = ra[r];
+              if ( t[ap+v] !== undefined && x !== 'skewZ' ) {
+                rtp[ap+v] = parseProperty.transform(ap+v, t[ap+v]);
+              }
+            }
+            transformObject[ap] = rtp;
+          } else if ( /(rotate|translate|scale)$/.test(x) ) { //process 2d translation / rotation
+            transformObject[x] = parseProperty.transform(x, t[x]);
           }
+          propertiesObject['transform'] = transformObject;
+        } else if ( x !== 'transform') {
+          if ( _bm.indexOf(x) !== -1 ) {
+            propertiesObject[x] = parseProperty.box(x,t[x]); 
+          } else if (_op.indexOf(x) !== -1 || _sc.indexOf(x) !== -1) { 
+            propertiesObject[x] = parseProperty.unl(x,t[x]); 
+          } else if (_cls.indexOf(x) !== -1) { 
+            propertiesObject[x] = parseProperty.cls(x,t[x]);
+          } else if (x in parseProperty) { propertiesObject[x] = parseProperty[x](x,t[x],l); } // or any other property from css/ attr / svg / third party plugins
         }
       }
-      return _st;
+      return propertiesObject;
     },
 
     // process properties object | registers the plugins prepareStart functions
@@ -424,11 +423,10 @@
       }
     },
     close = function () { //  when animation is finished reset repeat, yoyo&reversed tweens
-      if (_tws.length-1 === _tws.indexOf(this)) { setTimeout(function(){stop()}, 48); } // when all animations are finished, stop ticking after ~3 frames
-      // if (_tws.length === 0) { setTimeout(function(){stop()}, 48); } // when all animations are finished, stop ticking after ~3 frames
       if (this.repeat > 0) { this._r = this.repeat; }
       if (this._y && this.reversed===true) { reverse.call(this); this.reversed = false; }
       this.playing = false;
+      setTimeout(function(){ if (!_tws.length) { stop(); } }, 48);  // when all animations are finished, stop ticking after ~3 frames
     },
     scrollOut = function(){ //prevent scroll when tweening scroll    
       if (( 'scroll' in this._vE || 'scrollTop' in this._vE ) && document.body.getAttribute('data-tweening')) {
@@ -531,7 +529,7 @@
       }
 
       // now it's a good time to start
-      _tws.push(this);
+      add(this);
       this.playing = true;
       this.paused = false;
       this._sCF = false;
@@ -550,7 +548,7 @@
         this.paused = false;
         if (this._rC !== null) { this._rC.call(); }        
         this._sT += time.now() - this._pST;    
-        _tws.push(this);
+        add(this);
         !tick && ticker();  // restart ticking if stopped
       }
       return this;
@@ -664,7 +662,7 @@
         }
 
         this._vS = {};
-        this._vS = preparePropertiesObject(startValues,{},this._el)[0]; 
+        this._vS = preparePropertiesObject(startValues,this._el); 
         if ( 'transform' in this._vE ){ // stack transform
           var transform = 'transform';
           for ( var sp in this._vS['transform']) {
@@ -726,11 +724,11 @@
     // main methods
     to = function (el, to, o) {
       var _el = selector(el),
-          _vS = to, _vE = preparePropertiesObject(to, {}, _el)[0]; o = o || {}; o.rpr = true;  
+          _vS = to, _vE = preparePropertiesObject(to,_el); o = o || {}; o.rpr = true;  
       return new Tween(_el, _vS, _vE, o);
     },
     fromTo = function (el, f, to, o) {
-      var _el = selector(el), ft = preparePropertiesObject(f, to, _el), _vS = ft[0], _vE = ft[1]; o = o || {};
+      var _el = selector(el), _vS = preparePropertiesObject(f,_el), _vE = preparePropertiesObject(to,_el); o = o || {};
       var tw = new Tween(_el, _vS, _vE, o); K.svg && K.svq(tw); // on init we process the SVG paths
       return tw;
     },
@@ -747,7 +745,7 @@
   return K = { // export core methods to public for plugins
     property: property, getPrefix: getPrefix, selector: selector, pe : processEasing, // utils
     to: to, fromTo: fromTo, allTo: allTo, allFromTo: allFromTo, // main methods
-    pp: parseProperty, prS: prepareStart, Tween : Tween, // property parsing & preparation | Tween
+    pp: parseProperty, prS: prepareStart, //Tween : Tween, // property parsing & preparation | Tween
     truD: trueDimension, truC: trueColor, rth: rgbToHex, htr: hexToRGB, gCS: getCurrentStyle, // property parsing
   };
 }));
