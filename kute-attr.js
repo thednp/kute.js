@@ -48,8 +48,8 @@
       atts = DOM.attributes = {}
     }
 
-    var ats = {}, p;
-    for ( p in o ) {
+    var ats = {};
+    for ( var p in o ) {
       var prop = replaceUppercase(p), cv = getCurrentValue(l,prop.replace(/_+[a-z]+/,''));
       if ( svgColors.indexOf(prop) === -1 && (/(%|[a-z]+)$/.test(o[p]) || /(%|[a-z]+)$/.test(cv)) ) {
         var u = trueDimension(cv).u || trueDimension(o[p]).u, s = /%/.test(u) ? '_percent' : '_'+u;
@@ -67,7 +67,7 @@
             l.setAttribute(_u, color(a,b,v,o.keepHex));
           }
         }
-        ats[p] = trueColor(o[p]);     
+        ats[p] = trueColor(o[p]);
       } else {
         if (!(p in atts)) {
           atts[p] = function(l,o,a,b,v) {

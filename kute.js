@@ -55,7 +55,7 @@
       } else if (/transparent|none|initial|inherit/.test(v)) {
         return { r: 0, g: 0, b: 0, a: 0 };
       } else if (!/^#|^rgb/.test(v) ) { // maybe we can check for web safe colors
-        var h = document.getElementsByTagName('head')[0]; h.style.color = v; var webColor = g.getComputedStyle(h,null).color;
+        var h = document.getElementsByTagName('head')[0]; h.style.color = v; var webColor = g.getComputedStyle(h,null).color.replace(/[^\d,]/g, '').split(',');
         h.style.color = ''; return v !== webColor ? { r: parseInt(webColor[0]), g: parseInt(webColor[1]), b: parseInt(webColor[2]) } : {r:0,g:0,b:0};
       }
     },
