@@ -431,14 +431,14 @@
       this.playing = false;
     },
     scrollOut = function(){ //prevent scroll when tweening scroll    
-      if (document.body.getAttribute('data-tweening') && ( 'scroll' in this._vE || 'scrollTop' in this._vE )) {
+      if (( 'scroll' in this._vE || 'scrollTop' in this._vE ) && document.body.getAttribute('data-tweening')) {
         document.removeEventListener(touchOrWheel, preventScroll, false);
         document.removeEventListener(mouseEnter, preventScroll, false);
         document.body.removeAttribute('data-tweening');
       }
     },
     scrollIn = function(){
-      if (!document.body.getAttribute('data-tweening') && ( 'scroll' in this._vE || 'scrollTop' in this._vE )) {
+      if (( 'scroll' in this._vE || 'scrollTop' in this._vE ) && !document.body.getAttribute('data-tweening')) {
         document.addEventListener(touchOrWheel, preventScroll, false);
         document.addEventListener(mouseEnter, preventScroll, false);
         document.body.setAttribute('data-tweening', 'scroll');
@@ -517,7 +517,7 @@
   };
   easing.easingBounceInOut = function(t) { if ( t < 0.5 ) return easing.easingBounceIn( t * 2 ) * 0.5; return easing.easingBounceOut( t * 2 - 1 ) * 0.5 + 0.5;};
 
-  // single Tween object construct
+  // these methods run faster when defined outside
   var start = function (t) { // move functions that use the ticker outside the prototype to be in the same scope with it
       scrollIn.call(this);
         
@@ -555,6 +555,8 @@
       }
       return this;
     },
+    
+    // single Tween object construct
     Tween = g._tween = function (_el, _vS, _vE, _o) {
       this._el = _el; // element animation is applied to
       this._vSR = {}; // internal valuesStartRepeat
@@ -720,7 +722,7 @@
       play : function(){ for ( var i = 0, tl = this.tweens.length; i < tl; i++ ) { this.tweens[i].play(); } return this; },
       resume : function() {return this.play()}
     },
-    
+
     // main methods
     to = function (el, to, o) {
       var _el = selector(el),
