@@ -168,8 +168,10 @@
     number = Interpolate.number = function(a,b,v) { // number1, number2, progress
       a = +a; b -= a; return a + b * v;
     },
-    unit = Interpolate.unit = function(a,b,u,v) { // number1, number2, unit, progress
-      a = +a; b -= a; return (a + b * v)+u;
+    unit = Interpolate.unit = function(a,b,u,v,f) { // number1, number2, unit, progress
+      a = +a, b -= a;
+      var l = (a + b * v);
+      return f ? (l | 0) : l;
     },
     color = Interpolate.color = function(a,b,v,h){ // rgba1, rgba2, progress, convertToHex(true/false)
       var _c = {}, c, n = number, ep = ')', cm =',', r = 'rgb(', ra = 'rgba(';
@@ -320,7 +322,7 @@
       box : function(p,v){ // box model | text props | radius props
         if (!(p in DOM)){
           DOM[p] = function(l,p,a,b,v){
-            l.style[p] = unit(a.value,b.value,b.unit,v);
+            l.style[p] = unit(a.value,b.value,b.unit,v,true);
           }
         }
         return { value: trueDimension(v).v, unit: trueDimension(v).u }; 
