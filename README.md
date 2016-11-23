@@ -41,6 +41,7 @@ For documentation, examples and other cool tips, check the <a href="http://thedn
 * properly handles the suffixes for you
 
 # Easing Functions - [visit page](http://thednp.github.io/kute.js/easing.html)
+
 * optimized dynamics easing functions
 * optimized cubic-bezier easing functions
 
@@ -72,10 +73,6 @@ require("kute.js/kute-css");
 require("kute.js/kute-attr");
 // Add Text Plugin
 require("kute.js/kute-text");
-// Add Bezier Easing
-require("kute.js/kute-bezier");
-// Add Physics Easing
-require("kute.js/kute-physics");
 
 // AMD style
 define([
@@ -85,8 +82,6 @@ define([
     "kute.js/kute-css.js", // optional for additional CSS properties
     "kute.js/kute-attr.js", // optional for animating presentation attributes
     "kute.js/kute-text.js" // optional for string write and number incrementing animations
-    "kute.js/kute-bezier.js", // optional for more accurate easing functions
-    "kute.js/kute-physics.js" // optional for more flexible & accurate easing functions
 ], function(KUTE){
     // ...
 });
