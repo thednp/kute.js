@@ -24,9 +24,9 @@
   // filter unsupported browsers
   if (!('boxShadow' in document.body.style)) {return;}
   // add a reference to KUTE object
-  var g = window, K = KUTE, getComputedStyle = K.gCS,
-    trueColor = K.truC, prepareStart = K.prS, parseProperty = K.pp, DOM = g.dom,
-    unit = g.Interpolate.unit, color = g.Interpolate.color,
+  var g = typeof global !== 'undefined' ? global : window, K = KUTE, getComputedStyle = K.getCurrentStyle,
+    trueColor = K.truC, prepareStart = K.prepareStart, parseProperty = K.parseProperty, DOM = g.dom,
+    unit = g._unit, color = g._color,
 
     // the preffixed boxShadow property, mostly for legacy browsers
     // maybe the browser is supporting the property with its vendor preffix

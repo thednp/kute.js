@@ -1,11 +1,11 @@
 {
   "name": "KUTE.js",
-  "version": "1.5.96",
+  "version": "1.5.97",
   "homepage": "http://thednp.github.io/kute.js",
   "authors": [
     "thednp"
   ],
-  "description": "A minimal Native Javascript animation engine.",
+  "description": "Complete Native Javascript animation engine.",
   "main": "kute.js",
   "moduleType": [
     "amd",
@@ -13,13 +13,15 @@
     "node"
   ],
   "keywords": [
-    "animations",
+    "kute.js",
+    "svg morph",
+    "svg transform",
+    "tweening engine",
     "animation engine",
     "javascript animation engine",
-    "native javascript",
-    "kute.js",
-    "tweening",
-    "engine"
+    "javascript animation",
+    "animations",
+    "native javascript"
   ],
   "license": "MIT",
   "ignore": [

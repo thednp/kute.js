@@ -18,8 +18,8 @@
 }(this, function (KUTE) {
   'use strict';
 
-  var g = typeof global !== 'undefined' ? global : window, K = KUTE, DOM = g.dom, prepareStart = K.prS, parseProperty = K.pp,
-    unit = g.Interpolate.unit, number = g.Interpolate.number, color = g.Interpolate.color,
+  var g = typeof global !== 'undefined' ? global : window, K = KUTE, DOM = g.dom, prepareStart = K.prepareStart, parseProperty = K.parseProperty,
+    unit = g._unit, number = g._number, color = g._color,
     getCurrentValue = function(e,a){ return e.getAttribute(a); }, // get current attribute value
     svgColors = ['fill','stroke','stop-color'], trueColor = K.truC, trueDimension = K.truD, atts,
     replaceUppercase = function(a) {
@@ -27,20 +27,20 @@
     }; 
   
   prepareStart['attr'] = function(el,p,v){
-    var f = {};
+    var attsStartValues = {};
     for (var a in v){
-      var _a = replaceUppercase(a).replace(/_+[a-z]+/,''),
-        _v = getCurrentValue(el,_a); // get the value for 'fill-opacity' not fillOpacity
-      f[_a] = svgColors.indexOf(replaceUppercase(a)) !== -1 ? (_v || 'rgba(0,0,0,0)') : (_v || (/opacity/i.test(a) ? 1 : 0));
+      var attribute = replaceUppercase(a).replace(/_+[a-z]+/,''),
+        currentValue = getCurrentValue(el,attribute); // get the value for 'fill-opacity' not fillOpacity
+      attsStartValues[attribute] = svgColors.indexOf(replaceUppercase(a)) !== -1 ? (currentValue || 'rgba(0,0,0,0)') : (currentValue || (/opacity/i.test(a) ? 1 : 0));
     }
-    return f;
+    return attsStartValues;
   };
   
   // process attributes object K.pp.attr(t[x]) 
   // and also register their render functions
   parseProperty['attr'] = function(a,o,l){
     if (!('attr' in DOM)) {
-      DOM.attr = function(l,p,a,b,v) { 
+      DOM.attr = function(l,p,a,b,v) {
         for ( var o in b ){
           DOM.attributes[o](l,o,a[o],b[o],v);
         }
@@ -53,29 +53,26 @@
       var prop = replaceUppercase(p), cv = getCurrentValue(l,prop.replace(/_+[a-z]+/,''));
       if ( svgColors.indexOf(prop) === -1 && (/(%|[a-z]+)$/.test(o[p]) || /(%|[a-z]+)$/.test(cv)) ) {
         var u = trueDimension(cv).u || trueDimension(o[p]).u, s = /%/.test(u) ? '_percent' : '_'+u;
-        if (!(p+s in atts)) {
-          atts[p+s] = function(l,p,a,b,v) {
-            var _p = _p || replaceUppercase(p).replace(s,'');
-            l.setAttribute(_p, unit(a.v,b.v,b.u,v) );
+        if (!(prop+s in atts)) {
+          atts[prop+s] = function(l,p,a,b,v) {
+            l.setAttribute(p.replace(s,''), unit(a.v,b.v,b.u,v) );
           }
         }
-        ats[p+s] = trueDimension(o[p]);       
+        ats[prop+s] = trueDimension(o[p]);       
       } else if ( svgColors.indexOf(prop) > -1 ) {
-        if (!(p in atts)) {
-          atts[p] = function(l,u,a,b,v) {
-            var _u = _u || replaceUppercase(u);
-            l.setAttribute(_u, color(a,b,v,o.keepHex));
+        if (!(prop in atts)) {
+          atts[prop] = function(l,u,a,b,v) {
+            l.setAttribute(u, color(a,b,v,o.keepHex));
           }
         }
-        ats[p] = trueColor(o[p]);
+        ats[prop] = trueColor(o[p]);
       } else {
-        if (!(p in atts)) {
-          atts[p] = function(l,o,a,b,v) {
-            var _o = _o || replaceUppercase(o);
-            l.setAttribute(_o, number(a,b,v));
+        if (!(prop in atts)) {
+          atts[prop] = function(l,o,a,b,v) {
+            l.setAttribute(o, number(a,b,v));
           }
         }
-        ats[p] = parseFloat(o[p]);     
+        ats[prop] = parseFloat(o[p]);     
       }
     }
     return ats;

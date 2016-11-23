@@ -19,22 +19,23 @@
   'use strict'; 
 
   // variables, reference global objects, prepare properties
-  var g = typeof global !== 'undefined' ? global : window, K = KUTE, p, DOM = g.dom, parseProperty = K.pp, prepareStart = K.prS, getCurrentStyle = K.gCS,
-    _isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false,
+  var g = typeof global !== 'undefined' ? global : window, K = KUTE, p, 
+    DOM = g.dom, parseProperty = K.parseProperty, prepareStart = K.prepareStart, getCurrentStyle = K.getCurrentStyle,
     trueColor = K.truC, trueDimension = K.truD,
-    _nm = ['strokeWidth', 'strokeOpacity', 'fillOpacity', 'stopOpacity'], // numeric SVG CSS props
-    _cls = ['fill', 'stroke', 'stopColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
+    _isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false,
+    _numeric = ['strokeWidth', 'strokeOpacity', 'fillOpacity', 'stopOpacity'], // numeric SVG CSS props
+    _colors = ['fill', 'stroke', 'stopColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
     pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi, ns = 'http://www.w3.org/2000/svg',
-    number = g.Interpolate.number, unit = g.Interpolate.unit, color = g.Interpolate.color, // interpolate functions
-    array = g.Interpolate.array = function array(a,b,l,v) { // array1, array2, array2.length, progress
-      var na = [], i;
-      for(i=0;i<l;i++) { na.push( a[i] === b[i] ? b[i] : number(a[i],b[i],v) ); } // don't do math if not needed
-      return na;
-    },
-    coords = g.Interpolate.coords = function(a,b,l,ll,o,v) { // function(array1, array2, array2.length, coordinates.length, joiner, progress) for SVG morph
-      var s = [], i;
-      for(i=0;i<l;i++) { s.push( array( a[i],b[i],ll,v ) ); }
-      return s.join(o);
+    number = g._number, unit = g._unit, color = g._color, // interpolate functions
+    coords = g._coords = function(a,b,l,v) { // function(array1, array2, array2.length, progress) for SVG morph
+      var points =[];
+      for(var i=0;i<l;i++) { // for each point
+        points[i] = [];
+        for(var j=0;j<2;j++) { // each point coordinate
+          points[i].push(a[i][j]+(b[i][j]-a[i][j])*v);
+        }
+      }
+      return points;
     };
 
   if (_isIE&&_isIE<9) {return;} // return if SVG API is not supported
@@ -171,10 +172,10 @@
         var p1 = getOnePath(w._vS.path.o), p2 = getOnePath(w._vE.path.o), paths;
 
         // path tween options
-        this._mpr = w._ops.morphPrecision || 15;
-        this._idx = w._ops.morphIndex;
-        this._rv1 = w._ops.reverseFirstPath;
-        this._rv2 = w._ops.reverseSecondPath;
+        this._mpr = w.options.morphPrecision || 15;
+        this._idx = w.options.morphIndex;
+        this._rv1 = w.options.reverseFirstPath;
+        this._rv2 = w.options.reverseSecondPath;
           
         // begin processing paths
         this._isP = !/[CSQTA]/i.test(p1) && !/[CSQTA]/i.test(p2); // check if both shapes are polygons
@@ -193,7 +194,7 @@
   parseProperty['path'] = function(a,o,l) { // K.pp['path']('path',value,element);
     if (!('path' in DOM)) {
       DOM['path'] = function(l,p,a,b,v){
-        l.setAttribute("d", v === 1 ? b.o : 'M' + coords( a['d'],b['d'],b['d'].length,2,'L',v ) + 'Z' );       
+        l.setAttribute("d", v === 1 ? b.o : 'M' + coords( a['d'],b['d'],b['d'].length,v ) + 'Z' );   
       }
     }
     return getPath(o);
@@ -303,8 +304,8 @@
 
   
   // SVG CSS Color Properties
-  for ( var i = 0, l = _cls.length; i< l; i++) { 
-    parseProperty[_cls[i]] = function(p,v){
+  for ( var i = 0, l = _colors.length; i< l; i++) { 
+    parseProperty[_colors[i]] = function(p,v){
       if (!(p in DOM)) {
         DOM[p] = function(l,p,a,b,v,o) {
           l.style[p] = color(a,b,v,o.keepHex);
@@ -312,15 +313,15 @@
       }
       return trueColor(v); 
     } 
-    prepareStart[_cls[i]] = function(el,p,v){
+    prepareStart[_colors[i]] = function(el,p,v){
       return getCurrentStyle(el,p) || 'rgb(0,0,0)';
     }
   }
 
   // Other SVG related CSS props
-  for ( var i = 0, l = _nm.length; i< l; i++) { // for numeric CSS props from any type of SVG shape
-    if (_nm[i] === 'strokeWidth'){ // stroke can be unitless or unit | http://stackoverflow.com/questions/1301685/fixed-stroke-width-in-svg
-      parseProperty[_nm[i]] = function(p,v){
+  for ( var i = 0, l = _numeric.length; i< l; i++) { // for numeric CSS props from any type of SVG shape
+    if (_numeric[i] === 'strokeWidth'){ // stroke can be unitless or unit | http://stackoverflow.com/questions/1301685/fixed-stroke-width-in-svg
+      parseProperty[_numeric[i]] = function(p,v){
         if (!(p in DOM)) {
           DOM[p] = function(l,p,a,b,v) {
             l.style[p] = typeof b === 'number' ? number(a,b,v) :  unit(a.v,b.v,b.u,v);
@@ -329,7 +330,7 @@
         return /px|%|em|vh|vw/.test(v) ? trueDimension(v) : parseFloat(v);
       }
     } else {
-      parseProperty[_nm[i]] = function(p,v){
+      parseProperty[_numeric[i]] = function(p,v){
         if (!(p in DOM)) {
           DOM[p] = function(l,p,a,b,v) {
             l.style[p] = number(a,b,v);
@@ -338,7 +339,7 @@
         return parseFloat(v);
       }
     } 
-    prepareStart[_nm[i]] = function(el,p,v){
+    prepareStart[_numeric[i]] = function(el,p,v){
       return getCurrentStyle(el,p) || 0;
     }
   }
@@ -354,13 +355,13 @@
       }
       return c;
     },
-    translateSVG = g.Interpolate.translateSVG = function (s,e,a,b,v){ // translate(i+'(',')',a[i],b[i],v)
+    translateSVG = g._translateSVG = function (s,e,a,b,v){ // translate(i+'(',')',a[i],b[i],v)
       return s + ((a[1] === b[1] && b[1] === 0 ) ? number(a[0],b[0],v) : number(a[0],b[0],v) + ' ' + number(a[1],b[1],v)) + e;
     },
-    rotateSVG = g.Interpolate.rotateSVG = function (s,e,a,b,v){
+    rotateSVG = g._rotateSVG = function (s,e,a,b,v){
        return s + (number(a[0],b[0],v) + ' ' + b[1] + ',' + b[2]) + e;
     },
-    scaleOrSkew = g.Interpolate.scaleOrSkewSVG = function (s,e,a,b,v){ // scale / skew
+    scaleOrSkew = g._scaleOrSkewSVG = function (s,e,a,b,v){ // scale / skew
       return s + number(a,b,v) + e;
     },
     stackTransform = function (w){ // helper function that helps preserve current transform properties into the objects

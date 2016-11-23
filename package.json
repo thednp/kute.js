@@ -1,7 +1,7 @@
 {
   "name": "kute.js",
-  "version": "1.5.96",
-  "description": "A minimal Native Javascript animation engine.",
+  "version": "1.5.97",
+  "description": "Complete Native Javascript animation engine.",
   "main": "kute.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,6 +13,9 @@
   },
   "keywords": [
     "kute.js",
+    "svg morph",
+    "svg transform",
+    "tweening engine",
     "animation engine",
     "javascript animation engine",
     "javascript animation",

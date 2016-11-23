@@ -166,6 +166,18 @@ h1.example-item span {
   background-color: transparent;
   border: 0;
 }
+.text-olive { color: #9C27B0;}
+.text-indigo { color: #673AB7;}
+.text-green { color: #4CAF50;}
+.text-red { color: #e91b1f;}
+.text-yellow { color: #ffd626;}
+.text-blue { color: #2196F3;}
+.text-pink { color: #E91E63;}
+.text-orange { color: #FF5722;}
+.text-lime { color: #CDDC39;}
+.text-teal { color: #009688;}
+.text-strong { font-weight: bold }
+
 .hidden {
   display: none !important;
   visibility: hidden !important;
