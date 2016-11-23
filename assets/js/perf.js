@@ -115,7 +115,6 @@ function createTest(count, property, engine, repeat) {
 			}
 		} else if (engine==='tween') {
 						
-			
 			if (property==="left"){
 				update = updateLeft;				
 			} else if (property==="translateX"){
@@ -126,11 +125,11 @@ function createTest(count, property, engine, repeat) {
 		}
 	}
 	if (engine==='tween') {
-		animate();
-		function animate( time ) {
+		var animate = function( time ) {
 			requestAnimationFrame( animate );
 			TWEEN.update( time );
 		}
+		animate();
 	}
 
 }

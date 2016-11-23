@@ -123,7 +123,8 @@
 		<p>The <a href="svg.html">SVG Plugin</a> can animate the <code>d</code> attribute of a given <code>&lt;path&gt;</code> or <code>&lt;glyph&gt;</code> element with the tween property called <kbd class="bg-olive">path</kbd>. The animation effect is widelly known as morph SVG and implemented in various scripts, but the KUTE.js implementation is similar to <a href="http://bl.ocks.org/mbostock/3081153" target="_blank">the D3.js examples</a> for wider usability.</p>
 
 		<p>Further more, the SVG Plugin can animate the stroke in a way that you probably know as <code>drawSVG</code>. KUTE.js implements it as <kbd class="bg-olive">draw</kbd> tween property that deals with the well known CSS properties: <kbd>strokeDasharray</kbd> and <kbd>strokeDashoffset</kbd>.
-		<p>The SVG Plugin also manages animation for most useful CSS properties that are specific to SVG elements, since SMIL animations tend to go extinct, this plugin can get quite useful.</p>
+		
+		<!--<p>The SVG Plugin also manages animation for most useful CSS properties that are specific to SVG elements, since SMIL animations tend to go extinct, this plugin can get quite useful.</p>
         <ul>
 			<li><kbd class="bg-olive">strokeWidth</kbd> allows you to animate the <code>stroke-width</code> for a given SVG element.</li>
 			<li><kbd class="bg-olive">strokeOpacity</kbd> allows you to animate the <code>stroke-opacity</code> for a given SVG element.</li>
@@ -132,7 +133,7 @@
 			<li><kbd class="bg-olive">fill</kbd> allows you to animate the <code>fill</code> color property for a given SVG element.</li>
 			<li><kbd class="bg-olive">stroke</kbd> allows you to animate the <code>stroke</code> color for a given SVG element.</li>
 			<li><kbd class="bg-olive">stopColor</kbd> allows you to animate the <code>stop-color</code> for a given gradient SVG element.</li>
-		</ul>
+		</ul>-->
 
 		<h3>Box Model Properties</h3>
 		<p>The core engine supports <code>width</code>, <code>height</code>, <code>left</code> and <code>top</code> while the <a href="css.html">CSS Plugin</a> adds support for all other box-model properties.</p>
@@ -171,6 +172,7 @@
 		<h3>Presentation Attributes</h3>
 		<p>The <a href="attr.html">Attributes Plugin</a> can animate any numerical presentation attribute such as <kbd class="bg-olive">width</kbd>, <kbd class="bg-olive">cx</kbd> or <kbd class="bg-olive">stop-opacity</kbd>, but the values can be also suffixed: <code>150px</code> or <code>50%</code>, and for that you must always provide a string value that include the measurement unit, and that, of course, depends on the attribute. This plugin can be a great addition to the above SVG Plugin for specific gradient attributes or specific geometric shapes' attributes.</p>
 		<p>The synthax is slightly different to make sure we don't mess up with CSS properties that have the same name because the presentation attribute may be a unitless attribute while the CSS property might require a suffix (%,px,etc). For instance <code>KUTE.to('selector', {attr:{width:150}})</code> is clearly different from <code>KUTE.to('selector', {width:150})</code> which is the the CSS property with the same name.</p>
+		<p>Starting KUTE.js 1.6.0 the <a href="attr.html">Attributes Plugin</a> can also animate color attributes such as <kbd class="bg-olive">stroke</kbd>, <kbd class="bg-olive">fill</kbd> or <kbd class="bg-olive">stop-color</kbd>, and they are removed from the SVG Plugin, and the reason for that is the new bundle build that incorporates both plugins into an unified file. More details to come.</p>
         
 		<h3>Typography Properties</h3>
 		<p>The <a href="css.html">CSS Plugin</a> also cover the text properties, and these can be combinated with each other when applied to text elements (paragraphs, headings) as animation fallback for <code>scale</code> on browsers that don't support <code>transform</code> at all. Yes, IE8 and other legacy browsers.</p>

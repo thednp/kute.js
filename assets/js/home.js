@@ -65,7 +65,6 @@ function doBlockAnimations() {
 			t6 = KUTE.to(bs[i], { backgroundColor: '#fff'}, { easing: 'easingCircularOut', delay: 550+i*50, duration:450, yoyo: true, repeat: 1, complete: fn });
 			
 		
-		// t6.start();
 		t1.start();
 		t1.chain(t2);
 		t2.chain(t3);

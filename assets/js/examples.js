@@ -264,7 +264,7 @@ easings.addEventListener('click',function(e){
         var es = e.target.innerHTML, g = window;
         easingSelectButton.innerHTML = es;
         tweenEasingElements[1].innerHTML = es;
-        tweenEasing2._e = KUTE.pe(es) || g.Easing.linear; 
+      tweenEasing2.options.easing = KUTE.processEasing(es) || KUTE.processEasing('linear'); 
     }
 }, false);
 
