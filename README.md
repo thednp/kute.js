@@ -41,6 +41,7 @@ For documentation, examples and other cool tips, check the <a href="http://thedn
 * properly handles the suffixes for you
 
 # Easing Functions - [visit page](http://thednp.github.io/kute.js/easing.html)
+**NOTE:** Starting with KUTE.js v 1.6.0 the Cubic Bezier Functions are removed from the distribution folder and from CDN repositories, but you can find them in the [Experiments repository on Github](https://github.com/thednp/kute.js/tree/experiments).</p>
 
 * optimized dynamics easing functions
 * optimized cubic-bezier easing functions

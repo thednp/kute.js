@@ -86,7 +86,7 @@
 		<p>In most cases, the best animation possible is the <code class="bg-blue">opacity</code>, for performance, aesthetics and maybe more other reasons such as avoiding unwanted layout changes. KUTE.js also covers IE8 here with the help of proprietary synthax <code>filter: alpha(opacity=0)</code>. Also, opacity can be used for instance on legacy browsers that don't support <code>RGBA</code> colors. Eg. <code>opacity:0.5</code> will make an element semitransparent.</p>
 		
 		<h3>2D Transform Properties</h3>
-		<p>The core engine supports all 2D transform properties except <code>matrix</code>.</p>
+		<p>The core engine supports most 2D transform properties, but the most important part is that starting with KUTE.js v1.6.0 the values used for animation are always converted from percentage based translation to pixels and radians based angles to degrees, to help improve memory efficiency.</p>
 		<ul>
 			<li><kbd class="bg-blue">translate</kbd> property can be used for horizontal and / or vertical movement. EG. <code>translate:150</code> to translate an element 150px to the right or <code>translate:[-150,200]</code> to move the element to the left by 150px and to bottom by 200px. <kbd class="bg-lime">IE9+</kbd></li>
 			<li><kbd class="bg-blue">rotate</kbd> property applies rotation to an element on the Z axis or the plain document. Eg. <code>rotate:250</code> will rotate an element clockwise by 250 degrees. <kbd class="bg-lime">IE9+</kbd></li>
@@ -97,7 +97,7 @@
 		</ul>		
 		
 		<h3>3D Transform Properties</h3>
-		<p>The core engine supports all 3D transform properties except <code>matrix3d</code> and <code>rotate3d</code>.</p>
+		<p>The core engine supports all 3D transform properties except <code>matrix3d</code> and <code>rotate3d</code>. Just as the above, these properties' values are also converted to traditional pixels and degrees measurements to help improve memory usage.</p>
         <ul>
 			<li><kbd class="bg-blue">translateX</kbd> property is for horizontal translation. EG. <code>translateX:150</code> to translate an element 150px to the right. <kbd class="bg-lime">IE10+</kbd></li>
 			<li><kbd class="bg-blue">translateY</kbd> property is for vertical translation. EG. <code>translateY:-250</code> to translate an element 250px towards the top. <kbd class="bg-lime">IE10+</kbd></li>
@@ -123,17 +123,6 @@
 		<p>The <a href="svg.html">SVG Plugin</a> can animate the <code>d</code> attribute of a given <code>&lt;path&gt;</code> or <code>&lt;glyph&gt;</code> element with the tween property called <kbd class="bg-olive">path</kbd>. The animation effect is widelly known as morph SVG and implemented in various scripts, but the KUTE.js implementation is similar to <a href="http://bl.ocks.org/mbostock/3081153" target="_blank">the D3.js examples</a> for wider usability.</p>
 
 		<p>Further more, the SVG Plugin can animate the stroke in a way that you probably know as <code>drawSVG</code>. KUTE.js implements it as <kbd class="bg-olive">draw</kbd> tween property that deals with the well known CSS properties: <kbd>strokeDasharray</kbd> and <kbd>strokeDashoffset</kbd>.
-		
-		<!--<p>The SVG Plugin also manages animation for most useful CSS properties that are specific to SVG elements, since SMIL animations tend to go extinct, this plugin can get quite useful.</p>
-        <ul>
-			<li><kbd class="bg-olive">strokeWidth</kbd> allows you to animate the <code>stroke-width</code> for a given SVG element.</li>
-			<li><kbd class="bg-olive">strokeOpacity</kbd> allows you to animate the <code>stroke-opacity</code> for a given SVG element.</li>
-			<li><kbd class="bg-olive">fillOpacity</kbd> allows you to animate the <code>fill-opacity</code> for a given SVG element.</li>
-			<li><kbd class="bg-olive">stopOpacity</kbd> allows you to animate the <code>stop-opacity</code> for a given gradient SVG element.</li>
-			<li><kbd class="bg-olive">fill</kbd> allows you to animate the <code>fill</code> color property for a given SVG element.</li>
-			<li><kbd class="bg-olive">stroke</kbd> allows you to animate the <code>stroke</code> color for a given SVG element.</li>
-			<li><kbd class="bg-olive">stopColor</kbd> allows you to animate the <code>stop-color</code> for a given gradient SVG element.</li>
-		</ul>-->
 
 		<h3>Box Model Properties</h3>
 		<p>The core engine supports <code>width</code>, <code>height</code>, <code>left</code> and <code>top</code> while the <a href="css.html">CSS Plugin</a> adds support for all other box-model properties.</p>
@@ -143,7 +132,8 @@
 			<li><kbd class="bg-olive">padding</kbd>, <kbd class="bg-olive">margin</kbd>, <kbd class="bg-olive">paddingTop</kbd>, <kbd class="bg-olive">paddingBottom</kbd>, <kbd class="bg-olive">paddingLeft</kbd>, <kbd class="bg-olive">paddingRight</kbd>, <kbd class="bg-olive">marginTop</kbd>, <kbd class="bg-olive">marginBottom</kbd>, <kbd class="bg-olive">marginLeft</kbd> and <kbd class="bg-olive">marginRight</kbd> are properties that allow you to animate the spacing of an element inside (via padding) and outside (via margin). Shorthand notations such as <code>margin: "20px 50px"</code> or any other type are not supported.</li>
 			<li><kbd class="bg-olive">borderWidth</kbd>, <kbd class="bg-olive">borderTopWidth</kbd>, <kbd class="bg-olive">borderRightWidth</kbd>, <kbd class="bg-olive">borderBottomWidth</kbd> are <kbd class="bg-olive">borderLeftWidth</kbd> are properties that allow you to animate the border of an element either on all sides at once or each side separatelly. Shorthand notations are not supported.</li>
 			<li><kbd class="bg-olive">outlineWidth</kbd> property allows you to animate the <code>outline-width</code> of an element.</li>
-		</ul>		
+		</ul>
+		<p>As a quick side note, starting with KUTE.js v1.6.0 the core engine supported box model properties values are converted from percent based into pixel based values, using the <code>element.offsetWidth</code> as a refference. The idea is the same as presented on the above supported transform properties.</p>
 		<p><strong>Remember</strong>: these properties are <strong>layout modifiers</strong> that may force repaint of the entire DOM, drastically affecting performance on lower end and mobile devices. They also trigger <code>resize</code> event that may cause crashes on old browsers such as IE8 when using handlers bound on <code>resize</code>, so use with caution.</p>
 
 		<h3>Border Radius</h3>
@@ -236,7 +226,7 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->	
 
-<!--<script src="http://cdn.jsdelivr.net/kute.js/1.5.9/kute.min.js"></script>  KUTE CDN -->
+<!--<script src="http://cdn.jsdelivr.net/kute.js/1.6.0/kute.min.js"></script>  KUTE CDN -->
 
 <script src="./src/kute.min.js"></script> <!-- some stuff -->
 <script src="./assets/js/scripts.js"></script> <!-- some stuff -->

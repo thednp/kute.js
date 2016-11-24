@@ -19,6 +19,24 @@ for (var i=0; i<l; i++) {
   tweenEasing2.push(KUTE.fromTo(featurettes[i].querySelectorAll('.easing-example')[1], esProp1, esProp2, { duration: 1000, easing: 'linear', repeat: 1, yoyo: true}));
 }
 
+// override core processEasing to be able to use predefined bezier and physics functions
+KUTE.processEasing = function (fn) { //process easing function
+  if ( typeof fn === 'function') {
+    return fn;
+  } else if ( typeof fn === 'string' ) {
+    if ( /easing|linear/.test(fn) ) {
+      return window.Easing[fn]; // regular Robert Penner Easing Functions
+    } else if ( /bezier/.test(fn) )  { 
+      var bz = fn.replace(/bezier|\s|\(|\)/g,'').split(',');
+      return window.Bezier( bz[0]*1,bz[1]*1,bz[2]*1,bz[3]*1 ); //bezier fn            
+    } else if ( /physics/.test(fn) )  {
+      return window.Physics[fn].apply(this); // predefined physics bezier based fn functions
+    } else {
+      return window.Ease[fn].apply(this); // predefined bezier based fn functions
+    }
+  }
+};
+
 // update tween objects and update dropdown
 for (var j=0; j<l; j++) {
   function cHandler(e){

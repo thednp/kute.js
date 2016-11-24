@@ -11,7 +11,7 @@
   } else if(typeof module == 'object' && typeof require == 'function') {
     module.exports = factory(require('kute.js'));
   } else if ( typeof root.KUTE !== 'undefined' ) {
-    root.KUTE.svg = factory(root.KUTE);
+    factory(root.KUTE);
   } else {
     throw new Error("SVG Plugin require KUTE.js.");
   }
@@ -21,10 +21,9 @@
   // variables, reference global objects, prepare properties
   var g = typeof global !== 'undefined' ? global : window, K = KUTE, p, 
     DOM = g.dom, parseProperty = K.parseProperty, prepareStart = K.prepareStart, getCurrentStyle = K.getCurrentStyle,
-    trueColor = K.truC, trueDimension = K.truD,
+    trueColor = K.truC, trueDimension = K.truD, crossCheck = K.crossCheck,
     _isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false,
-    _numeric = ['strokeWidth', 'strokeOpacity', 'fillOpacity', 'stopOpacity'], // numeric SVG CSS props
-    _colors = ['fill', 'stroke', 'stopColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
+
     pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi, ns = 'http://www.w3.org/2000/svg',
     number = g._number, unit = g._unit, color = g._color, // interpolate functions
     coords = g._coords = function(a,b,l,v) { // function(array1, array2, array2.length, progress) for SVG morph
@@ -129,9 +128,9 @@
     computePathCross = function(s,e){ // pathCross
       var s1, e1, pointsArray, largerPathLength, smallerPath, largerPath, simluatedSmallerPath, nsm = [], sml, cl = [], len, tl, cs;
 
-      if (!this._isP) {
+      if (!this._isPolygon) {
         s = createPath(s); e = createPath(e);  
-        pointsArray = getSegments(s,e,this._mpr); 
+        pointsArray = getSegments(s,e,this.options.morphPrecision); 
         s1 = pointsArray[0]; e1 = pointsArray[1]; largerPathLength = e1.length;
       } else {
         s = pathToAbsolute(s); e = pathToAbsolute(e);
@@ -155,40 +154,18 @@
       }
 
       // reverse arrays
-      if (this._rv1) { s1.reverse(); }
-      if (this._rv2) { e1.reverse(); }
+      if (this.options.reverseFirstPath) { s1.reverse(); }
+      if (this.options.reverseSecondPath) { e1.reverse(); }
       
       // shift second array to for smallest tween distance
-      if (this._idx) {
-        var e11 = e1.splice(this._idx,largerPathLength-this._idx);
+      if (this.options.morphIndex) {
+        var e11 = e1.splice(this.options.morphIndex,largerPathLength-this.options.morphIndex);
         e1 = e11.concat(e1);
       }
 
       s = e = null;
       return [s1,e1]
-    },
-    SVG = {
-      pathCross : function(w){ // pathCross
-        var p1 = getOnePath(w._vS.path.o), p2 = getOnePath(w._vE.path.o), paths;
-
-        // path tween options
-        this._mpr = w.options.morphPrecision || 15;
-        this._idx = w.options.morphIndex;
-        this._rv1 = w.options.reverseFirstPath;
-        this._rv2 = w.options.reverseSecondPath;
-          
-        // begin processing paths
-        this._isP = !/[CSQTA]/i.test(p1) && !/[CSQTA]/i.test(p2); // check if both shapes are polygons
-
-        paths = computePathCross.apply(this,[p1,p2]);
-
-        w._vS.path.d = paths[0];
-        w._vE.path.d = paths[1];
-      }
     };
-
-  // a shortHand pathCross && SVG transform stack
-  K.svq = function(w){ if ( w._vE.path ) SVG.pathCross(w); if ( w._vE.svgTransform ) stackTransform(w); }
   
   // process path object and also register the render function
   parseProperty['path'] = function(a,o,l) { // K.pp['path']('path',value,element);
@@ -202,6 +179,20 @@
     
   prepareStart['path'] = function(el,p,v){
     return el.getAttribute('d');
+  };
+
+  crossCheck['path'] = function() {
+    var p1 = getOnePath(this._vS.path.o), p2 = getOnePath(this._vE.path.o), paths;
+
+    // path tween options
+    this.options.morphPrecision = this.options.morphPrecision || 15;
+    this._isPolygon = !/[CSQTA]/i.test(p1) && !/[CSQTA]/i.test(p2); // check if both shapes are polygons
+
+    // begin processing paths
+    paths = computePathCross.apply(this,[p1,p2]);
+
+    this._vS.path.d = paths[0];
+    this._vE.path.d = paths[1];
   };
 
 
@@ -302,47 +293,6 @@
     return getDraw(el);
   }
 
-  
-  // SVG CSS Color Properties
-  for ( var i = 0, l = _colors.length; i< l; i++) { 
-    parseProperty[_colors[i]] = function(p,v){
-      if (!(p in DOM)) {
-        DOM[p] = function(l,p,a,b,v,o) {
-          l.style[p] = color(a,b,v,o.keepHex);
-        };
-      }
-      return trueColor(v); 
-    } 
-    prepareStart[_colors[i]] = function(el,p,v){
-      return getCurrentStyle(el,p) || 'rgb(0,0,0)';
-    }
-  }
-
-  // Other SVG related CSS props
-  for ( var i = 0, l = _numeric.length; i< l; i++) { // for numeric CSS props from any type of SVG shape
-    if (_numeric[i] === 'strokeWidth'){ // stroke can be unitless or unit | http://stackoverflow.com/questions/1301685/fixed-stroke-width-in-svg
-      parseProperty[_numeric[i]] = function(p,v){
-        if (!(p in DOM)) {
-          DOM[p] = function(l,p,a,b,v) {
-            l.style[p] = typeof b === 'number' ? number(a,b,v) :  unit(a.v,b.v,b.u,v);
-          }
-        }
-        return /px|%|em|vh|vw/.test(v) ? trueDimension(v) : parseFloat(v);
-      }
-    } else {
-      parseProperty[_numeric[i]] = function(p,v){
-        if (!(p in DOM)) {
-          DOM[p] = function(l,p,a,b,v) {
-            l.style[p] = number(a,b,v);
-          }
-        }
-        return parseFloat(v);
-      }
-    } 
-    prepareStart[_numeric[i]] = function(el,p,v){
-      return getCurrentStyle(el,p) || 0;
-    }
-  }
 
   // SVG Transform
   var parseTransform = function (a){ // helper function that turns transform value from string to object
@@ -363,36 +313,6 @@
     },
     scaleOrSkew = g._scaleOrSkewSVG = function (s,e,a,b,v){ // scale / skew
       return s + number(a,b,v) + e;
-    },
-    stackTransform = function (w){ // helper function that helps preserve current transform properties into the objects
-      var bb = w._el.getBBox(), ctr = parseTransform(w._el.getAttribute('transform')), r, t, i,
-        cx = bb.x + bb.width/2, cy = bb.y + bb.height/2;
-      
-      for ( i in ctr ) { // populate the valuesStart
-        if (i === 'translate'){
-          t = ctr[i] instanceof Array ? ctr[i] : /\,|\s/.test(ctr[i]) ? ctr[i].split(/\,|\s/) : [ctr[i]*1,0];
-          w._vS.svgTransform[i] = [t[0] * 1||0, t[1] * 1||0];
-        } else if (i === 'scale'){
-          w._vS.svgTransform[i] = ctr[i] * 1||1;
-        } else if (i === 'rotate'){
-          r = ctr[i] instanceof Array ? ctr[i]
-          : /\s/.test(ctr[i]) ? [ctr[i].split(' ')[0]*1, ctr[i].split(' ')[1].split(',')[0]*1, ctr[i].split(' ')[1].split(',')[1]*1] 
-          : [ctr[i]*1,cx,cy];
-          w._vS.svgTransform[i] = r;
-        } else if (/skew/.test(i)) {
-          w._vS.svgTransform[i] = ctr[i] * 1||0;
-        }
-      }
-
-      for (var i in w._vS.svgTransform) {
-        if (!(i in w._vE.svgTransform)) { // copy existing and unused properties to the valuesEnd
-          w._vE.svgTransform[i] = w._vS.svgTransform[i];
-        }
-        if (i === 'rotate' in w._vS.svgTransform && 'rotate' in w._vE.svgTransform){ // make sure to use the right transform origin when rotation is used
-          w._vE.svgTransform.rotate[1] = w._vS.svgTransform.rotate[1] = cx;
-          w._vE.svgTransform.rotate[2] = w._vS.svgTransform.rotate[2] = cy;
-        }
-      }
     };
 
   parseProperty['svgTransform'] = function(p,v,l){
@@ -458,7 +378,6 @@
     return tf;
   }
 
-  // KUTE.prepareStart prepareStart[p](el,p,to[p])
   // returns an obect with current transform attribute value
   prepareStart['svgTransform'] = function(l,p,t) {
     var tr = {}, i, ctr = parseTransform(l.getAttribute('transform'));
@@ -466,6 +385,38 @@
     return tr;
   }
 
-  return SVG;
+  crossCheck['svgTransform'] = function() { // helper function that helps preserve current transform properties into the objects
+    var bb = this._el.getBBox(), ctr = parseTransform(this._el.getAttribute('transform')), r, t, i,
+      cx = bb.x + bb.width/2, cy = bb.y + bb.height/2;
+    
+    for ( i in ctr ) { // populate the valuesStart
+      if (i === 'translate'){
+        t = ctr[i] instanceof Array ? ctr[i] : /\,|\s/.test(ctr[i]) ? ctr[i].split(/\,|\s/) : [ctr[i]*1,0];
+        this._vS.svgTransform[i] = [t[0] * 1||0, t[1] * 1||0];
+      } else if (i === 'scale'){
+        this._vS.svgTransform[i] = ctr[i] * 1||1;
+      } else if (i === 'rotate'){
+        r = ctr[i] instanceof Array ? ctr[i]
+        : /\s/.test(ctr[i]) ? [ctr[i].split(' ')[0]*1, ctr[i].split(' ')[1].split(',')[0]*1, ctr[i].split(' ')[1].split(',')[1]*1] 
+        : [ctr[i]*1,cx,cy];
+        this._vS.svgTransform[i] = r;
+      } else if (/skew/.test(i)) {
+        this._vS.svgTransform[i] = ctr[i] * 1||0;
+      }
+    }
+
+    for (var i in this._vS.svgTransform) {
+      if (!(i in this._vE.svgTransform)) { // copy existing and unused properties to the valuesEnd
+        this._vE.svgTransform[i] = this._vS.svgTransform[i];
+      }
+      if (i === 'rotate' in this._vS.svgTransform && 'rotate' in this._vE.svgTransform){ // make sure to use the right transform origin when rotation is used
+        this._vE.svgTransform.rotate[1] = this._vS.svgTransform.rotate[1] = cx;
+        this._vE.svgTransform.rotate[2] = this._vS.svgTransform.rotate[2] = cy;
+      }
+    }
+  }
+
+  // return SVG;
+  return this;
 
 }));

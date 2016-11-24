@@ -21,7 +21,7 @@
     getCurrentStyle = K.getCurrentStyle, trueDimension = K.truD, trueColor = K.truC,
     number = g._number, unit = g._unit, color = g._color,
     _colors = ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
-    _radius  = ['borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'], // border radius px/any
+    _radius  = ['borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'], // border radius px/%
     _boxModel  = ['right', 'bottom', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 
       'padding', 'margin', 'paddingTop','paddingBottom', 'paddingLeft', 'paddingRight', 'marginTop','marginBottom', 'marginLeft', 'marginRight', 
       'borderWidth', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'outlineWidth'], // dimensions / box model
@@ -87,7 +87,7 @@
       return trueDimension(v);
     };
     prepareStart[prefixedProp] = function(el,p,v){
-      return getCurrentStyle(el,p) || _defaults[p];
+      return getCurrentStyle(el,prefixedProp) || _defaults[p];
     };
   }
   

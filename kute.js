@@ -38,6 +38,7 @@
       if (nl === null && el !== 'window') throw new TypeError('Element not found or incorrect selector: '+el); 
       return nl;   
     },
+    radToDeg = function(a) { return a*180/Math.PI; },
     trueDimension = function (d,p) { //true dimension returns { v = value, u = unit }
       var x = parseInt(d) || 0, mu = ['px','%','deg','rad','em','rem','vh','vw'], y;
       for (var i=0, l = mu.length; i<l; i++) { if ( typeof d === 'string' && d.indexOf(mu[i]) !== -1 ) { y = mu[i]; break; } }
@@ -69,7 +70,7 @@
     rgbToHex = function (r, g, b) { // transform rgb to hex or vice-versa | webkit browsers ignore HEX, always use RGB/RGBA
       return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
     },
-    hexToRGB = function (hex) {
+    hexToRGB = g._htr = function (hex) {
       var shr = /^#?([a-f\d])([a-f\d])([a-f\d])$/i; // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
       hex = hex.replace(shr, function (m, r, g, b) {
         return r + r + g + g + b + b;
@@ -100,9 +101,9 @@
       return trsf;
     },
     getCurrentStyle = function (el,p) { // gCS = get style property for element from computedStyle for .to() method
-      var es = el.style, cs = g.getComputedStyle(el,null) || el.currentStyle, pp = property(p), //the computed style | prefixed property
-        s = es[p] && !/auto|initial|none|unset/.test(es[p]) ? es[p] : cs[pp]; // s the property style value
-      if ( p !== 'transform' && (pp in cs || pp in es) ) {
+      var styleAttribute = el.style, computedStyle = g.getComputedStyle(el,null) || el.currentStyle, pp = property(p), //the computed style | prefixed property
+        s = styleAttribute[p] && !/auto|initial|none|unset/.test(styleAttribute[p]) ? styleAttribute[p] : computedStyle[pp]; // s the property style value
+      if ( p !== 'transform' && (pp in computedStyle || pp in styleAttribute) ) {
         if ( s ){
           if (pp==='filter') { // handle IE8 opacity
             var si1 = parseInt(s.split('=')[1].replace(')','')), si = parseFloat(si1/100);
@@ -165,8 +166,7 @@
   }
   
   // KUTE.js INTERPOLATORS
-  var /*Interpolate = g.Interpolate = {},*/
-    number = g._number = function(a,b,v) { // number1, number2, progress
+  var number = g._number = function(a,b,v) { // number1, number2, progress
       a = +a; b -= a; return a + b * v;
     },
     unit = g._unit = function(a,b,u,v) { // number1, number2, unit, progress
@@ -177,48 +177,39 @@
       for (c in b) { _c[c] = c !== 'a' ? (parseInt( number(a[c],b[c],v) ) || 0) : (a[c] && b[c]) ? parseFloat( number(a[c],b[c],v) ) : null; }
       return h ? rgbToHex( _c.r, _c.g, _c.b ) : !_c.a ? r + _c.r + cm + _c.g + cm + _c.b + ep : ra + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
     },
-    translate = g._translate = function (a,b,v){
+    translate = g._translate = function (a,b,u,v){
       var translation = {};
-
       for (var ax in b){
-        var x1 = a[ax].value || 0, x2 = b[ax].value || 0, xu = b[ax].unit || 'px';
-        translation[ax] = x1===x2 ? x2+xu : (x1 + ( x2 - x1 ) * v) + xu;  
+        var x1 = a[ax] || 0, x2 = b[ax] || 0;
+        translation[ax] = x1===x2 ? x2+u : (x1 + ( x2 - x1 ) * v) + u; 
       }
-      return b.x ? 'translate(' + translation.x + ',' + translation.y + ')' :
+      return translation.x ? 'translate(' + translation.x + ',' + translation.y + ')' :
         'translate3d(' + translation.translateX + ',' + translation.translateY + ',' + translation.translateZ + ')';
     },
-    rotate = g._rotate = function (a,b,v){
+    rotate = g._rotate = function (a,b,u,v){
       var rotation = {};
       for ( var rx in b ){
-        if ( a[rx] ) {
-          var a1 = a[rx].value, a2 = b[rx].value, au = b[rx].unit||'deg', av = a1 + (a2 - a1) * v;
-          rotation[rx] = rx === 'z' ? 'rotate('+av+au+')' : rx + '(' + av + au + ')';
-        }
+        rotation[rx] = rx === 'z' ? 'rotate('+ (a[rx] + (b[rx] - a[rx]) * v) +u+')' : rx + '(' + (a[rx] + (b[rx] - a[rx]) * v) + u + ')';
       }
-      return b.z ?  rotation.z  : (rotation.rotateX||'') + (rotation.rotateY||'') + (rotation.rotateZ||'');
+      return rotation.z ? rotation.z : (rotation.rotateX||'') + (rotation.rotateY||'') + (rotation.rotateZ||'');
     },
-    skew = g._skew = function (a,b,v){
+    skew = g._skew = function (a,b,u,v){
       var skewProp = {};
       for ( var sx in b ){
-        if ( a[sx] ) {
-          var s1 = a[sx].value, s2 = b[sx].value, su = b[sx].unit||'deg';
-          skewProp[sx] = sx + '(' + (s1 + (s2 - s1) * v) + su + ')';
-        }
+        skewProp[sx] = sx + '(' + (a[sx] + (b[sx] - a[sx]) * v) + u + ')';
       }
       return (skewProp.skewX||'') + (skewProp.skewY||'');
     },
     scale = g._scale = function(a,b,v){
-      var scaleA = a.value, scaleB = b.value; 
-      return 'scale(' + (scaleA + (scaleB - scaleA) * v) + ')';             
+      return 'scale(' + (a + (b - a) * v) + ')';          
     },
 
     // KUTE.js DOM update functions
     DOM = g.dom = {},
     ticker = g._ticker = function(t) {
-      var i = 0, l;
-      while ( i < (l=_tws.length) ) {
-      // while ( i < _tws.length ) {
-        if ( update(_tws[i],t) ) {
+      var i = 0;
+      while ( i < _tws.length ) {
+        if ( update.call(_tws[i],t) ) {
           i++;
         } else {
           _tws.splice(i, 1);
@@ -226,39 +217,35 @@
       }
       tick = _requestAnimationFrame(ticker);
     },
-    update = g._update = function(w,t) {
+    update = g._update = function(t) {
       t = t || time.now();
-      // if (t < w._startTime && w.playing && !w.paused) { return true; }
-      if ( t < w._startTime && w.playing ) { return true; }
+      if ( t < this._startTime && this.playing ) { return true; }
 
-      // element/node, method, (prefixed)property, startValue, endValue, progress
-      var elapsed = Math.min(( t - w._startTime ) / w.options.duration, 1); // calculate progress
+      var elapsed = Math.min(( t - this._startTime ) / this.options.duration, 1); // calculate progress
 
-      // for (var p in w._vE){ DOM[p](w._el,p,w._vS[p],w._vE[p],w._e(elapsed),w.options); } //render the CSS update
-      for (var p in w._vE){ DOM[p](w._el,p,w._vS[p],w._vE[p],w.options.easing(elapsed),w.options); } //render the CSS update
+      for (var p in this._vE){ DOM[p](this._el,p,this._vS[p],this._vE[p],this.options.easing(elapsed),this.options); } //render the CSS update
 
-      if (w.options.update) { w.options.update.call(); } // fire the updateCallback, try to minimize recursion
+      if (this.options.update) { this.options.update.call(); } // fire the updateCallback
 
       if (elapsed === 1) {
-        if (w.options.repeat > 0) {
-          if ( w.options.repeat < 9999 ) { w.options.repeat--; } else { w.options.repeat = 0; } // we have to make it stop somewhere, infinity is too damn much
+        if (this.options.repeat > 0) {
+          if ( this.options.repeat < 9999 ) { this.options.repeat--; } else { this.options.repeat = 0; } // we have to make it stop somewhere, infinity is too damn much
           
-          if (w.options.yoyo) { w.reversed = !w.reversed; reverse.call(w); } // handle yoyo
+          if (this.options.yoyo) { this.reversed = !this.reversed; reverse.call(this); } // handle yoyo
             
-          w._startTime = (w.options.yoyo && !w.reversed) ? t + w.options.repeatDelay : t; //set the right time for delay
+          this._startTime = (this.options.yoyo && !this.reversed) ? t + this.options.repeatDelay : t; //set the right time for delay
           return true;        
         } else {
           
-          if (w.options.complete) { w.options.complete.call(); }
+          if (this.options.complete) { this.options.complete.call(); }
           
-          scrollOut.call(w); // unbind preventing scroll when scroll tween finished 
+          scrollOut.call(this); // unbind preventing scroll when scroll tween finished 
           
-          // start animating chained tweens
-          for (var i = 0, ctl = w.options.chain.length; i < ctl; i++) {
-            w.options.chain[i].start();
+          for (var i = 0, ctl = this.options.chain.length; i < ctl; i++) { // start animating chained tweens
+            this.options.chain[i].start();
           }
           //stop ticking when finished
-          close.call(w);
+          close.call(this);
         }
         return false;
       }
@@ -266,13 +253,14 @@
     },
   
     // applies the transform origin and perspective
-    perspective = function (l,o) {
-      if ( o.transformOrigin !== undefined ) { l.style[property('transformOrigin')] = o.transformOrigin; } // element transform origin    
-      if ( o.perspectiveOrigin !== undefined ) { l.style[property('perspectiveOrigin')] = o.perspectiveOrigin; } // element perspective origin
-      if ( o.parentPerspective !== undefined ) { l.parentNode.style[property('perspective')] = o.parentPerspective + 'px'; } // parent perspective  
-      if ( o.parentPerspectiveOrigin !== undefined ) { l.parentNode.style[property('perspectiveOrigin')] = o.parentPerspectiveOrigin; } // parent perspective origin
+    perspective = g._perspective = function () {
+      if ( this.options.perspective !== undefined && transformProperty in this._vE ) { this._vS[transformProperty]['perspective'] = this._vE[transformProperty]['perspective']; } // element perspective
+      if ( this.options.transformOrigin !== undefined ) { this._el.style[property('transformOrigin')] = this.options.transformOrigin; } // element transform origin    
+      if ( this.options.perspectiveOrigin !== undefined ) { this._el.style[property('perspectiveOrigin')] = this.options.perspectiveOrigin; } // element perspective origin
+      if ( this.options.parentPerspective !== undefined ) { this._el.parentNode.style[property('perspective')] = this.options.parentPerspective + 'px'; } // parent perspective  
+      if ( this.options.parentPerspectiveOrigin !== undefined ) { this._el.parentNode.style[property('perspectiveOrigin')] = this.options.parentPerspectiveOrigin; } // parent perspective origin
     },
-      
+
     // process properties for _vE and _vS or one of them
     preparePropertiesObject = function (t, l) {
       var skewObject = {}, rotateObject = {}, translateObject = {}, transformObject = {}, propertiesObject = {};
@@ -284,9 +272,9 @@
             for (var f = 0; f < 3; f++) {        
               var a = ta[f];
               if ( /3d/.test(x) ) {
-                translateObject['translate' + a] = parseProperty.transform('translate' + a, t[x][f]);                
+                translateObject['translate' + a] = parseProperty.transform('translate' + a, t[x][f], l);                
               } else {
-                translateObject['translate' + a] = ('translate' + a in t) ? parseProperty.transform('translate' + a, t['translate' + a]) : { value: 0, unit: 'px' };
+                translateObject['translate' + a] = ('translate' + a in t) ? parseProperty.transform('translate' + a, t['translate' + a], l) : 0;
               }
             }
             transformObject['translate'] = translateObject;
@@ -301,7 +289,7 @@
             }
             transformObject[ap] = rtp;
           } else if ( /(rotate|translate|scale)$/.test(x) ) { //process 2d translation / rotation
-            transformObject[x] = parseProperty.transform(x, t[x]);
+            transformObject[x] = parseProperty.transform(x, t[x], l);
           }
           propertiesObject[transformProperty] = transformObject;
         } else if ( x !== 'transform') {
@@ -320,68 +308,76 @@
     // process properties object | registers the plugins prepareStart functions
     // string parsing and property specific value processing
     parseProperty = {
-      boxModel : function(p,v){ // box model | text props | radius props
+      boxModel : function(p,v,l){ // box model | text props | radius props
         if (!(p in DOM)){
           DOM[p] = function(l,p,a,b,v){
-            l.style[p] = unit(a.value,b.value,b.unit,v);
+            l.style[p] = unit(a,b,'px',v);
           }
         }
-        return { value: trueDimension(v).v, unit: trueDimension(v).u }; 
+        var boxValue = trueDimension(v);
+        return boxValue.u === '%' ? boxValue.v * l.offsetWidth / 100 : boxValue.v; 
       },
-      transform : function(p,v){ // transform prop / value
+      transform : function(p,v,l) { // transform prop / value
         if (!('transform' in DOM)) {
           DOM[transformProperty] = function(l,p,a,b,v,o){
-            var _tS = '', t = '', r = '', sk = '', s = '', pp = pp || o.perspective && parseInt(o.perspective) !== 0 ? 'perspective('+parseInt(o.perspective)+'px) ' : 0;
+            var t = '', r = '', sk = '', s = '', pp = '';
 
             for (var tp in b){
-              if (tp === 'translate'){
-                t += translate(a[tp],b[tp],v);
+              if (tp === 'perspective'){
+                pp += a[tp];
+              } else if (tp === 'translate'){
+                t += translate(a[tp],b[tp],'px',v);
               } else if (tp === 'rotate'){
-                r += rotate(a[tp],b[tp],v);
+                r += rotate(a[tp],b[tp],'deg',v);
               } else if (tp === 'skew'){
-                sk += skew(a[tp],b[tp],v);
+                sk += skew(a[tp],b[tp],'deg',v);
               } else if (tp === 'scale'){
                 s += scale(a[tp],b[tp],v);
               }
             }
-            _tS = t + r + sk + s;
 
-            l.style[p] = pp ? pp + _tS : _tS;
+            l.style[p] = pp + t + r + sk + s;
           }
         }
 
         // process each transform property
         if (/translate/.test(p)) {
           if (p === 'translate3d') {
-            var t3d = v.split(','); 
+            var t3d = v.split(','), t3d0 = trueDimension(t3d[0]), t3d1 = trueDimension(t3d[1], t3d2 = trueDimension(t3d[2]));
             return {
-              translateX : { value: trueDimension(t3d[0]).v, unit: trueDimension(t3d[0]).u },
-              translateY : { value: trueDimension(t3d[1]).v, unit: trueDimension(t3d[1]).u },
-              translateZ : { value: trueDimension(t3d[2]).v, unit: trueDimension(t3d[2]).u }
+              translateX : t3d0.u === '%' ? (t3d0.v * l.offsetWidth / 100) : t3d0.v,
+              translateY : t3d1.u === '%' ? (t3d1.v * l.offsetHeight / 100) : t3d1.v,
+              translateZ : t3d2.u === '%' ? (t3d2.v * (l.offsetHeight + l.offsetWidth) / 200) : t3d2.v // to be changed with something like element and/or parent perspective
             };
           } else if (/^translate(?:[XYZ])$/.test(p)) {
-            return { value: trueDimension(v).v, unit: (trueDimension(v).u||'px') };
+            var t1d = trueDimension(v), percentOffset = /X/.test(p) ? l.offsetWidth / 100 : /Y/.test(p) ? l.offsetHeight / 100 : (l.offsetWidth+l.offsetHeight) / 200;
+
+            return t1d.u === '%' ? (t1d.v * percentOffset) : t1d.v;
           } else if (p === 'translate') {
-            var tv = typeof v === 'string' ? v.split(',') : v, t2d = {};
+            var tv = typeof v === 'string' ? v.split(',') : v, t2d = {}, t2dv,
+              t2d0 = trueDimension(tv[0]), t2d1 = tv.length ? trueDimension(tv[1]) : {v: 0, u: 'px'};
             if (tv instanceof Array) {
-              t2d.x = { value: trueDimension(tv[0]).v, unit: trueDimension(tv[0]).u },
-              t2d.y = { value: trueDimension(tv[1]).v, unit: trueDimension(tv[1]).u }
+              t2d.x = t2d0.u === '%' ? (t2d0.v * l.offsetWidth / 100) : t2d0.v,
+              t2d.y = t2d1.u === '%' ? (t2d1.v * l.offsetHeight / 100) : t2d1.v
             } else {
-              t2d.x = { value: trueDimension(tv).v, unit: trueDimension(tv).u },
-              t2d.y = { value: 0, unit: 'px' }        
+              t2dv = trueDimension(tv);
+              t2d.x = t2dv.u === '%' ? (t2dv.v * l.offsetWidth / 100) : t2dv.v,
+              t2d.y = 0 
             }
+
             return t2d;
           }
         } else if (/rotate|skew/.test(p)) {
           if (/^rotate(?:[XYZ])$|skew(?:[XY])$/.test(p)) {
-            return { value: trueDimension(v,true).v, unit: (trueDimension(v,true).u||'deg') };
+            var r3d = trueDimension(v,true);
+            return r3d.u === 'rad' ? radToDeg(r3d.v) : r3d.v;
           } else if (p === 'rotate') {
-            var r2d = {};
-            r2d.z = { value: trueDimension(v,true).v, unit: (trueDimension(v,true).u||'deg') };
+            var r2d = {}, r2dv = trueDimension(v,true);
+            r2d.z = r2dv.u === 'rad' ? radToDeg(r2dv.v) : r2dv.v;
             return r2d;
           } 
         } else if (p === 'scale') {
-          return { value: parseFloat(v) }; // this must be parseFloat(v)
+          return parseFloat(v); // this must be parseFloat(v)
         }
       },
       unitless : function(p,v){  // scroll | opacity | unitless  
@@ -445,46 +441,39 @@
         document.body.setAttribute('data-tweening', 'scroll');
       }
     },
-    processEasing = function (es) { //process easing
-      if ( typeof es === 'function') {
-        return es;
-      } else if ( typeof es === 'string' ) {
-        if ( /easing|linear/.test(es) ) {
-          return easing[es]; // regular Robert Penner Easing Functions
-        } else if ( /bezier/.test(es) )  { 
-          var bz = es.replace(/bezier|\s|\(|\)/g,'').split(',');
-          return g.Bezier( bz[0]*1,bz[1]*1,bz[2]*1,bz[3]*1 ); //bezier easing            
-        } else if ( /physics/.test(es) )  {
-          return g.Physics[es].apply(this); // predefined physics bezier based easing functions
-        } else {
-          return g.Ease[es].apply(this); // predefined bezier based easing functions
-        }
+    processEasing = function (fn) { //process easing function
+      if ( typeof fn === 'function') {
+        return fn;
+      } else if ( typeof fn === 'string' ) {
+        return easing[fn]; // regular Robert Penner Easing Functions
       }
     },
+    prepareStart = {},
+    crossCheck = {},
     getStartValues = function () { // stack transform props for .to() chains
-      var startValues = {}, cs = getInlineStyle(this._el,'transform'),
+      var startValues = {}, currentStyle = getInlineStyle(this._el,'transform'),
         deg = ['rotate','skew'], ax = ['X','Y','Z'];
           
       for (var p in this._vS){
         if ( _transform.indexOf(p) !== -1 ) {
           var r2d = (/(rotate|translate|scale)$/.test(p));
           if ( /translate/.test(p) && p !== 'translate' ) {
-            startValues['translate3d'] = cs['translate3d'] || _defaults[p];           
+            startValues['translate3d'] = currentStyle['translate3d'] || _defaults[p];
           } else if ( r2d ) { // 2d transforms
-            startValues[p] = cs[p] || _defaults[p]; 
+            startValues[p] = currentStyle[p] || _defaults[p]; 
           } else if ( !r2d && /rotate|skew/.test(p) ) { // all angles
             for (var d=0; d<2; d++) {
               for (var a = 0; a<3; a++) {
                 var s = deg[d]+ax[a];                
-                if (_transform.indexOf(s) !== -1 && (s in this._vS) ) { startValues[s] =  cs[s] || _defaults[s]; }
+                if (_transform.indexOf(s) !== -1 && (s in this._vS) ) { startValues[s] = currentStyle[s] || _defaults[s]; }
               }
             }
           }
         } else {
           if ( _scroll.indexOf(p) === -1 ) {
             if (p === 'opacity' && _isIE8 ) { // handle IE8 opacity  
-              var co = getCurrentStyle(this._el,'filter');          
-              startValues['opacity'] = typeof co === 'number' ? co : _defaults['opacity'];
+              var currentOpacity = getCurrentStyle(this._el,'filter');          
+              startValues['opacity'] = typeof currentOpacity === 'number' ? currentOpacity : _defaults['opacity'];
             } else {
               if ( _all.indexOf(p) !== -1 ) {
                 startValues[p] = getCurrentStyle(this._el,p) || d[p];
@@ -493,47 +482,41 @@
               }
             }
           } else {
-            startValues[p] = (this._el === null || this._el === undefined) ? (g.pageYOffset || scrollContainer.scrollTop) : this._el.scrollTop;
+            startValues[p] = this._el === scrollContainer ? (g.pageYOffset || scrollContainer.scrollTop) : this._el.scrollTop;
           }      
         }
       }
-      for ( var p in cs ){ // also add to _vS values from previous tweens  
+      for ( var p in currentStyle ){ // also add to _vS values from previous tweens  
         if ( _transform.indexOf(p) !== -1 && (!( p in this._vS )) ) {
-          startValues[p] = cs[p] || _defaults[p]; 
+          startValues[p] = currentStyle[p] || _defaults[p]; 
         }
       }
 
       this._vS = {};
-      this._vS = preparePropertiesObject(startValues,this._el); 
-      
-      if ( transformProperty in this._vE ){ // stack transform
-        for ( var sp in this._vS[transformProperty]) {
-          if (!(sp in this._vE[transformProperty])) { this._vE[transformProperty][sp] = {}; }
-          for ( var spp in this._vS[transformProperty][sp] ) { // 3rd level
-            if ( this._vS[transformProperty][sp][spp].value !== undefined ) {
-              if (!(spp in this._vE[transformProperty][sp])) { this._vE[transformProperty][sp][spp] = {}; }
-              for ( var sppp in this._vS[transformProperty][sp][spp]) { // spp = translateX | rotateX | skewX | rotate2d
-                if ( !(sppp in this._vE[transformProperty][sp][spp])) {
-                  this._vE[transformProperty][sp][spp][sppp] = this._vS[transformProperty][sp][spp][sppp]; // sppp = unit | value
+      this._vS = preparePropertiesObject(startValues,this._el);
+
+      if ( transformProperty in this._vE ) { // let's stack transform
+        for ( var sp in this._vS[transformProperty]) { // sp is the object corresponding to the transform function objects translate / rotate / skew / scale
+          if ( sp !== 'perspective') {
+            if ( typeof this._vS[transformProperty][sp] === 'object' ) {
+              for ( var spp in this._vS[transformProperty][sp] ) { // 3rd level 
+                if ( typeof this._vE[transformProperty][sp] === 'undefined' ) { this._vE[transformProperty][sp] = {}; }
+                if ( typeof this._vS[transformProperty][sp][spp] === 'number' && typeof this._vE[transformProperty][sp][spp] === 'undefined' ) {
+                  this._vE[transformProperty][sp][spp] = this._vS[transformProperty][sp][spp];
                 }
               }
-            }
-          }
-          if ( 'value' in this._vS[transformProperty][sp] && (!('value' in this._vE[transformProperty][sp])) ) { // 2nd level                    
-            for ( var spp1 in this._vS[transformProperty][sp] ) { // scale
-              if (!(spp1 in this._vE[transformProperty][sp])) {
-                this._vE[transformProperty][sp][spp1] = this._vS[transformProperty][sp][spp1]; // spp = unit | value 
+            } else if ( typeof this._vS[transformProperty][sp] === 'number' ) {
+              if ( typeof this._vE[transformProperty][sp] === 'undefined' ) { // scale
+                this._vE[transformProperty][sp] = this._vS[transformProperty][sp];
               }
             }
           }
         }
       }
-    },
-    prepareStart = {},
-    crossCheck = {},
+    };
 
     // core easing functions  
-    easing = g.Easing = {};
+  var easing = g.Easing = {};
   easing.linear = function (t) { return t; };
   easing.easingSinusoidalIn = function(t) { return -Math.cos(t * Math.PI / 2) + 1; };
   easing.easingSinusoidalOut = function(t) { return Math.sin(t * Math.PI / 2); };
@@ -591,13 +574,11 @@
   var start = g._start = function (t) { // move functions that use the ticker outside the prototype to be in the same scope with it
       scrollIn.call(this);
         
-      perspective(this._el,this.options); // apply the perspective and transform origin
       if ( this.options.rpr ) { getStartValues.apply(this); } // on start we reprocess the valuesStart for TO() method
-
-      K.svg && K.svq(this); // SVG Plugin | on start we process the SVG paths and SVG transforms
+      perspective.apply(this); // apply the perspective and transform origin
 
       for ( var e in this._vE ) {
-        if (e in crossCheck) crossCheck[e]; // this is where we do the valuesStart and valuesEnd check
+        if (e in crossCheck && this.options.rpr) crossCheck[e].call(this); // this is where we do the valuesStart and valuesEnd check for to() method
         this._vSR[e] = this._vS[e];      
       }
 
@@ -628,31 +609,40 @@
     },
     
     // single Tween object construct
-    Tween = g._Tween = function (_el, _vS, _vE, _o) {
+    Tween = function (_el, _vS, _vE, _o) {
       this._el = 'scroll' in _vE && (_el === undefined || _el === null) ? scrollContainer : _el; // element animation is applied to
 
-      this.playing = false; // _isPlaying
-      this.reversed = false; // _reversed
-      this.paused = false; //_paused
+      this.playing = false;
+      this.reversed = false;
+      this.paused = false;
 
-      this._startTime = null; // startTime
-      this._pauseTime = null; //_pauseTime
+      this._startTime = null;
+      this._pauseTime = null;
 
-      this._startFired = false; //_on StartCallbackFIRED
+      this._startFired = false;
 
       this._vSR = {}; // internal valuesStartRepeat
       this._vS = _o.rpr ? _vS : preparePropertiesObject(_vS,_el); // valuesStart
       this._vE = preparePropertiesObject(_vE,_el); // valuesEnd
 
       this.options = {}; for (var o in _o) { this.options[o] = _o[o]; }
-      this.options.chain = []; //_chainedTweens
+      this.options.rpr = _o.rpr || false; // internal option to process inline/computed style at start instead of init true/false
+      for ( var e in this._vE ) {
+        if (e in crossCheck && !this.options.rpr) crossCheck[e].call(this); // this is where we do the valuesStart and valuesEnd check for fromTo() method
+      }
+
+      if ( this.options.perspective !== undefined && transformProperty in this._vE ) { // element transform perspective
+        var perspectiveString = 'perspective('+parseInt(this.options.perspective)+'px) ';
+        this._vE[transformProperty]['perspective'] = perspectiveString; 
+      } 
+
+      this.options.chain = []; // chained Tweens
       this.options.easing = _o.easing && typeof processEasing(_o.easing) === 'function' ? processEasing(_o.easing) : easing.linear;
       this.options.repeat = _o.repeat || 0;
       this.options.repeatDelay = _o.repeatDelay || 0;
-      this.options.yoyo = _o.yoyo || false; // _yoyo
-      this.options.rpr = _o.rpr || false; // internal option to process inline/computed style at start instead of init true/false
-      this.options.duration = _o.duration || 700; //duration
-      this.options.delay = _o.delay || 0; //delay
+      this.options.yoyo = _o.yoyo || false;
+      this.options.duration = _o.duration || 700; // duration option | default
+      this.options.delay = _o.delay || 0; // delay option | default
       this.repeat = this.options.repeat; // we cache the number of repeats to be able to put it back after all cycles finish
 
       this.start = start; this.play = play; this.resume = play;
@@ -725,8 +715,7 @@
     },
     fromTo = function (el, f, to, o) {
       var _el = selector(el); o = o || {};
-      var tw = new Tween(_el, f, to, o); K.svg && K.svq(tw); // on init we process the SVG paths
-      return tw;
+      return new Tween(_el, f, to, o);
     },
 
     // multiple elements tweening
@@ -742,7 +731,7 @@
   return K = { // export core methods to public for plugins
     property: property, getPrefix: getPrefix, selector: selector, processEasing : processEasing, // utils
     to: to, fromTo: fromTo, allTo: allTo, allFromTo: allFromTo, // main methods
-    parseProperty: parseProperty, prepareStart: prepareStart, crossCheck : crossCheck, // Tween : Tween, // property parsing & preparation | Tween | crossCheck
+    parseProperty: parseProperty, prepareStart: prepareStart, crossCheck : crossCheck, Tween : Tween, // property parsing & preparation | Tween | crossCheck
     truD: trueDimension, truC: trueColor, rth: rgbToHex, htr: hexToRGB, getCurrentStyle: getCurrentStyle, // property parsing
   };
 }));
