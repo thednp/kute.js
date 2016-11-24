@@ -132,12 +132,8 @@ bm3.chain(bm4);
 
 
 //callback functions
-// function onWidth() { var css = box.currentStyle || window.getComputedStyle(box); box.innerHTML = 'WIDTH<br>'+parseInt(css.width)+'px'; }
-// function onHeight() { var css = box.currentStyle || window.getComputedStyle(box); box.innerHTML = 'HEIGHT<br>'+parseInt(css.height)+'px'; }
-// function onLeft() { var css = box.currentStyle || window.getComputedStyle(box); box.innerHTML = 'LEFT<br>'+parseInt(css.left)+'px'; }
-// function onTop() { var css = box.currentStyle || window.getComputedStyle(box); box.innerHTML = 'TOP<br>'+parseInt(css.top)+'px'; }
 function onWidth() { box.innerHTML = 'WIDTH<br>'+parseInt(box.offsetWidth)+'px'; }
-function onHeight() { box.innerHTML = 'HEIGHT<br>'+parseInt(box.offsetWidth)+'px'; }
+function onHeight() { box.innerHTML = 'HEIGHT<br>'+parseInt(box.offsetHeight)+'px'; }
 function onLeft() { box.innerHTML = 'LEFT<br>'+parseInt(box.offsetLeft)+'px'; }
 function onTop() { box.innerHTML = 'TOP<br>'+parseInt(box.offsetTop)+'px'; }
 
