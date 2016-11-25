@@ -1,10 +1,11 @@
 // radius attribute
-var radiusTween = KUTE.to('#circle', {attr: {r: 75} }, {repeat:1, yoyo: true, easing: 'easingCubicOut'});
+// var radiusTween = KUTE.to('#circle', {attr: {r: '75px'} }, {repeat:1, yoyo: true, easing: 'easingCubicOut'});
+var radiusTween = KUTE.to('#circle', {attr: {r: '75%'} }, {repeat:1, yoyo: true, easing: 'easingCubicOut'});
     
 // coordinates of the circle center
-var coordinatesTween1 = KUTE.to('#circle', {attr: {cx:40,cy:40}}, { duration: 300, easing: 'easingCubicOut'});
+var coordinatesTween1 = KUTE.to('#circle', {attr: {cx:40,cy:40,fillOpacity:0.3}}, { duration: 300, easing: 'easingCubicOut'});
 var coordinatesTween2 = KUTE.to('#circle', {attr: {cx:110,cy:40}}, { duration: 400,  easing: 'linear'});
-var coordinatesTween3 = KUTE.to('#circle', {attr: {cx:75,cy:75}}, { easing: 'easingCubicOut'});
+var coordinatesTween3 = KUTE.to('#circle', {attr: {cx:75,cy:75,fillOpacity:1}}, { easing: 'easingCubicOut'});
 
 coordinatesTween1.chain(coordinatesTween2);
 coordinatesTween2.chain(coordinatesTween3);

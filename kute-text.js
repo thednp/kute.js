@@ -16,10 +16,13 @@
   }
 }(this, function (KUTE) {
   'use strict';
-  var g = typeof global !== 'undefined' ? global : window, 
+
+  var g = typeof global !== 'undefined' ? global : window, // connect to KUTE object and global
     K = KUTE, DOM = g.dom, prepareStart = K.prepareStart,
-    parseProperty = K.parseProperty, number = g._number,
-    _string = String("abcdefghijklmnopqrstuvwxyz").split(""), // lowercase
+    parseProperty = K.parseProperty, number = g._number;
+  
+  // let's go with the plugin
+  var _string = String("abcdefghijklmnopqrstuvwxyz").split(""), // lowercase
     _stringUppercase = String("abcdefghijklmnopqrstuvwxyz".toUpperCase()).split(""), // uppercase
     _symbols = String("~!@#$%^&*()_+{}[];'<>,./?\=-").split(""), // symbols
     _numeric = String("0123456789").split(""), // numeric
@@ -43,7 +46,7 @@
             : _string, ll = tp.length,
             t = tp[floor((random() * ll))], ix = '', tx = '', fi = a.substring(0), f = b.substring(0); 
 
-        // use string.replace(/<\/?[^>]+(>|$)/g, "") to strip HTML tags while animating ? this is definatelly a to do
+        // use string.replace(/<\/?[^>]+(>|$)/g, "") to strip HTML tags while animating ? this is definatelly a smart to do
         ix = a !== '' ? fi.substring(fi.length,floor(min(v * fi.length, fi.length))) : ''; // initial text, A value 
         tx = f.substring(0,floor(min(v * f.length, f.length))); // end text, B value
         l.innerHTML = v < 1 ? tx + t + ix : b;

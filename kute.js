@@ -120,7 +120,7 @@
     //more internals
     getAll = function () { return _tws; },
     removeAll = function () { _tws = []; },
-    add = function (tw) { _tws.push(tw); },
+    add = g._queueTween = function (tw) { _tws.push(tw); },
     remove = function (tw) { var i = _tws.indexOf(tw); if (i !== -1) { _tws.splice(i, 1); }}, 
     stop = function () { if (tick) { _cancelAnimationFrame(tick); tick = null; } },    
 
@@ -622,15 +622,15 @@
       this._startFired = false;
 
       this._vSR = {}; // internal valuesStartRepeat
-      this._vS = _o.rpr ? _vS : preparePropertiesObject(_vS,_el); // valuesStart
       this._vE = preparePropertiesObject(_vE,_el); // valuesEnd
+      this._vS = _o.rpr ? _vS : preparePropertiesObject(_vS,_el); // valuesStart
+
+      for ( var e in this._vE ) {
+        if (e in crossCheck && !_o.rpr) crossCheck[e].call(this); // this is where we do the valuesStart and valuesEnd check for fromTo() method
+      }
 
       this.options = {}; for (var o in _o) { this.options[o] = _o[o]; }
       this.options.rpr = _o.rpr || false; // internal option to process inline/computed style at start instead of init true/false
-      for ( var e in this._vE ) {
-        if (e in crossCheck && !this.options.rpr) crossCheck[e].call(this); // this is where we do the valuesStart and valuesEnd check for fromTo() method
-      }
-
       if ( this.options.perspective !== undefined && transformProperty in this._vE ) { // element transform perspective
         var perspectiveString = 'perspective('+parseInt(this.options.perspective)+'px) ';
         this._vE[transformProperty]['perspective'] = perspectiveString; 

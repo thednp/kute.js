@@ -20,6 +20,7 @@
     parseProperty = K.parseProperty, prepareStart = K.prepareStart, property = K.property,
     getCurrentStyle = K.getCurrentStyle, trueDimension = K.truD, trueColor = K.truC,
     number = g._number, unit = g._unit, color = g._color,
+    
     _colors = ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
     _radius  = ['borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'], // border radius px/%
     _boxModel  = ['right', 'bottom', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 

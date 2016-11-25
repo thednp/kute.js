@@ -1,6 +1,6 @@
 /* KUTE.js - The Light Tweening Engine
  * package - SVG Plugin
- * desc - draw strokes, morph paths and SVG color props
+ * desc - draw SVG strokes, morph SVG and SVG transforms
  * by dnp_theme
  * Licensed under MIT-License
  */
@@ -18,15 +18,15 @@
 }(this, function(KUTE) {
   'use strict'; 
 
-  // variables, reference global objects, prepare properties
-  var g = typeof global !== 'undefined' ? global : window, K = KUTE, p, 
+  var g = typeof global !== 'undefined' ? global : window, K = KUTE, // connect plugin to KUTE object and global
     DOM = g.dom, parseProperty = K.parseProperty, prepareStart = K.prepareStart, getCurrentStyle = K.getCurrentStyle,
-    trueColor = K.truC, trueDimension = K.truD, crossCheck = K.crossCheck,
-    _isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false,
-
-    pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi, ns = 'http://www.w3.org/2000/svg',
+    trueColor = K.truC, trueDimension = K.truD, crossCheck = K.crossCheck, 
     number = g._number, unit = g._unit, color = g._color, // interpolate functions
-    coords = g._coords = function(a,b,l,v) { // function(array1, array2, array2.length, progress) for SVG morph
+    _isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false;
+  
+  // here we go with the plugin
+  var pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi, ns = 'http://www.w3.org/2000/svg',
+    coords = g._coords = function(a,b,l,v) { // function(array1, array2, length, progress) for SVG morph
       var points =[];
       for(var i=0;i<l;i++) { // for each point
         points[i] = [];
@@ -126,7 +126,7 @@
       return p;
     },
     computePathCross = function(s,e){ // pathCross
-      var s1, e1, pointsArray, largerPathLength, smallerPath, largerPath, simluatedSmallerPath, nsm = [], sml, cl = [], len, tl, cs;
+      var s1, e1, pointsArray, largerPathLength, smallerPath, largerPath, simulatedSmallerPath, nsm = [], sml, cl = [], len, tl, cs;
 
       if (!this._isPolygon) {
         s = createPath(s); e = createPath(e);  
@@ -140,9 +140,9 @@
           if ( largerPathLength === e.length) { smallerPath = s; largerPath = e; } else { smallerPath = e; largerPath = s; }
           sml = smallerPath.length;
 
-          simluatedSmallerPath = createPath('M'+smallerPath.join('L')+'z'); len = simluatedSmallerPath.getTotalLength() / largerPathLength;
+          simulatedSmallerPath = createPath('M'+smallerPath.join('L')+'z'); len = simulatedSmallerPath.getTotalLength() / largerPathLength;
           for (var i=0; i<largerPathLength; i++){
-            tl = simluatedSmallerPath.getPointAtLength(len*i);
+            tl = simulatedSmallerPath.getPointAtLength(len*i);
             cs = getClosestPoint(len,tl,smallerPath);
             nsm.push( [ cs[0], cs[1] ] );
           }
@@ -416,7 +416,5 @@
     }
   }
 
-  // return SVG;
   return this;
-
 }));
