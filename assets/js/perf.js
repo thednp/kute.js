@@ -46,7 +46,6 @@ if (document.body.offsetWidth < 1200 || checkMOBS) {
 		warning +='<p class="text-info">'+explain+'</p>';
 		warning +='</div>';
 	document.body.innerHTML = warning;
-	isMobile.Android() && alert(isMobile.Android());
 	throw new Error('This page is only for high-end desktop computers. ' + explain); 
 }
 
