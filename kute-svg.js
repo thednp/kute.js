@@ -185,7 +185,7 @@
     var p1 = getOnePath(this._vS.path.o), p2 = getOnePath(this._vE.path.o), paths;
 
     // path tween options
-    this.options.morphPrecision = this.options.morphPrecision || 15;
+    this.options.morphPrecision = this.options && 'morphPrecision' in this.options ? parseInt(this.options.morphPrecision) : 15;
     this._isPolygon = !/[CSQTA]/i.test(p1) && !/[CSQTA]/i.test(p2); // check if both shapes are polygons
 
     // begin processing paths
