@@ -8,6 +8,11 @@ var mobileType = '',
 			mobileType += checkW ? 'Windows Phones.' : '';
 			return checkW;
 		},
+		// Chrome: function() {
+		// 	var checkC = /Chrome/i.test(navigator.userAgent)
+		// 	mobileType += checkC ? 'Chrome browser.' : '';
+		// 	return checkC;
+		// },
 		Android: function() {
 			var checkA = /Android/i.test(navigator.userAgent)
 			mobileType += checkA ? 'Android Phones.' : '';
@@ -19,12 +24,12 @@ var mobileType = '',
 			return checkB;
 		},
 		iOS: function() {
-			checkI = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+			var checkI = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 			mobileType += checkI ? 'Apple iPhone, iPad or iPod.' : '';
 			return checkI;
 		},
 		any: function() {
-			return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
+			return (/*isMobile.Chrome() ||*/ isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
 		}
 	};
 
