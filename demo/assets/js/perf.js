@@ -1,27 +1,27 @@
 // testing grounds
 "use strict";
 
-var mobileType = '', check,
+var mobileType = '',
 	isMobile = {
 		Windows: function() {
-			check = /IEMobile/i.test(navigator.userAgent);
-			mobileType += check ? 'Windows Phones.' : '';
-			return check;
+			var checkW = /IEMobile/i.test(navigator.userAgent);
+			mobileType += checkW ? 'Windows Phones.' : '';
+			return checkW;
 		},
 		Android: function() {
-			check = /Android/i.test(navigator.userAgent)
-			mobileType += check ? 'Android Phones.' : '';
-			return check;
+			var checkA = /Android/i.test(navigator.userAgent)
+			mobileType += checkA ? 'Android Phones.' : '';
+			return checkA;
 		},
 		BlackBerry: function() {
-			check = /BlackBerry/i.test(navigator.userAgent);
-			mobileType += check ? 'BlackBerry.' : '';
-			return check;
+			var checkB = /BlackBerry/i.test(navigator.userAgent);
+			mobileType += checkB ? 'BlackBerry.' : '';
+			return checkB;
 		},
 		iOS: function() {
-			check = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-			mobileType += check ? 'Apple iPhone, iPad or iPod.' : '';
-			return check;
+			checkI = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+			mobileType += checkI ? 'Apple iPhone, iPad or iPod.' : '';
+			return checkI;
 		},
 		any: function() {
 			return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
@@ -32,7 +32,7 @@ var mobileType = '', check,
 if (document.body.offsetWidth < 1200 || isMobile.any()) {
 	var explain = '';
 		explain +=	mobileType !== '' ? 'For safety reasons, this page does not work with ' + mobileType : '';
-		explain +=	document.body.offsetWidth < 1200 ? 'For safety reasons this page does not work on your machine because it might be very old. In other cases the browser window size is not enough for the animation to work properly, so if that\'s the case, maximize the window, refresh and proceed with the tests.' : '';
+		explain +=	document.body.offsetWidth < 1200 && mobileType === '' ? 'For safety reasons this page does not work on your machine because it might be very old. In other cases the browser window size is not enough for the animation to work properly, so if that\'s the case, maximize the window, refresh and proceed with the tests.' : '';
 	var warning = '<div style="padding: 20px;">';
 		warning +='<h1 class="text-danger">Warning!</h1>';
 		warning +='<p class="lead text-danger">This web page is only for high-end desktop computers.</p>';
