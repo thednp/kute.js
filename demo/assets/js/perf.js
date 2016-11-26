@@ -8,13 +8,8 @@ var mobileType = '',
 			mobileType += checkW ? 'Windows Phones.' : '';
 			return checkW;
 		},
-		// Chrome: function() {
-		// 	var checkC = /Chrome/i.test(navigator.userAgent)
-		// 	mobileType += checkC ? 'Chrome browser.' : '';
-		// 	return checkC;
-		// },
 		Android: function() {
-			var checkA = /Android/i.test(navigator.userAgent)
+			var checkA = /Android/i.test(navigator.userAgent);
 			mobileType += checkA ? 'Android Phones.' : '';
 			return checkA;
 		},
@@ -29,7 +24,7 @@ var mobileType = '',
 			return checkI;
 		},
 		any: function() {
-			return (/*isMobile.Chrome() ||*/ isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
+			return ( isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
 		}
 	};
 
