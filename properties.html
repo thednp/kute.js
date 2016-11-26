@@ -164,7 +164,7 @@
 		<p>The synthax is slightly different to make sure we don't mess up with CSS properties that have the same name because the presentation attribute may be a unitless attribute while the CSS property might require a suffix (%,px,etc). For instance <code>KUTE.to('selector', {attr:{width:150}})</code> is clearly different from <code>KUTE.to('selector', {width:150})</code> which is the the CSS property with the same name.</p>
 		<p>Starting KUTE.js 1.6.0 the <a href="attr.html">Attributes Plugin</a> can also animate color attributes such as <kbd class="bg-olive">stroke</kbd>, <kbd class="bg-olive">fill</kbd> or <kbd class="bg-olive">stop-color</kbd>, and they are removed from the SVG Plugin, and the reason for that is the new bundle build that incorporates both plugins into an unified file.<p> 
 		<p>The plugin handles attribute namespaces properly which means you can use both Javascript notation (like <kbd class="bg-olive">stopColor</kbd>) and HTML markup notation (like <kbd class="bg-olive">'stop-color'</kbd>), see the below example.</p>
-		<p>EG: <code>KUTE.to('selector', {attr:{stroke:'blue'}})</code> to animate the stroke of an SVG element or <code>KUTE.to('selector', {attr:{'stop-color':'rgb(135,16,122)'}})</code> to animate the stop color of some SVG gradient.</p>
+		<p>EG: <code>KUTE.to('selector', {attr:{stroke:'blue'}})</code> to animate the stroke of an SVG element or <code>KUTE.to('selector', {attr:{'stop-color':'red'}})</code> to animate the stop color of some SVG gradient.</p>
         
 		<h3>Typography Properties</h3>
 		<p>The <a href="css.html">CSS Plugin</a> also cover the text properties, and these can be combinated with each other when applied to text elements (paragraphs, headings) as animation fallback for <code>scale</code> on browsers that don't support <code>transform</code> at all. Yes, IE8 and other legacy browsers.</p>
@@ -174,7 +174,7 @@
 			<li><kbd class="bg-olive">letterSpacing</kbd> allows you to animate the <code>letter-spacing</code> for a given element.</li>
 			<li><kbd class="bg-olive">wordSpacing</kbd> allows you to animate the <code>word-spacing</code> for a given element.</li>
 		</ul>
-		<p><strong>Remember</strong>: these properties are also <strong>layout modifiers</strong>.</p>
+		<p><strong>Remember</strong>: these properties are <strong>layout modifiers</strong>.</p>
 
 		<h3>Scroll Animation</h3>
 		<p>KUTE.js core engine currently supports only vertical <kbd class="bg-blue">scroll</kbd> for both the window and a given element that's scrollable (when <code>scrollHeight</code> is higher than <code>offsetHeight</code>). Both <code>scroll: 150</code> or <code>scrollTop: 150</code> notations will do. When animating scroll, KUTE.js will disable all scroll and swipe handlers to prevent animation bubbles as well as scroll bottlenecks.</p>		
