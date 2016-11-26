@@ -1,16 +1,59 @@
 // testing grounds
 "use strict";
 
+var mobileType = '', check,
+	isMobile = {
+		Windows: function() {
+			check = /IEMobile/i.test(navigator.userAgent);
+			mobileType += check ? 'Windows Phones.' : '';
+			return check;
+		},
+		Android: function() {
+			check = /Android/i.test(navigator.userAgent)
+			mobileType += check ? 'Android Phones.' : '';
+			return check;
+		},
+		BlackBerry: function() {
+			check = /BlackBerry/i.test(navigator.userAgent);
+			mobileType += check ? 'BlackBerry.' : '';
+			return check;
+		},
+		iOS: function() {
+			check = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+			mobileType += check ? 'Apple iPhone, iPad or iPod.' : '';
+			return check;
+		},
+		any: function() {
+			return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
+		}
+	};
+
+// protect older / low end devices
+if (document.body.offsetWidth < 1200 || isMobile.any()) {
+	var explain = '';
+		explain +=	mobileType !== '' ? 'For safety reasons, this page does not work with ' + mobileType : '';
+		explain +=	document.body.offsetWidth < 1200 ? 'For safety reasons this page does not work on your machine because it might be very old. In other cases the browser window size is not enough for the animation to work properly, so if that\'s the case, maximize the window, refresh and proceed with the tests.' : '';
+	var warning = '<div style="padding: 20px;">';
+		warning +='<h1 class="text-danger">Warning!</h1>';
+		warning +='<p class="lead text-danger">This web page is only for high-end desktop computers.</p>';
+		warning +='<p class="text-danger">We do not take any responsibility and we are not liable for any damage caused through use of this website, be it indirect, special, incidental or consequential damages to your devices.</p>';
+		warning +='<p class="text-info">'+explain+'</p>';
+		warning +='</div>';
+	document.body.innerHTML = warning;
+	throw new Error('This page is only for high-end desktop computers. ' + explain); 
+}
+
 // generate a random number within a given range
 function random(min, max) {
 	return Math.random() * (max - min) + min;
 }
 
-// vendor prefix handle 
-var transformProperty = KUTE.property('transform');
-
 // the variables
-var container = document.getElementById('container'), tws = [];
+var container = document.getElementById('container');
+
+// vendor prefix handle 
+var transformProperty = KUTE.property('transform'), tws = [];
+
 
 function complete(){
 	document.getElementById('info').style.display = 'block';
@@ -38,16 +81,16 @@ function buildObjects(){
 	warning.className = 'text-warning padding lead';
 	container.innerHTML = '';	
 	if (count && engine && property && repeat) {
-				if (engine === 'gsap') {
-						document.getElementById('info').style.display = 'none';
-				}
+		if (engine === 'gsap') {
+				document.getElementById('info').style.display = 'none';
+		}
 		
 		createTest(count,property,engine,repeat);
-				// since our engines don't do sync, we make it our own here
-				if (engine==='tween'||engine==='kute') {
-						document.getElementById('info').style.display = 'none';
-						start();	
-				}
+		// since our engines don't do sync, we make it our own here
+		if (engine==='tween'||engine==='kute') {
+				document.getElementById('info').style.display = 'none';
+				start();	
+		}
 	} else {
 
 		if (!count && !property && !repeat && !engine){
@@ -146,7 +189,7 @@ for (var i=0; i<l; i++) {
 			"use strict";
 			var link = this, b = link.parentNode.parentNode.parentNode.querySelector('.btn');
 			b.innerHTML = link.id.toUpperCase() + ' <span class="caret"></span>';
-			b.setAttribute('data-'+link.parentNode.parentNode.parentNode.id,link.id);
+			b.setAttribute('data-'+link.parentNode.parentNode.parentNode.id, link.id);
 		}
 	}
 }

@@ -82,7 +82,7 @@
         b: parseInt(result[3], 16)
       } : null;
     },
-    getInlineStyle = function(el,p) { // getInlineStyle = get transform style for element from cssText for .to() method, the sp is for transform property
+    getInlineStyle = function(el,p) { // get transform style for element from cssText for .to() method, the sp is for transform property
       if (!el) return; // if the scroll applies to `window` it returns as it has no styling
       var css = el.style.cssText.replace(/\s/g,'').split(';'),//the cssText  
         trsf = {}; //the transform object
@@ -100,16 +100,16 @@
       }
       return trsf;
     },
-    getCurrentStyle = function (el,p) { // gCS = get style property for element from computedStyle for .to() method
+    getCurrentStyle = function (el,p) { // get computed style property for element for .to() method
       var styleAttribute = el.style, computedStyle = g.getComputedStyle(el,null) || el.currentStyle, pp = property(p), //the computed style | prefixed property
-        s = styleAttribute[p] && !/auto|initial|none|unset/.test(styleAttribute[p]) ? styleAttribute[p] : computedStyle[pp]; // s the property style value
+        styleValue = styleAttribute[p] && !/auto|initial|none|unset/.test(styleAttribute[p]) ? styleAttribute[p] : computedStyle[pp]; // s the property style value
       if ( p !== 'transform' && (pp in computedStyle || pp in styleAttribute) ) {
-        if ( s ){
+        if ( styleValue ){
           if (pp==='filter') { // handle IE8 opacity
-            var si1 = parseInt(s.split('=')[1].replace(')','')), si = parseFloat(si1/100);
-            return si;
+            var filterValue = parseInt(styleValue.split('=')[1].replace(')',''));
+            return parseFloat(filterValue/100);
           } else {
-            return s;
+            return styleValue;
           }        
         } else {
           return _defaults[p];
@@ -609,7 +609,7 @@
     },
     
     // single Tween object construct
-    Tween = function (_el, _vS, _vE, _o) {
+    Tween = g._tween = function (_el, _vS, _vE, _o) {
       this._el = 'scroll' in _vE && (_el === undefined || _el === null) ? scrollContainer : _el; // element animation is applied to
 
       this.playing = false;
