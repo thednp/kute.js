@@ -620,17 +620,17 @@
       this._pauseTime = null;
 
       this._startFired = false;
-
       this.options = {}; for (var o in _o) { this.options[o] = _o[o]; }
       this.options.rpr = _o.rpr || false; // internal option to process inline/computed style at start instead of init true/false
-      if ( this.options.perspective !== undefined && transformProperty in this._vE ) { // element transform perspective
-        var perspectiveString = 'perspective('+parseInt(this.options.perspective)+'px) ';
-        this._vE[transformProperty]['perspective'] = perspectiveString; 
-      } 
-      
+
       this._vSR = {}; // internal valuesStartRepeat
       this._vE = preparePropertiesObject(_vE,_el); // valuesEnd
       this._vS = _o.rpr ? _vS : preparePropertiesObject(_vS,_el); // valuesStart
+
+      if ( this.options.perspective !== undefined && transformProperty in this._vE ) { // element transform perspective
+        var perspectiveString = 'perspective('+parseInt(this.options.perspective)+'px) ';
+        this._vE[transformProperty]['perspective'] = perspectiveString; 
+      }
 
       for ( var e in this._vE ) {
         if (e in crossCheck && !_o.rpr) crossCheck[e].call(this); // this is where we do the valuesStart and valuesEnd check for fromTo() method
