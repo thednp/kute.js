@@ -8,11 +8,6 @@ var mobileType = '',
 			mobileType += checkW ? 'Windows Phones.' : '';
 			return checkW;
 		},
-		Chrome: function() {
-			var checkC = /Chrome/i.test(navigator.userAgent);
-			// mobileType += checkC ? 'Android Phones.' : '';
-			return checkC;
-		},
 		Android: function() {
 			var checkA = /Android/i.test(navigator.userAgent);
 			mobileType += checkA ? 'Android Phones.' : '';
@@ -34,7 +29,7 @@ var mobileType = '',
 	},
 	checkMOBS = isMobile.any();
 
-// protect older / low end devices
+// protect phones, older / low end devices
 if (document.body.offsetWidth < 1200 || checkMOBS) {
 	var explain = '';
 		explain += checkMOBS && mobileType !== '' ? ('For safety reasons, this page does not work with ' + mobileType) : '';
@@ -68,11 +63,11 @@ function complete(){
 }
 
 function updateLeft(){
-		this.div.style['left'] = this.left+'px';
+		this.div.style['left'] = parseInt(this.left)+'px';
 }					
 
 function updateTranslate(){
-		this.div.style[transformProperty] = 'translate3d('+this.x + 'px,0px,0px)';
+		this.div.style[transformProperty] = 'translate3d('+ Math.round(this.x * 100) / 100 + 'px,0px,0px)';
 }
 
 function buildObjects(){
