@@ -25,8 +25,8 @@ function replaceK(s) {
   }
 }
 function minify(srcPath, writePath) {
-  fs.writeFile(writePath, 
-    ('// KUTE.js ' + version + ' | © dnp_theme | ' + replaceK(srcPath)  + ' | ' + license + '\n' 
+  fs.writeFile(writePath,
+    ('// KUTE.js ' + version + ' | © dnp_theme | ' + replaceK(srcPath)  + ' | ' + license + '\n'
     + uglify.minify(srcPath).code), function (err) {
     if (err) return handleError(err);
     console.log(srcPath+' is done.');

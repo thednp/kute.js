@@ -19,13 +19,13 @@
   var g = typeof global !== 'undefined' ? global : window, K = KUTE, DOM = g.dom, 
     parseProperty = K.parseProperty, prepareStart = K.prepareStart, property = K.property,
     getCurrentStyle = K.getCurrentStyle, trueDimension = K.truD, trueColor = K.truC,
-    number = g._number, unit = g._unit, color = g._color,
-    
-    _colors = ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
-    _radius  = ['borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'], // border radius px/%
+    number = g._number, unit = g._unit, color = g._color;
+
+  var _colors = ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
     _boxModel  = ['right', 'bottom', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 
       'padding', 'margin', 'paddingTop','paddingBottom', 'paddingLeft', 'paddingRight', 'marginTop','marginBottom', 'marginLeft', 'marginRight', 
       'borderWidth', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'outlineWidth'], // dimensions / box model
+    _radius  = ['borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'], // border radius px/%
     _textProperties  = ['fontSize','lineHeight','letterSpacing','wordSpacing'], // text properties
     _clip = ['clip'], _bg  = ['backgroundPosition'], // clip | background position
     _mergeTextAndBox = _boxModel.concat(_textProperties), // a merge of all properties with px|%|em|rem|etc unit

@@ -59,16 +59,29 @@
         if ( cv !== null && /(%|[a-z]+)$/.test(cv) ) {
           var u = trueDimension(cv).u || trueDimension(o[p]).u, s = /%/.test(u) ? '_percent' : '_'+u;
           if (!(prop+s in atts)) {
-            atts[prop+s] = function(l,p,a,b,v) {
-              var _p = _p || p.replace(s,'');
-              l.setAttribute(_p, unit(a.v,b.v,b.u,v) );
+            if (/%/.test(u)) {
+              atts[prop+s] = function(l,p,a,b,v) {
+                var _p = _p || p.replace(s,'');
+                l.setAttribute(_p, (Math.floor(number(a.v,b.v,v) * 100)/100) + b.u );
+              }
+            } else {
+              atts[prop+s] = function(l,p,a,b,v) {
+                var _p = _p || p.replace(s,'');
+                l.setAttribute(_p, Math.floor(number(a.v,b.v,v)) + b.u );
+              }
             }
           }
           ats[prop+s] = trueDimension(o[p]); 
         } else if ( !/(%|[a-z]+)$/.test(o[p]) || cv === null || cv !== null && !/(%|[a-z]+)$/.test(cv) ) {
           if (!(prop in atts)) {
-            atts[prop] = function(l,o,a,b,v) {
-              l.setAttribute(o, number(a,b,v));
+            if (/opacity/i.test(p)) {
+              atts[prop] = function(l,o,a,b,v) {
+                l.setAttribute(o, Math.floor(number(a,b,v) * 100) / 100 );
+              }
+            } else {
+              atts[prop] = function(l,o,a,b,v) {
+                l.setAttribute(o, Math.floor(number(a,b,v) *10 ) / 10 );
+              }
             }
           }
           ats[prop] = parseFloat(o[p]);     

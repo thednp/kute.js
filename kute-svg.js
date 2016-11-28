@@ -31,7 +31,7 @@
       for(var i=0;i<l;i++) { // for each point
         points[i] = [];
         for(var j=0;j<2;j++) { // each point coordinate
-          points[i].push(a[i][j]+(b[i][j]-a[i][j])*v);
+          points[i].push( Math.floor(a[i][j]+(b[i][j]-a[i][j])*v) );
         }
       }
       return points;
@@ -281,9 +281,9 @@
   parseProperty['draw'] = function(a,o,el){ // register the draw property
     if (!('draw' in DOM)) {
       DOM['draw'] = function(l,p,a,b,v){
-        var ll = a.l, s = number(a.s,b.s,v), e = number(a.e,b.e,v), o = 0 - s;
+        var ll = a.l, s = Math.floor(number(a.s,b.s,v)), e = Math.floor(number(a.e,b.e,v)), o = 0 - s;
         l.style.strokeDashoffset = o +'px';
-        l.style.strokeDasharray = e+o<1 ? '0px, ' + ll + 'px' : (e+o) + 'px, ' + ll + 'px';
+        l.style.strokeDasharray = e+o<1.01 ? '0px, ' + ll + 'px' : (e+o) + 'px, ' + ll + 'px';
       }
     }
     return getDraw(el,o);
@@ -306,13 +306,17 @@
       return c;
     },
     translateSVG = g._translateSVG = function (s,e,a,b,v){ // translate(i+'(',')',a[i],b[i],v)
-      return s + ((a[1] === b[1] && b[1] === 0 ) ? number(a[0],b[0],v) : number(a[0],b[0],v) + ' ' + number(a[1],b[1],v)) + e;
+      return s + ((a[1] === b[1] && b[1] === 0 ) ? (Math.floor(number(a[0],b[0],v) * 10)/10)
+                                                 : ((Math.floor(number(a[0],b[0],v) * 10)/10) + ' ' + (Math.floor(number(a[1],b[1],v)) *10)/10)) + e;
     },
     rotateSVG = g._rotateSVG = function (s,e,a,b,v){
-       return s + (number(a[0],b[0],v) + ' ' + b[1] + ',' + b[2]) + e;
+       return s + ( Math.floor(number(a[0],b[0],v)*10)/10 + ' ' + b[1] + ',' + b[2]) + e;
     },
-    scaleOrSkew = g._scaleOrSkewSVG = function (s,e,a,b,v){ // scale / skew
-      return s + number(a,b,v) + e;
+    scaleSVG = g._scaleSVG = function (s,e,a,b,v){ // scale / skew
+      return s + Math.floor(number(a,b,v)*100)/100 + e;
+    },
+    skewSVG = g._skewSVG = function (s,e,a,b,v){ // scale / skew
+      return s + Math.floor(number(a,b,v)*10)/10 + e;
     };
 
   parseProperty['svgTransform'] = function(p,v,l){
@@ -328,11 +332,11 @@
           } else if ( i === 'rotate'){ // rotate
             rt += rotateSVG(i+'(',')',a[i],b[i],v);
           } else if ( i === 'scale'){ // scale
-            s += scaleOrSkew(i+'(',')',a[i],b[i],v);
+            s += scaleSVG(i+'(',')',a[i],b[i],v);
           } else if ( i === 'skewX'){ // skewX
-            sx += scaleOrSkew(i+'(',')',a[i],b[i],v);
+            sx += skewSVG(i+'(',')',a[i],b[i],v);
           } else if ( i === 'skewY'){ // skewY
-            sy += scaleOrSkew(i+'(',')',a[i],b[i],v);
+            sy += skewSVG(i+'(',')',a[i],b[i],v);
           }
         }
 

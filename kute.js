@@ -11,13 +11,42 @@
     root.KUTE = factory();
   }
 }(this, function () {
-  "use strict"; 
+  "use strict";
 
   // set a custom scope for KUTE.js
   var g = typeof global !== 'undefined' ? global : window, time = g.performance,
-    K = {}, _tws = g._tweens = [], tick = null,
-    // tools / utils
-    getPrefix = function() { //returns browser prefix
+    _tws = g._tweens = [], tick = null;
+
+  //supported properties
+  var _colors = ['color', 'backgroundColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
+    _boxModel  = ['top', 'left', 'width', 'height'], // dimensions / box model
+    _transform  = ['translate3d', 'translateX', 'translateY', 'translateZ', 'rotate', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'skewX', 'skewY', 'scale'], // transform
+    _scroll  = ['scrollTop', 'scroll'], //scroll, it has no default value, it's calculated on tween start
+    _opacity  = ['opacity'], // opacity
+    _all = _colors.concat(_scroll, _opacity, _boxModel, _transform), al = _all.length,
+    _defaults = {}; //all properties default values
+
+  //populate default values object
+  for ( var i=0; i<al; i++ ){
+    var p = _all[i];
+    if (_colors.indexOf(p) !== -1){
+      _defaults[p] = 'rgba(0,0,0,0)'; // _defaults[p] = {r:0,g:0,b:0,a:1}; // no unit/suffix
+    } else if ( _boxModel.indexOf(p) !== -1 ) {
+      _defaults[p] = 0;
+    } else if ( p === 'translate3d' ){ // px
+      _defaults[p] = [0,0,0];
+    } else if ( p === 'translate' ){ // px
+      _defaults[p] = [0,0];
+    } else if ( p === 'rotate' || /X|Y|Z/.test(p) ){ // deg
+      _defaults[p] = 0;
+    } else if ( p === 'scale' || p === 'opacity' ){ // unitless
+      _defaults[p] = 1;
+    }
+    p = null;
+  }
+
+  // tools / utils
+  var getPrefix = function() { //returns browser prefix
       var div = document.createElement('div'), i = 0,  pf = ['Moz', 'moz', 'Webkit', 'webkit', 'O', 'o', 'Ms', 'ms'],
         s = ['MozTransform', 'mozTransform', 'WebkitTransform', 'webkitTransform', 'OTransform', 'oTransform', 'MsTransform', 'msTransform'];
       for (var i = 0, pl = pf.length; i < pl; i++) { if (s[i] in div.style) { return pf[i]; }  }
@@ -28,15 +57,15 @@
       return r ? f + (p.charAt(0).toUpperCase() + p.slice(1)) : p;
     },
     selector = function(el,multi){ // a public selector utility
-      var nl; 
+      var nl;
       if (multi){
         nl = el instanceof Object || typeof el === 'object' ? el : document.querySelectorAll(el);
       } else {
-        nl = typeof el === 'object' ? el 
-           : /^#/.test(el) ? document.getElementById(el.replace('#','')) : document.querySelector(el);       
+        nl = typeof el === 'object' ? el
+           : /^#/.test(el) ? document.getElementById(el.replace('#','')) : document.querySelector(el);
       }
-      if (nl === null && el !== 'window') throw new TypeError('Element not found or incorrect selector: '+el); 
-      return nl;   
+      if (nl === null && el !== 'window') throw new TypeError('Element not found or incorrect selector: '+el);
+      return nl;
     },
     radToDeg = function(a) { return a*180/Math.PI; },
     trueDimension = function (d,p) { //true dimension returns { v = value, u = unit }
@@ -58,7 +87,7 @@
       } else if (/transparent|none|initial|inherit/.test(v)) {
         return { r: 0, g: 0, b: 0, a: 0 };
       } else if (!/^#|^rgb/.test(v) ) { // maybe we can check for web safe colors
-        var h = document.getElementsByTagName('head')[0]; h.style.color = v; 
+        var h = document.getElementsByTagName('head')[0]; h.style.color = v;
         var webColor = g.getComputedStyle(h,null).color; webColor = /rgb/.test(webColor) ? webColor.replace(/[^\d,]/g, '').split(',') : [0,0,0];
         h.style.color = ''; return { r: parseInt(webColor[0]), g: parseInt(webColor[1]), b: parseInt(webColor[2]) };
       }
@@ -84,14 +113,14 @@
     },
     getInlineStyle = function(el,p) { // get transform style for element from cssText for .to() method, the sp is for transform property
       if (!el) return; // if the scroll applies to `window` it returns as it has no styling
-      var css = el.style.cssText.replace(/\s/g,'').split(';'),//the cssText  
+      var css = el.style.cssText.replace(/\s/g,'').split(';'),//the cssText
         trsf = {}; //the transform object
       // if we have any inline style in the cssText attribute, usually it has higher priority
       for ( var i=0, csl = css.length; i<csl; i++ ){
         if ( /transform/i.test(css[i])) {
-          var tps = css[i].split(':')[1].split(')'); //all transform properties        
+          var tps = css[i].split(':')[1].split(')'); //all transform properties
           for ( var k=0, tpl = tps.length-1; k< tpl; k++){
-            var tpv = tps[k].split('('), tp = tpv[0], tv = tpv[1]; //each transform property          
+            var tpv = tps[k].split('('), tp = tpv[0], tv = tpv[1]; //each transform property
             if ( _transform.indexOf(tp) !== -1 ){
               trsf[tp] = /translate3d/.test(tp) ? tv.split(',') : tv;
             }
@@ -110,19 +139,19 @@
             return parseFloat(filterValue/100);
           } else {
             return styleValue;
-          }        
+          }
         } else {
           return _defaults[p];
         }
       }
     },
-    
+
     //more internals
     getAll = function () { return _tws; },
     removeAll = function () { _tws = []; },
     add = g._queueTween = function (tw) { _tws.push(tw); },
-    remove = function (tw) { var i = _tws.indexOf(tw); if (i !== -1) { _tws.splice(i, 1); }}, 
-    stop = function () { if (tick) { _cancelAnimationFrame(tick); tick = null; } },    
+    remove = function (tw) { var i = _tws.indexOf(tw); if (i !== -1) { _tws.splice(i, 1); }},
+    stop = function () { if (tick) { _cancelAnimationFrame(tick); tick = null; } },
 
     canTouch = ('ontouchstart' in g || navigator.msMaxTouchPoints) || false, // support Touch?
     touchOrWheel = canTouch ? 'touchstart' : 'mousewheel', mouseEnter = 'mouseenter', //events to prevent on scroll
@@ -135,53 +164,26 @@
     scrollContainer = /webkit/i.test(navigator.userAgent) || document.compatMode == 'BackCompat' ? body : html,
 
     _isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false,
-    _isIE8 = _isIE === 8, // check IE8/IE
+    _isIE8 = _isIE === 8; // check IE8/IE
 
-    //supported properties
-    _colors = ['color', 'backgroundColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
-    _scroll  = ['scrollTop', 'scroll'], //scroll, it has no default value, it's calculated on tween start
-    _opacity  = ['opacity'], // opacity
-    _boxModel  = ['top', 'left', 'width', 'height'], // dimensions / box model
-    _transform  = ['translate3d', 'translateX', 'translateY', 'translateZ', 'rotate', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'skewX', 'skewY', 'scale'], // transform
-    _all = _colors.concat(_scroll, _opacity, _boxModel, _transform), al = _all.length,
-    _defaults = _defaults || {}; //all properties default values
-   
-  //populate default values object
-  for ( var i=0; i<al; i++ ){
-    var p = _all[i];
-    if (_colors.indexOf(p) !== -1){
-      _defaults[p] = 'rgba(0,0,0,0)'; // _defaults[p] = {r:0,g:0,b:0,a:1}; // no unit/suffix
-    } else if ( _boxModel.indexOf(p) !== -1 ) {
-      _defaults[p] = 0;      
-    } else if ( p === 'translate3d' ){ // px
-      _defaults[p] = [0,0,0];
-    } else if ( p === 'translate' ){ // px
-      _defaults[p] = [0,0];
-    } else if ( p === 'rotate' || /X|Y|Z/.test(p) ){ // deg
-      _defaults[p] = 0;    
-    } else if ( p === 'scale' || p === 'opacity' ){ // unitless
-      _defaults[p] = 1;    
-    }
-    p = null;
-  }
-  
+
   // KUTE.js INTERPOLATORS
   var number = g._number = function(a,b,v) { // number1, number2, progress
       a = +a; b -= a; return a + b * v;
     },
     unit = g._unit = function(a,b,u,v) { // number1, number2, unit, progress
-      a = +a; b -= a; return (a + b * v)+u;
+      a = +a; b -= a; return (a + b * v) + u;
     },
     color = g._color = function(a,b,v,h){ // rgba1, rgba2, progress, convertToHex(true/false)
       var _c = {}, c, n = number, ep = ')', cm =',', r = 'rgb(', ra = 'rgba(';
-      for (c in b) { _c[c] = c !== 'a' ? (parseInt( number(a[c],b[c],v) ) || 0) : (a[c] && b[c]) ? parseFloat( number(a[c],b[c],v) ) : null; }
+      for (c in b) { _c[c] = c !== 'a' ? (Math.floor( number(a[c],b[c],v) ) || 0) : (a[c] && b[c]) ? number(a[c],b[c],v) : null; }
       return h ? rgbToHex( _c.r, _c.g, _c.b ) : !_c.a ? r + _c.r + cm + _c.g + cm + _c.b + ep : ra + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
     },
     translate = g._translate = function (a,b,u,v){
       var translation = {};
       for (var ax in b){
         var x1 = a[ax] || 0, x2 = b[ax] || 0;
-        translation[ax] = x1===x2 ? x2+u : (x1 + ( x2 - x1 ) * v) + u; 
+        translation[ax] = x1===x2 ? x2+u : (Math.floor( (x1 + ( x2 - x1 ) * v) * 10) / 10) + u;
       }
       return translation.x ? 'translate(' + translation.x + ',' + translation.y + ')' :
         'translate3d(' + translation.translateX + ',' + translation.translateY + ',' + translation.translateZ + ')';
@@ -189,19 +191,20 @@
     rotate = g._rotate = function (a,b,u,v){
       var rotation = {};
       for ( var rx in b ){
-        rotation[rx] = rx === 'z' ? 'rotate('+ (a[rx] + (b[rx] - a[rx]) * v) +u+')' : rx + '(' + (a[rx] + (b[rx] - a[rx]) * v) + u + ')';
+        rotation[rx] = rx === 'z' ? 'rotate('+ (Math.floor((a[rx] + (b[rx] - a[rx]) * v) * 10 ) / 10) + u + ')'
+                                  : rx + '(' + (Math.floor((a[rx] + (b[rx] - a[rx]) * v) * 10 ) / 10) + u + ')';
       }
       return rotation.z ? rotation.z : (rotation.rotateX||'') + (rotation.rotateY||'') + (rotation.rotateZ||'');
     },
     skew = g._skew = function (a,b,u,v){
       var skewProp = {};
       for ( var sx in b ){
-        skewProp[sx] = sx + '(' + (a[sx] + (b[sx] - a[sx]) * v) + u + ')';
+        skewProp[sx] = sx + '(' + (Math.floor((a[sx] + (b[sx] - a[sx]) * v) * 10) / 10) + u + ')';
       }
       return (skewProp.skewX||'') + (skewProp.skewY||'');
     },
     scale = g._scale = function(a,b,v){
-      return 'scale(' + (a + (b - a) * v) + ')';          
+      return 'scale(' + (Math.floor((a + (b - a) * v) * 100 ) / 100) + ')';
     },
 
     // KUTE.js DOM update functions
@@ -230,17 +233,17 @@
       if (elapsed === 1) {
         if (this.options.repeat > 0) {
           if ( this.options.repeat < 9999 ) { this.options.repeat--; } else { this.options.repeat = 0; } // we have to make it stop somewhere, infinity is too damn much
-          
+
           if (this.options.yoyo) { this.reversed = !this.reversed; reverse.call(this); } // handle yoyo
-            
+
           this._startTime = (this.options.yoyo && !this.reversed) ? t + this.options.repeatDelay : t; //set the right time for delay
-          return true;        
+          return true;
         } else {
-          
+
           if (this.options.complete) { this.options.complete.call(); }
-          
-          scrollOut.call(this); // unbind preventing scroll when scroll tween finished 
-          
+
+          scrollOut.call(this); // unbind preventing scroll when scroll tween finished
+
           for (var i = 0, ctl = this.options.chain.length; i < ctl; i++) { // start animating chained tweens
             this.options.chain[i].start();
           }
@@ -251,13 +254,13 @@
       }
       return true;
     },
-  
+
     // applies the transform origin and perspective
     perspective = g._perspective = function () {
       if ( this.options.perspective !== undefined && transformProperty in this._vE ) { this._vS[transformProperty]['perspective'] = this._vE[transformProperty]['perspective']; } // element perspective
-      if ( this.options.transformOrigin !== undefined ) { this._el.style[property('transformOrigin')] = this.options.transformOrigin; } // element transform origin    
+      if ( this.options.transformOrigin !== undefined ) { this._el.style[property('transformOrigin')] = this.options.transformOrigin; } // element transform origin
       if ( this.options.perspectiveOrigin !== undefined ) { this._el.style[property('perspectiveOrigin')] = this.options.perspectiveOrigin; } // element perspective origin
-      if ( this.options.parentPerspective !== undefined ) { this._el.parentNode.style[property('perspective')] = this.options.parentPerspective + 'px'; } // parent perspective  
+      if ( this.options.parentPerspective !== undefined ) { this._el.parentNode.style[property('perspective')] = this.options.parentPerspective + 'px'; } // parent perspective
       if ( this.options.parentPerspectiveOrigin !== undefined ) { this._el.parentNode.style[property('perspectiveOrigin')] = this.options.parentPerspectiveOrigin; } // parent perspective origin
     },
 
@@ -267,20 +270,20 @@
       for (var x in t) {
         if (_transform.indexOf(x) !== -1) { // transform object gets built here
           if ( /^translate(?:[XYZ]|3d)$/.test(x) ) { //process translate3d
-            var ta = ['X', 'Y', 'Z']; //coordinates //   translate[x] = pp(x, t[x]);  
-            
-            for (var f = 0; f < 3; f++) {        
+            var ta = ['X', 'Y', 'Z']; //coordinates //   translate[x] = pp(x, t[x]);
+
+            for (var f = 0; f < 3; f++) {
               var a = ta[f];
               if ( /3d/.test(x) ) {
-                translateObject['translate' + a] = parseProperty.transform('translate' + a, t[x][f], l);                
+                translateObject['translate' + a] = parseProperty.transform('translate' + a, t[x][f], l);
               } else {
                 translateObject['translate' + a] = ('translate' + a in t) ? parseProperty.transform('translate' + a, t['translate' + a], l) : 0;
               }
             }
             transformObject['translate'] = translateObject;
           } else if ( /^rotate(?:[XYZ])$|^skew(?:[XY])$/.test(x) ) { //process rotation/skew
-            var ap = /rotate/.test(x) ? 'rotate' : 'skew', ra = ['X', 'Y', 'Z'], 
-              rtp = ap === 'rotate' ? rotateObject : skewObject; 
+            var ap = /rotate/.test(x) ? 'rotate' : 'skew', ra = ['X', 'Y', 'Z'],
+              rtp = ap === 'rotate' ? rotateObject : skewObject;
             for (var r = 0; r < 3; r++) {
               var v = ra[r];
               if ( t[ap+v] !== undefined && x !== 'skewZ' ) {
@@ -294,10 +297,10 @@
           propertiesObject[transformProperty] = transformObject;
         } else if ( x !== 'transform') {
           if ( _boxModel.indexOf(x) !== -1 ) {
-            propertiesObject[x] = parseProperty.boxModel(x,t[x]); 
-          } else if (_opacity.indexOf(x) !== -1 || _scroll.indexOf(x) !== -1) { 
-            propertiesObject[x] = parseProperty.unitless(x,t[x]); 
-          } else if (_colors.indexOf(x) !== -1) { 
+            propertiesObject[x] = parseProperty.boxModel(x,t[x]);
+          } else if (_opacity.indexOf(x) !== -1 || _scroll.indexOf(x) !== -1) {
+            propertiesObject[x] = parseProperty.unitless(x,t[x]);
+          } else if (_colors.indexOf(x) !== -1) {
             propertiesObject[x] = parseProperty.colors(x,t[x]);
           } else if (x in parseProperty) { propertiesObject[x] = parseProperty[x](x,t[x],l); } // or any other property from css/ attr / svg / third party plugins
         }
@@ -311,11 +314,11 @@
       boxModel : function(p,v,l){ // box model | text props | radius props
         if (!(p in DOM)){
           DOM[p] = function(l,p,a,b,v){
-            l.style[p] = unit(a,b,'px',v);
+            l.style[p] = Math.floor(number(a,b,v))+'px';
           }
         }
         var boxValue = trueDimension(v);
-        return boxValue.u === '%' ? boxValue.v * l.offsetWidth / 100 : boxValue.v; 
+        return boxValue.u === '%' ? boxValue.v * l.offsetWidth / 100 : boxValue.v;
       },
       transform : function(p,v,l) { // transform prop / value
         if (!('transform' in DOM)) {
@@ -362,7 +365,7 @@
             } else {
               t2dv = trueDimension(tv);
               t2d.x = t2dv.u === '%' ? (t2dv.v * l.offsetWidth / 100) : t2dv.v,
-              t2d.y = 0 
+              t2d.y = 0
             }
 
             return t2d;
@@ -375,31 +378,31 @@
             var r2d = {}, r2dv = trueDimension(v,true);
             r2d.z = r2dv.u === 'rad' ? radToDeg(r2dv.v) : r2dv.v;
             return r2d;
-          } 
+          }
         } else if (p === 'scale') {
           return parseFloat(v); // this must be parseFloat(v)
         }
       },
-      unitless : function(p,v){  // scroll | opacity | unitless  
+      unitless : function(p,v){  // scroll | opacity | unitless
         if (/scroll/.test(p) && !(p in DOM) ){
           DOM[p] = function(l,p,a,b,v) {
-            l.scrollTop = number(a,b,v);
+            l.scrollTop = Math.floor(number(a,b,v));
           };
         } else if (p === 'opacity') {
-          if (!(p in DOM)) {    
+          if (!(p in DOM)) {
             if (_isIE8) {
               DOM[p] = function(l,p,a,b,v) {
                 var st = "alpha(opacity=", ep = ')';
-                l.style.filter = st + (number(a,b,v) * 100) + ep;
+                l.style.filter = st + Math.floor(number(a,b,v) * 100) + ep;
               };
             } else {
               DOM[p] = function(l,p,a,b,v) {
-                l.style.opacity = number(a,b,v);
+                l.style.opacity = Math.floor(number(a,b,v) * 100)/100;
               };
             }
           }
         }
-        return parseFloat(v); 
+        return parseFloat(v);
       },
       colors : function(p,v){ // colors
         if (!(p in DOM)) {
@@ -407,7 +410,7 @@
             l.style[p] = color(a,b,v,o.keepHex);
           };
         }
-        return trueColor(v); 
+        return trueColor(v);
       }
     },
     reverse = g._reverse = function () {
@@ -415,8 +418,8 @@
         for (var p in this._vE) {
           var tmp = this._vSR[p];
           this._vSR[p] = this._vE[p];
-          this._vE[p] = tmp;  
-          this._vS[p] = this._vSR[p];    
+          this._vE[p] = tmp;
+          this._vS[p] = this._vSR[p];
         }
       }
     },
@@ -427,7 +430,7 @@
 
       setTimeout(function(){ if (!_tws.length) { stop(); } }, 48);  // when all animations are finished, stop ticking after ~3 frames
     },
-    scrollOut = function(){ //prevent scroll when tweening scroll    
+    scrollOut = function(){ //prevent scroll when tweening scroll
       if (( 'scroll' in this._vE || 'scrollTop' in this._vE ) && document.body.getAttribute('data-tweening')) {
         document.removeEventListener(touchOrWheel, preventScroll, false);
         document.removeEventListener(mouseEnter, preventScroll, false);
@@ -453,26 +456,26 @@
     getStartValues = function () { // stack transform props for .to() chains
       var startValues = {}, currentStyle = getInlineStyle(this._el,'transform'),
         deg = ['rotate','skew'], ax = ['X','Y','Z'];
-          
+
       for (var p in this._vS){
         if ( _transform.indexOf(p) !== -1 ) {
           var r2d = (/(rotate|translate|scale)$/.test(p));
           if ( /translate/.test(p) && p !== 'translate' ) {
             startValues['translate3d'] = currentStyle['translate3d'] || _defaults[p];
           } else if ( r2d ) { // 2d transforms
-            startValues[p] = currentStyle[p] || _defaults[p]; 
+            startValues[p] = currentStyle[p] || _defaults[p];
           } else if ( !r2d && /rotate|skew/.test(p) ) { // all angles
             for (var d=0; d<2; d++) {
               for (var a = 0; a<3; a++) {
-                var s = deg[d]+ax[a];                
+                var s = deg[d]+ax[a];
                 if (_transform.indexOf(s) !== -1 && (s in this._vS) ) { startValues[s] = currentStyle[s] || _defaults[s]; }
               }
             }
           }
         } else {
           if ( _scroll.indexOf(p) === -1 ) {
-            if (p === 'opacity' && _isIE8 ) { // handle IE8 opacity  
-              var currentOpacity = getCurrentStyle(this._el,'filter');          
+            if (p === 'opacity' && _isIE8 ) { // handle IE8 opacity
+              var currentOpacity = getCurrentStyle(this._el,'filter');
               startValues['opacity'] = typeof currentOpacity === 'number' ? currentOpacity : _defaults['opacity'];
             } else {
               if ( _all.indexOf(p) !== -1 ) {
@@ -483,12 +486,12 @@
             }
           } else {
             startValues[p] = this._el === scrollContainer ? (g.pageYOffset || scrollContainer.scrollTop) : this._el.scrollTop;
-          }      
+          }
         }
       }
-      for ( var p in currentStyle ){ // also add to _vS values from previous tweens  
+      for ( var p in currentStyle ){ // also add to _vS values from previous tweens
         if ( _transform.indexOf(p) !== -1 && (!( p in this._vS )) ) {
-          startValues[p] = currentStyle[p] || _defaults[p]; 
+          startValues[p] = currentStyle[p] || _defaults[p];
         }
       }
 
@@ -499,7 +502,7 @@
         for ( var sp in this._vS[transformProperty]) { // sp is the object corresponding to the transform function objects translate / rotate / skew / scale
           if ( sp !== 'perspective') {
             if ( typeof this._vS[transformProperty][sp] === 'object' ) {
-              for ( var spp in this._vS[transformProperty][sp] ) { // 3rd level 
+              for ( var spp in this._vS[transformProperty][sp] ) { // 3rd level
                 if ( typeof this._vE[transformProperty][sp] === 'undefined' ) { this._vE[transformProperty][sp] = {}; }
                 if ( typeof this._vS[transformProperty][sp][spp] === 'number' && typeof this._vE[transformProperty][sp][spp] === 'undefined' ) {
                   this._vE[transformProperty][sp][spp] = this._vS[transformProperty][sp][spp];
@@ -515,7 +518,7 @@
       }
     };
 
-    // core easing functions  
+    // core easing functions
   var easing = g.Easing = {};
   easing.linear = function (t) { return t; };
   easing.easingSinusoidalIn = function(t) { return -Math.cos(t * Math.PI / 2) + 1; };
@@ -563,9 +566,9 @@
   };
   easing.easingBounceIn = function(t) { return 1 - easing.easingBounceOut( 1 - t ); };
   easing.easingBounceOut = function(t) {
-    if ( t < ( 1 / 2.75 ) ) { return 7.5625 * t * t; } 
-    else if ( t < ( 2 / 2.75 ) ) { return 7.5625 * ( t -= ( 1.5 / 2.75 ) ) * t + 0.75; } 
-    else if ( t < ( 2.5 / 2.75 ) ) { return 7.5625 * ( t -= ( 2.25 / 2.75 ) ) * t + 0.9375; } 
+    if ( t < ( 1 / 2.75 ) ) { return 7.5625 * t * t; }
+    else if ( t < ( 2 / 2.75 ) ) { return 7.5625 * ( t -= ( 1.5 / 2.75 ) ) * t + 0.75; }
+    else if ( t < ( 2.5 / 2.75 ) ) { return 7.5625 * ( t -= ( 2.25 / 2.75 ) ) * t + 0.9375; }
     else {return 7.5625 * ( t -= ( 2.625 / 2.75 ) ) * t + 0.984375; }
   };
   easing.easingBounceInOut = function(t) { if ( t < 0.5 ) return easing.easingBounceIn( t * 2 ) * 0.5; return easing.easingBounceOut( t * 2 - 1 ) * 0.5 + 0.5;};
@@ -573,13 +576,13 @@
   // these methods run faster when defined outside
   var start = g._start = function (t) { // move functions that use the ticker outside the prototype to be in the same scope with it
       scrollIn.call(this);
-        
+
       if ( this.options.rpr ) { getStartValues.apply(this); } // on start we reprocess the valuesStart for TO() method
       perspective.apply(this); // apply the perspective and transform origin
 
       for ( var e in this._vE ) {
         if (e in crossCheck && this.options.rpr) crossCheck[e].call(this); // this is where we do the valuesStart and valuesEnd check for to() method
-        this._vSR[e] = this._vS[e];      
+        this._vSR[e] = this._vS[e];
       }
 
       // now it's a good time to start
@@ -589,7 +592,7 @@
       this._startFired = false;
       this._startTime = t || time.now();
       this._startTime += this.options.delay;
-      
+
       if (!this._startFired) {
         if (this.options.start) { this.options.start.call(); }
         this._startFired = true;
@@ -600,16 +603,16 @@
     play = g._play = function () {
       if (this.paused && this.playing) {
         this.paused = false;
-        if (this.options.resume) { this.options.resume.call(); }        
-        this._startTime += time.now() - this._pauseTime;    
+        if (this.options.resume) { this.options.resume.call(); }
+        this._startTime += time.now() - this._pauseTime;
         add(this);
         !tick && ticker();  // restart ticking if stopped
       }
       return this;
     },
-    
+
     // single Tween object construct
-    Tween = g._tween = function (_el, _vS, _vE, _o) {
+    Tween = g._Tween = function (_el, _vS, _vE, _o) {
       this._el = 'scroll' in _vE && (_el === undefined || _el === null) ? scrollContainer : _el; // element animation is applied to
 
       this.playing = false;
@@ -629,13 +632,12 @@
 
       if ( this.options.perspective !== undefined && transformProperty in this._vE ) { // element transform perspective
         var perspectiveString = 'perspective('+parseInt(this.options.perspective)+'px) ';
-        this._vE[transformProperty]['perspective'] = perspectiveString; 
+        this._vE[transformProperty]['perspective'] = perspectiveString;
       }
 
       for ( var e in this._vE ) {
         if (e in crossCheck && !_o.rpr) crossCheck[e].call(this); // this is where we do the valuesStart and valuesEnd check for fromTo() method
       }
-
 
       this.options.chain = []; // chained Tweens
       this.options.easing = _o.easing && typeof processEasing(_o.easing) === 'function' ? processEasing(_o.easing) : easing.linear;
@@ -650,8 +652,8 @@
       this.pause = function() {
         if (!this.paused && this.playing) {
           remove(this);
-          this.paused = true;    
-          this._pauseTime = time.now();    
+          this.paused = true;
+          this._pauseTime = time.now();
           if (this.options.pause) { this.options.pause.call(); }
         }
         return this;
@@ -662,8 +664,8 @@
           this.playing = false;
           this.paused = false;
           scrollOut.call(this);
-            
-          if (this.options.stop) { this.options.stop.call(); }    
+
+          if (this.options.stop) { this.options.stop.call(); }
           this.stopChainedTweens();
           close.call(this);
         }
@@ -679,7 +681,7 @@
 
     // the multi elements Tween constructs
     TweensTO = function (els, vE, o) { // .to
-      this.tweens = []; var _o = []; 
+      this.tweens = []; var _o = [];
       for ( var i = 0, tl = els.length; i < tl; i++ ) {
         _o[i] = o || {}; o.delay = o.delay || 0;
         _o[i].delay = i>0 ? o.delay + (o.offset||0) : o.delay;
@@ -687,7 +689,7 @@
       }
     },
     TweensFT = function (els, vS, vE, o) { // .fromTo
-      this.tweens = []; var _o = []; 
+      this.tweens = []; var _o = [];
       for ( var i = 0, l = els.length; i < l; i++ ) {
         _o[i] = o || {}; o.delay = o.delay || 0;
         _o[i].delay = i>0 ? o.delay + (o.offset||0) : o.delay;
@@ -697,7 +699,7 @@
     ws = TweensTO.prototype = TweensFT.prototype = {
       start : function(t){
         t = t || time.now();
-        for ( var i = 0, tl = this.tweens.length; i < tl; i++ ) { 
+        for ( var i = 0, tl = this.tweens.length; i < tl; i++ ) {
           this.tweens[i].start(t);
         }
         return this;
@@ -711,7 +713,7 @@
 
     // main methods
     to = function (el, to, o) {
-      var _el = selector(el); o = o || {}; o.rpr = true;  
+      var _el = selector(el); o = o || {}; o.rpr = true;
       return new Tween(_el, to, to, o);
     },
     fromTo = function (el, f, to, o) {
@@ -729,7 +731,7 @@
       return new TweensFT(_els, f, to, o); 
     };
 
-  return K = { // export core methods to public for plugins
+  return { // export core methods to public for plugins
     property: property, getPrefix: getPrefix, selector: selector, processEasing : processEasing, // utils
     to: to, fromTo: fromTo, allTo: allTo, allFromTo: allFromTo, // main methods
     parseProperty: parseProperty, prepareStart: prepareStart, crossCheck : crossCheck, Tween : Tween, // property parsing & preparation | Tween | crossCheck

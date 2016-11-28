@@ -58,7 +58,7 @@
   parseProperty['number'] = function(p,v,l) {
     if ( !( 'number' in DOM ) ) {
       DOM['number'] = function(l,p,a,b,v) {
-        l.innerHTML = parseInt( number(a, b, v));
+        l.innerHTML = floor( number(a, b, v));
       }
     }
     return parseInt(v) || 0;
