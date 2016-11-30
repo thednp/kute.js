@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
     <meta name="description" content="Animation examples for KUTE.js core engine with most essential CSS and CSS3 properties, as well as all easing functions.">
     <meta name="keywords" content="kute,kute.js,animation,javscript animation,tweening engine,animation engine,css3 transform,box model,color,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
@@ -281,6 +281,11 @@ KUTE.to('selector1',{backgroundColor:'turquoise'}).start(); // IE9+ only
 <pre><code class="language-javascript">KUTE.to('selector',{scroll:450}).start(); // for a scrollable element
 KUTE.to('window',{scroll:450}).start(); // for the window
 </code></pre>
+		<p>The scroll animation could however be influenced by mouse hover effects, usually creating some really nasty bottlenecks, but you can always add some CSS to your page to prevent that:</p>
+<pre><code class="language-css">/* prevent scroll bottlenecks */
+body[data-tweening="scroll"],
+body[data-tweening="scroll"] * { pointer-events: none !important; }
+</code></pre>
 		<p>A working example would work like <a href="http://codepen.io/thednp/pen/bVqKmp/" target="_blank">this</a>. Scroll works with IE8+ and is a unitless property even if these scroll distances are measured in pixels.</p>
 		
 		
@@ -308,15 +313,18 @@ var endValues = {};
 var options = {};
 
 // here we define properties that are commonly supported
-startValues.opacity = 1;
-endValues.opacity = 0.2;
-startValues.backgroundColor = '#CDDC39'; 
-endValues.backgroundColor = '#ec1e71';
+startValues.backgroundColor = 'rgba(255,214,38,1)'; endValues.backgroundColor = 'rgba(236,30,113,0.1)';
 
 // here we define the properties according to the target browsers
 if (isIE8) { // or any other browser that doesn"t support transforms		
 	startValues.left = 0;
 	endValues.left = 250;
+	// for IE we override color values
+	startValues.backgroundColor = '#CDDC39'; 
+	endValues.backgroundColor = '#ec1e71';
+	// IE8 also doesn't support RGBA, we set to animate the opacity of the element
+	startValues.opacity = 1;
+	endValues.opacity = 0.2;
 } else if (isIE9) { // or any other browser that only support 2d transforms
 	startValues.translate = 0; // 2d translate on X axis
 	endValues.translate = 250;
@@ -383,6 +391,7 @@ playPauseButton.addEventListener('click', function(e){
 			</div>
 		</div>
 		<p>Let's explain this code a bit. KUTE.js gives you the internal variables <code>myTween.playing</code> and <code>myTween.paused</code> (both true/false) to help you easily manage the tween control methods all together as in this example here. As said before, KUTE.js version 0.9.5 doesn't stat animating by default, for all the examples on this page you have to start it yourself, unlike their versions hosted on Codepen.</p>
+		<p>Also please know that opacity animation only works on Internet Explorer 8 if the target element uses <code>float: left/right</code>, <code>display: block</code> or <code>display: inline-block</code>.</p>
 		<ul>
 			<li>the <code class="bg-blue">START</code> button will use the <code>.start()</code> method and the animation starts;</li>
 			<li>the <code class="bg-red">STOP</code> button will use the <code>.stop()</code> method and stops the animation; after this the, animation can only be started again</li>

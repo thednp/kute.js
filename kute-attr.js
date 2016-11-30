@@ -19,9 +19,9 @@
   'use strict';
 
   var g = typeof global !== 'undefined' ? global : window, // connect to KUTE object and global
-    K = KUTE, DOM = g.dom, prepareStart = K.prepareStart, parseProperty = K.parseProperty,
+    K = KUTE, DOM = K.dom, prepareStart = K.prepareStart, parseProperty = K.parseProperty,
     trueColor = K.truC, trueDimension = K.truD, crossCheck = K.crossCheck,
-    unit = g._unit, number = g._number, color = g._color;
+    unit = g.Interpolate.unit, number = g.Interpolate.number, color = g.Interpolate.color;
 
   // here we go with the plugin
   var getCurrentValue = function(e,a){ return e.getAttribute(a); }, // get current attribute value
@@ -30,11 +30,11 @@
       return a.replace(/[A-Z]/g, "-$&").toLowerCase();
     }; 
   
-  prepareStart['attr'] = function(el,p,v){
+  prepareStart.attr = function(p,v){
     var attrStartValues = {};
     for (var a in v){
       var attribute = replaceUppercase(a).replace(/_+[a-z]+/,''),
-        currentValue = getCurrentValue(el,attribute); // get the value for 'fill-opacity' not fillOpacity
+        currentValue = getCurrentValue(this.element,attribute); // get the value for 'fill-opacity' not fillOpacity
       attrStartValues[attribute] = svgColors.indexOf(attribute) !== -1 ? (currentValue || 'rgba(0,0,0,0)') : (currentValue || (/opacity/i.test(a) ? 1 : 0));
     }
     return attrStartValues;
@@ -42,7 +42,7 @@
   
   // process attributes object K.pp.attr(t[x]) 
   // and also register their render functions
-  parseProperty['attr'] = function(a,o,l){
+  parseProperty.attr = function(a,o){
     if (!('attr' in DOM)) {
       DOM.attr = function(l,p,a,b,v) {
         for ( var o in b ){
@@ -54,33 +54,33 @@
 
     var ats = {};
     for ( var p in o ) {
-      var prop = replaceUppercase(p), cv = getCurrentValue(l,prop.replace(/_+[a-z]+/,''));
+      var prop = replaceUppercase(p), regex = /(%|[a-z]+)$/, cv = getCurrentValue(this.element,prop.replace(/_+[a-z]+/,''));
       if ( svgColors.indexOf(prop) === -1) {
-        if ( cv !== null && /(%|[a-z]+)$/.test(cv) ) {
-          var u = trueDimension(cv).u || trueDimension(o[p]).u, s = /%/.test(u) ? '_percent' : '_'+u;
+        if ( cv !== null && regex.test(cv) ) {
+          var prefix = trueDimension(cv).u || trueDimension(o[p]).u, s = /%/.test(prefix) ? '_percent' : '_'+prefix;
           if (!(prop+s in atts)) {
-            if (/%/.test(u)) {
+            if (/%/.test(prefix)) {
               atts[prop+s] = function(l,p,a,b,v) {
                 var _p = _p || p.replace(s,'');
-                l.setAttribute(_p, (Math.floor(number(a.v,b.v,v) * 100)/100) + b.u );
+                l.setAttribute(_p, ((number(a.v,b.v,v) * 100>>0)/100) + b.prefix );
               }
             } else {
               atts[prop+s] = function(l,p,a,b,v) {
                 var _p = _p || p.replace(s,'');
-                l.setAttribute(_p, Math.floor(number(a.v,b.v,v)) + b.u );
+                l.setAttribute(_p, (number(a.v,b.v,v)>>0) + b.prefix );
               }
             }
           }
           ats[prop+s] = trueDimension(o[p]); 
-        } else if ( !/(%|[a-z]+)$/.test(o[p]) || cv === null || cv !== null && !/(%|[a-z]+)$/.test(cv) ) {
+        } else if ( !regex.test(o[p]) || cv === null || cv !== null && !regex.test(cv) ) {
           if (!(prop in atts)) {
             if (/opacity/i.test(p)) {
               atts[prop] = function(l,o,a,b,v) {
-                l.setAttribute(o, Math.floor(number(a,b,v) * 100) / 100 );
+                l.setAttribute(o, (number(a,b,v) * 100 >> 0) / 100 );
               }
             } else {
               atts[prop] = function(l,o,a,b,v) {
-                l.setAttribute(o, Math.floor(number(a,b,v) *10 ) / 10 );
+                l.setAttribute(o, (number(a,b,v) *10 >> 0 ) / 10 );
               }
             }
           }

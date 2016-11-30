@@ -4,7 +4,7 @@
 var mobileType = '',
 	isMobile = {
 		Windows: function() {
-			var checkW = /IEMobile/i.test(navigator.userAgent);
+			var checkW = /IEMobile|Windows Mobile/i.test(navigator.userAgent);
 			mobileType += checkW ? 'Windows Phones.' : '';
 			return checkW;
 		},
@@ -24,7 +24,7 @@ var mobileType = '',
 			return checkI;
 		},
 		any: function() {
-			return ( isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
+			return ( isMobile.Windows() || isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() );
 		}
 	},
 	checkMOBS = isMobile.any();
@@ -63,11 +63,11 @@ function complete(){
 }
 
 function updateLeft(){
-		this.div.style['left'] = parseInt(this.left)+'px';
+	this.div.style['left'] = Math.floor(this.left) +'px';
 }					
 
 function updateTranslate(){
-		this.div.style[transformProperty] = 'translate3d('+ Math.round(this.x * 100) / 100 + 'px,0px,0px)';
+	this.div.style[transformProperty] = 'translate3d('+ Math.floor(this.x * 10) / 10 + 'px,0px,0px)';
 }
 
 function buildObjects(){
@@ -194,6 +194,3 @@ for (var i=0; i<l; i++) {
 		}
 	}
 }
-
-
-

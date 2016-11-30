@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
     <meta name="description" content="The complete list of supported CSS properties, presentation attributes and other DOM animations for KUTE.js.">
     <meta name="keywords" content="kute,kute.js,animation,javascript animation,tweening engine,animation engine,css properties,css3 animation,kute.js supported properties,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
@@ -137,7 +137,7 @@
 		<p><strong>Remember</strong>: these properties are <strong>layout modifiers</strong> that may force repaint of the entire DOM, drastically affecting performance on lower end and mobile devices. They also trigger <code>resize</code> event that may cause crashes on old browsers such as IE8 when using handlers bound on <code>resize</code>, so use with caution.</p>
 
 		<h3>Border Radius</h3>
-		<p>The <a href="css.html">CSS Plugin</a> covers all the radius properties while making sure to use the proper vendor prefix if a slightly older browser version is detected.</p>
+		<p>The <a href="css.html">CSS Plugin</a> covers all the radius properties with the exception that shorthand notations are not implemented.</p>
 		<ul>
 			<li><kbd class="bg-olive">borderRadius</kbd> allows you to animate the <code>border-radius</code> on all corners for a given element.</li>
 			<li><kbd class="bg-olive">borderTopLeftRadius</kbd> allows you to animate the <code>border-top-left-radius</code> for a given element.</li>
@@ -161,8 +161,8 @@
         
 		<h3>Presentation Attributes</h3>
 		<p>The <a href="attr.html">Attributes Plugin</a> can animate any numerical presentation attribute such as <kbd class="bg-olive">width</kbd>, <kbd class="bg-olive">cx</kbd> or <kbd class="bg-olive">stop-opacity</kbd>, but the values can be also suffixed: <code>150px</code> or <code>50%</code>, and for that you must always provide a string value that include the measurement unit, and that, of course, depends on the attribute. This plugin can be a great addition to the above SVG Plugin for specific gradient attributes or specific geometric shapes' attributes.</p>
-		<p>The synthax is slightly different to make sure we don't mess up with CSS properties that have the same name because the presentation attribute may be a unitless attribute while the CSS property might require a suffix (%,px,etc). For instance <code>KUTE.to('selector', {attr:{width:150}})</code> is clearly different from <code>KUTE.to('selector', {width:150})</code> which is the the CSS property with the same name.</p>
 		<p>Starting KUTE.js 1.6.0 the <a href="attr.html">Attributes Plugin</a> can also animate color attributes such as <kbd class="bg-olive">stroke</kbd>, <kbd class="bg-olive">fill</kbd> or <kbd class="bg-olive">stop-color</kbd>, and they are removed from the SVG Plugin, and the reason for that is the new bundle build that incorporates both plugins into an unified file.<p> 
+		<p>The synthax is slightly different to make sure we don't mess up with CSS properties that have the same name because the presentation attribute may be a unitless attribute while the CSS property might require a suffix (%,px,etc). For instance <code>KUTE.to('selector', {attr:{width:150}})</code> is clearly different from <code>KUTE.to('selector', {width:150})</code> which is the the CSS property with the same name.</p>
 		<p>The plugin handles attribute namespaces properly which means you can use both Javascript notation (like <kbd class="bg-olive">stopColor</kbd>) and HTML markup notation (like <kbd class="bg-olive">'stop-color'</kbd>), see the below example.</p>
 		<p>EG: <code>KUTE.to('selector', {attr:{stroke:'blue'}})</code> to animate the stroke of an SVG element or <code>KUTE.to('selector', {attr:{'stop-color':'red'}})</code> to animate the stop color of some SVG gradient.</p>
         
@@ -177,7 +177,7 @@
 		<p><strong>Remember</strong>: these properties are <strong>layout modifiers</strong>.</p>
 
 		<h3>Scroll Animation</h3>
-		<p>KUTE.js core engine currently supports only vertical <kbd class="bg-blue">scroll</kbd> for both the window and a given element that's scrollable (when <code>scrollHeight</code> is higher than <code>offsetHeight</code>). Both <code>scroll: 150</code> or <code>scrollTop: 150</code> notations will do. When animating scroll, KUTE.js will disable all scroll and swipe handlers to prevent animation bubbles as well as scroll bottlenecks.</p>		
+		<p>KUTE.js core engine currently supports only vertical <kbd class="bg-blue">scroll</kbd> for both the window and a given element that's scrollable (when <code>scrollHeight</code> is higher than <code>offsetHeight</code>). EG: <code>scroll: 150</code> will scroll an element or window to 150px from top to bottom. When animating scroll, KUTE.js will disable all scroll and swipe handlers to prevent animation bubbles as well as scroll bottlenecks, but we'll have a look at that later.</p>
 
 		<h3>String Properties</h3>
 		<ul>

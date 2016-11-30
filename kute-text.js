@@ -18,8 +18,8 @@
   'use strict';
 
   var g = typeof global !== 'undefined' ? global : window, // connect to KUTE object and global
-    K = KUTE, DOM = g.dom, prepareStart = K.prepareStart,
-    parseProperty = K.parseProperty, number = g._number;
+    K = KUTE, DOM = K.dom, prepareStart = K.prepareStart,
+    parseProperty = K.parseProperty, number = g.Interpolate.number;
   
   // let's go with the plugin
   var _string = String("abcdefghijklmnopqrstuvwxyz").split(""), // lowercase
@@ -28,15 +28,15 @@
     _numeric = String("0123456789").split(""), // numeric
     _alphanumeric = _string.concat(_stringUppercase,_numeric), // alpha numeric
     _all = _alphanumeric.concat(_symbols), // all caracters
-    random = Math.random, floor = Math.floor, min = Math.min;
+    random = Math.random, min = Math.min;
 
-  prepareStart['text'] = prepareStart['number'] = function(l,p,v){
-    return l.innerHTML;
+  prepareStart.text = prepareStart.number = function(p,v){
+    return this.element.innerHTML;
   }
     
-  parseProperty['text'] = function(p,v,l) {
+  parseProperty.text = function(p,v) {
     if ( !( 'text' in DOM ) ) {
-      DOM['text'] = function(l,p,a,b,v,o) {
+      DOM.text = function(l,p,a,b,v,o) {
         var tp = tp || o.textChars === 'alpha' ? _string // textChars is alpha
             : o.textChars === 'upper' ? _stringUppercase  // textChars is numeric
             : o.textChars === 'numeric' ? _numeric  // textChars is numeric
@@ -44,11 +44,11 @@
             : o.textChars === 'symbols' ? _symbols // textChars is symbols
             : o.textChars ? o.textChars.split('') // textChars is a custom text
             : _string, ll = tp.length,
-            t = tp[floor((random() * ll))], ix = '', tx = '', fi = a.substring(0), f = b.substring(0); 
+            t = tp[(random() * ll)>>0], ix = '', tx = '', fi = a.substring(0), f = b.substring(0); 
 
         // use string.replace(/<\/?[^>]+(>|$)/g, "") to strip HTML tags while animating ? this is definatelly a smart to do
-        ix = a !== '' ? fi.substring(fi.length,floor(min(v * fi.length, fi.length))) : ''; // initial text, A value 
-        tx = f.substring(0,floor(min(v * f.length, f.length))); // end text, B value
+        ix = a !== '' ? fi.substring(fi.length, min(v * fi.length, fi.length)>>0 ) : ''; // initial text, A value 
+        tx = f.substring(0, min(v * f.length, f.length)>>0 ); // end text, B value
         l.innerHTML = v < 1 ? tx + t + ix : b;
       }
     }
@@ -57,8 +57,8 @@
     
   parseProperty['number'] = function(p,v,l) {
     if ( !( 'number' in DOM ) ) {
-      DOM['number'] = function(l,p,a,b,v) {
-        l.innerHTML = floor( number(a, b, v));
+      DOM.number = function(l,p,a,b,v) {
+        l.innerHTML = number(a, b, v)>>0;
       }
     }
     return parseInt(v) || 0;

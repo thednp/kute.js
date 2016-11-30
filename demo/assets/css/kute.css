@@ -19,6 +19,10 @@ body > .fill {
 	position: fixed; top: 0; left:0; right: 0; bottom:0; 
 }
 
+/* the body and it's children can be irresponsive on scroll animations as well */
+body[data-tweening="scroll"],
+body[data-tweening="scroll"] * { pointer-events: none !important; }
+
 .fill { 
 	background-size: cover;
 	background-position: 50% 50%;
@@ -112,22 +116,24 @@ svg.example-box { width: auto; height: auto; }*/
 .example-buttons {position: absolute; top: 18px; right:0}
 
 /* text properties example */
+:not(.ie8) .btn.example-item {opacity: 0}
 h1.example-item {
     font-size: 50px;
     line-height:50px;
     color: #333;
+		opacity: 0;
 }
 
 h1.example-item span {
     line-height: inherit; 
-    opacity: 0; display: inline;
+    display: inline;
     vertical-align: top;
 }
-.btn.example-item {opacity: 0}
 
-.ie8 h1.example-item span,
-.ie8 .btn.example-item {filter: alpha(opacity=0)}
-.ie8 .btn.example-item * {filter: inherit}
+.ie8 h1.example-item,
+.ie8 .btn.example-item {filter: alpha(opacity=0); }
+.ie8 .btn.example-item {display: block; padding:0; text-align: center; }
+
 
 /* UTILITY STYLES
 -------------------------------------------------- */

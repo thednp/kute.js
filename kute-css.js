@@ -16,10 +16,10 @@
 })(this, function(KUTE){
   'use strict';
 
-  var g = typeof global !== 'undefined' ? global : window, K = KUTE, DOM = g.dom, 
+  var g = typeof global !== 'undefined' ? global : window, K = KUTE, DOM = K.dom, 
     parseProperty = K.parseProperty, prepareStart = K.prepareStart, property = K.property,
     getCurrentStyle = K.getCurrentStyle, trueDimension = K.truD, trueColor = K.truC,
-    number = g._number, unit = g._unit, color = g._color;
+    number = g.Interpolate.number, unit = g.Interpolate.unit, color = g.Interpolate.color;
 
   var _colors = ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
     _boxModel  = ['right', 'bottom', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 
@@ -27,10 +27,10 @@
       'borderWidth', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'outlineWidth'], // dimensions / box model
     _radius  = ['borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'], // border radius px/%
     _textProperties  = ['fontSize','lineHeight','letterSpacing','wordSpacing'], // text properties
-    _clip = ['clip'], _bg  = ['backgroundPosition'], // clip | background position
-    _mergeTextAndBox = _boxModel.concat(_textProperties), // a merge of all properties with px|%|em|rem|etc unit
+    _clip = ['clip'], _backgroundPosition  = ['backgroundPosition'], // clip | background position
+    _textAndBox = _boxModel.concat(_textProperties), // a merge of all properties with px|%|em|rem|etc unit
     _mergeUnits = _radius.concat(_boxModel,_textProperties), // a merge of all properties with px|%|em|rem|etc unit
-    _all = _colors.concat(_clip, _radius, _boxModel, _textProperties, _bg), al = _all.length, 
+    _all = _colors.concat(_clip, _radius, _boxModel, _textProperties, _backgroundPosition), al = _all.length, 
     _defaults = _defaults || {}; //all properties default values  
  
   //populate default values object
@@ -39,7 +39,7 @@
       _defaults[_all[i]] = 'rgba(0,0,0,0)'; // _defaults[p] = {r:0,g:0,b:0,a:1};
     } else if ( _mergeUnits.indexOf(_all[i]) !== -1 ) {
       _defaults[_all[i]] = 0;      
-    } else if ( _bg.indexOf(_all[i]) !== -1 ){
+    } else if ( _backgroundPosition.indexOf(_all[i]) !== -1 ){
       _defaults[_all[i]] = [50,50];
     } else if ( _all[i] === 'clip' ){
       _defaults[_all[i]] = [0,0,0,0];  
@@ -56,50 +56,57 @@
       }
       return trueColor(v); 
     };
-    prepareStart[_colors[i]] = function(el,p,v){
-      return getCurrentStyle(el,p) || _defaults[p];
+    prepareStart[_colors[i]] = function(p){
+      return getCurrentStyle(this.element,p) || _defaults[p];
     };
   }
   
   // create prepare/process/render functions for additional box model properties
-  for (var i = 0, l = _mergeTextAndBox.length; i<l; i++) {
-    parseProperty[_mergeTextAndBox[i]] = function(p,v){
+  for (var i = 0, l = _textAndBox.length; i<l; i++) {
+    parseProperty[_textAndBox[i]] = function(p,v){
       if (!(p in DOM)){
-        DOM[p] = function(l,p,a,b,v){
-          l.style[p] = unit(a.v,b.v,b.u,v);
+        if (_boxModel.indexOf(p) > -1) {
+          DOM[p] = function(l,p,a,b,v){
+            l.style[p] = ( v > 0.98 || v<0.02 ? (number(a.v,b.v,v) * 100 >> 0)/100 : number(a.v,b.v,v)>>0 ) + b.u;
+          }
+        } else {
+          DOM[p] = function(l,p,a,b,v){
+            l.style[p] = ((number(a.v,b.v,v) * 100 >> 0)/100) + b.u;
+          }
         }
       }
       return trueDimension(v); 
     };
-    prepareStart[_mergeTextAndBox[i]] = function(el,p,v){
-      return getCurrentStyle(el,p) || _defaults[p];
+    prepareStart[_textAndBox[i]] = function(p,v){
+      return getCurrentStyle(this.element,p) || _defaults[p];
     };
   }
   
   //create prepare/process/render functions for radius properties
   for (var i = 0, l = _radius.length; i<l; i++) {
-    var prefixedProp = property(_radius[i]);
-    parseProperty[prefixedProp] = function(p,v){
+
+    parseProperty[_radius[i]] = function(p,v){
       if ( (!(p in DOM)) ) {
         DOM[p] = function(l,p,a,b,v){
-          l.style[p] = unit(a.v,b.v,b.u,v);
+          l.style[p] = ((number(a.v,b.v,v) * 100 >> 0)/100) + b.u;
         }
       }
       return trueDimension(v);
     };
-    prepareStart[prefixedProp] = function(el,p,v){
-      return getCurrentStyle(el,prefixedProp) || _defaults[p];
+    prepareStart[_radius[i]] = function(p,v){
+      var radiusProp = p === _radius[0] ? _radius[1] : p; radiusProp = property(radiusProp); // old Safari has a problem with borderRadius
+      return getCurrentStyle(this.element,radiusProp) || _defaults[p];
     };
   }
   
   // clip
-  parseProperty['clip'] = function(p,v){
+  parseProperty.clip = function(p,v){
     if ( !(p in DOM) ) {
       DOM[p] = function(l,p,a,b,v) {
         var h = 0, cl = [];
         for (h;h<4;h++){
           var c1 = a[h].v, c2 = b[h].v, cu = b[h].u || 'px';
-          cl[h] = unit(c1,c2,cu,v);
+          cl[h] = ((number(c1,c2,v)*100 >> 0)/100) + cu;
         }  
         l.style[p] = 'rect('+cl+')';
       };
@@ -113,30 +120,30 @@
     }
   };
   
-  prepareStart['clip'] = function(el,p,v){
-    var c = getCurrentStyle(el,p), w = getCurrentStyle(el,'width'), h = getCurrentStyle(el,'height');      
+  prepareStart.clip = function(p,v){
+    var c = getCurrentStyle(this.element,p), w = getCurrentStyle(this.element,'width'), h = getCurrentStyle(this.element,'height');      
     return !/rect/.test(c) ? [0, w, h, 0] : c;
   };
     
   // background position
-  parseProperty['backgroundPosition'] = function(p,v) {
-    if ( !(p in DOM) ) {        
+  parseProperty.backgroundPosition = function(p,v) {
+    if ( !(p in DOM) ) {
       DOM[p] = function(l,p,a,b,v) {
-        l.style[p] = unit(a.x.v,b.x.v,'%',v) + ' ' + unit(a.y.v,b.y.v,'%',v);
+        l.style[p] = ((number(a[0],b[0],v)*100>>0)/100) + '%' + ' ' + ((number(a[1],b[1],v)*100>>0)/100) + '%';
       };
     }
-    if ( v instanceof Array ){        
-      return { x: trueDimension(v[0])||{ v: 50, u: '%' }, y: trueDimension(v[1])||{ v: 50, u: '%' } };
+    if ( v instanceof Array ){
+      var x = trueDimension(v[0]).v, y = trueDimension(v[1]).v;
+      return [ x !== NaN ? x : 50, y !== NaN ? y : 50 ];
     } else {
-      var posxy = v.replace(/top|left/g,0).replace(/right|bottom/g,100).replace(/center|middle/g,50), xp, yp;
-      posxy = /\,/g.test(posxy) ? posxy.split(/\,/g) : posxy.split(/\s/g); posxy = posxy.length === 2 ? posxy : [posxy[0],50];
-      xp = trueDimension(posxy[0]); yp = trueDimension(posxy[1]);
-      return { x: xp, y: yp };
+      var posxy = v.replace(/top|left/g,0).replace(/right|bottom/g,100).replace(/center|middle/g,50);
+      posxy = posxy.split(/(\,|\s)/g); posxy = posxy.length === 2 ? posxy : [posxy[0],50]; 
+      return [ trueDimension(posxy[0]).v, trueDimension(posxy[1]).v ];
     }
   }
-  prepareStart['backgroundPosition'] = function(el,p,v){
-    return getCurrentStyle(el,p) || _defaults[p];
-  }
+  prepareStart.backgroundPosition = function(p,v){
+    return getCurrentStyle(this.element,p) || _defaults[p];
+  }  
   
   return this;
 });

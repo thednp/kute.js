@@ -26,7 +26,7 @@
     // add a reference to KUTE utilities
     prepareStart = K.prepareStart, parseProperty = K.parseProperty,
     property = K.property, getCurrentStyle = K.getCurrentStyle, trueColor = K.truC,
-    DOM = g.dom, unit = g._unit, color = g._color, // interpolation functions
+    DOM = K.dom, unit = g.Interpolate.unit, color = g.Interpolate.color, // interpolation functions
 
     // the preffixed boxShadow property, mostly for legacy browsers
     // maybe the browser is supporting the property with its vendor preffix
@@ -60,8 +60,8 @@
 
   // for the .to() method, you need to prepareStart the boxShadow property
   // which means you need to read the current computed value
-  prepareStart['boxShadow'] = function(element,property,value){
-    var cssBoxShadow = getCurrentStyle(element,_boxShadow);
+  prepareStart.boxShadow = function(property,value){
+    var cssBoxShadow = getCurrentStyle(this.element,_boxShadow);
     return /^none$|^initial$|^inherit$|^inset$/.test(cssBoxShadow) ? '0px 0px 0px 0px rgb(0,0,0)' : cssBoxShadow;
   }
 

@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
     <meta name="description" content="A detailed guide how to extend or customize the functionality KUTE.js, with an example for a box-shadow plugin.">
     <meta name="keywords" content="kute,kute.js,animation,javascript animation,tweening engine,animation engine,extend,box-shadow animation,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
@@ -129,11 +129,11 @@ Tween.prototype.timescale = function(factor){
 
 // or let's add a reverse method
 Tween.prototype.reverse = function(){
-    for (var p in this._vE) {
-        var tmp = this._vSR[p];         // we cache this object first
-        this._vSR[p] = this._vE[p];     // this._vSR is the internal valuesStartRepeat object
-        this._vE[p] = tmp;              // this._vE is the internal valuesEnd object
-        this._vS[p] = this._vSR[p];     // this._vSR is the internal valuesStart object
+    for (var p in this.valuesEnd) {
+        var tmp = this.valuesRepeat[p]; // we cache this object first
+        this.valuesRepeat[p] = this.valuesEnd[p];
+        this.valuesEnd[p] = tmp;
+        this.valuesStart[p] = this.valuesRepeat[p];
     }
     return this;
 }
@@ -168,7 +168,7 @@ Tween.prototype.onUpdate = function(){
         <ul>
             <li><code>KUTE.prepareStart['propertyName']</code> <kbd class="bg-red">required</kbd> a function to get the current value of the property required for the <code>.to()</code> method;</li>
             <li><code>KUTE.parseProperty['propertyName']</code> <kbd class="bg-red">required</kbd> a function to process the user value / current value to have it ready to tween;</li>
-            <li><code>window.dom['propertyName']</code> <kbd class="bg-red">required</kbd> a <strong>domUpdate</strong> function that will update the property value into the DOM;</li>
+            <li><code>KUTE.dom['propertyName']</code> <kbd class="bg-red">required</kbd> a <strong>domUpdate</strong> function that will update the property value into the DOM;</li>
             <li><code>KUTE.crossCheck['propertyName']</code> <kbd class="bg-green">optional</kbd> a function to help you set proper values when for instance startValues unit is different than endValues unit; so far this is used for CSS3/SVG transforms and SVG Morph, but it can be extended for many properties such as box-model properties or border-radius properties;</li>
             <li>also <kbd class="bg-green">optional</kbd> additional functions that will help with value processing.</li>
         </ul>
@@ -178,7 +178,7 @@ var g = typeof global !== 'undefined' ? global : window, K = KUTE,
     // add a reference to KUTE utilities
     prepareStart = K.prepareStart, getCurrentStyle = K.getCurrentStyle, 
     property = K.property, parseProperty = K.parseProperty, trueColor = K.truC,
-    DOM = g.dom, color = g._color, unit = g._unit; // interpolation functions
+    DOM = K.dom, color = g.Interpolate.color, unit = g.Interpolate.unit; // interpolation functions
 
 // the preffixed boxShadow property, mostly for legacy browsers
 // maybe the browser is supporting the property with its vendor preffix
@@ -193,19 +193,21 @@ var colRegEx = /(\s?(?:#(?:[\da-f]{3}){1,2}|rgba?\(\d{1,3},\s*\d{1,3},\s*\d{1,3}
 <pre><code class="language-javascript">// for the .to() method, you need to prepareStart the boxShadow property
 // which means you need to read the current computed value
 // if the current computed value is not acceptable, use a default value
-prepareStart['boxShadow'] = function(element,property,value){
-    var cssBoxShadow = getCurrentStyle(element,'boxShadow'); // where getCurrentStyle() is an accurate method to read the current property value
+prepareStart['boxShadow'] = function(property,value){
+    var cssBoxShadow = getCurrentStyle(this.element,'boxShadow'); // where getCurrentStyle() is an accurate method to read the current property value
     return /^none$|^initial$|^inherit$|^inset$/.test(cssBoxShadow) ? '0px 0px 0px 0px rgb(0,0,0)' : cssBoxShadow; // if the current value is not valid, use a default one
 }
 
-// note that in some cases the window.getComputedStyle(element,null) can be faster or more appropriate
+// note that in some cases the window.getComputedStyle(this.element,null) can be faster or more appropriate
 // we are using a hybrid function that's trying to get proper colors and other stuff
 // some legacy browsers lack in matters of accuracy so the KUTE.js core methods would suffice
 
 // also to read the current value of an attribute, replace first line of the above function body with this
 // var attrValue = element.getAttribute(property);
 // and return the value or a default value, mostly rgb(0,0,0) for colors, 1 for opacity, or 0 for most other types  
-</code></pre> 
+</code></pre>
+
+        <p>Since KUTE.js 1.6.0, the tween object is bound to all property parsing utilities, meaning that you have access to <code>this</code> that has the target element, options, start and end values and everything else. This is extremely useful if you want to optimize and/or extend particular properties values, the dom update functions, and even override the property name</p>
 
         <p>Now we need an utility function that makes sure the structure looks right for the DOM update function.</p>
 <pre><code class="language-javascript">// utility function to process values accordingly
@@ -233,7 +235,7 @@ var processBoxShadowArray = function(shadow){
 };
 </code></pre>  
 
-        <p>Next we'll need to write a <code>processProperty</code> function that will prepare the property value and build an Object or Array of values ready to tween. This function also registers the <code>window.dom['boxShadow']</code> function into the KUTE object, and this way we avoid filling the main object with unnecessary functions, just to keep performance tight.</p>
+        <p>Next we'll need to write a <code>parseProperty</code> function that will prepare the property value and build an Object or Array of values ready to tween. This function also registers the <code>KUTE.dom['boxShadow']</code> function into the KUTE object, and this way we avoid filling the main object with unnecessary functions, just to keep performance tight.</p>
         
 <pre><code class="language-javascript">// the parseProperty for boxShadow 
 // registers the window.dom['boxShadow'] function 
@@ -312,10 +314,10 @@ var myBSTween3 = KUTE.fromTo('selector', {boxShadow: [5, 5, 0, '#069', 'inset']}
             <li><kbd class="bg-lime">KUTE.truC(color)</kbd> a function that returns an <code>{r: 150, g: 150, b: 0}</code> color object ready to tween; if the color value is a <a href="http://www.w3schools.com/colors/colors_names.asp" target="_blank">web safe color</a>, the IE9+ browsers will be able to return the rgb object we need.</li>
             <li><kbd class="bg-lime">KUTE.htr(hex)</kbd> a function that accepts HEX formatted colors and returns an <code>{r: 150, g: 150, b: 0}</code> color object;</li>
             <li><kbd class="bg-lime">KUTE.rth(r,g,b)</kbd> a function that accepts numeric values for red, blue and green and returns a HEX format <code>#006699</code> color string.</li>
-            <li><kbd class="bg-lime">window._number</kbd> is most essential interpolation tool when developing plugins for various properties not supported in the core.</li>
-            <li><kbd class="bg-lime">window._unit</kbd> is used mainly for box model properties, text properties, and generally anything that's a string based valued. Like <code>width: 250px</code></li>
-            <li><kbd class="bg-lime">window._color</kbd> is a very fast interpolation function for colors, as used in the above example.</li>
-            <li><kbd class="bg-lime">window._coords</kbd> is SVG Plugin only, but you can have a look anytime when you're out of ideas.</li>
+            <li><kbd class="bg-lime">Interpolate.number</kbd> is most essential interpolation tool when developing plugins for various properties not supported in the core.</li>
+            <li><kbd class="bg-lime">Interpolate.unit</kbd> is used mainly for box model properties, text properties, and generally anything that's a string based valued. Like <code>width: 250px</code></li>
+            <li><kbd class="bg-lime">Interpolate.color</kbd> is a very fast interpolation function for colors, as used in the above example.</li>
+            <li><kbd class="bg-lime">Interpolate.coords</kbd> is SVG Plugin only, but you can have a look anytime when you're out of ideas.</li>
         </ul>
 
         <ul id="share" class="nav">

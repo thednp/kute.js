@@ -4,7 +4,7 @@
  * Licensed under MIT-License
  */
 
- (function(root,factory){
+(function(root,factory){
   // We need to require the root KUTE and jQuery.
   if (typeof define === 'function' && define.amd) {
     define(["./kute.js", "jquery"], function(KUTE, $){
@@ -29,14 +29,12 @@
   'use strict';
 
   $.fn.fromTo = function(from,to,ops) {
-    var el = this.length > 1 ? this : this[0],
-        method = this.length > 1 ? 'allFromTo' : 'fromTo';
+    var el = this.length > 1 ? this : this[0], method = this.length > 1 ? 'allFromTo' : 'fromTo';
     return KUTE[method](el,from,to,ops);
   };
 
   $.fn.to = function(to,ops) {
-    var el = this.length > 1 ? this : this[0],
-        method = this.length > 1 ? 'allTo' : 'to';
+    var el = this.length > 1 ? this : this[0], method = this.length > 1 ? 'allTo' : 'to';
     return KUTE[method](el,to,ops);
   };
 
