@@ -59,48 +59,28 @@ var textProperties = document.getElementById('textProperties'),
 	chars = heading.innerHTML.split('');
 
 // wrap the splits into spans and build an object with these spans 
-heading.innerHTML = '<span>' + chars.join('</span><span>') + '</span>';
+heading.innerHTML = '<span style="filter: alpha(opacity:0)">' + chars.join('</span><span>') + '</span>';
 var charsObject = heading.getElementsByTagName('SPAN'), l = charsObject.length;
 
 
 // built the tween objects
-var tp1 = KUTE.fromTo(
-    button, 
-    {width: 150, opacity:0, height: 70, lineHeight:70, fontSize: 40}, 
-    {width: 100, opacity:1, height: 35, lineHeight:35, fontSize: 20}),
-    tps = [];
+var buttonTween = KUTE.fromTo(button, 
+		{width: 150, opacity:0, height: 70, lineHeight:70, fontSize: 40}, 
+		{width: 100, opacity:1, height: 35, lineHeight:35, fontSize: 20}),
+	headingTween = KUTE.fromTo(heading, {opacity:0}, {opacity:1}),
+	tps = KUTE.allFromTo(charsObject, 
+        { height: 50, fontSize:80, letterSpacing: 20}, 
+        { height: 35, fontSize:50, letterSpacing: 0}, 
+        { offset: 250, duration: 500, easing: 'easingCubicOut'});
 
-for (var i=0; i<l; i++){
-    var fn = i === l-1 ? startButtonAnimation : null,
-        delay = 250*i;
-    
-    tps.push(KUTE.fromTo(charsObject[i], 
-        {opacity:0, height: 50, fontSize:80, letterSpacing: 20}, 
-        {opacity:1, height: 35, fontSize:50, letterSpacing: 0}, 
-        {complete: fn, delay: delay, duration: 500, easing: 'easingCubicOut'}
-    ))
-
-}
-
-function startButtonAnimation(){
-    tp1.start();
-}	
-function runHeadingAnimation() {
-	for (var i=0; i<l; i++){    
-        tps[i].start();
-    }
-}
+	tps.tweens[tps.tweens.length-1].chain(buttonTween);
 
 tbt.addEventListener('click', function(e){
 	e.preventDefault();
-    if (!tp1.playing && !tps[0].playing && !tps[l-1].playing) {
-        for (var i=0;i<l; i++) {
-            charsObject[i].style.opacity ="";
-            if (isIE8) charsObject[i].style.filter ="";
-        }
-        button.style.opacity = '';
-        if (isIE8) button.style.filter ="";
-        runHeadingAnimation();
+    if (!headingTween.playing && !tps.playing ) {
+        if (isIE8) { button.style.filter ="alpha(opacity=0)"; heading.style.filter ="alpha(opacity=0)"; } else { button.style.opacity = ''; heading.style.opacity = ''; }
+		headingTween.start();
+		tps.start();
     }
 },false);
 /*  TEXT PROPERTIES EXAMPLE  */
@@ -158,10 +138,10 @@ clpbtn.addEventListener('click', function(e){
 var bgPos = document.getElementById('bgPos'),
 	bgBox = bgPos.querySelector('.example-box'),
 	bgb = bgPos.querySelector('.btn'),	
-	bpTween1 = KUTE.to(bgBox, {backgroundPosition: ['0%','50%']}, { yoyo: true, repeat: 1, duration: 1500, easing: 'easingCubicOut'});
+	bpTween = KUTE.to(bgBox, {backgroundPosition: ['0%','50%']}, { yoyo: true, repeat: 1, duration: 1500, easing: 'easingCubicOut'});
 	
 bgb.addEventListener('click', function(e){
 	e.preventDefault();
-	!bpTween1.playing && bpTween1.start();
+	!bpTween.playing && bpTween.start();
 },false);	
 /*  BACKGROUND POSITION EXAMPLE  */

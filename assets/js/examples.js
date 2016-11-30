@@ -175,12 +175,13 @@ var element = document.getElementById("myElement");
 var startValues = {}, endValues = {}, options = {};
 
 // here we define properties that are commonly supported
-startValues.opacity = 1; endValues.opacity = 0.1;
-startValues.backgroundColor = '#ffd626'; endValues.backgroundColor = '#ec1e71';
+startValues.backgroundColor = 'rgba(255,214,38,1)'; endValues.backgroundColor = 'rgba(236,30,113,0.1)';
 
 // here we define the properties according to the target browsers
 if (isIE8) { // or any other browser that doesn"t support transforms		
+    startValues.opacity = 1; endValues.opacity = 0.1;
 	startValues.left = 0; endValues.left = 250;
+    startValues.backgroundColor = '#ffd626'; endValues.backgroundColor = '#ec1e71';
 } else if (isIE9) { // or any other browser that only support 2d transforms
 	startValues.translate = 0; endValues.translate = 250; // 2d translate on X axis	
 	startValues.rotate = 0; endValues.rotate = 180; // 2d rotation on Z axis	
