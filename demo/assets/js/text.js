@@ -5,7 +5,7 @@ var numText = document.getElementById('numText'),
 numBtn.addEventListener('click', function(){
     
     if (!numTween.playing) { 
-        if (numText.innerHTML === '1550') { numTween._vE['number'] = 0; } else { numTween._vE['number'] = 1550; }
+        if (numText.innerHTML === '1550') { numTween.valuesEnd['number'] = 0; } else { numTween.valuesEnd['number'] = 1550; }
      numTween.start(); 
     }
 }, false); 
