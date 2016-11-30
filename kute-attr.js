@@ -62,12 +62,12 @@
             if (/%/.test(prefix)) {
               atts[prop+s] = function(l,p,a,b,v) {
                 var _p = _p || p.replace(s,'');
-                l.setAttribute(_p, ((number(a.v,b.v,v) * 100>>0)/100) + b.prefix );
+                l.setAttribute(_p, ((number(a.v,b.v,v) * 100>>0)/100) + b.u );
               }
             } else {
               atts[prop+s] = function(l,p,a,b,v) {
                 var _p = _p || p.replace(s,'');
-                l.setAttribute(_p, (number(a.v,b.v,v)>>0) + b.prefix );
+                l.setAttribute(_p, (number(a.v,b.v,v)>>0) + b.u );
               }
             }
           }
