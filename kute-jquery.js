@@ -21,7 +21,7 @@
   } else if (typeof root.KUTE !== "undefined" && (typeof root.$ !== 'undefined' || typeof root.jQuery !== 'undefined' ) ) {
     // jQuery always has two ways of existing... Find one, and pass.
     var $ = root.jQuery || root.$, KUTE = root.KUTE;
-    $.fn.KUTE = factory($, KUTE);
+    factory($, KUTE);
   } else {
     throw new Error("jQuery Plugin for KUTE.js depend on KUTE.js and jQuery");
   }

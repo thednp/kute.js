@@ -15,7 +15,7 @@
 
   // set a custom scope for KUTE.js
   var g = typeof global !== 'undefined' ? global : window, time = g.performance,
-    tweens = [], tick = null;
+    tweens = [], tick = null; // tick must be null!!
 
   //supported properties
   var _colors = ['color', 'backgroundColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
@@ -163,9 +163,9 @@
     body = document.body, html = document.getElementsByTagName('HTML')[0],
     scrollContainer = navigator && /webkit/i.test(navigator.userAgent) || document.compatMode == 'BackCompat' ? body : html,
 
-    _isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false,
-    _isIE8 = _isIE === 8; // check IE8/IE
-
+    isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false,
+    isIE8 = isIE === 8, // check IE8/IE
+    isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent); // we optimize morph depending on device type
 
   // KUTE.js INTERPOLATORS
   var interpolate = g.Interpolate = {},
@@ -180,12 +180,19 @@
       for (c in b) { _c[c] = c !== 'a' ? (number(a[c],b[c],v)>>0 || 0) : (a[c] && b[c]) ? (number(a[c],b[c],v) * 100 >> 0 )/100 : null; }
       return h ? rgbToHex( _c.r, _c.g, _c.b ) : !_c.a ? r + _c.r + cm + _c.g + cm + _c.b + ep : ra + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
     },
-    translate = interpolate.translate = function (a,b,u,v){
+    translate = interpolate.translate = isMobile ? function (a,b,u,v){
+      var translation = {};
+      for (var ax in b){
+        translation[ax] = ( a[ax]===b[ax] ? b[ax] : (a[ax] + ( b[ax] - a[ax] ) * v ) >> 0 ) + u;
+      }
+      return translation.x||translation.y ? 'translate(' + translation.x + ',' + translation.y + ')' :
+        'translate3d(' + translation.translateX + ',' + translation.translateY + ',' + translation.translateZ + ')';
+    } : function (a,b,u,v){
       var translation = {};
       for (var ax in b){
         translation[ax] = ( a[ax]===b[ax] ? b[ax] : ( (a[ax] + ( b[ax] - a[ax] ) * v ) * 10 >> 0 ) /10 ) + u;
       }
-      return translation.x ? 'translate(' + translation.x + ',' + translation.y + ')' :
+      return translation.x||translation.y ? 'translate(' + translation.x + ',' + translation.y + ')' :
         'translate3d(' + translation.translateX + ',' + translation.translateY + ',' + translation.translateZ + ')';
     },
     rotate = interpolate.rotate = function (a,b,u,v){
@@ -232,7 +239,7 @@
 
       if (elapsed === 1) {
         if (this.options.repeat > 0) {
-          if ( this.options.repeat < 9999 ) { this.options.repeat--; } else { this.options.repeat = 0; } // we have to make it stop somewhere, infinity is too damn much
+          if ( isFinite(this.options.repeat ) ) { this.options.repeat--; }
 
           if (this.options.yoyo) { // handle yoyo
             this.reversed = !this.reversed;
@@ -261,11 +268,15 @@
 
     // applies the transform origin and perspective
     perspective = function () {
-      if ( this.options.perspective !== undefined && transformProperty in this.valuesEnd ) { this.valuesStart[transformProperty]['perspective'] = this.valuesEnd[transformProperty]['perspective']; } // element perspective
-      if ( this.options.transformOrigin !== undefined ) { this.element.style[property('transformOrigin')] = this.options.transformOrigin; } // element transform origin
-      if ( this.options.perspectiveOrigin !== undefined ) { this.element.style[property('perspectiveOrigin')] = this.options.perspectiveOrigin; } // element perspective origin
-      if ( this.options.parentPerspective !== undefined ) { this.element.parentNode.style[property('perspective')] = this.options.parentPerspective + 'px'; } // parent perspective
-      if ( this.options.parentPerspectiveOrigin !== undefined ) { this.element.parentNode.style[property('perspectiveOrigin')] = this.options.parentPerspectiveOrigin; } // parent perspective origin
+      var el = this.element, ops = this.options;
+      if ( ops.perspective !== undefined && transformProperty in this.valuesEnd ) { // element perspective
+        this.valuesStart[transformProperty]['perspective'] = this.valuesEnd[transformProperty]['perspective']; 
+      }
+      // element transform origin / we filter it out for svgTransform to fix the Firefox transformOrigin bug https://bugzilla.mozilla.org/show_bug.cgi?id=923193
+      if ( ops.transformOrigin !== undefined && (!('svgTransform' in this.valuesEnd)) ) { el.style[property('transformOrigin')] = ops.transformOrigin; } 
+      if ( ops.perspectiveOrigin !== undefined ) { el.style[property('perspectiveOrigin')] = ops.perspectiveOrigin; } // element perspective origin
+      if ( ops.parentPerspective !== undefined ) { el.parentNode.style[property('perspective')] = ops.parentPerspective + 'px'; } // parent perspective
+      if ( ops.parentPerspectiveOrigin !== undefined ) { el.parentNode.style[property('perspectiveOrigin')] = ops.parentPerspectiveOrigin; } // parent perspective origin
     },
 
     // plugin connector objects
@@ -278,7 +289,7 @@
       boxModel : function(p,v){
         if (!(p in DOM)){
           DOM[p] = function(l,p,a,b,v){
-            l.style[p] = ( v > 0.99 || v < 0.01 ? ((number(a,b,v)*10)>>0)/10 : (number(a,b,v) ) >> 0 ) + 'px' ;
+            l.style[p] = ( v > 0.99 || v < 0.01 ? ((number(a,b,v)*10)>>0)/10 : (number(a,b,v) ) >> 0 ) + 'px';
           }
         }
         var boxValue = trueDimension(v);
@@ -288,10 +299,10 @@
         if (!(transformProperty in DOM)) {
           DOM[transformProperty] = function(l,p,a,b,v,o){
             l.style[p] = (a.perspective||'')
-                       + (a.translate ? translate(a.translate,b.translate,'px',v):'')
-                       + (a.rotate ? rotate(a.rotate,b.rotate,'deg',v):'')
-                       + (a.skew ? skew(a.skew,b.skew,'deg',v):'')
-                       + (a.scale ? scale(a.scale,b.scale,v):'');
+                       + ('translate' in a ? translate(a.translate,b.translate,'px',v):'')
+                       + ('rotate' in a ? rotate(a.rotate,b.rotate,'deg',v):'')
+                       + ('skew' in a ? skew(a.skew,b.skew,'deg',v):'')
+                       + ('scale' in a ? scale(a.scale,b.scale,v):'');
           }
         }
 
@@ -342,7 +353,7 @@
           };
         } else if (p === 'opacity') {
           if (!(p in DOM)) {
-            if (_isIE8) {
+            if (isIE8) {
               DOM[p] = function(l,p,a,b,v) {
                 var st = "alpha(opacity=", ep = ')';
                 l.style.filter = st + ((number(a,b,v) * 100)>>0) + ep;
@@ -366,7 +377,7 @@
       }
     },
 
-    // process properties for _vE and _vS or one of them
+    // process properties for endValues and startValues or one of them
     preparePropertiesObject = function(obj, fn) { // this, props object, type: start/end
       var element = this.element, propertiesObject = fn === 'start' ? this.valuesStart : this.valuesEnd,
         skewObject = {}, rotateObject = {}, translateObject = {}, transformObject = {};
@@ -471,7 +482,7 @@
           }
         } else {
           if ( p !== 'scroll' ) {
-            if (p === 'opacity' && _isIE8 ) { // handle IE8 opacity
+            if (p === 'opacity' && isIE8 ) { // handle IE8 opacity
               var currentOpacity = getCurrentStyle(this.element,'filter');
               startValues['opacity'] = typeof currentOpacity === 'number' ? currentOpacity : _defaults['opacity'];
             } else {
@@ -486,7 +497,7 @@
           }
         }
       }
-      for ( var p in currentStyle ){ // also add to _vS values from previous tweens
+      for ( var p in currentStyle ){ // also add to startValues values from previous tweens
         if ( _transform.indexOf(p) !== -1 && (!( p in this.valuesStart )) ) {
           startValues[p] = currentStyle[p] || _defaults[p];
         }
@@ -571,8 +582,8 @@
   easing.easingBounceInOut = function(t) { if ( t < 0.5 ) return easing.easingBounceIn( t * 2 ) * 0.5; return easing.easingBounceOut( t * 2 - 1 ) * 0.5 + 0.5;};
 
   // single Tween object construct
-  var Tween = function (_el, _vS, _vE, _o) {
-      this.element = 'scroll' in _vE && (_el === undefined || _el === null) ? scrollContainer : _el; // element animation is applied to
+  var Tween = function (targetElement, startObject, endObject, options) {
+      this.element = 'scroll' in endObject && (targetElement === undefined || targetElement === null) ? scrollContainer : targetElement; // element animation is applied to
 
       this.playing = false;
       this.reversed = false;
@@ -582,15 +593,15 @@
       this._pauseTime = null;
 
       this._startFired = false;
-      this.options = {}; for (var o in _o) { this.options[o] = _o[o]; }
-      this.options.rpr = _o.rpr || false; // internal option to process inline/computed style at start instead of init true/false
+      this.options = {}; for (var o in options) { this.options[o] = options[o]; }
+      this.options.rpr = options.rpr || false; // internal option to process inline/computed style at start instead of init true/false
 
       this.valuesRepeat = {}; // internal valuesStartRepeat
       this.valuesEnd = {}; // valuesEnd
       this.valuesStart = {}; // valuesStart
 
-      preparePropertiesObject.call(this,_vE,'end'); // valuesEnd
-      if ( _o.rpr ) { this.valuesStart = _vS; } else { preparePropertiesObject.call(this,_vS,'start'); } // valuesStart
+      preparePropertiesObject.call(this,endObject,'end'); // valuesEnd
+      if ( options.rpr ) { this.valuesStart = startObject; } else { preparePropertiesObject.call(this,startObject,'start'); } // valuesStart
 
       if ( this.options.perspective !== undefined && transformProperty in this.valuesEnd ) { // element transform perspective
         var perspectiveString = 'perspective('+parseInt(this.options.perspective)+'px)';
@@ -598,20 +609,21 @@
       }
 
       for ( var e in this.valuesEnd ) {
-        if (e in crossCheck && !_o.rpr) crossCheck[e].call(this); // this is where we do the valuesStart and valuesEnd check for fromTo() method
+        if (e in crossCheck && !options.rpr) crossCheck[e].call(this); // this is where we do the valuesStart and valuesEnd check for fromTo() method
       }
 
       this.options.chain = []; // chained Tweens
-      this.options.easing = _o.easing && typeof processEasing(_o.easing) === 'function' ? processEasing(_o.easing) : easing.linear;
-      this.options.repeat = _o.repeat || 0;
-      this.options.repeatDelay = _o.repeatDelay || 0;
-      this.options.yoyo = _o.yoyo || false;
-      this.options.duration = _o.duration || 700; // duration option | default
-      this.options.delay = _o.delay || 0; // delay option | default
+      this.options.easing = options.easing && typeof processEasing(options.easing) === 'function' ? processEasing(options.easing) : easing.linear;
+      this.options.repeat = options.repeat || 0;
+      this.options.repeatDelay = options.repeatDelay || 0;
+      this.options.yoyo = options.yoyo || false;
+      this.options.duration = options.duration || 700; // duration option | default
+      this.options.delay = options.delay || 0; // delay option | default
       this.repeat = this.options.repeat; // we cache the number of repeats to be able to put it back after all cycles finish
     },
     // tween control and chain
     TweenProto = Tween.prototype = {
+      // queue tween object to main frame update
       start : function (t) { // move functions that use the ticker outside the prototype to be in the same scope with it
         scrollIn.call(this);
 
@@ -653,7 +665,7 @@
         if (!this.paused && this.playing) {
           remove(this);
           this.paused = true;
-          this._pauseTime = (time.now() * 1000 >> 0) / 1000;
+          this._pauseTime = time.now();
           if (this.options.pause) { this.options.pause.call(); }
         }
         return this;
@@ -681,19 +693,19 @@
 
     // the multi elements Tween constructs
     TweensTO = function (els, vE, o) { // .to
-      this.tweens = []; var _o = [];
+      this.tweens = []; var options = [];
       for ( var i = 0, tl = els.length; i < tl; i++ ) {
-        _o[i] = o || {}; o.delay = o.delay || 0;
-        _o[i].delay = i>0 ? o.delay + (o.offset||0) : o.delay;
-        this.tweens.push( to(els[i], vE, _o[i]) );
+        options[i] = o || {}; o.delay = o.delay || 0;
+        options[i].delay = i>0 ? o.delay + (o.offset||0) : o.delay;
+        this.tweens.push( to(els[i], vE, options[i]) );
       }
     },
     TweensFT = function (els, vS, vE, o) { // .fromTo
-      this.tweens = []; var _o = [];
+      this.tweens = []; var options = [];
       for ( var i = 0, l = els.length; i < l; i++ ) {
-        _o[i] = o || {}; o.delay = o.delay || 0;
-        _o[i].delay = i>0 ? o.delay + (o.offset||0) : o.delay;
-        this.tweens.push( fromTo(els[i], vS, vE, _o[i]) );
+        options[i] = o || {}; o.delay = o.delay || 0;
+        options[i].delay = i>0 ? o.delay + (o.offset||0) : o.delay;
+        this.tweens.push( fromTo(els[i], vS, vE, options[i]) );
       }
     },
     ws = TweensTO.prototype = TweensFT.prototype = {
@@ -712,29 +724,27 @@
     },
 
     // main methods
-    to = function (el, to, o) {
-      var _el = selector(el); o = o || {}; o.rpr = true;
-      return new Tween(_el, to, to, o);
+    to = function (element, endObject, options) {
+      options = options || {}; options.rpr = true;
+      return new Tween(selector(element), endObject, endObject, options);
     },
-    fromTo = function (el, f, to, o) {
-      var _el = selector(el); o = o || {};
-      return new Tween(_el, f, to, o);
+    fromTo = function (element, startObject, endObject, options) {
+      options = options || {};
+      return new Tween(selector(element), startObject, endObject, options);
     },
 
     // multiple elements tweening
-    allTo = function (els, to, o) {
-      var _els = selector(els,true);
-      return new TweensTO(_els, to, o);
+    allTo = function (elements, endObject, options) {
+      return new TweensTO(selector(elements,true), endObject, options);
     },
-    allFromTo = function (els, f, to, o) {
-      var _els = selector(els,true);
-      return new TweensFT(_els, f, to, o);
+    allFromTo = function (elements, f, endObject, options) {
+      return new TweensFT(selector(elements,true), f, endObject, options);
     };
 
   return { // export core methods to public for plugins
     property: property, getPrefix: getPrefix, selector: selector, processEasing : processEasing, // utils
     to: to, fromTo: fromTo, allTo: allTo, allFromTo: allFromTo, // main methods
-    ticker : ticker, tweens : tweens, update: update, dom : DOM, // update
+    ticker : ticker, tick : tick, tweens : tweens, update: update, dom : DOM, // update
     parseProperty: parseProperty, prepareStart: prepareStart, crossCheck : crossCheck, Tween : Tween, // property parsing & preparation | Tween | crossCheck
     truD: trueDimension, truC: trueColor, rth: rgbToHex, htr: hexToRGB, getCurrentStyle: getCurrentStyle, // property parsing
   };

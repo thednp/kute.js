@@ -1,6 +1,6 @@
 /* KUTE.js - The Light Tweening Engine
  * package - Attributes Plugin
- * desc - enables animation for any numeric presentation attribute
+ * desc - enables animation for color attributes and any numeric presentation attribute
  * by dnp_theme
  * Licensed under MIT-License
  */
@@ -25,7 +25,7 @@
 
   // here we go with the plugin
   var getCurrentValue = function(e,a){ return e.getAttribute(a); }, // get current attribute value
-    svgColors = ['fill','stroke','stop-color'], atts,
+    svgColors = ['fill','stroke','stop-color'], attributes,
     replaceUppercase = function(a) {
       return a.replace(/[A-Z]/g, "-$&").toLowerCase();
     }; 
@@ -49,53 +49,53 @@
           DOM.attributes[o](l,o,a[o],b[o],v);
         }
       }
-      atts = DOM.attributes = {}
+      attributes = DOM.attributes = {}
     }
 
-    var ats = {};
+    var attributesObject = {};
     for ( var p in o ) {
       var prop = replaceUppercase(p), regex = /(%|[a-z]+)$/, cv = getCurrentValue(this.element,prop.replace(/_+[a-z]+/,''));
       if ( svgColors.indexOf(prop) === -1) {
         if ( cv !== null && regex.test(cv) ) {
           var prefix = trueDimension(cv).u || trueDimension(o[p]).u, s = /%/.test(prefix) ? '_percent' : '_'+prefix;
-          if (!(prop+s in atts)) {
+          if (!(prop+s in attributes)) {
             if (/%/.test(prefix)) {
-              atts[prop+s] = function(l,p,a,b,v) {
+              attributes[prop+s] = function(l,p,a,b,v) {
                 var _p = _p || p.replace(s,'');
                 l.setAttribute(_p, ((number(a.v,b.v,v) * 100>>0)/100) + b.u );
               }
             } else {
-              atts[prop+s] = function(l,p,a,b,v) {
+              attributes[prop+s] = function(l,p,a,b,v) {
                 var _p = _p || p.replace(s,'');
                 l.setAttribute(_p, (number(a.v,b.v,v)>>0) + b.u );
               }
             }
           }
-          ats[prop+s] = trueDimension(o[p]); 
+          attributesObject[prop+s] = trueDimension(o[p]); 
         } else if ( !regex.test(o[p]) || cv === null || cv !== null && !regex.test(cv) ) {
-          if (!(prop in atts)) {
+          if (!(prop in attributes)) {
             if (/opacity/i.test(p)) {
-              atts[prop] = function(l,o,a,b,v) {
+              attributes[prop] = function(l,o,a,b,v) {
                 l.setAttribute(o, (number(a,b,v) * 100 >> 0) / 100 );
               }
             } else {
-              atts[prop] = function(l,o,a,b,v) {
+              attributes[prop] = function(l,o,a,b,v) {
                 l.setAttribute(o, (number(a,b,v) *10 >> 0 ) / 10 );
               }
             }
           }
-          ats[prop] = parseFloat(o[p]);     
+          attributesObject[prop] = parseFloat(o[p]);     
         }        
       } else {
-        if (!(prop in atts)) {
-          atts[prop] = function(l,u,a,b,v) {
+        if (!(prop in attributes)) {
+          attributes[prop] = function(l,u,a,b,v) {
             l.setAttribute(u, color(a,b,v,o.keepHex));
           }
         }
-        ats[prop] = trueColor(o[p]);
+        attributesObject[prop] = trueColor(o[p]);
       }
     }
-    return ats;
+    return attributesObject;
   }
 
   return this;

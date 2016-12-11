@@ -16,11 +16,12 @@
 })(this, function(KUTE){
   'use strict';
 
-  var g = typeof global !== 'undefined' ? global : window, K = KUTE, DOM = K.dom, 
+  var g = typeof global !== 'undefined' ? global : window, K = KUTE, DOM = K.dom, // connect to KUTE object and global
     parseProperty = K.parseProperty, prepareStart = K.prepareStart, property = K.property,
     getCurrentStyle = K.getCurrentStyle, trueDimension = K.truD, trueColor = K.truC,
     number = g.Interpolate.number, unit = g.Interpolate.unit, color = g.Interpolate.color;
 
+  // supported properties
   var _colors = ['borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
     _boxModel  = ['right', 'bottom', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 
       'padding', 'margin', 'paddingTop','paddingBottom', 'paddingLeft', 'paddingRight', 'marginTop','marginBottom', 'marginLeft', 'marginRight', 

@@ -22,23 +22,32 @@
     DOM = K.dom, parseProperty = K.parseProperty, prepareStart = K.prepareStart, getCurrentStyle = K.getCurrentStyle,
     trueColor = K.truC, trueDimension = K.truD, crossCheck = K.crossCheck, 
     number = g.Interpolate.number, unit = g.Interpolate.unit, color = g.Interpolate.color, // interpolate functions
-    _isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false;
+    isIE = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null ? parseFloat( RegExp.$1 ) : false,
+    isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent); // we optimize morph depending on device type
+  
+  if (isIE&&isIE<9) {return;} // return if SVG API is not supported
   
   // here we go with the plugin
   var pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi, ns = 'http://www.w3.org/2000/svg',
-    coords = g.Interpolate.coords = function(a,b,l,v) { // function(array1, array2, length, progress) for SVG morph
+    coords = g.Interpolate.coords = isMobile ? function(a,b,l,v) { // function(array1, array2, length, progress) for SVG morph
       var points =[];
       for(var i=0;i<l;i++) { // for each point
         points[i] = [];
         for(var j=0;j<2;j++) { // each point coordinate
-          points[i].push( (a[i][j]+(b[i][j]-a[i][j])*v) >> 0 );
+          points[i].push( a[i][j]+(b[i][j]-a[i][j])*v );
+        }
+      }
+      return points;
+    } : function(a,b,l,v) { // on desktop devices we use more accuracy for morph
+      var points =[];
+      for(var i=0;i<l;i++) { // for each point
+        points[i] = [];
+        for(var j=0;j<2;j++) { // each point coordinate
+          points[i].push( ((a[i][j]+(b[i][j]-a[i][j])*v) * 10 >> 0)/10 );
         }
       }
       return points;
     };
-
-  if (_isIE&&_isIE<9) {return;} // return if SVG API is not supported
-
 
   // SVG MORPH
   var getSegments = function(s,e,r){ // getSegments returns an array of points based on a sample size morphPrecision
@@ -126,7 +135,8 @@
       return p;
     },
     computePathCross = function(s,e){ // pathCross
-      var s1, e1, pointsArray, largerPathLength, smallerPath, largerPath, simulatedSmallerPath, nsm = [], sml, cl = [], len, tl, cs;
+      var s1, e1, pointsArray, largerPathLength, smallerPath, largerPath, simulatedSmallerPath, nsm = [], sml, cl = [], len, tl, cs,
+        index = this.options.morphIndex;
 
       if (!this._isPolygon) {
         s = createPath(s); e = createPath(e);  
@@ -158,8 +168,8 @@
       if (this.options.reverseSecondPath) { e1.reverse(); }
       
       // shift second array to for smallest tween distance
-      if (this.options.morphIndex) {
-        var e11 = e1.splice(this.options.morphIndex,largerPathLength-this.options.morphIndex);
+      if (index) {
+        var e11 = e1.splice(index,largerPathLength-index);
         e1 = e11.concat(e1);
       }
 
@@ -197,7 +207,7 @@
 
 
   // SVG DRAW
-  var percent = function(v,l){ return parseFloat(v) / 100 * l; }, // percent
+  var percent = function(v,l){ return parseFloat(v) / 100 * l; },
     // SVG DRAW UTILITITES
     // http://stackoverflow.com/a/30376660
     getRectLength = function(el){ // returns the length of a Rect
@@ -295,116 +305,117 @@
 
 
   // SVG Transform
-  var parseTransform = function (a){ // helper function that turns transform value from string to object
-      var d = a && /\)/.test(a) ? a.split(')') : 'none', j, c ={}, p;
+  var parseStringOrigin = function(origin,box){
+      return /[a-zA-Z]/.test(origin) && !/px/.test(origin) ? origin.replace(/top|left/,0).replace(/right|bottom/,100).replace(/center|middle/,50) 
+                                     : /%/.test(origin) ? (box.x + parseFloat(origin) * box.width / 100) : parseFloat(origin);
+    },
+    parseTransformString = function (a){ // helper function that turns transform value from string to object
+      var d = a && /\)/.test(a) ? a.substring(0, a.length-1).split(/\)\s|\)/) : 'none', c = {};
 
       if (d instanceof Array) {
-        for (j=0; j<d.length; j++){
-          p = d[j].split('('); p[0] !== '' && (c[p[0].replace(/\s/,'')] = p[1] );
+        for (var j=0, jl = d.length; j<jl; j++){
+          var p = d[j].trim().split('('); c[p[0]] = p[1];
         }
       }
       return c;
     },
-    translateSVG = g.Interpolate.translateSVG = function (s,e,a,b,v){ // translate(i+'(',')',a[i],b[i],v)
-      return s + ( (a[1] === b[1] && b[1] === 0 ) ? ((number(a[0],b[0],v) * 10 >> 0)/10)
-                                                 : (((number(a[0],b[0],v) * 10 >> 0)/10) + ' ' + ((number(a[1],b[1],v)) *10 >> 0)/10) ) + e;
-    },
-    rotateSVG = g.Interpolate.rotateSVG = function (s,e,a,b,v){
-       return s + ( (number(a[0],b[0],v)*10 >> 0)/10 + ' ' + b[1] + ',' + b[2] ) + e;
-    },
-    scaleSVG = g.Interpolate.scaleSVG = function (s,e,a,b,v){ // scale would very much like to have 3 decimals
-      return s + ( (number(a,b,v)*1000 >> 0)/1000 ) + e;
-    },
-    skewSVG = g.Interpolate.skewSVG = function (s,e,a,b,v){ // skew
-      return s + ( (number(a,b,v)*10 >> 0)/10 ) + e;
+    parseTransformObject = function(v){
+      var svgTransformObject = {}, bb = this.element.getBBox(),
+        cx = bb.x + bb.width/2, cy = bb.y + bb.height/2, // by default the transformOrigin is "50% 50%" of the shape box
+        origin = this.options.transformOrigin, translation;
+      
+      origin = !!origin ? (origin instanceof Array ? origin : origin.split(/\s/)) : [cx,cy];
+
+      origin[0] = typeof origin[0] === 'number' ? origin[0] : parseStringOrigin(origin[0],bb);
+      origin[1] = typeof origin[1] === 'number' ? origin[1] : parseStringOrigin(origin[1],bb);
+
+      svgTransformObject.origin = origin;
+
+      for ( var i in v ) { // populate the valuesStart and / or valuesEnd
+        if (i === 'rotate'){
+          svgTransformObject[i] = typeof v[i] === 'number' ? v[i] : v[i] instanceof Array ? v[i][0] : v[i].split(/\s/)[0]*1;
+        } else if (i === 'translate'){
+          translation = v[i] instanceof Array ? v[i] : /\,|\s/.test(v[i]) ? v[i].split(',') : [v[i],0];
+          svgTransformObject[i] = [translation[0]*1||0, translation[1]*1||0];
+        } else if (/skew/.test(i)) {
+          svgTransformObject[i] = v[i]*1||0;
+        } else if (i === 'scale'){
+          svgTransformObject[i] = parseFloat(v[i])||1;
+        }
+      }
+
+      return svgTransformObject;
     };
 
   parseProperty.svgTransform = function(p,v){
     // register the render function
     if (!('svgTransform' in DOM)) {
-      
       DOM.svgTransform = function(l,p,a,b,v){
-        l.setAttribute('transform', ('translate' in a ? translateSVG('translate(',')',a.translate,b.translate,v) : '')
-                                   +('rotate' in a ? rotateSVG('rotate(',')',a.rotate,b.rotate,v) : '')
-                                   +('scale' in a ? scaleSVG('scale(',')',a.scale,b.scale,v) : '')
-                                   +('skewX' in a ? skewSVG('skewX(',')',a.skewX,b.skewX,v) : '')
-                                   +('skewY' in a ? skewSVG('skewY(',')',a.skewY,b.skewY,v) : ''));
+        var x = 0, y = 0, tmp, deg = Math.PI/180, 
+          scale = 'scale' in b ? number(a.scale,b.scale,v) : 1,
+          rotate = 'rotate' in b ? number(a.rotate,b.rotate,v) : 0,
+          sin = Math.sin(rotate*deg), cos = Math.cos(rotate*deg),
+          skewX = 'skewX' in b ? number(a.skewX,b.skewX,v) : 0,
+          skewY = 'skewY' in b ? number(a.skewY,b.skewY,v) : 0,
+          complex = rotate||skewX||skewY||scale!==1 || 0;
+        
+        // start normalizing the translation, we start from last to first (from last chained translation)
+        // the normalized translation will handle the transformOrigin tween option and makes sure to have a consistent transformation
+        x -= complex ? b.origin[0] : 0; y -= complex ? b.origin[1] : 0; // we start with removing transformOrigin from translation
+        x *= scale; y *= scale; // we now apply the scale
+        y += skewY ? x*Math.tan(skewY*deg) : 0; x += skewX ? y*Math.tan(skewX*deg) : 0; // now we apply skews
+        tmp = cos*x - sin*y; // apply rotation as well
+        y = rotate ? sin*x + cos*y : y; x = rotate ? tmp : x;
+        x += 'translate' in b ? number(a.translate[0],b.translate[0],v) : 0; // now we apply the actual translation
+        y += 'translate' in b ? number(a.translate[1],b.translate[1],v) : 0;
+        x += complex ? b.origin[0] : 0; y += complex ? b.origin[1] : 0; // normalizing ends with the addition of the transformOrigin to the translation
+
+        // finally we apply the transform attribute value 
+        l.setAttribute('transform', 
+                                    ( x||y ? ('translate(' + (x*10>>0)/10 + ( y ? (',' + ((y*10>>0)/10)) : '') + ')') : '' )
+                                   +( rotate ? 'rotate(' + (rotate*10>>0)/10 + ')' : '' )
+                                   +( skewX ? 'skewX(' + (skewX*10>>0)/10 + ')' : '' )
+                                   +( skewY ? 'skewY(' + (skewY*10>>0)/10 + ')' : '' ) 
+                                   +( scale !== 1 ? 'scale(' + (scale*1000>>0)/1000 +')' : '' ) );
       }
     }
 
     // now prepare transform
-    var svgTransformObject = {}, bb = this.element.getBBox(), cx = bb.x + bb.width/2, cy = bb.y + bb.height/2, r, cr, t, ct;
-
-    for ( i in v ) { // populate the valuesStart and / or valuesEnd
-      if (i === 'rotate'){
-        r = v[i] instanceof Array ? v[i]
-        : /\s/.test(v[i]) ? [v[i].split(' ')[0]*1, v[i].split(' ')[1].split(',')[0]*1, v[i].split(' ')[1].split(',')[1]*1] 
-        : [v[i]*1,cx,cy];
-        svgTransformObject[i] = r;
-      } else if (i === 'translate'){
-        t = v[i] instanceof Array ? v[i] : /\,|\s/.test(v[i]) ? v[i].split(/\,|\s/) : [v[i]*1,0];
-        svgTransformObject[i] = [t[0] * 1||0, t[1] * 1||0];
-      } else if (i === 'scale'){
-        svgTransformObject[i] = v[i] * 1||1;
-      } else if (/skew/.test(i)) {
-        svgTransformObject[i] = v[i] * 1||0;
-      }
-    }
-
-    // try to adjust translation when scale is used, probably we should do the same when using skews, but I think it's a waste of time
-    // http://www.petercollingridge.co.uk/interactive-svg-components/pan-and-zoom-control
-    if ('scale' in svgTransformObject) {
-      !('translate' in svgTransformObject) && ( svgTransformObject['translate'] = [0,0] ); // if no translate is found in current value or next value, we default to 0
-      svgTransformObject['translate'][0] += (1-svgTransformObject['scale']) * bb.width/2;
-      svgTransformObject['translate'][1] += (1-svgTransformObject['scale']) * bb.height/2;
-      // adjust rotation transform origin and translation when skews are used, to make the animation look exactly the same as if we were't using svgTransform
-      // http://stackoverflow.com/questions/39191054/how-to-compensate-translate-when-skewx-and-skewy-are-used-on-svg/39192565#39192565
-      if ('rotate' in svgTransformObject) {
-        svgTransformObject['rotate'][1] -= 'skewX' in svgTransformObject ? Math.tan(svgTransformObject['skewX']) * bb.height : 0;
-        svgTransformObject['rotate'][2] -= 'skewY' in svgTransformObject ? Math.tan(svgTransformObject['skewY']) * bb.width : 0;
-      }
-      svgTransformObject['translate'][0] += 'skewX' in svgTransformObject ? Math.tan(svgTransformObject['skewX']) * bb.height*2 : 0;
-      svgTransformObject['translate'][1] += 'skewY' in svgTransformObject ? Math.tan(svgTransformObject['skewY']) * bb.width*2 : 0;
-    } // more variations here https://gist.github.com/thednp/0b93068e20adb84658b5840ead0a07f8
-
-    return svgTransformObject;
+    return parseTransformObject.call(this,v);
   }
 
   // returns an obect with current transform attribute value
   prepareStart.svgTransform = function(p,t) {
-    var tr = {}, i, ctr = parseTransform(this.element.getAttribute('transform'));
-    for (i in t) { tr[i] = i in ctr ? ctr[i] : (i==='scale'?1:0); } // find a value in current attribute value or add a default value
-    return tr;
+    var transformObject = {}, currentTransform = parseTransformString(this.element.getAttribute('transform'));
+    for (var i in t) { transformObject[i] = i in currentTransform ? currentTransform[i] : (i==='scale'?1:0); } // find a value in current attribute value or add a default value
+    return transformObject;
   }
 
   crossCheck.svgTransform = function() { // helper function that helps preserve current transform properties into the objects
-    var bb = this.element.getBBox(), ctr = parseTransform(this.element.getAttribute('transform')), r, t, i,
-      cx = bb.x + bb.width/2, cy = bb.y + bb.height/2;
-    
-    for ( i in ctr ) { // populate the valuesStart
-      if (i === 'translate'){
-        t = ctr[i] instanceof Array ? ctr[i] : /\,|\s/.test(ctr[i]) ? ctr[i].split(/\,|\s/) : [ctr[i]*1,0];
-        this.valuesStart.svgTransform[i] = [t[0] * 1||0, t[1] * 1||0];
-      } else if (i === 'scale'){
-        this.valuesStart.svgTransform[i] = ctr[i] * 1||1;
-      } else if (i === 'rotate'){
-        r = ctr[i] instanceof Array ? ctr[i]
-        : /\s/.test(ctr[i]) ? [ctr[i].split(' ')[0]*1, ctr[i].split(' ')[1].split(',')[0]*1, ctr[i].split(' ')[1].split(',')[1]*1] 
-        : [ctr[i]*1,cx,cy];
-        this.valuesStart.svgTransform[i] = r;
-      } else if (/skew/.test(i)) {
-        this.valuesStart.svgTransform[i] = ctr[i] * 1||0;
-      }
+    var valuesStart = this.valuesStart.svgTransform, valuesEnd = this.valuesEnd.svgTransform,
+      currentTransform = parseTransformObject.call(this, parseTransformString(this.element.getAttribute('transform')) );
+
+    for ( var i in currentTransform ) {  // populate the valuesStart first
+      valuesStart[i] = currentTransform[i];
     }
 
-    for (var i in this.valuesStart.svgTransform) {
-      if (!(i in this.valuesEnd.svgTransform)) { // copy existing and unused properties to the valuesEnd
-        this.valuesEnd.svgTransform[i] = this.valuesStart.svgTransform[i];
-      }
-      if (i === 'rotate' in this.valuesStart.svgTransform && 'rotate' in this.valuesEnd.svgTransform){ // make sure to use the right transform origin when rotation is used
-        this.valuesEnd.svgTransform.rotate[1] = this.valuesStart.svgTransform.rotate[1] = cx;
-        this.valuesEnd.svgTransform.rotate[2] = this.valuesStart.svgTransform.rotate[2] = cy;
-      }
+    // now try to determine the REAL translation
+    var parentSVG = this.element.ownerSVGElement,
+      newTransform = parentSVG.createSVGTransformFromMatrix(
+        parentSVG.createSVGMatrix()
+        .translate(-valuesStart.origin[0],-valuesStart.origin[1]) // - origin
+        .translate(valuesStart.translate[0]||0,valuesStart.translate[1]||0) // the current translate
+        .rotate(valuesStart.rotate||0).skewX(valuesStart.skewX||0).skewY(valuesStart.skewY||0).scale(valuesStart.scale||1)// the other functions
+        .translate(+valuesStart.origin[0],+valuesStart.origin[1]) // + origin
+      );
+
+    valuesStart.translate = [newTransform.matrix.e,newTransform.matrix.f]; // finally the translate we're looking for
+
+    newTransform = null;
+
+    // copy existing and unused properties to the valuesEnd
+    for ( var i in valuesStart) {
+      if ( !(i in valuesEnd)) { valuesEnd[i] = valuesStart[i]; }
     }
   }
 

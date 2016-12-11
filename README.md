@@ -1,5 +1,7 @@
 # KUTE.js
-A minimal native Javascript animation engine with jQuery plugin and with most essential features for web developers, designers and animators, delivering easy to use methods to set up high performance, cross-browser animations. The focus is flexibility, performance and size (core engine is 15.8k min and 5.6k gzipped).
+A fully fledged native Javascript animation engine with most essential features for web developers, designers and animators, delivering easy to use methods to set up high performance, cross-browser animations. The focus is code quality, flexibility, performance and size (core engine is 17k min and 5.5k gzipped). Along with a simple jQuery plugin, KUTE.js packs plugins for presentation attibutes, SVG transform, draw stroke and path morph, text string write up or number countdowns, plus additional CSS properties like colors, border-radius or typographic properties.
+
+Because of it's modularity, KUTE.js makes it super easy to extend or override functionality, making it unique among Javascript animation engines.
 
 # Demo / CDN
 For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>. Thanks to jsdelivr, we have a CDN link <a target="_blank" href="http://www.jsdelivr.com/#!kute.js">here</a>. We also have cdnjs link <a href="https://cdnjs.com/libraries/kute.js" target="_blank">right here</a>. Sweet!
@@ -17,17 +19,16 @@ For documentation, examples and other cool tips, check the <a href="http://thedn
  
 # SVG Plugin - [visit page](http://thednp.github.io/kute.js/svg.html)
 * morphs SVGs with the `path` tween property, updating the `d` attribute of `<path>` or `<glyph>` elements
-* cross-browser SVG `transform` via the `svgTransform` property and the `transform` presentation attribute
-* draws SVG stroke with the `draw` tween property for most SVG elements
-* SVG related color CSS properties such as: `fill`, `stroke`, `stopColor`
-* other SVG CSS properties: `strokeWidth`, `stopOpacity`
+* cross-browser SVG `transform` via the `svgTransform` property and the `transform` presentation attribute, this feature also helps stacking transform functions on chained tweens
+* draws SVG stroke with the `draw` tween property for most SVG elements: `<path>`, `<glyph>`, `<polygon>` or `<polyline>`, `<ellipse>` or `<circle>`, `<rect>`
 
 # CSS Plugin - [visit page](http://thednp.github.io/kute.js/css.html)
 * all box model properties: `margin`, `padding`, with all their variations like `marginTop`, all variations for `width` or `height` like `maxHeight` or `minWidth`, `outlineWidth`, `borderWidth` with all side variations, except short-hand notations
-* `borderRadius` properties radius
+* `borderRadius` properties and all side variations, shorthand notations and early implementations are not supported
 * color properties: `outlineColor`, `borderColor` with all side variations except shorthands, etc
 * `clip` property only for `rect` type of values
-* text properties: `fontSize`, `lineHeight`,  `lettersSpacing` and `wordSpacing` 
+* `backgroundPosition` property with the ability to understand strings like `top left` and such
+* typographic properties: `fontSize`, `lineHeight`,  `lettersSpacing` and `wordSpacing` 
 
 # Text Plugin - [visit page](http://thednp.github.io/kute.js/text.html)
 * animated number increments/decreases
@@ -38,10 +39,10 @@ For documentation, examples and other cool tips, check the <a href="http://thedn
 * animates any other non-suffixed numeric presentation attribute
 * animates `fill`, `stroke` and `stop-color` color properties
 * handles attributes namespaces properly with `stroke-opacity` or `strokeOpacity`
-* properly handles the suffixes for you
+* properly handles the suffixes for you and depends very much on the current values then values you input
 
 # Easing Functions - [visit page](http://thednp.github.io/kute.js/easing.html)
-**NOTE:** Starting with KUTE.js v 1.6.0 the Physics and Cubic Bezier Functions are removed from the distribution folder and from CDN repositories, but you can find them in the [Experiments repository on Github](https://github.com/thednp/kute.js/tree/experiments).</p>
+**NOTE:** Starting with KUTE.js v 1.6.0 the Physics and Cubic Bezier Functions are removed from the distribution folder and from CDN repositories, but you can find them in the [Experiments repository on Github](https://github.com/thednp/kute.js/tree/experiments). The reasons for that is to make it easy to maintain what's more important: core code quality and the ability to create custom builds.</p>
 
 * optimized dynamics easing functions
 * optimized cubic-bezier easing functions
@@ -49,7 +50,7 @@ For documentation, examples and other cool tips, check the <a href="http://thedn
 # jQuery Plugin
 This aims to make the KUTE.js script work native within other jQuery apps but it's not always really needed as we will see in the second subchapter here. Since the demos don't insist on this particular plugin, we'll write some basics [right here](https://github.com/thednp/kute.js#using-the-jquery-plugin).
 
-The plugin is just a few bits of code to bridge all of the the awesome `kute.js` methods to your jQuery apps. The plugin can be found in the [/master](https://github.com/thednp/kute.js/blob/master/kute-jquery.js) folder.
+The plugin is just a few bits of code to bridge all of the `KUTE.js` methods to your jQuery apps. The plugin can be found in the [/master](https://github.com/thednp/kute.js/blob/master/kute-jquery.js) folder, CDN repositories and npm packages.
 
 # NPM/Bower
 You can install this through NPM or bower respectively:
@@ -84,7 +85,8 @@ define([
     "kute.js/kute-attr.js", // optional for animating presentation attributes
     "kute.js/kute-text.js" // optional for string write and number incrementing animations
 ], function(KUTE){
-    // ...
+    // your stuff happens here, for instance
+    // KUTE.fromTo('some-selector',{translateX:150}).start();
 });
 ```
 
@@ -95,8 +97,7 @@ At a glance, you can write one line and you're done.
 KUTE.fromTo('selector', fromValues, toValues, options).start();
 
 //with jQuery plugin
-var tween = $('selector').fromTo(fromValues, toValues, options);
-$(tween).KUTE('start');
+$('selector').fromTo(fromValues, toValues, options).start();
 ```
 
 # Advanced Usage
@@ -113,10 +114,10 @@ KUTE.fromTo(el,
       // callbacks
       start: functionOne, // run function when tween starts
       complete: functionTwo, // run function when tween animation is finished
-      update: functionThree // run function while tween running    
-      stop: functionThree // run function when tween stopped    
-      pause: functionThree // run function when tween paused    
-      resume: functionThree // run function when resuming tween    
+      update: functionFour // run function while tween running    
+      stop: functionFive // run function when tween stopped    
+      pause: functionSix // run function when tween paused    
+      resume: functionSeven // run function when resuming tween    
     }
 ).start(); // this is to start animation right away
 ```
@@ -125,7 +126,7 @@ KUTE.fromTo(el,
 Here's a KUTE.js jQuery Plugin example that showcases most common usage in future apps:
 ```javascript
 // first we define the object(s)
-var tween = $('selector').fromTo( // apply fromTo() method to selector
+$('selector').fromTo( // apply fromTo() method to selector
   
     { translate: 0, opacity: 1 }, // fromValues
     { translate: 150, opacity: 0 }, // toValues
@@ -136,16 +137,14 @@ var tween = $('selector').fromTo( // apply fromTo() method to selector
       //callbacks
       start: functionOne, // run function when tween starts
       complete: functionTwo, // run function when tween animation is finished
-      update: functionThree // run function while tween running    
-      stop: functionThree // run function when tween stopped    
-      pause: functionThree // run function when tween paused    
-      resume: functionThree // run function when resuming tween    
+      update: functionFour // run function while tween running    
+      stop: functionFive // run function when tween stopped    
+      pause: functionSix // run function when tween paused    
+      resume: functionSeven // run function when resuming tween       
     }
-);
-
-// then we apply the tween control methods, like start
-tween.start();
+).start(); // then we apply the tween control methods, like start
 ```
+
 Starting with KUTE.js 1.5.7, the jQuery Plugin got lighter and uses the proper method automatically based on how many elements are returned from selector. If one element the proper single object method is used `fromTo()` or `to()` but if more than one elements are returned it will use `allFromTo()` or `allTo()`.
 
 ## Alternative usage in jQuery powered applications
@@ -167,7 +166,6 @@ var tween = KUTE.allFromTo($('selector'), fromValues, toValues, options);
 tween.start();
 ```
 
-
 # How it works
 * it computes all the values before starting the animation, then caches them to avoid layout thrashing that occur during animation
 * handles all kinds of `transform` properties and makes sure to always use the same order of the `transform` properties (`translate`, `rotate`, `skew`, `scale`)
@@ -181,8 +179,8 @@ tween.start();
 * allows you to add many callbacks: `start`, `update`, `complete`, `pause`, `stop`, and they can be set as tween options
 * since `translate3D` is best for movement animation performance, `kute.js` will always use it
 * accepts "nice & easy string" easing functions, like `linear` or `easingExponentialOut` (removes the use of the evil `eval`, making development safer, easier and closer to standards :)
-* uses all 31 Robert Penner's easing functions, as well as bezier and physics easing functions
-* handles browser prefixes for you for `transform`, `perspective`, `perspective-origin`, `border-radius` and `requestAnimationFrame`
+* uses all 31 Robert Penner's easing functions, as well as any other custom functions such as bezier and physics based easing functions
+* handles browser prefixes for you for `transform`, `perspective`, `perspective-origin` and `requestAnimationFrame`
 * all this is possible with a core script of less than 20k size!
 
 # Browser Support

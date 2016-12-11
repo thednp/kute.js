@@ -52,7 +52,7 @@ function random(min, max) {
 // the variables
 var container = document.getElementById('container');
 
-// vendor prefix handle 
+// vendor prefix handle for Tween.js
 var transformProperty = KUTE.property('transform'), tws = [];
 
 
