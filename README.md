@@ -1,5 +1,7 @@
 # KUTE.js
-A fully fledged native Javascript animation engine with most essential features for web developers, designers and animators, delivering easy to use methods to set up high performance, cross-browser animations. The focus is code quality, flexibility, performance and size (core engine is 17k min and 5.5k gzipped). Along with a simple jQuery plugin, KUTE.js packs plugins for presentation attibutes, SVG transform, draw stroke and path morph, text string write up or number countdowns, plus additional CSS properties like colors, border-radius or typographic properties.
+A fully fledged native Javascript animation engine with most essential features for web developers, designers and animators, delivering easy to use methods to set up high performance, cross-browser animations. The focus is code quality, flexibility, performance and size (core engine is 17k min and 5.5k gzipped). 
+
+Along with a simple jQuery plugin, KUTE.js packs plugins for presentation attributes, SVG transform, draw SVG strokes and path morphing, text string write up or number countdowns, plus additional CSS properties like colors, border-radius or typographic properties.
 
 Because of it's modularity, KUTE.js makes it super easy to extend or override functionality, making it unique among Javascript animation engines.
 
