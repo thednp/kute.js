@@ -400,14 +400,14 @@
     }
 
     // now try to determine the REAL translation
-    var parentSVG = this.element.ownerSVGElement, newMatrix = parentSVG.createSVGMatrix(), newTransform,
-      isComplex = 'skewX' in valuesStart || 'skewY' in valuesStart || 'scale' in valuesStart || 'rotate' in valuesStart;
-
-    isComplex && newMatrix.translate(-valuesStart.origin[0],-valuesStart.origin[1]); // - origin
-    'translate' in valuesStart && newMatrix.translate( valuesStart.translate[0], valuesStart.translate[1] ); // the current translate
-    newMatrix.rotate(valuesStart.rotate||0).skewX(valuesStart.skewX||0).skewY(valuesStart.skewY||0).scale(valuesStart.scale||1); // the other functions
-    isComplex && newMatrix.translate(+valuesStart.origin[0],+valuesStart.origin[1]); // + origin
-    newTransform = parentSVG.createSVGTransformFromMatrix(newMatrix);
+    var parentSVG = this.element.ownerSVGElement,
+      newTransform = parentSVG.createSVGTransformFromMatrix(
+        parentSVG.createSVGMatrix()
+        .translate(-valuesStart.origin[0],-valuesStart.origin[1]) // - origin
+        .translate('translate' in valuesStart ? valuesStart.translate[0] : 0,'translate' in valuesStart ? valuesStart.translate[1] : 0) // the current translate
+        .rotate(valuesStart.rotate||0).skewX(valuesStart.skewX||0).skewY(valuesStart.skewY||0).scale(valuesStart.scale||1)// the other functions
+        .translate(+valuesStart.origin[0],+valuesStart.origin[1]) // + origin
+      );
 
     valuesStart.translate = [newTransform.matrix.e,newTransform.matrix.f]; // finally the translate we're looking for
 
