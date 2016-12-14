@@ -291,9 +291,10 @@
   parseProperty.draw = function(a,o){ // register the draw property
     if (!('draw' in DOM)) {
       DOM.draw = function(l,p,a,b,v){
-        var ll = a.l>>0, s = number(a.s,b.s,v)>>0, e = number(a.e,b.e,v)>>0, o = 0 - s;
-        l.style.strokeDashoffset = o +'px';
-        l.style.strokeDasharray = (e+o-0.5>>0) + 'px, ' + ll + 'px';
+        var pathLength = (a.l*100>>0)/100, start = (number(a.s,b.s,v)*100>>0)/100, end = (number(a.e,b.e,v)*100>>0)/100, 
+        offset = 0 - start, dashOne = end+offset;
+        l.style.strokeDashoffset = offset +'px';
+        l.style.strokeDasharray = (((dashOne <1 ? 0 : dashOne)*100>>0)/100) + 'px, ' + pathLength + 'px';
       }
     }
     return getDraw(this.element,o);
@@ -371,9 +372,8 @@
         x += complex ? b.origin[0] : 0; y += complex ? b.origin[1] : 0; // normalizing ends with the addition of the transformOrigin to the translation
 
         // finally we apply the transform attribute value 
-        l.setAttribute('transform', 
-                                    ( x||y ? ('translate(' + (x*10>>0)/10 + ( y ? (',' + ((y*10>>0)/10)) : '') + ')') : '' )
-                                   +( rotate ? 'rotate(' + (rotate*10>>0)/10 + ')' : '' )
+        l.setAttribute('transform', ( x||y ? ('translate(' + (x*10>>0)/10 + ( y ? (',' + ((y*100>>0)/100)) : '') + ')') : '' )
+                                   +( rotate ? 'rotate(' + (rotate*100>>0)/100 + ')' : '' )
                                    +( skewX ? 'skewX(' + (skewX*10>>0)/10 + ')' : '' )
                                    +( skewY ? 'skewY(' + (skewY*10>>0)/10 + ')' : '' ) 
                                    +( scale !== 1 ? 'scale(' + (scale*1000>>0)/1000 +')' : '' ) );
@@ -400,14 +400,14 @@
     }
 
     // now try to determine the REAL translation
-    var parentSVG = this.element.ownerSVGElement,
-      newTransform = parentSVG.createSVGTransformFromMatrix(
-        parentSVG.createSVGMatrix()
-        .translate(-valuesStart.origin[0],-valuesStart.origin[1]) // - origin
-        .translate(valuesStart.translate[0]||0,valuesStart.translate[1]||0) // the current translate
-        .rotate(valuesStart.rotate||0).skewX(valuesStart.skewX||0).skewY(valuesStart.skewY||0).scale(valuesStart.scale||1)// the other functions
-        .translate(+valuesStart.origin[0],+valuesStart.origin[1]) // + origin
-      );
+    var parentSVG = this.element.ownerSVGElement, newMatrix = parentSVG.createSVGMatrix(), newTransform,
+      isComplex = 'skewX' in valuesStart || 'skewY' in valuesStart || 'scale' in valuesStart || 'rotate' in valuesStart;
+
+    isComplex && newMatrix.translate(-valuesStart.origin[0],-valuesStart.origin[1]); // - origin
+    'translate' in valuesStart && newMatrix.translate( valuesStart.translate[0], valuesStart.translate[1] ); // the current translate
+    newMatrix.rotate(valuesStart.rotate||0).skewX(valuesStart.skewX||0).skewY(valuesStart.skewY||0).scale(valuesStart.scale||1); // the other functions
+    isComplex && newMatrix.translate(+valuesStart.origin[0],+valuesStart.origin[1]); // + origin
+    newTransform = parentSVG.createSVGTransformFromMatrix(newMatrix);
 
     valuesStart.translate = [newTransform.matrix.e,newTransform.matrix.f]; // finally the translate we're looking for
 

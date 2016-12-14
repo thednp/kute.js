@@ -190,7 +190,7 @@
     } : function (a,b,u,v){
       var translation = {};
       for (var ax in b){
-        translation[ax] = ( a[ax]===b[ax] ? b[ax] : ( (a[ax] + ( b[ax] - a[ax] ) * v ) * 10 >> 0 ) /10 ) + u;
+        translation[ax] = ( a[ax]===b[ax] ? b[ax] : ( (a[ax] + ( b[ax] - a[ax] ) * v ) * 100 >> 0 ) / 100 ) + u;
       }
       return translation.x||translation.y ? 'translate(' + translation.x + ',' + translation.y + ')' :
         'translate3d(' + translation.translateX + ',' + translation.translateY + ',' + translation.translateZ + ')';
@@ -198,8 +198,8 @@
     rotate = interpolate.rotate = function (a,b,u,v){
       var rotation = {};
       for ( var rx in b ){
-        rotation[rx] = rx === 'z' ? ('rotate('+ (((a[rx] + (b[rx] - a[rx]) * v) * 10 >> 0 ) / 10) + u + ')')
-                                  : (rx + '(' + (((a[rx] + (b[rx] - a[rx]) * v) * 10 >> 0 ) / 10) + u + ')');
+        rotation[rx] = rx === 'z' ? ('rotate('+ (((a[rx] + (b[rx] - a[rx]) * v) * 100 >> 0 ) / 100) + u + ')')
+                                  : (rx + '(' + (((a[rx] + (b[rx] - a[rx]) * v) * 100 >> 0 ) / 100) + u + ')');
       }
       return rotation.z ? rotation.z : (rotation.rotateX||'') + (rotation.rotateY||'') + (rotation.rotateZ||'');
     },
