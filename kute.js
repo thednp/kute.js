@@ -601,7 +601,7 @@
       this.valuesStart = {}; // valuesStart
 
       preparePropertiesObject.call(this,endObject,'end'); // valuesEnd
-      if ( options.rpr ) { this.valuesStart = startObject; } else { preparePropertiesObject.call(this,startObject,'start'); } // valuesStart
+      if ( this.options.rpr ) { this.valuesStart = startObject; } else { preparePropertiesObject.call(this,startObject,'start'); } // valuesStart
 
       if ( this.options.perspective !== undefined && transformProperty in this.valuesEnd ) { // element transform perspective
         var perspectiveString = 'perspective('+parseInt(this.options.perspective)+'px)';
@@ -609,7 +609,7 @@
       }
 
       for ( var e in this.valuesEnd ) {
-        if (e in crossCheck && !options.rpr) crossCheck[e].call(this); // this is where we do the valuesStart and valuesEnd check for fromTo() method
+        if (e in crossCheck && !this.options.rpr) crossCheck[e].call(this); // this is where we do the valuesStart and valuesEnd check for fromTo() method
       }
 
       this.options.chain = []; // chained Tweens

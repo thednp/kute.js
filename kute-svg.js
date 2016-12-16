@@ -324,7 +324,7 @@
       var svgTransformObject = {}, bb = this.element.getBBox(),
         cx = bb.x + bb.width/2, cy = bb.y + bb.height/2, // by default the transformOrigin is "50% 50%" of the shape box
         origin = this.options.transformOrigin, translation;
-      
+
       origin = !!origin ? (origin instanceof Array ? origin : origin.split(/\s/)) : [cx,cy];
 
       origin[0] = typeof origin[0] === 'number' ? origin[0] : parseStringOrigin(origin[0],bb);
@@ -372,11 +372,11 @@
         x += complex ? b.origin[0] : 0; y += complex ? b.origin[1] : 0; // normalizing ends with the addition of the transformOrigin to the translation
 
         // finally we apply the transform attribute value 
-        l.setAttribute('transform', ( x||y ? ('translate(' + (x*10>>0)/10 + ( y ? (',' + ((y*100>>0)/100)) : '') + ')') : '' )
-                                   +( rotate ? 'rotate(' + (rotate*100>>0)/100 + ')' : '' )
-                                   +( skewX ? 'skewX(' + (skewX*10>>0)/10 + ')' : '' )
-                                   +( skewY ? 'skewY(' + (skewY*10>>0)/10 + ')' : '' ) 
-                                   +( scale !== 1 ? 'scale(' + (scale*1000>>0)/1000 +')' : '' ) );
+        l.setAttribute('transform', ( x||y ? ('translate(' + (x*100>>0)/100 + ( y ? (',' + ((y*100>>0)/100)) : '') + ')') : '' )
+                                    +( rotate ? 'rotate(' + (rotate*100>>0)/100 + ')' : '' )
+                                    +( skewX ? 'skewX(' + (skewX*10>>0)/10 + ')' : '' )
+                                    +( skewY ? 'skewY(' + (skewY*10>>0)/10 + ')' : '' ) 
+                                    +( scale !== 1 ? 'scale(' + (scale*1000>>0)/1000 +')' : '' ) );
       }
     }
 
@@ -392,12 +392,11 @@
   }
 
   crossCheck.svgTransform = function() { // helper function that helps preserve current transform properties into the objects
+    if (!this.options.rpr) return;
     var valuesStart = this.valuesStart.svgTransform, valuesEnd = this.valuesEnd.svgTransform,
       currentTransform = parseTransformObject.call(this, parseTransformString(this.element.getAttribute('transform')) );
 
-    for ( var i in currentTransform ) {  // populate the valuesStart first
-      valuesStart[i] = currentTransform[i];
-    }
+    for ( var i in currentTransform ) { valuesStart[i] = currentTransform[i]; } // populate the valuesStart first
 
     // now try to determine the REAL translation
     var parentSVG = this.element.ownerSVGElement,
@@ -411,12 +410,8 @@
 
     valuesStart.translate = [newTransform.matrix.e,newTransform.matrix.f]; // finally the translate we're looking for
 
-    newTransform = null;
-
     // copy existing and unused properties to the valuesEnd
-    for ( var i in valuesStart) {
-      if ( !(i in valuesEnd)) { valuesEnd[i] = valuesStart[i]; }
-    }
+    for ( var i in valuesStart) { if ( !(i in valuesEnd)) { valuesEnd[i] = valuesStart[i]; } }
   }
 
   return this;
