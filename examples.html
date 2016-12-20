@@ -191,13 +191,13 @@ var tween2 = KUTE.fromTo('selector1',{skewY:0},{skewY:45}).start();
 	'selector1', // element
 	{translateX:0, rotateX:0, rotateY:0, rotateZ:0}, // from
 	{translateX:250, rotateX:360, rotateY:15, rotateZ:5}, // to
-	{perspective:400, perspectiveOrigin: 'center top'} // trasform options
+	{perspective:400, perspectiveOrigin: 'center top'} // transform options
 );
 var tween2 = KUTE.fromTo(
 	'selector2', // element
 	{translateX:0, rotateX:0, rotateY:0, rotateZ:0}, // from values
 	{translateX:-250, rotateX:360, rotateY:15, rotateZ:5}, // to values
-	{parentPerspective:400, parentPerspectiveOrigin: 'center top'} // trasform options
+	{parentPerspective:400, parentPerspectiveOrigin: 'center top'} // transform options
 );
 </code></pre>
 		<p>Now you can see we are using the specific transform options, the first tween object uses these settings for an element and the second for its parent.</p>

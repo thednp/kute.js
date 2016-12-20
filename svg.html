@@ -432,7 +432,14 @@ var rotationTween = KUTE.to(element, {svgTransform: {rotate: 150}}, { transformO
             <li>Similar to the CSS3 transform animation featured in the core engine, the <code class="bg-indigo">svgTransform</code> property DOES stack transform functions for chained tween objects created with the <code>.to()</code> method, you will have to provide only values for the functions that will change and the plugin will try to keep the unchanged values. However, there's a catch: you need to follow the properties that change and I highly recommend checking the example code for skews in the <a href="./assets/js/svg.js">svg.js</a> file.</li>
             <li>In other cases when you need maximum control and precision or when shapes are already affected by translation, you might want to use the <code>.fromTo()</code> method with all proper values.</li>
             <li>Also the <code class="bg-indigo">svgTransform</code> feature does not support 3D transforms, because they are not supported in all browsers.</li>
-            <li>Rotations will always use the <i>valuesEnd</i> value of the transform origin and cannot be animated, so that translations don't get messed up.</li>
+            <li>This feature does not work with SVG specific chained transforms right away (do not confuse with tween chain), but luckily there is a workaround<br>EG: <code>transform="translate(150,150) rotate(45) translate(-150,-150)"</code>.<br>In this case I would recommend using the values of the first translation as transform-origin for your tween, like so:<br>
+<pre><code class="language-javascript">// a possible workaround for animating a SVG element that uses chained transform functions
+KUTE.fromTo(element, 
+    {svgTransform : { translate: 0, rotate: 45, skewX: 0 }}, // startValues we asume the current translation is zero on both X and Y axis
+    {svgTransform : { translate: 450, rotate: 180, skewX: 20 }}, // endValues we will translate to a 450 value horizontaly and skew the X axis by 20 degrees
+    {transformOrigin: [150,150]} // tween options use the transform-origin of the target SVG element
+).start();
+</code></pre>This way we make sure to count the real current transform-origin and produce a consistent animation with the SVG coordinate system.</li>
         </ul>
 
 
