@@ -92,10 +92,6 @@
         h.style.color = ''; return { r: parseInt(webColor[0]), g: parseInt(webColor[1]), b: parseInt(webColor[2]) };
       }
     },
-    preventScroll = function (e) { // prevent mousewheel or touch events while tweening scroll
-      var data = document.body.getAttribute('data-tweening');
-      if (data && data === 'scroll') { e.preventDefault();  }
-    },
     rgbToHex = function (r, g, b) { // transform rgb to hex or vice-versa | webkit browsers ignore HEX, always use RGB/RGBA
       return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
     },
@@ -273,7 +269,7 @@
         this.valuesStart[transformProperty]['perspective'] = this.valuesEnd[transformProperty]['perspective']; 
       }
       // element transform origin / we filter it out for svgTransform to fix the Firefox transformOrigin bug https://bugzilla.mozilla.org/show_bug.cgi?id=923193
-      if ( ops.transformOrigin !== undefined && (!('svgTransform' in this.valuesEnd)) ) { el.style[property('transformOrigin')] = ops.transformOrigin; } 
+      if ( ops.transformOrigin !== undefined && (!('svgTransform' in this.valuesEnd)) ) { el.style[property('transformOrigin')] = ops.transformOrigin; } // set transformOrigin for CSS3 transforms only
       if ( ops.perspectiveOrigin !== undefined ) { el.style[property('perspectiveOrigin')] = ops.perspectiveOrigin; } // element perspective origin
       if ( ops.parentPerspective !== undefined ) { el.parentNode.style[property('perspective')] = ops.parentPerspective + 'px'; } // parent perspective
       if ( ops.parentPerspectiveOrigin !== undefined ) { el.parentNode.style[property('perspectiveOrigin')] = ops.parentPerspectiveOrigin; } // parent perspective origin
@@ -440,15 +436,19 @@
 
       setTimeout(function(){ if (!tweens.length) { stop(); } }, 48);  // when all animations are finished, stop ticking after ~3 frames
     },
+    preventScroll = function (e) { // prevent mousewheel or touch events while tweening scroll
+      var data = document.body.getAttribute('data-tweening');
+      if (data && data === 'scroll') { e.preventDefault(); }
+    },
     scrollOut = function(){ //prevent scroll when tweening scroll
-      if (( 'scroll' in this.valuesEnd || 'scrollTop' in this.valuesEnd ) && document.body.getAttribute('data-tweening')) {
+      if ( 'scroll' in this.valuesEnd && document.body.getAttribute('data-tweening')) {
         document.removeEventListener(touchOrWheel, preventScroll, false);
         document.removeEventListener(mouseEnter, preventScroll, false);
         document.body.removeAttribute('data-tweening');
       }
     },
     scrollIn = function(){
-      if (( 'scroll' in this.valuesEnd || 'scrollTop' in this.valuesEnd ) && !document.body.getAttribute('data-tweening')) {
+      if ( 'scroll' in this.valuesEnd && !document.body.getAttribute('data-tweening')) {
         document.addEventListener(touchOrWheel, preventScroll, false);
         document.addEventListener(mouseEnter, preventScroll, false);
         document.body.setAttribute('data-tweening', 'scroll');
