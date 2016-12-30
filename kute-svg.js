@@ -62,7 +62,7 @@
     },
     getClosestPoint = function(p,t,s){ // getClosestPoint for polygon paths it returns a close point from the original path (length,pointAtLength,smallest); // intervalLength
       var x, y, a = [], l = s.length, dx, nx, pr;
-      for (i=0; i<l; i++){
+      for (var i=0; i<l; i++){
         x = Math.abs(s[i][0] - t.x);
         y = Math.abs(s[i][1] - t.y);
         a.push( Math.sqrt( x * x + y * y ) );
