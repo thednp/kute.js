@@ -82,6 +82,8 @@
 
 	<div class="content-wrap">
 		<h2 id="tweenoptions">Tween Options</h2>
+		<p>Any animation can be customized in many ways for duration, progress / easing, delay and even for specific plugins. Some of these options have a default value and starting with KUTE.js version 1.6.1 you can override these default values, as we'll see later on this page.</p>
+
 		<h3>Common Options</h3>
         <p>These options affect all types of tweens, no matter the properties used or context.</p>
         <ul>
@@ -99,9 +101,9 @@
         <ul>
             <li><kbd>perspective: 500</kbd> option allows you to set a 3D transformation <code>perspective</code> for a given HTML element. No default value.</li>
             <li><kbd>perspectiveOrigin: "50% 50%"</kbd> option allows you to set a <code>perspectiveOrigin</code> for a given HTML element.  This option has no default value and only accepts valid CSS values according to it's specs.</li>
-            <li><kbd>parentPerspective: 500</kbd> option allows you to set a 3D <code>perspective</code> for the <strong>parent</strong> of the HTML element subject to the transform animation.</li>
-            <li><kbd>parentPerspectiveOrigin: "50% 50%"</kbd> option allows you to set a <code>perspectiveOrigin</code> for the parent of the HTML element subject to the transform animation. Also like the above similar options, this options only accepts valid CSS values.</li>
-            <li><kbd>transformOrigin: "50% 50%"</kbd> option allows you to set a <code>transformOrigin</code> for the HTML/SVG element subject for the transform animation. Starting KUTE.js 1.6.0 this option also aplies to SVG transforms featured with the SVG Plugin. This options only accepts valid CSS values for CSS3 transforms, but keep in mind that for both CSS3 transform and SVG transform attribute KUTE.js will always think of "50% 50%" as the default value, even if most browser's default value for SVG transform origin is "0px 0px 0px" and the reason is simply consistency all round. When applied to a <kbd class="bg-olive">svgTransform</kbd> property, it can also accept array values: <code>transformOrigin: [250,250]</code>.</li>
+            <li><kbd>parentPerspective: 500</kbd> option allows you to set a 3D <code>perspective</code> for the <strong>parent</strong> of the HTML element subject to the transform animation. No default value.</li>
+            <li><kbd>parentPerspectiveOrigin: "50% 50%"</kbd> option allows you to set a <code>perspectiveOrigin</code> for the parent of the HTML element subject to the transform animation. Also like the above similar options, this options only accepts valid CSS values and has no default value.</li>
+            <li><kbd>transformOrigin: "50% 50%"</kbd> option allows you to set a <code>transformOrigin</code> for the HTML/SVG element subject for the transform animation. Starting KUTE.js 1.6.0 this option also aplies to SVG transforms featured with the SVG Plugin. This options only accepts valid CSS values for CSS3 transforms, but keep in mind that for both CSS3 transform and SVG transform attribute KUTE.js will always think of "50% 50%" as the default value, even if most browser's default value for SVG transform origin is "0px 0px 0px" and the reason is simply consistency all round. When applied to a <kbd class="bg-olive">svgTransform</kbd> property, it can also accept array values: <code>transformOrigin: [250,250]</code>. There is no default value but the SVG Plugin will always use <code>50% 50%</code> for your transform tweens.</li>
         </ul>
 
 		<h3>SVG Plugin Options</h3>
@@ -136,8 +138,31 @@ var callback = function(){
 //create object and start animating already
 KUTE.fromTo(div,{left:150},{left:0},{complete: callback}).start();
 </code></pre>		
-		<h3>Other</h3>
+		<h3>Other Options</h3>
 		<p><kbd>keepHex: true</kbd> option allows you to always use <code>HEX</code> color format, even if you have used <code>RGB</code> or <code>RGBA</code>. This option is useful when tweening color properties on legacy browsers, however modern browsers may ignore this option for performance reasons.</p>
+
+		<h3>Override Default Options' Values</h3>
+        <p>Most options have a default value as you can see above, they are globally defined in the <code>KUTE.defaultOptions</code> object like so:</p>
+<pre><code class="language-javascript">// the list of all tween options that can be overrided
+KUTE.defaultOptions = {
+    duration: 700,
+    delay: 0,
+    offset: 0, // allTo() or allFromTo() methods only
+    repeat: 0,
+    yoyo: false,
+    easing: 'linear',
+    keepHex: false,
+    morphPrecision: 15, // SVG Plugin only
+    textChars: 'alpha', // Text Plugin only
+};
+</code></pre>
+
+    <p>As some <a href="https://github.com/thednp/kute.js/issues/47">user suggested</a>, he would need a way to override the default duration value, here's how to:</p>
+    
+<pre><code class="language-javascript">// sets the new global duration tween option default value 
+KUTE.defaultOptions.duration = 1000;
+</code></pre>		
+    <p>Also make sure to define the new option global default values <b>before</b> you define your tween objects.</p>
 	</div>
 
 	<div class="content-wrap">		
