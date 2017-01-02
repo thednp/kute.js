@@ -217,3 +217,31 @@ mixedBtn.addEventListener('click', function(){
     !svgTween51.playing && svgTween51.start();
     !svgTween52.playing && svgTween52.start();
 }, false);
+
+// chained transforms
+var svgChained = document.getElementById('svgChained');
+var chainedBtn = document.getElementById('chainedBtn');
+var svgc = svgChained.getElementsByTagName('path')[0];
+
+var svgTween6 = KUTE.fromTo(svgc, 
+    { // from
+        svgTransform: {
+            translate: 0,
+            scale: 0.5,
+            rotate: 45,
+            // skewX: 0
+        },
+    },
+    { // to
+        svgTransform: {
+            translate: 450,
+            scale: 1.5,
+            rotate: 360,
+            // skewX: -45
+        }
+    },
+{transformOrigin: [256,256], yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+
+chainedBtn.addEventListener('click', function(){
+    !svgTween6.playing && svgTween6.start();
+}, false);

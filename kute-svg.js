@@ -22,6 +22,9 @@
     DOM = K.dom, parseProperty = K.parseProperty, prepareStart = K.prepareStart, getCurrentStyle = K.getCurrentStyle,
     trueColor = K.truC, trueDimension = K.truD, crossCheck = K.crossCheck, 
     number = g.Interpolate.number, unit = g.Interpolate.unit, color = g.Interpolate.color, // interpolate functions
+    defaultOptions = K.defaultOptions, // default tween options since 1.6.1
+
+    // browser detection
     isIE = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null ? parseFloat( RegExp.$1 ) : false,
     isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent); // we optimize morph depending on device type
   
@@ -49,6 +52,7 @@
       return points;
     };
 
+
   // SVG MORPH
   var getSegments = function(s,e,r){ // getSegments returns an array of points based on a sample size morphPrecision
       var s1 = [], e1 = [], le1 = s.getTotalLength(), le2 = e.getTotalLength(), ml = Math.max(le1,le2),
@@ -60,9 +64,9 @@
       }
       return [s1,e1];
     },
-    getClosestPoint = function(p,t,s){ // getClosestPoint for polygon paths it returns a close point from the original path (length,pointAtLength,smallest); // intervalLength
+    getClosestPoint = function(p,t,s){ // utility for polygon paths, returns a close point from the original path (length,pointAtLength,smallest); // intervalLength
       var x, y, a = [], l = s.length, dx, nx, pr;
-      for (i=0; i<l; i++){
+      for (var i=0; i<l; i++){
         x = Math.abs(s[i][0] - t.x);
         y = Math.abs(s[i][1] - t.y);
         a.push( Math.sqrt( x * x + y * y ) );
@@ -75,7 +79,7 @@
       : Math.abs(s[dx][0] - t.x) < p && Math.abs(s[dx][1] - t.y) < p ? s[dx] 
       : [t.x,t.y];
     },
-    pathToAbsolute = function(p) { // simple pathToAbsolute for polygons | this is still BETA / a work in progress
+    pathToAbsolute = function(p) { // simple utility for polygons | this is still BETA / a work in progress
       var np = p.match(pathReg), wp = [], l = np.length, s, c, r, x = 0, y = 0;
       for (var i = 0; i<l; i++){
         np[i] = np[i]; c = np[i][0]; r = new RegExp(c+'[^\\d|\\-]*','i'); 
@@ -100,10 +104,10 @@
       }
       return np;
     },
-    getOnePath = function(p){ return p.split(/z/i).shift() + 'z'; }, // getOnePath, first path only
-    createPath = function (p){ // createPath
-      var c = document.createElementNS(ns,'path'), d = typeof p === 'object' ? p.getAttribute('d') : p; 
-      c.setAttribute('d',d); return c;
+    getOnePath = function(p){ return p.split(/z/i).shift() + 'z'; }, // we only tween first path only
+    createPath = function (p){ // create a <path> when glyph
+      var createdPath = document.createElementNS(ns,'path'), d = typeof p === 'object' ? p.getAttribute('d') : p; 
+      createdPath.setAttribute('d',d); return createdPath;
     },
     forcePath = function(p){ // forcePath for glyph elements
       if (p.tagName === 'glyph') { // perhaps we can also change other SVG tags in the future 
@@ -177,6 +181,9 @@
       return [s1,e1]
     };
   
+  // set default morphPrecision since 1.6.1
+  defaultOptions.morphPrecision = 15;
+
   // process path object and also register the render function
   parseProperty.path = function(o,v) {
     if (!('path' in DOM)) {
@@ -191,11 +198,11 @@
     return this.element.getAttribute('d');
   };
 
-  crossCheck.path = function() {
+  crossCheck.path = function() { // unlike other cases, the crossCheck apply to both to() and fromTo() methods
     var p1 = getOnePath(this.valuesStart.path.o), p2 = getOnePath(this.valuesEnd.path.o), paths;
 
     // path tween options
-    this.options.morphPrecision = this.options && 'morphPrecision' in this.options ? parseInt(this.options.morphPrecision) : 15;
+    this.options.morphPrecision = this.options && 'morphPrecision' in this.options ? parseInt(this.options.morphPrecision) : defaultOptions.morphPrecision;
     this._isPolygon = !/[CSQTA]/i.test(p1) && !/[CSQTA]/i.test(p2); // check if both shapes are polygons
 
     // begin processing paths
@@ -392,7 +399,7 @@
   }
 
   crossCheck.svgTransform = function() { // helper function that helps preserve current transform properties into the objects
-    if (!this.options.rpr) return;
+    if (!this.options.rpr) return; // fix since 1.6.1 for fromTo() method
     var valuesStart = this.valuesStart.svgTransform, valuesEnd = this.valuesEnd.svgTransform,
       currentTransform = parseTransformObject.call(this, parseTransformString(this.element.getAttribute('transform')) );
 

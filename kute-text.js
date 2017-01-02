@@ -19,7 +19,8 @@
 
   var g = typeof global !== 'undefined' ? global : window, // connect to KUTE object and global
     K = KUTE, DOM = K.dom, prepareStart = K.prepareStart,
-    parseProperty = K.parseProperty, number = g.Interpolate.number;
+    parseProperty = K.parseProperty, number = g.Interpolate.number,
+    defaultOptions = K.defaultOptions;
   
   // let's go with the plugin
   var _string = String("abcdefghijklmnopqrstuvwxyz").split(""), // lowercase
@@ -29,6 +30,8 @@
     _alphanumeric = _string.concat(_stringUppercase,_numeric), // alpha numeric
     _all = _alphanumeric.concat(_symbols), // all caracters
     random = Math.random, min = Math.min;
+
+  defaultOptions.textChars = 'alpha'; // set default textChars tween option since 1.6.1
 
   prepareStart.text = prepareStart.number = function(p,v){
     return this.element.innerHTML;
@@ -46,7 +49,7 @@
             : _string, ll = tp.length,
             t = tp[(random() * ll)>>0], ix = '', tx = '', fi = a.substring(0), f = b.substring(0); 
 
-        // use string.replace(/<\/?[^>]+(>|$)/g, "") to strip HTML tags while animating ? this is definatelly a smart to do
+        // use string.replace(/<\/?[^>]+(>|$)/g, "") to strip HTML tags while animating ? this is definatelly a smart TO DO
         ix = a !== '' ? fi.substring(fi.length, min(v * fi.length, fi.length)>>0 ) : ''; // initial text, A value 
         tx = f.substring(0, min(v * f.length, f.length)>>0 ); // end text, B value
         l.innerHTML = v < 1 ? tx + t + ix : b;

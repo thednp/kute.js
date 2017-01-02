@@ -333,13 +333,13 @@ var tween1 = KUTE.to('shape', { translate: [150,100], rotate: 45, skewX: 15, ske
 			</div>
 		</div>
         <p>The first tween uses the CSS3 transform notation and the animation clearly shows the shape rotating around it's center coordinate, as we've set <code>transformOrigin</code> option to <i>50% 50%</i>, but this animation doesn't work in IE browsers, while in Firefox is inconsistent with the SVG coordinate system. The second tween uses the <code>rotate: 360</code> notation and the animation shows the shape rotating around it's own central point and without any option, an animation that DO WORK in all SVG enabled browsers.</p>
-        <p>When for CSS3 transforms we could have used values such as <i>center bottom</i> as <code>transform-origin</code> (also not supported in all modern browsers for SVGs), the entire processing was basically in/by the browser, however when it comes to SVGs the plugin here will compute the <code>transformOrigin</code> tween setting value accordingly to use a shape's <code>.getBBox()</code> value to determine for instance the coordinates for <i>25% 75%</i> position for instance or <i>center top</i>.</p>
+        <p>When for CSS3 transforms we could have used values such as <i>center bottom</i> as <code>transform-origin</code> (also not supported in all modern browsers for SVGs), the entire processing was basically in/by the browser, however when it comes to SVGs the plugin here will compute the <code>transformOrigin</code> tween setting value accordingly to use a shape's <code>.getBBox()</code> value to determine for instance the coordinates for <i>25% 75%</i> position or <i>center top</i>.</p>
 
         <p>In other cases you may want to rotate shapes around the center point of the parent <code>&lt;svg></code> or <code>&lt;g></code> element, and we use it's <code>.getBBox()</code> to determine the <i>50% 50%</i> coordinate, so here's how to deal with it:</p>
 
 <pre><code class="language-javascript">// rotate around parent svg's "50% 50%" coordinate as transform-origin
 // get the bounding box of the parent element
-var svgBB = element.ownerSVGElement.getBBox(); // returns same object but it's for the parent &lt;svg> element
+var svgBB = element.ownerSVGElement.getBBox(); // returns an object of the parent &lt;svg> element
 
 // we need to know the current translate position of the element [x,y]
 // in our case is:
@@ -365,7 +365,7 @@ var rotationTween = KUTE.to(element, {svgTransform: {rotate: 150}}, { transformO
 				<a id="rotateBtn1" class="btn btn-red" href="javascript:void(0)">Start</a>	
 			</div>
 		</div>
-        <p>This is the only example we have adapted the transform-origin for the CSS3 transform rotation so that both animations look consistent in all browsers, and if you are interested in learning about this fix, similar to the above, just we are adding "px" to the calculated value, so make sure to check <a href="./assets/js/svg.js">svg.js</a> file.</p>
+        <p>Note that this is the only SVG transform example in which we have adapted the <code>transform-origin</code> for the CSS3 transform rotation so that both animations look consistent in all browsers, and if you are interested in learning about this fix, similar to the above, just we are adding "px" to the calculated value, but you better make sure to check <a href="./assets/js/svg.js">svg.js</a> file.</p>
 
         <h4>SVG Translation</h4>
         <p>In this example we'll have a look at translations, so when setting <code>translate: [150,0]</code>, the first value is X (horizontal) coordinate to which the shape will translate to and the second value is Y (vertical) coordinate for translation. When <code>translate: 150</code> notation is used, the script will understand that's the X value and the Y value is 0 just like for the regular HTML elements transformation. Let's have a look at a quick demo:</p>
@@ -379,7 +379,7 @@ var rotationTween = KUTE.to(element, {svgTransform: {rotate: 150}}, { transformO
 				<a id="translateBtn" class="btn btn-blue" href="javascript:void(0)">Start</a>	
 			</div>
 		</div>
-        <p>The first tween uses the CSS3 <code>translate: 580</code> notation and the second tween uses the <code>translate: [0,0]</code> as <code class="bg-indigo">svgTransform</code> value. For the second example the values are unitless and are relative to the <code>viewBox</code> attribute.</p>
+        <p>The first tween uses the CSS3 <code>translate: 580</code> notation for the end value, while the second tween uses the <code>translate: [0,0]</code> as <code class="bg-indigo">svgTransform</code> value. For the second example the values are unitless and are relative to the <code>viewBox</code> attribute.</p>
         
         <h4>SVG Skew</h4>
         <p>For skews for SVGs we have a very simple notation: <code>skewX: 25</code> or <code>skewY: -25</code> as SVGs don't support the <code>skew: [X,Y]</code> function. Here's a quick demo:</p>
@@ -402,14 +402,14 @@ var rotationTween = KUTE.to(element, {svgTransform: {rotate: 150}}, { transformO
                 <path class="bg-lime" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>            
                 <path class="bg-olive" transform="translate(580)" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>            
             </svg>
-	
+
 			<div class="example-buttons">
 				<a id="scaleBtn" class="btn btn-pink" href="javascript:void(0)">Start</a>	
 			</div>
 		</div>
         <p>The first tween scales the shape at <code>scale: 1.5</code> via regular CSS3 transforms, and the second tween scales down the shape at <code>scale: 0.5</code> value via <code class="bg-indigo">svgTransform</code>. If you inspect the elements, you will notice for the second shape translation is involved, and this is to keep <code>transform-origin</code> at an expected <i>50% 50%</i> value. A similar case as with the skews.</p>
 
-        <h4>SVG Mixed Transforms</h4>
+        <h4>SVG Mixed Transform Functions</h4>
         <p>Our last transform example for SVGs is the mixed transformation. Just like for the other examples the plugin will try to adjust the rotation <code>transform-origin</code> to make it look as you would expect it from regular HTML elements. Let's combine 3 functions at the same time and see what happens:</p>
 		<div class="featurettes">
             <svg id="svgMixed" class="example-box-model example-box" style="width: 320px; overflow: visible;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1085 513" xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:space="preserve" version="1.1"> 
@@ -423,23 +423,44 @@ var rotationTween = KUTE.to(element, {svgTransform: {rotate: 150}}, { transformO
 		</div>
         <p>Both shapes are scaled at <code>scale: 1.5</code>, translated to <code>translate: 250</code> and skewed at <code>skewX: -15</code>. If you inspect the elements, you will notice the second shape's translation is different from what we've set in the tween object, and this is to keep <code>transform-origin</code> at an expected <i>50% 50%</i> value. This means that the plugin will also compensate rotation transform origin when skews are used, so that both CSS3 transform property and SVG transform attribute have an identical animation.</p>
         
+        <h4>Chained SVG transforms</h4>
+        <p>The SVG Plugin does not work with SVG specific chained transform functions right away (do not confuse with tween chain), but if your SVGs only use this feature to set a custom <code>transform-origin</code>, it should look like this:</p>
+<pre><code class="language-markup">&lt;svg>
+    &lt;circle transform="translate(150,150) rotate(45) scale(1.2) translate(-150,-150)" r="20">&lt;/circle>
+&lt;/svg>
+</code></pre>
+    <p>Well in this case I would recommend using the values of the first translation as <code>transform-origin</code> for your tween built with the <code>.fromTo()</code> method like so:</p>
+<pre><code class="language-javascript">// a possible workaround for animating a SVG element that uses chained transform functions
+KUTE.fromTo(element, 
+    {svgTransform : { translate: 0, rotate: 45, scale: 0.5 }}, // we asume the current translation is zero on both X &amp; Y axis
+    {svgTransform : { translate: 450, rotate: 0, scale: 1.5 }}, // we will translate the X to a 450 value and scale to 1.5
+    {transformOrigin: [256,256]} // tween options use the transform-origin of the target SVG element
+).start();
+</code></pre>
+        <p>Before you hit the <kbd>Start</kbd> button, make sure to check the <code>transform</code> attribute value.</p>
+		<div class="featurettes">
+            <svg id="svgChained" class="example-box-model example-box" style="overflow: visible;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 513" xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:space="preserve" version="1.1"> 
+                <path class="bg-blue" 
+                      d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"
+                      transform="translate(256,256) rotate(45) scale(0.5) translate(-256,-256)"></path>            
+            </svg>
+	
+			<div class="example-buttons">
+				<a id="chainedBtn" class="btn btn-lime" href="javascript:void(0)">Start</a>	
+			</div>
+		</div>
+        <p>This way we make sure to count the real current transform-origin and produce a consistent animation with the SVG coordinate system, just as the above example showcases.</p>
+
         <h4>Recommendations for SVG Transforms</h4>
         <ul>
-            <li>The SVG Plugin coming with KUTE.js version 1.6.0 is successfuly handling all possible combinations of transform functions, and <b>always uses same order of transform functions</b>: <code>translate</code>, <code>rotate</code>, <code>skewX</code>, <code>skewY</code> and  <code>scale</code> to keep animation consistent and with same aspect as for CSS3 transforms on non-SVG elements. Keep in mind that the SVG transforms will use the center of a shape as transform origin by default.</li>
+            <li>The SVG Plugin coming with KUTE.js version 1.6.0 is successfuly handling all possible combinations of transform functions, and <b>always uses same order of transform functions</b>: <code>translate</code>, <code>rotate</code>, <code>skewX</code>, <code>skewY</code> and  <code>scale</code> to keep animation consistent and with same aspect as for CSS3 transforms on non-SVG elements.</li>
+            <li>Keep in mind that the SVG transforms will use the center of a shape as transform origin by default, contrary to the SVG draft.</li>
             <li>Keep in mind the adjustments required for rotations, remember the <code>.getBBox()</code> method, it's really useful to set custom <code>transform-origin</code>.</li>
             <li>By default browsers use <code>overflow: hidden</code> for <code>&lt;svg></code> so child elements are partialy/completely hidden while animating. You might want to set <code>overflow: visible</code> or some browser specific tricks if that is the case.</li>
             <li>When using <code>viewBox="0 0 500 500"</code> attribute for <code>&lt;svg></code> and no <code>width</code> and/or <code>height</code> attribute(s), means that you expect the SVG to be scalable and most Internet Explorer versions simply don't work. You might want to <a href="https://css-tricks.com/scale-svg/" target="_blank">check this tutorial</a>.</li>
-            <li>Similar to the CSS3 transform animation featured in the core engine, the <code class="bg-indigo">svgTransform</code> property DOES stack transform functions for chained tween objects created with the <code>.to()</code> method, you will have to provide only values for the functions that will change and the plugin will try to keep the unchanged values. However, there's a catch: you need to follow the properties that change and I highly recommend checking the example code for skews in the <a href="./assets/js/svg.js">svg.js</a> file.</li>
+            <li>Similar to the CSS3 transform animation featured in the core engine, the <code class="bg-indigo">svgTransform</code> property DOES stack transform functions for chained tween objects created with the <code>.to()</code> method, you will have to provide only values for the functions that will change and the plugin will try to keep the unchanged values. However, there's a catch: you need to follow all the properties and I highly recommend checking the example code for skews in the <a href="./assets/js/svg.js">svg.js</a> file.</li>
             <li>In other cases when you need maximum control and precision or when shapes are already affected by translation, you might want to use the <code>.fromTo()</code> method with all proper values.</li>
-            <li>Also the <code class="bg-indigo">svgTransform</code> feature does not support 3D transforms, because they are not supported in all browsers.</li>
-            <li>This feature does not work with SVG specific chained transforms right away (do not confuse with tween chain), but luckily there is a workaround<br>EG: <code>transform="translate(150,150) rotate(45) translate(-150,-150)"</code>.<br>In this case I would recommend using the values of the first translation as transform-origin for your tween, like so:<br>
-<pre><code class="language-javascript">// a possible workaround for animating a SVG element that uses chained transform functions
-KUTE.fromTo(element, 
-    {svgTransform : { translate: 0, rotate: 45, skewX: 0 }}, // startValues we asume the current translation is zero on both X and Y axis
-    {svgTransform : { translate: 450, rotate: 180, skewX: 20 }}, // endValues we will translate to a 450 value horizontaly and skew the X axis by 20 degrees
-    {transformOrigin: [150,150]} // tween options use the transform-origin of the target SVG element
-).start();
-</code></pre>This way we make sure to count the real current transform-origin and produce a consistent animation with the SVG coordinate system.</li>
+            <li>Also the <code class="bg-indigo">svgTransform</code> tween property does not support 3D transforms, because they are not supported in all SVG enabled browsers.</li>
         </ul>
 
 

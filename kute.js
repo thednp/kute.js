@@ -45,8 +45,18 @@
     p = null;
   }
 
-  // tools / utils
-  var getPrefix = function() { //returns browser prefix
+  // default tween options, since 1.6.1
+  var defaultOptions = {
+      duration: 700,
+      delay: 0,
+      offset: 0,
+      repeat: 0,
+      yoyo: false,
+      easing: 'linear',
+      keepHex: false,
+    },
+    // tools / utils
+    getPrefix = function() { //returns browser prefix
       var div = document.createElement('div'), i = 0,  pf = ['Moz', 'moz', 'Webkit', 'webkit', 'O', 'o', 'Ms', 'ms'],
         s = ['MozTransform', 'mozTransform', 'WebkitTransform', 'webkitTransform', 'OTransform', 'oTransform', 'MsTransform', 'msTransform'];
       for (var i = 0, pl = pf.length; i < pl; i++) { if (s[i] in div.style) { return pf[i]; }  }
@@ -596,7 +606,7 @@
       this.options = {}; for (var o in options) { this.options[o] = options[o]; }
       this.options.rpr = options.rpr || false; // internal option to process inline/computed style at start instead of init true/false
 
-      this.valuesRepeat = {}; // internal valuesStartRepeat
+      this.valuesRepeat = {}; // internal valuesRepeat
       this.valuesEnd = {}; // valuesEnd
       this.valuesStart = {}; // valuesStart
 
@@ -613,12 +623,13 @@
       }
 
       this.options.chain = []; // chained Tweens
-      this.options.easing = options.easing && typeof processEasing(options.easing) === 'function' ? processEasing(options.easing) : easing.linear;
-      this.options.repeat = options.repeat || 0;
-      this.options.repeatDelay = options.repeatDelay || 0;
-      this.options.yoyo = options.yoyo || false;
-      this.options.duration = options.duration || 700; // duration option | default
-      this.options.delay = options.delay || 0; // delay option | default
+      this.options.easing = options.easing && typeof processEasing(options.easing) === 'function' ? processEasing(options.easing) : easing[defaultOptions.easing]; // you can only set a core easing function as default
+      this.options.repeat = options.repeat || defaultOptions.repeat;
+      this.options.repeatDelay = options.repeatDelay || defaultOptions.repeatDelay;
+      this.options.yoyo = options.yoyo || defaultOptions.yoyo;
+      this.options.duration = options.duration || defaultOptions.duration; // duration option | default
+      this.options.delay = options.delay || defaultOptions.delay; // delay option | default
+
       this.repeat = this.options.repeat; // we cache the number of repeats to be able to put it back after all cycles finish
     },
     // tween control and chain
@@ -695,16 +706,16 @@
     TweensTO = function (els, vE, o) { // .to
       this.tweens = []; var options = [];
       for ( var i = 0, tl = els.length; i < tl; i++ ) {
-        options[i] = o || {}; o.delay = o.delay || 0;
-        options[i].delay = i>0 ? o.delay + (o.offset||0) : o.delay;
+        options[i] = o || {}; o.delay = o.delay || defaultOptions.delay;
+        options[i].delay = i>0 ? o.delay + (o.offset||defaultOptions.offset) : o.delay;
         this.tweens.push( to(els[i], vE, options[i]) );
       }
     },
     TweensFT = function (els, vS, vE, o) { // .fromTo
       this.tweens = []; var options = [];
       for ( var i = 0, l = els.length; i < l; i++ ) {
-        options[i] = o || {}; o.delay = o.delay || 0;
-        options[i].delay = i>0 ? o.delay + (o.offset||0) : o.delay;
+        options[i] = o || {}; o.delay = o.delay || defaultOptions.delay;
+        options[i].delay = i>0 ? o.delay + (o.offset||defaultOptions.offset) : o.delay;
         this.tweens.push( fromTo(els[i], vS, vE, options[i]) );
       }
     },
@@ -743,6 +754,7 @@
 
   return { // export core methods to public for plugins
     property: property, getPrefix: getPrefix, selector: selector, processEasing : processEasing, // utils
+    defaultOptions : defaultOptions, // default tween options since 1.6.1
     to: to, fromTo: fromTo, allTo: allTo, allFromTo: allFromTo, // main methods
     ticker : ticker, tick : tick, tweens : tweens, update: update, dom : DOM, // update
     parseProperty: parseProperty, prepareStart: prepareStart, crossCheck : crossCheck, Tween : Tween, // property parsing & preparation | Tween | crossCheck
