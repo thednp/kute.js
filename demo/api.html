@@ -187,7 +187,7 @@ stopButton.addEventListener('click', function(){
 </code></pre>
 
 		<h3>Chaining Tweens</h3>
-		<p><kbd>.chain()</kbd> method can be used to chain tweens together. When the animation finishes for a given tween, it triggers the animation start for another tween.</p>
+		<p><kbd>.chain()</kbd> method can be used to chain tweens together. When the animation finishes for a given tween, it calls for <code>.start()</code> for another tween(s).</p>
 <pre><code class="language-javascript">var tween2 = KUTE.fromTo(div,{left:50},{left:0});
 
 //the first tween chains the new tween
@@ -204,7 +204,7 @@ tween.chain(tween1,tween2);
 
         <p>Another thing we talked before is the ability to chain to one of the tween object within the array built with <code>.allTo()</code> or <code>.allFromTo()</code> methods.</p>
 <pre><code class="language-javascript">// chain to a tween from collection
-var tweensCollection = KUTE.allTo('.a-class-for-multiple-elements', {opacity: 1}, {opacity: 0});
+var tweensCollection = KUTE.allTo('.a-class-for-multiple-elements', {opacity: 1});
 
 // considering the collection has 5 tweens,
 // the array is right here tweensCollection.tweens, so
@@ -213,7 +213,7 @@ tweensCollection.tweens[1].chain(tween2);
 </code></pre>
 		<p>Also we can chain the tweens created with <code>.allTo()</code> and <code>.allFromTo()</code> methods like this:</p>
 <pre><code class="language-javascript">// chain a collection of tweens to another tween
-var tweensCollection2 = KUTE.allTo('.a-class-for-multiple-elements', {opacity: 1}, {opacity: 0});
+var tweensCollection2 = KUTE.allTo('.a-class-for-multiple-elements', {opacity: 1});
 
 // the array is right here tweensCollection2.tweens
 // we can pass it in the chain of another tween
