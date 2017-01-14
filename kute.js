@@ -51,6 +51,7 @@
       delay: 0,
       offset: 0,
       repeat: 0,
+      repeatDelay: 0,
       yoyo: false,
       easing: 'linear',
       keepHex: false,
