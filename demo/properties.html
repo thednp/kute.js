@@ -82,25 +82,30 @@
 
         <div class="content-wrap">
             <h2>Supported Properties</h2>
-            <p>KUTE.js covers all animation needs by itself for <code>transform</code> properties, <code>scroll</code> for window or a given element, colors. Note: not all browsers support <a href="http://caniuse.com/#feat=transforms2d" target="_blank">2D transforms</a>                or <a href="http://caniuse.com/#feat=transforms3d" target="_blank">3D transforms</a>. With the help of some plugins it also covers SVG specific properties, presentation attributes, or other CSS properties like <code>border-radius</code>,
-                <code>clip</code>, <code>backgroundPosition</code> and more box model properties.</p>
-            <p>Starting with KUTE.js version 1.5.0 the supported properties are split among some plugins to have a lighter core engine that gives more power to the developer. Due to it's modular coding, KUTE.js makes it easy to add support for additional
-                properties, so check out the guide on <a href="extend.html">how to extend</a>.</p>
-            <p>All common measurement units are supported: <code>px</code> and <code>%</code> for translations and box-model properties, or <code>deg</code> and <code>rad</code> for rotations and skews, while <code>clip</code> only supports <code>px</code>.
-                Other properties such as <code>opacity</code>, <code>scale</code> or <code>scroll</code> are unitless, and <code>background-position</code> always uses <code>%</code> as measurement unit. As for the text properties you can use <code>px</code>,
-                <code>em</code>, <code>rem</code>, <code>vh</code> and <code>vw</code>. Be sure to <a href="http://caniuse.com/#feat=viewport-units" target="_blank">check</a> what your browsers support in terms of measurement unit.</p>
+            <p>KUTE.js covers all animation needs by itself for <code>transform</code> properties, <code>scroll</code> for window or a given element, colors. Note: not all browsers support 
+                <a href="http://caniuse.com/#feat=transforms2d" target="_blank">2D transforms</a> or <a href="http://caniuse.com/#feat=transforms3d" target="_blank">3D transforms</a>. With 
+                the help of some plugins it also covers SVG specific properties, presentation attributes, or other CSS properties like <code>border-radius</code>, <code>clip</code>, 
+                <code>backgroundPosition</code> and more box model properties.</p>
+            <p>Starting with KUTE.js version 1.5.0 the supported properties are split among some plugins to have a lighter core engine that gives more power to the developer. Due to it's modular 
+                coding, KUTE.js makes it easy to add support for additional properties, so check out the guide on <a href="extend.html">how to extend</a>.</p>
+            <p>All common measurement units are supported: <code>px</code> and <code>%</code> for translations and box-model properties, or <code>deg</code> and <code>rad</code> for rotations and 
+                skews, while <code>clip</code> only supports <code>px</code>. Other properties such as <code>opacity</code>, <code>scale</code> or <code>scroll</code> are unitless, and 
+                <code>background-position</code> always uses <code>%</code> as measurement unit. As for the text properties you can use <code>px</code>, <code>em</code>, <code>rem</code>, 
+                <code>vh</code> and <code>vw</code>. Be sure to <a href="http://caniuse.com/#feat=viewport-units" target="_blank">check</a> what your browsers support in terms of measurement unit.</p>
 
             <h3>Opacity</h3>
-            <p>In most cases, the best animation possible is the <code class="bg-blue">opacity</code>, for performance, aesthetics and maybe more other reasons such as avoiding unwanted layout changes. KUTE.js also covers IE8 here with the help of proprietary
-                synthax <code>filter: alpha(opacity=0)</code>. Also, opacity can be used for instance on legacy browsers that don't support <code>RGBA</code> colors. Eg. <code>opacity:0.5</code> will make an element semitransparent.</p>
+            <p>In most cases, the best animation possible is the <code class="bg-blue">opacity</code>, for performance, aesthetics and maybe more other reasons such as avoiding unwanted layout changes. 
+                KUTE.js also covers IE8 here with the help of proprietary synthax <code>filter: alpha(opacity=0)</code>. Also, opacity can be used for instance on legacy browsers that don't support 
+                <code>RGBA</code> colors. Eg. <code>opacity:0.5</code> will make an element semitransparent.</p>
 
             <h3>2D Transform Properties</h3>
-            <p>The core engine supports most 2D transform properties, but the most important part is that starting with KUTE.js v1.6.0 the values used for animation are always converted from percentage based translation to pixels and radians based angles
-                to degrees, to help improve memory efficiency.</p>
+            <p>The core engine supports most 2D transform properties, but the most important part is that starting with KUTE.js v1.6.0 the values used for animation are always converted from percentage 
+                based translation to pixels and radians based angles to degrees, to help improve memory efficiency.</p>
             <ul>
-                <li><kbd class="bg-blue">translate</kbd> property can be used for horizontal and / or vertical movement. EG. <code>translate:150</code> to translate an element 150px to the right or <code>translate:[-150,200]</code> to move the element to
-                    the left by 150px and to bottom by 200px. <kbd class="bg-lime">IE9+</kbd></li>
-                <li><kbd class="bg-blue">rotate</kbd> property applies rotation to an element on the Z axis or the plain document. Eg. <code>rotate:250</code> will rotate an element clockwise by 250 degrees. <kbd class="bg-lime">IE9+</kbd></li>
+                <li><kbd class="bg-blue">translate</kbd> property can be used for horizontal and / or vertical movement. EG. <code>translate:150</code> to translate an element 150px to the right or 
+                    <code>translate:[-150,200]</code> to move the element to the left by 150px and to bottom by 200px. <kbd class="bg-lime">IE9+</kbd></li>
+                <li><kbd class="bg-blue">rotate</kbd> property applies rotation to an element on the Z axis or the plain document. Eg. <code>rotate:250</code> will rotate an element clockwise by 250 degrees. 
+                    <kbd class="bg-lime">IE9+</kbd></li>
                 <li><kbd class="bg-blue">skewX</kbd> property applies a skew transformation on the X axis. Eg. <code>skewX:25</code> will skew an element by 25 degrees. <kbd class="bg-lime">IE9+</kbd></li>
                 <li><kbd class="bg-blue">skewY</kbd> property applies a skew transformation on the Y axis. Eg. <code>skewY:25</code> will skew an element by 25 degrees. <kbd class="bg-lime">IE9+</kbd></li>
                 <li><kbd class="bg-blue">scale</kbd> property applies a single value size transformation. Eg. <code>scale:2</code> will enlarge an element by a degree of 2. <kbd class="bg-lime">IE9+</kbd></li>
@@ -108,28 +113,32 @@
             </ul>
 
             <h3>3D Transform Properties</h3>
-            <p>The core engine supports all 3D transform properties except <code>matrix3d</code> and <code>rotate3d</code>. Just as the above, these properties' values are also converted to traditional pixels and degrees measurements to help improve memory
-                usage.</p>
+            <p>The core engine supports all 3D transform properties except <code>matrix3d</code> and <code>rotate3d</code>. Just as the above, these properties' values are also converted to traditional pixels 
+                and degrees measurements to help improve memory usage.</p>
             <ul>
                 <li><kbd class="bg-blue">translateX</kbd> property is for horizontal translation. EG. <code>translateX:150</code> to translate an element 150px to the right. <kbd class="bg-lime">IE10+</kbd></li>
                 <li><kbd class="bg-blue">translateY</kbd> property is for vertical translation. EG. <code>translateY:-250</code> to translate an element 250px towards the top. <kbd class="bg-lime">IE10+</kbd></li>
-                <li><kbd class="bg-blue">translateZ</kbd> property is for translation on the Z axis in a given 3D field. EG. <code>translateZ:-250</code> to translate an element 250px to it's back, making it smaller. Requires a <code>perspective</code> tween
-                    option to be used; the smaller perspective value, the deeper translation. <kbd class="bg-lime">IE10+</kbd></li>
-                <li><kbd class="bg-blue">translate3d</kbd> property is for movement on all the axis in a given 3D field. EG. <code>translate3d:[-150,200,150]</code> to translate an element 150px to the left, 200px to the bottom and 150px closer to the viewer,
-                    making it larger. Also requires using a <code>perspective</code> tween option. <kbd class="bg-lime">IE10+</kbd></li>
-                <li><kbd class="bg-blue">rotateX</kbd> property rotates an element on the X axis in a given 3D field. Eg. <code>rotateX:250</code> will rotate an element clockwise by 250 degrees. Requires perspective. <kbd class="bg-lime">IE10+</kbd></li>
-                <li><kbd class="bg-blue">rotateY</kbd> property rotates an element on the Y axis in a given 3D field. Eg. <code>rotateY:-150</code> will rotate an element counter-clockwise by 150 degrees. Requires perspective. <kbd class="bg-lime">IE10+</kbd></li>
-                <li><kbd class="bg-blue">rotateZ</kbd> property rotates an element on the Z axis and is the equivalent of the 2D rotation. Eg. <code>rotateZ:-150</code> will rotate an element counter-clockwise by 150 degrees. <kbd class="bg-lime">IE10+</kbd></li>
+                <li><kbd class="bg-blue">translateZ</kbd> property is for translation on the Z axis in a given 3D field. EG. <code>translateZ:-250</code> to translate an element 250px to it's back, making it smaller. 
+                    Requires a <code>perspective</code> tween option to be used; the smaller perspective value, the deeper translation. <kbd class="bg-lime">IE10+</kbd></li>
+                <li><kbd class="bg-blue">translate3d</kbd> property is for movement on all the axis in a given 3D field. EG. <code>translate3d:[-150,200,150]</code> to translate an element 150px to the left, 200px 
+                    to the bottom and 150px closer to the viewer, making it larger. Also requires using a <code>perspective</code> tween option. <kbd class="bg-lime">IE10+</kbd></li>
+                <li><kbd class="bg-blue">rotateX</kbd> property rotates an element on the X axis in a given 3D field. Eg. <code>rotateX:250</code> will rotate an element clockwise by 250 degrees. Requires perspective. 
+                    <kbd class="bg-lime">IE10+</kbd></li>
+                <li><kbd class="bg-blue">rotateY</kbd> property rotates an element on the Y axis in a given 3D field. Eg. <code>rotateY:-150</code> will rotate an element counter-clockwise by 150 degrees. 
+                    Requires perspective. <kbd class="bg-lime">IE10+</kbd></li>
+                <li><kbd class="bg-blue">rotateZ</kbd> property rotates an element on the Z axis and is the equivalent of the 2D rotation. Eg. <code>rotateZ:-150</code> will rotate an element counter-clockwise by 
+                    150 degrees. <kbd class="bg-lime">IE10+</kbd></li>
                 <li><kbd class="bg-red">matrix3d</kbd>, <kbd class="bg-red">rotate3d</kbd>, and <kbd class="bg-red">scale3d</kbd> properties are not supported.</li>
             </ul>
 
             <h3>SVG Transform</h3>
-            <p>The <a href="svg.html">SVG Plugin</a> features cross browser 2D transform animations via the <kbd class="bg-olive">svgTransform</kbd> tween property and the <code>transform</code> presentation attribute, similar in functionality as the Attributes
-                Plugin.</p>
+            <p>The <a href="svg.html">SVG Plugin</a> features cross browser 2D transform animations via the <kbd class="bg-olive">svgTransform</kbd> tween property and the <code>transform</code> presentation attribute, 
+                similar in functionality as the Attributes Plugin.</p>
             <ul>
-                <li><kbd class="bg-olive">translate</kbd> sub-property applies horizontal and / or vertical translation. EG. <code>translate:150</code> to translate a shape 150px to the right or <code>translate:[-150,200]</code> to move the element to the
-                    left by 150px and to bottom by 200px. <kbd class="bg-lime">IE9+</kbd></li>
-                <li><kbd class="bg-olive">rotate</kbd> sub-property applies rotation to a shape on the Z axis. Eg. <code>rotate:150</code> will rotate a shape clockwise by 150 degrees around it's own center or around the <code>transformOrigin: '450 450'</code>                    set tween option coordinate of the parent element. <kbd class="bg-lime">IE9+</kbd></li>
+                <li><kbd class="bg-olive">translate</kbd> sub-property applies horizontal and / or vertical translation. EG. <code>translate:150</code> to translate a shape 150px to the right or 
+                    <code>translate:[-150,200]</code> to move the element to the left by 150px and to bottom by 200px. <kbd class="bg-lime">IE9+</kbd></li>
+                <li><kbd class="bg-olive">rotate</kbd> sub-property applies rotation to a shape on the Z axis. Eg. <code>rotate:150</code> will rotate a shape clockwise by 150 degrees around it's own center or around 
+                    the <code>transformOrigin: '450 450'</code> set tween option coordinate of the parent element. <kbd class="bg-lime">IE9+</kbd></li>
                 <li><kbd class="bg-olive">skewX</kbd> sub-property used to apply a skew transformation on the X axis. Eg. <code>skewX:25</code> will skew a shape by 25 degrees. <kbd class="bg-lime">IE9+</kbd></li>
                 <li><kbd class="bg-olive">skewY</kbd> sub-property used to apply a skew transformation on the Y axis. Eg. <code>skewY:25</code> will skew a shape by 25 degrees. <kbd class="bg-lime">IE9+</kbd></li>
                 <li><kbd class="bg-olive">scale</kbd> sub-property used to apply a single value size transformation. Eg. <code>scale:0.5</code> will scale a shape to half of it's initial size. <kbd class="bg-lime">IE9+</kbd></li>
@@ -138,113 +147,119 @@
             <p>As a quick note, the translation is normalized and computed in a way to handle the <code>transformOrigin</code> tween option in all cases, not just for rotations, but also scaling or skews.</p>
 
             <h3>SVG Properties</h3>
-            <p>The <a href="svg.html">SVG Plugin</a> can animate the <code>d</code> attribute of a given <code>&lt;path&gt;</code> or <code>&lt;glyph&gt;</code> element with the tween property called <kbd class="bg-olive">path</kbd>. The animation effect
-                is widelly known as morph SVG and implemented in various scripts, but the KUTE.js implementation is similar to <a href="http://bl.ocks.org/mbostock/3081153" target="_blank">the D3.js examples</a> for wider usability and the ability to
-                optimize the visual and performance of the morph, all with the help of special tween options and utilities.</p>
+            <p>The <a href="svg.html">SVG Plugin</a> can animate the <code>d</code> attribute of a given <code>&lt;path&gt;</code> or <code>&lt;glyph&gt;</code> element with the tween property called 
+                <kbd class="bg-olive">path</kbd>. The animation effect is widelly known as morph SVG and implemented in various scripts, but the KUTE.js implementation is similar to 
+                <a href="http://bl.ocks.org/mbostock/3081153" target="_blank">the D3.js examples</a> for wider usability and the ability to optimize the visual and performance of the morph, all with the help of special 
+                tween options and utilities.</p>
 
-            <p>Further more, the SVG Plugin can animate the stroke in a way that you probably know as <code>drawSVG</code>. KUTE.js implements it as <kbd class="bg-olive">draw</kbd> tween property that deals with the well known CSS properties: <kbd>strokeDasharray</kbd>                and <kbd>strokeDashoffset</kbd>.
+            <p>Further more, the SVG Plugin can animate the stroke in a way that you probably know as <code>drawSVG</code>. KUTE.js implements it as <kbd class="bg-olive">draw</kbd> tween property that deals with the 
+                well known CSS properties: <kbd>strokeDasharray</kbd> and <kbd>strokeDashoffset</kbd>.</p>
 
-                <h3>Box Model Properties</h3>
-                <p>The core engine supports <code>width</code>, <code>height</code>, <code>left</code> and <code>top</code> while the <a href="css.html">CSS Plugin</a> adds support for all other box-model properties.</p>
-                <ul>
-                    <li><kbd class="bg-blue">left</kbd>, <kbd class="bg-blue">top</kbd>, <kbd class="bg-olive">right</kbd> and <kbd class="bg-olive">bottom</kbd> are <code>position</code> based properties for movement on vertical and / or horizontal axis.
-                        These properties require that the element to animate uses <code>position: absolute/relative</code> styling as well as it's parent element requires <code>position:relative</code>. These properties can be used as fallback for browsers
-                        with no support for <code>translate</code> properties such as IE8.</li>
-                    <li><kbd class="bg-blue">width</kbd>, <kbd class="bg-blue">height</kbd>, <kbd class="bg-olive">minWidth</kbd>, <kbd class="bg-olive">minHeight</kbd>, <kbd class="bg-olive">maxWidth</kbd>, <kbd class="bg-olive">maxHeight</kbd> are properties
-                        that allow you to animate the size of an element on horizontal and / or vertical axis. These properties can be used on images as fallback for <code>scale</code> on IE8 again, as well as for other purposes.</li>
-                    <li><kbd class="bg-olive">padding</kbd>, <kbd class="bg-olive">margin</kbd>, <kbd class="bg-olive">paddingTop</kbd>, <kbd class="bg-olive">paddingBottom</kbd>, <kbd class="bg-olive">paddingLeft</kbd>, <kbd class="bg-olive">paddingRight</kbd>,
-                        <kbd class="bg-olive">marginTop</kbd>, <kbd class="bg-olive">marginBottom</kbd>, <kbd class="bg-olive">marginLeft</kbd> and <kbd class="bg-olive">marginRight</kbd> are properties that allow you to animate the spacing of an element
-                        inside (via padding) and outside (via margin). Shorthand notations such as <code>margin: "20px 50px"</code> or any other type are not supported.</li>
-                    <li><kbd class="bg-olive">borderWidth</kbd>, <kbd class="bg-olive">borderTopWidth</kbd>, <kbd class="bg-olive">borderRightWidth</kbd>, <kbd class="bg-olive">borderBottomWidth</kbd> are <kbd class="bg-olive">borderLeftWidth</kbd> are properties
-                        that allow you to animate the border of an element either on all sides at once or each side separatelly. Shorthand notations are not supported.</li>
-                    <li><kbd class="bg-olive">outlineWidth</kbd> property allows you to animate the <code>outline-width</code> of an element.</li>
-                </ul>
-                <p>As a quick side note, starting with KUTE.js v1.6.0 the core engine supported box model properties values are converted from percent based into pixel based values, using the <code>element.offsetWidth</code> as a refference. The idea is
-                    the same as presented on the above supported transform properties.</p>
-                <p><strong>Remember</strong>: these properties are <strong>layout modifiers</strong> that may force repaint of the entire DOM, drastically affecting performance on lower end and mobile devices. They also trigger <code>resize</code> event
-                    that may cause crashes on old browsers such as IE8 when using handlers bound on <code>resize</code>, so use with caution.</p>
+            <h3>Box Model Properties</h3>
+            <p>The core engine supports <code>width</code>, <code>height</code>, <code>left</code> and <code>top</code> while the <a href="css.html">CSS Plugin</a> adds support for all other box-model properties.</p>
+            <ul>
+                <li><kbd class="bg-blue">left</kbd>, <kbd class="bg-blue">top</kbd>, <kbd class="bg-olive">right</kbd> and <kbd class="bg-olive">bottom</kbd> are <code>position</code> based properties for movement on 
+                    vertical and / or horizontal axis. These properties require that the element to animate uses <code>position: absolute/relative</code> styling as well as it's parent element requires 
+                    <code>position:relative</code>. These properties can be used as fallback for browsers with no support for <code>translate</code> properties such as IE8.</li>
+                <li><kbd class="bg-blue">width</kbd>, <kbd class="bg-blue">height</kbd>, <kbd class="bg-olive">minWidth</kbd>, <kbd class="bg-olive">minHeight</kbd>, <kbd class="bg-olive">maxWidth</kbd>, 
+                    <kbd class="bg-olive">maxHeight</kbd> are properties that allow you to animate the size of an element on horizontal and / or vertical axis. These properties can be used on images as fallback for 
+                    <code>scale</code> on IE8 again, as well as for other purposes.</li>
+                <li><kbd class="bg-olive">padding</kbd>, <kbd class="bg-olive">margin</kbd>, <kbd class="bg-olive">paddingTop</kbd>, <kbd class="bg-olive">paddingBottom</kbd>, <kbd class="bg-olive">paddingLeft</kbd>, 
+                    <kbd class="bg-olive">paddingRight</kbd>, <kbd class="bg-olive">marginTop</kbd>, <kbd class="bg-olive">marginBottom</kbd>, <kbd class="bg-olive">marginLeft</kbd> and 
+                    <kbd class="bg-olive">marginRight</kbd> are properties that allow you to animate the spacing of an element inside (via padding) and outside (via margin). Shorthand notations such as 
+                    <code>margin: "20px 50px"</code> or any other type are not supported.</li>
+                <li><kbd class="bg-olive">borderWidth</kbd>, <kbd class="bg-olive">borderTopWidth</kbd>, <kbd class="bg-olive">borderRightWidth</kbd>, <kbd class="bg-olive">borderBottomWidth</kbd> are 
+                    <kbd class="bg-olive">borderLeftWidth</kbd> are properties that allow you to animate the border of an element either on all sides at once or each side separatelly. Shorthand notations are not supported.</li>
+                <li><kbd class="bg-olive">outlineWidth</kbd> property allows you to animate the <code>outline-width</code> of an element.</li>
+            </ul>
+            <p>As a quick side note, starting with KUTE.js v1.6.0 the core engine supported box model properties values are converted from percent based into pixel based values, using the <code>element.offsetWidth</code> 
+                as a refference. The idea is the same as presented on the above supported transform properties.</p>
+            <p><strong>Remember</strong>: these properties are <strong>layout modifiers</strong> that may force repaint of the entire DOM, drastically affecting performance on lower end and mobile devices. 
+                They also trigger <code>resize</code> event that may cause crashes on old browsers such as IE8 when using handlers bound on <code>resize</code>, so use with caution.</p>
 
-                <h3>Border Radius</h3>
-                <p>The <a href="css.html">CSS Plugin</a> covers all the radius properties with the exception that shorthand notations are not implemented.</p>
-                <ul>
-                    <li><kbd class="bg-olive">borderRadius</kbd> allows you to animate the <code>border-radius</code> on all corners for a given element.</li>
-                    <li><kbd class="bg-olive">borderTopLeftRadius</kbd> allows you to animate the <code>border-top-left-radius</code> for a given element.</li>
-                    <li><kbd class="bg-olive">borderTopRightRadius</kbd> allows you to animate the <code>border-top-right-radius</code> for a given element.</li>
-                    <li><kbd class="bg-olive">borderBottomLeftRadius</kbd> allows you to animate the <code>border-bottom-left-radius</code>for a given element.</li>
-                    <li><kbd class="bg-olive">borderBottomRightRadius</kbd> allows you to animate the <code>border-bottom-right-radius</code>for a given element.</li>
-                </ul>
-                <p>For all radius properties above <code>borderRadius:20</code> or <code>borderTopLeftRadius:'25%'</code> will do. In the first case <code>px</code> is the default measurement unit used, while in the second we require using <code>%</code>                    unit which is relative to the element's size.</p>
-                <p><strong>Remember</strong>: shorthands for <code>border-radius</code> are not supported. Also KUTE.js does not cover early implementations by Mozilla Firefox (Eg. <code>-moz-border-radius-topleft</code>) as they were deprecated with later
-                    versions.</p>
+            <h3>Border Radius</h3>
+            <p>The <a href="css.html">CSS Plugin</a> covers all the radius properties with the exception that shorthand notations are not implemented.</p>
+            <ul>
+                <li><kbd class="bg-olive">borderRadius</kbd> allows you to animate the <code>border-radius</code> on all corners for a given element.</li>
+                <li><kbd class="bg-olive">borderTopLeftRadius</kbd> allows you to animate the <code>border-top-left-radius</code> for a given element.</li>
+                <li><kbd class="bg-olive">borderTopRightRadius</kbd> allows you to animate the <code>border-top-right-radius</code> for a given element.</li>
+                <li><kbd class="bg-olive">borderBottomLeftRadius</kbd> allows you to animate the <code>border-bottom-left-radius</code>for a given element.</li>
+                <li><kbd class="bg-olive">borderBottomRightRadius</kbd> allows you to animate the <code>border-bottom-right-radius</code>for a given element.</li>
+            </ul>
+            <p>For all radius properties above <code>borderRadius:20</code> or <code>borderTopLeftRadius:'25%'</code> will do. In the first case <code>px</code> is the default measurement unit used, while in the second we 
+                require using <code>%</code> unit which is relative to the element's size.</p>
+            <p><strong>Remember</strong>: shorthands for <code>border-radius</code> are not supported. Also KUTE.js does not cover early implementations by Mozilla Firefox (Eg. <code>-moz-border-radius-topleft</code>) 
+                as they were deprecated with later versions.</p>
 
-                <h3>Color Properties</h3>
-                <p>The core engine only supports <code>color</code> and <code>backgroundColor</code>, but the <a href="css.html">CSS Plugin</a> covers all the others. KUTE.js currently supports values such as <code>HEX</code>, <code>RGB</code> and <code>RGBA</code>                    for all color properties, but IE8 does not support <code>RGBA</code> and always uses <code>RGB</code> when detected, otherwise will produce no effect. There is also a tween option <code>keepHex:true</code> to convert the color format.
-                    Eg. <code>color: '#ff0000'</code> or <code>backgroundColor: 'rgb(202,150,20)'</code> or <code>borderColor: 'rgba(250,100,20,0.5)'</code>. The IE9+ browsers should also work with
-                    <a href="http://www.w3schools.com/colors/colors_names.asp"
-                        target="_blank">web safe colors</a>, eg. <code>color: 'red'</code>. </p>
-                <ul>
-                    <li><kbd class="bg-blue">color</kbd> allows you to animate the color for a given text element.</li>
-                    <li><kbd class="bg-blue">backgroundColor</kbd> allows you to animate the <code>background-color</code> for a given element.</li>
-                    <li><kbd class="bg-olive">outlineColor</kbd> allows you to animate the <code>outline-color</code> for a given element.</li>
-                    <li><kbd class="bg-olive">borderColor</kbd> allows you to animate the <code>border-color</code> on all sides for a given element.</li>
-                    <li><kbd class="bg-olive">borderTopColor</kbd>, <kbd class="bg-olive">borderRightColor</kbd>, <kbd class="bg-olive">borderBottomColor</kbd> and <kbd class="bg-olive">borderLeftColor</kbd> properties allow you to animate the color of the
-                        border on each side of a given element.</li>
-                </ul>
-                <p><strong>Remember</strong>: shorthands for <code>borderColor</code> property are not supported.</p>
+            <h3>Color Properties</h3>
+            <p>The core engine only supports <code>color</code> and <code>backgroundColor</code>, but the <a href="css.html">CSS Plugin</a> covers all the others. KUTE.js currently supports values such as <code>HEX</code>, 
+                <code>RGB</code> and <code>RGBA</code> for all color properties, but IE8 does not support <code>RGBA</code> and always uses <code>RGB</code> when detected, otherwise will produce no effect. There is also a 
+                tween option <code>keepHex:true</code> to convert the color format. Eg. <code>color: '#ff0000'</code> or <code>backgroundColor: 'rgb(202,150,20)'</code> or <code>borderColor: 'rgba(250,100,20,0.5)'</code>. 
+                The IE9+ browsers should also work with <a href="http://www.w3schools.com/colors/colors_names.asp" target="_blank">web safe colors</a>, eg. <code>color: 'red'</code>. </p>
+            <ul>
+                <li><kbd class="bg-blue">color</kbd> allows you to animate the color for a given text element.</li>
+                <li><kbd class="bg-blue">backgroundColor</kbd> allows you to animate the <code>background-color</code> for a given element.</li>
+                <li><kbd class="bg-olive">outlineColor</kbd> allows you to animate the <code>outline-color</code> for a given element.</li>
+                <li><kbd class="bg-olive">borderColor</kbd> allows you to animate the <code>border-color</code> on all sides for a given element.</li>
+                <li><kbd class="bg-olive">borderTopColor</kbd>, <kbd class="bg-olive">borderRightColor</kbd>, <kbd class="bg-olive">borderBottomColor</kbd> and <kbd class="bg-olive">borderLeftColor</kbd> properties allow 
+                    you to animate the color of the border on each side of a given element.</li>
+            </ul>
+            <p><strong>Remember</strong>: shorthands for <code>borderColor</code> property are not supported.</p>
 
-                <h3>Presentation Attributes</h3>
-                <p>The <a href="attr.html">Attributes Plugin</a> can animate any numerical presentation attribute such as <kbd class="bg-olive">width</kbd>, <kbd class="bg-olive">cx</kbd> or <kbd class="bg-olive">stop-opacity</kbd>, but the values can be
-                    also suffixed: <code>150px</code> or <code>50%</code>, and for that you must always provide a string value that include the measurement unit, and that, of course, depends on the attribute. This plugin can be a great addition to the
-                    above SVG Plugin for specific gradient attributes or specific geometric shapes' attributes.</p>
-                <p>Starting KUTE.js 1.6.0 the <a href="attr.html">Attributes Plugin</a> can also animate color attributes such as <kbd class="bg-olive">stroke</kbd>, <kbd class="bg-olive">fill</kbd> or <kbd class="bg-olive">stop-color</kbd>, and they are
-                    removed from the SVG Plugin, and the reason for that is the new bundle build that incorporates both plugins into an unified file.
-                    <p>
-                        <p>The synthax is slightly different to make sure we don't mess up with CSS properties that have the same name because the presentation attribute may be a unitless attribute while the CSS property might require a suffix (%,px,etc).
-                            For instance <code>KUTE.to('selector', {attr:{width:150}})</code> is clearly different from <code>KUTE.to('selector', {width:150})</code> which is the the CSS property with the same name.</p>
-                        <p>The plugin handles attribute namespaces properly which means you can use both Javascript notation (like <kbd class="bg-olive">stopColor</kbd>) and HTML markup notation (like <kbd class="bg-olive">'stop-color'</kbd>), see the below
-                            example.</p>
-                        <p>EG: <code>KUTE.to('selector', {attr:{stroke:'blue'}})</code> to animate the stroke of an SVG element or <code>KUTE.to('selector', {attr:{'stop-color':'red'}})</code> to animate the stop color of some SVG gradient.</p>
+            <h3>Presentation Attributes</h3>
+            <p>The <a href="attr.html">Attributes Plugin</a> can animate any numerical presentation attribute such as <kbd class="bg-olive">width</kbd>, <kbd class="bg-olive">cx</kbd> or <kbd class="bg-olive">stop-opacity</kbd>,
+                 but the values can be also suffixed: <code>150px</code> or <code>50%</code>, and for that you must always provide a string value that include the measurement unit, and that, of course, depends on the attribute. 
+                 This plugin can be a great addition to the above SVG Plugin for specific gradient attributes or specific geometric shapes' attributes.</p>
+            <p>Starting KUTE.js 1.6.0 the <a href="attr.html">Attributes Plugin</a> can also animate color attributes such as <kbd class="bg-olive">stroke</kbd>, <kbd class="bg-olive">fill</kbd> or 
+                <kbd class="bg-olive">stop-color</kbd>, and they are removed from the SVG Plugin, and the reason for that is the new bundle build that incorporates both plugins into an unified file.</p>
 
-                        <h3>Typography Properties</h3>
-                        <p>The <a href="css.html">CSS Plugin</a> also cover the text properties, and these can be combinated with each other when applied to text elements (paragraphs, headings) as animation fallback for <code>scale</code> on browsers that
-                            don't support <code>transform</code> at all. Yes, IE8 and other legacy browsers.</p>
-                        <ul>
-                            <li><kbd class="bg-olive">fontSize</kbd> allows you to animate the <code>font-size</code> for a given element.</li>
-                            <li><kbd class="bg-olive">lineHeight</kbd> allows you to animate the <code>line-height</code> for a given element.</li>
-                            <li><kbd class="bg-olive">letterSpacing</kbd> allows you to animate the <code>letter-spacing</code> for a given element.</li>
-                            <li><kbd class="bg-olive">wordSpacing</kbd> allows you to animate the <code>word-spacing</code> for a given element.</li>
-                        </ul>
-                        <p><strong>Remember</strong>: these properties are <strong>layout modifiers</strong>.</p>
+            <p>The synthax is slightly different to make sure we don't mess up with CSS properties that have the same name because the presentation attribute may be a unitless attribute while the CSS property might require a 
+                suffix (%,px,etc). For instance <code>KUTE.to('selector', {attr:{width:150}})</code> is clearly different from <code>KUTE.to('selector', {width:150})</code> which is the the CSS property with the same name.</p>
+            <p>The plugin handles attribute namespaces properly which means you can use both Javascript notation (like <kbd class="bg-olive">stopColor</kbd>) and HTML markup notation (like <kbd class="bg-olive">'stop-color'</kbd>),
+                 see the below example.</p>
+            <p>EG: <code>KUTE.to('selector', {attr:{stroke:'blue'}})</code> to animate the stroke of an SVG element or <code>KUTE.to('selector', {attr:{'stop-color':'red'}})</code> to animate the stop color of some SVG gradient.</p>
 
-                        <h3>Scroll Animation</h3>
-                        <p>KUTE.js core engine currently supports only vertical <kbd class="bg-blue">scroll</kbd> for both the window and a given element that's scrollable (when <code>scrollHeight</code> is higher than <code>offsetHeight</code>). EG: <code>scroll: 150</code>                            will scroll an element or window to 150px from top to bottom. When animating scroll, KUTE.js will disable all scroll and swipe handlers to prevent animation bubbles as well as scroll bottlenecks, but we'll have a look at that
-                            later.</p>
+            <h3>Typography Properties</h3>
+            <p>The <a href="css.html">CSS Plugin</a> also cover the text properties, and these can be combinated with each other when applied to text elements (paragraphs, headings) as animation fallback for <code>scale</code> 
+                on browsers that don't support <code>transform</code> at all. Yes, IE8 and other legacy browsers.</p>
+            <ul>
+                <li><kbd class="bg-olive">fontSize</kbd> allows you to animate the <code>font-size</code> for a given element.</li>
+                <li><kbd class="bg-olive">lineHeight</kbd> allows you to animate the <code>line-height</code> for a given element.</li>
+                <li><kbd class="bg-olive">letterSpacing</kbd> allows you to animate the <code>letter-spacing</code> for a given element.</li>
+                <li><kbd class="bg-olive">wordSpacing</kbd> allows you to animate the <code>word-spacing</code> for a given element.</li>
+            </ul>
+            <p><strong>Remember</strong>: these properties are <strong>layout modifiers</strong>.</p>
 
-                        <h3>String Properties</h3>
-                        <ul>
-                            <li><kbd class="bg-olive">number</kbd> allows you to tween a number either from 0 or from a current value and updates the <code>innerHTML</code> for a given target. Eg. <code>number:1500</code></li>
-                            <li><kbd class="bg-olive">text</kbd> allows you to write a string one character at a time followed by a scrambling character. Eg. <code>text: 'A demo with &lt;b>substring&lt;/b>'</code>. </li>
-                        </ul>
-                        <p>See <a href="text.html">Text Plugin</a> for details.</p>
+            <h3>Scroll Animation</h3>
+            <p>KUTE.js core engine currently supports only vertical <kbd class="bg-blue">scroll</kbd> for both the window and a given element that's scrollable (when <code>scrollHeight</code> is higher than 
+                <code>offsetHeight</code>). EG: <code>scroll: 150</code> will scroll an element or window to 150px from top to bottom. When animating scroll, KUTE.js will disable all scroll and swipe handlers to prevent 
+                animation bubbles as well as scroll bottlenecks, but we'll have a look at that later.</p>
 
-                        <h3>Other Properties</h3>
-                        <ul>
-                            <li><kbd class="bg-olive">clip</kbd> allows you to animate the <code>clip</code> property for a given element. Only rect is supported. Eg. <code>clip:[250,200,300,0]</code>. See
-                                <a href="http://www.w3.org/TR/CSS2/visufx.html#propdef-clip"
-                                    target="_blank">spec</a> for details.</li>
-                            <li><kbd class="bg-olive">backgroundPosition</kbd> allows you to animate the <code>background-position</code> for a given element that uses a background image. It only uses % as measurement unit. Eg. <code>backgroundPosition:[50,20]</code></li>
-                        </ul>
+            <h3>String Properties</h3>
+            <ul>
+                <li><kbd class="bg-olive">number</kbd> allows you to tween a number either from 0 or from a current value and updates the <code>innerHTML</code> for a given target. Eg. <code>number:1500</code></li>
+                <li><kbd class="bg-olive">text</kbd> allows you to write a string one character at a time followed by a scrambling character. Eg. <code>text: 'A demo with &lt;b>substring&lt;/b>'</code>. </li>
+            </ul>
+            <p>See <a href="text.html">Text Plugin</a> for details.</p>
 
-                        <h3>Legend</h3>
-                        <ul>
-                            <li><kbd class="bg-blue">core</kbd> - the property/properties are supported by core animation engine.</li>
-                            <li><kbd class="bg-olive">plugin</kbd> - the property/properties are supported by plugins.</li>
-                            <li><kbd class="bg-red">unsupported</kbd> - the property/properties are NOT supported by core and/or plugins.</li>
-                        </ul>
+            <h3>Other Properties</h3>
+            <ul>
+                <li><kbd class="bg-olive">clip</kbd> allows you to animate the <code>clip</code> property for a given element. Only rect is supported. Eg. <code>clip:[250,200,300,0]</code>. See
+                    <a href="http://www.w3.org/TR/CSS2/visufx.html#propdef-clip" target="_blank">spec</a> for details.</li>
+                <li><kbd class="bg-olive">backgroundPosition</kbd> allows you to animate the <code>background-position</code> for a given element that uses a background image. It only uses % as measurement unit. 
+                    Eg. <code>backgroundPosition:[50,20]</code></li>
+            </ul>
 
-                        <h3>Did We Miss Any Important Property?</h3>
-                        <p>Make sure you go to <a href="https://github.com/thednp/kute.js/issues" target="_blank">the issues tracker</a> and report the missing property ASAP, or you can check the <a href="extend.html">extend</a> guide and learn how to develop
-                            a plugin to support a new property yourself.</p>
+            <h3>Legend</h3>
+            <ul>
+                <li><kbd class="bg-blue">core</kbd> - the property/properties are supported by core animation engine.</li>
+                <li><kbd class="bg-olive">plugin</kbd> - the property/properties are supported by plugins.</li>
+                <li><kbd class="bg-red">unsupported</kbd> - the property/properties are NOT supported by core and/or plugins.</li>
+            </ul>
+
+            <h3>Did We Miss Any Important Property?</h3>
+            <p>Make sure you go to <a href="https://github.com/thednp/kute.js/issues" target="_blank">the issues tracker</a> and report the missing property ASAP, or you can check the <a href="extend.html">extend</a> 
+                guide and learn how to develop a plugin to support a new property yourself.</p>
         </div>
 
         <div class="content-wrap">

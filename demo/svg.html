@@ -142,8 +142,8 @@ var tween = KUTE.to('#rectangle', { path: 'M301.113,12.011l99.25,179.996l201.864
 
             <p>As you can see, the animation could need some fine tunning. Let's go ahead and play with the new <a href="http://codepen.io/thednp/pen/YGayLg">utility</a>, it's gonna make your SVG morph work a breeze.</p>
 
-            <p>Well, we're going to set the <code>morphIndex: 127</code> tween option and we will get an improved morph. Sometimes the recommended value isn't what we're looking for, so you just have to experience values around the recommended one. I also
-                made a <a href="http://codepen.io/thednp/pen/bpRRZd" target="_blank">pen</a> for you to play with.</p>
+            <p>Well, we're going to set the <code>morphIndex: 127</code> tween option and we will get an improved morph. Sometimes the recommended value isn't what we're looking for, so you just have to experience values 
+                around the recommended one. I also made a <a href="http://codepen.io/thednp/pen/bpRRZd" target="_blank">pen</a> for you to play with.</p>
             <div class="featurettes">
                 <svg class="example-box-model example-box" id="morph-example1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
                     <path id="rectangle1" class="bg-blue" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
@@ -159,10 +159,12 @@ var tween = KUTE.to('#rectangle', { path: 'M301.113,12.011l99.25,179.996l201.864
             <p>Much better! You can play with the <code>morphIndex</code> value, maybe you can get a more interesting morph.</p>
 
             <h4>Morphing Polygon Paths</h4>
-            <p>When your paths are only <code>lineto</code>, <code>vertical-lineto</code> and <code>horizontal-lineto</code> based shapes (the <code>d</code> attribute consists of <code>L</code>, <code>V</code> and <code>H</code> path commands), the SVG
-                Plugin will work differently: it will use their points instead of sampling new ones. As a result, we boost the visual and maximize the performance. The <code>morphPrecision</code> option will not apply since the paths are already polygons,
-                still you will have access to all the other options.</p>
-            <p>The plugin will try to convert paths to absolute values for polygons, but it might not find most accurate coordinates values for relative <code>v</code> and <code>h</code> path commands. I highly recommend using my <a href="http://codepen.io/thednp/full/EgVqLw/">utility converter</a>                to prepare your paths in that case.</p>
+            <p>When your paths are only <code>lineto</code>, <code>vertical-lineto</code> and <code>horizontal-lineto</code> based shapes (the <code>d</code> attribute consists of <code>L</code>, <code>V</code> and 
+                <code>H</code> path commands), the SVG Plugin will work differently: it will use their points instead of sampling new ones. As a result, we boost the visual and maximize the performance. The 
+                <code>morphPrecision</code> option will not apply since the paths are already polygons, still you will have access to all the other options.</p>
+            <p>The plugin will try to convert paths to absolute values for polygons, but it might not find most accurate coordinates values for relative <code>v</code> and <code>h</code> path commands. I highly 
+                recommend using my <a href="http://codepen.io/thednp/full/EgVqLw/">utility converter</a> to prepare your paths in that case.</p>
+
             <pre><code class="language-javascript">// let's morph a triangle into a star
 var tween1 = KUTE.to('#triangle', { path: '#star' }).start();
 
@@ -170,46 +172,48 @@ var tween1 = KUTE.to('#triangle', { path: '#star' }).start();
 var tween2 = KUTE.to('#triangle', { path: '#square' }).start();
 </code></pre>
 
-            <p>In the example below the triangle shape will morph into a square, then the square will morph into a star, so 2 tweens chained with a third that will morph back to the original triangle shape. For each tween the morph will use the number of
-                points from the shape with most points as a sample size for the other shape. Let's have a look at the demo.</p>
+            <p>In the example below the triangle shape will morph into a square, then the square will morph into a star, so 2 tweens chained with a third that will morph back to the original triangle shape. For each 
+                tween the morph will use the number of points from the shape with most points as a sample size for the other shape. Let's have a look at the demo.</p>
+            
             <div class="featurettes">
 
                 <svg class="example-box-model example-box" id="morph-example2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
 
-            <path id="square" style="visibility:hidden" d="M25.508,12.011 L576.715,12.011 L576.715,584.766 L25.508,584.766 L25.508,12.011 z"/>
+                    <path id="square" style="visibility:hidden" d="M25.508,12.011 L576.715,12.011 L576.715,584.766 L25.508,584.766 L25.508,12.011 z"/>
 
-            <path id="square2" style="visibility:hidden" d="M25.508,12.011 H576.715 V584.766 H25.508 V12.011z"/>
-            <path id="square3" style="visibility:hidden" d="M25.508,12.011 L576.715,12.011 V584.766 L25.508,584.766 V12.011 z"/>
+                    <path id="square2" style="visibility:hidden" d="M25.508,12.011 H576.715 V584.766 H25.508 V12.011z"/>
+                    <path id="square3" style="visibility:hidden" d="M25.508,12.011 L576.715,12.011 V584.766 L25.508,584.766 V12.011 z"/>
 
-            <path id="triangle" fill="#673AB7" d="M301.113,12.011L576.715,584.766L25.508,584.766L301.113,12.011z"/>
+                    <path id="triangle" fill="#673AB7" d="M301.113,12.011L576.715,584.766L25.508,584.766L301.113,12.011z"/>
 
-            <path id="star2" style="visibility:hidden" d="M301.113,12.011l99.25,179.996l201.864,38.778L461.706,380.808
-                l25.508,203.958l-186.101-87.287L115.01,584.766l25.507-203.958L0,230.785l201.86-38.778L301.113,12.011z"/>
-          </svg>
+                    <path id="star2" style="visibility:hidden" d="M301.113,12.011l99.25,179.996l201.864,38.778L461.706,380.808
+                        l25.508,203.958l-186.101-87.287L115.01,584.766l25.507-203.958L0,230.785l201.86-38.778L301.113,12.011z"/>
+                </svg>
 
                 <div class="example-buttons">
                     <a id="morphBtn2" class="btn btn-green" href="javascript:void(0)">Start</a>
                 </div>
             </div>
-            <p>The morph for polygon paths is the best morph in terms of performance so it's worth keeping that in mind. Also using paths with only <code>L</code> path command will make sure to prevent value processing and allow the animation to start as
-                fast as possible.</p>
+            <p>The morph for polygon paths is the best morph in terms of performance so it's worth keeping that in mind. Also using paths with only <code>L</code> path command will make sure to prevent value processing 
+                and allow the animation to start as fast as possible.</p>
 
 
             <h4>Multi Path Example</h4>
             <p>In other cases, you may want to morph paths that have subpaths. Let's have a look at the following paths:</p>
             <pre><code class="language-markup">&lt;svg id="multi-morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
-    &lt;path d="M206.115,255.957c-23.854-12.259-47.043-18.479-68.94-18.479c-2.978,0-5.976,0.09-8.974,0.354 c-27.94,2.312-53.461,9.684-69.875,15.414c-4.354,1.599-8.817,3.288-13.415,5.152L0,414.096  c30.851-11.416,58.146-16.969,83.135-16.969c40.423,0,69.764,15.104,93.996,30.652c11.481-38.959,39.022-133.045,47.241-161.162 C218.397,262.975,212.334,259.332,206.115,255.957z
-        M264.174,295.535l-45.223,157.074c13.416,7.686,58.549,32.024,93.105,32.024 c27.896,0,59.127-7.147,95.417-21.896l43.179-150.988c-29.316,9.461-57.438,14.26-83.732,14.26 C318.945,326.01,285.363,310.461,264.174,295.535z
-        M146.411,184.395c38.559,0.399,67.076,15.104,90.708,30.251l46.376-158.672c-9.772-5.598-35.403-19.547-53.929-24.3c-12.193-2.842-25.01-4.308-38.602-4.308c-25.898,0.488-54.194,6.973-86.444,19.9 L60.3,202.564c32.404-12.218,60.322-18.17,86.043-18.17C146.366,184.395,146.411,184.395,146.411,184.395L146.411,184.395z
-        M512,99.062c-29.407,11.416-58.104,17.233-85.514,17.233c-45.844,0-79.646-15.901-101.547-31.183L278.964,244.23 c30.873,19.854,64.146,29.939,99.062,29.939c28.474,0,57.97-6.84,87.73-20.344l-0.091-1.111l1.867-0.443L512,99.062z"/>
-     &lt;path d="M0.175 256l-0.175-156.037 192-26.072v182.109z
-        M224 69.241l255.936-37.241v224h-255.936z
-        M479.999 288l-0.063 224-255.936-36.008v-187.992z
-        M192 471.918l-191.844-26.297-0.010-157.621h191.854z"/>
+&lt;path d="M206.115,255.957c-23.854-12.259-47.043-18.479-68.94-18.479c-2.978,0-5.976,0.09-8.974,0.354 c-27.94,2.312-53.461,9.684-69.875,15.414c-4.354,1.599-8.817,3.288-13.415,5.152L0,414.096  c30.851-11.416,58.146-16.969,83.135-16.969c40.423,0,69.764,15.104,93.996,30.652c11.481-38.959,39.022-133.045,47.241-161.162 C218.397,262.975,212.334,259.332,206.115,255.957z
+    M264.174,295.535l-45.223,157.074c13.416,7.686,58.549,32.024,93.105,32.024 c27.896,0,59.127-7.147,95.417-21.896l43.179-150.988c-29.316,9.461-57.438,14.26-83.732,14.26 C318.945,326.01,285.363,310.461,264.174,295.535z
+    M146.411,184.395c38.559,0.399,67.076,15.104,90.708,30.251l46.376-158.672c-9.772-5.598-35.403-19.547-53.929-24.3c-12.193-2.842-25.01-4.308-38.602-4.308c-25.898,0.488-54.194,6.973-86.444,19.9 L60.3,202.564c32.404-12.218,60.322-18.17,86.043-18.17C146.366,184.395,146.411,184.395,146.411,184.395L146.411,184.395z
+    M512,99.062c-29.407,11.416-58.104,17.233-85.514,17.233c-45.844,0-79.646-15.901-101.547-31.183L278.964,244.23 c30.873,19.854,64.146,29.939,99.062,29.939c28.474,0,57.97-6.84,87.73-20.344l-0.091-1.111l1.867-0.443L512,99.062z"/>
+&lt;path d="M0.175 256l-0.175-156.037 192-26.072v182.109z
+    M224 69.241l255.936-37.241v224h-255.936z
+    M479.999 288l-0.063 224-255.936-36.008v-187.992z
+    M192 471.918l-191.844-26.297-0.010-157.621h191.854z"/>
 &lt;/svg>
 </code></pre>
             <p>As you can see, both these paths have subpaths, and KUTE.js will only animate the first of both in this case. To animate them all, we need to break them into multiple paths, so we can handle each path morph properly.</p>
-            <pre><code class="language-markup">&lt;svg id="multi-morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+
+<pre><code class="language-markup">&lt;svg id="multi-morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
     &lt;path id="w11" d="M206.115,255.957c-23.854-12.259-47.043-18.479-68.94-18.479c-2.978,0-5.976,0.09-8.974,0.354 c-27.94,2.312-53.461,9.684-69.875,15.414c-4.354,1.599-8.817,3.288-13.415,5.152L0,414.096 c30.851-11.416,58.146-16.969,83.135-16.969c40.423,0,69.764,15.104,93.996,30.652c11.481-38.959,39.022-133.045,47.241-161.162 C218.397,262.975,212.334,259.332,206.115,255.957z"/>
     &lt;path id="w12" d="M264.174,295.535l-45.223,157.074c13.416,7.686,58.549,32.024,93.105,32.024 c27.896,0,59.127-7.147,95.417-21.896l43.179-150.988c-29.316,9.461-57.438,14.26-83.732,14.26 C318.945,326.01,285.363,310.461,264.174,295.535z"/>
     &lt;path id="w13" d="M146.411,184.395c38.559,0.399,67.076,15.104,90.708,30.251l46.376-158.672c-9.772-5.598-35.403-19.547-53.929-24.3c-12.193-2.842-25.01-4.308-38.602-4.308c-25.898,0.488-54.194,6.973-86.444,19.9 L60.3,202.564c32.404-12.218,60.322-18.17,86.043-18.17C146.366,184.395,146.411,184.395,146.411,184.395L146.411,184.395z"/>
@@ -221,9 +225,11 @@ var tween2 = KUTE.to('#triangle', { path: '#square' }).start();
     &lt;path id="w24" style="visibility:hidden" d="M192 471.918l-191.844-26.297-0.010-157.621h191.854z"/>
 &lt;/svg>
 </code></pre>
-            <p>After a close inspection we determined that paths are not ordered the same so it seems we need to tween the paths in a way that their points travel the least possible distance, as follows: <code>#w11</code> to <code>#w24</code>, <code>#w13</code>                to <code>#w21</code>, <code>#w14</code> to <code>#w22</code> and <code>#w12</code> to <code>#w23</code>.</p>
+            <p>After a close inspection we determined that paths are not ordered the same so it seems we need to tween the paths in a way that their points travel the least possible distance, as follows: <code>#w11</code> 
+                to <code>#w24</code>, <code>#w13</code> to <code>#w21</code>, <code>#w14</code> to <code>#w22</code> and <code>#w12</code> to <code>#w23</code>.</p>
             <p>Now we can write the tween objects and get to working:</p>
-            <pre><code class="language-javascript">var multiMorph1 = KUTE.to('#w11', { path: '#w24' }).start();
+
+<pre><code class="language-javascript">var multiMorph1 = KUTE.to('#w11', { path: '#w24' }).start();
 var multiMorph2 = KUTE.to('#w13', { path: '#w21' }).start();
 var multiMorph3 = KUTE.to('#w14', { path: '#w22' }).start();
 var multiMorph3 = KUTE.to('#w12', { path: '#w23' }).start();
@@ -248,14 +254,15 @@ var multiMorph3 = KUTE.to('#w12', { path: '#w23' }).start();
                     <a id="multiMorphBtn" class="btn btn-olive" href="javascript:void(0)">Start</a>
                 </div>
             </div>
-            <p>Note that this final touch required using <code>reverseSecondPath:true</code> option for all tweens because each shape have a slightly different position from its corresponding shape, so make sure to check the <a href="assets/js/svg.js" target="_blank">svg.js</a>                for a full code review.</p>
+            <p>Note that this final touch required using <code>reverseSecondPath:true</code> option for all tweens because each shape have a slightly different position from its corresponding shape, so make sure to 
+                check the <a href="assets/js/svg.js" target="_blank">svg.js</a> for a full code review.</p>
 
             <h4>Complex Example</h4>
-            <p>The last morph example is a bit more complex as the paths have subpaths with different positions and other important differences such as having different amounts of subpaths as well as significant differences of their positions. In this case
-                you have to manually clone one or more paths in a way that the number of starting shapes is equal to the number of ending shapes, as well as making sure the starting shapes are close to their corresponding end shapes; at this point you
-                should be just like in the previous example.</p>
-            <p>An important aspect of multi path morph is syncronization: since the <code>.to()</code> method will prepare the paths for interpolation at animation start, and this usually takes a bit of time, the problem can be easily solved as always using
-                the <code>.fromTo()</code> method. So, let's get into it:</p>
+            <p>The last morph example is a bit more complex as the paths have subpaths with different positions and other important differences such as having different amounts of subpaths as well as significant 
+                differences of their positions. In this case you have to manually clone one or more paths in a way that the number of starting shapes is equal to the number of ending shapes, as well as making sure 
+                the starting shapes are close to their corresponding end shapes; at this point you should be just like in the previous example.</p>
+            <p>An important aspect of multi path morph is syncronization: since the <code>.to()</code> method will prepare the paths for interpolation at animation start, and this usually takes a bit of time, 
+                the problem can be easily solved as always using the <code>.fromTo()</code> method. So, let's get into it:</p>
 
             <pre><code class="language-javascript">// complex multi morph, the paths should be self explanatory
 var morph1 = KUTE.fromTo('#start-container',  { path: '#start-container' },    { path: '#end-container' });
@@ -263,7 +270,8 @@ var morph2 = KUTE.fromTo('#startpath1',       { path: '#startpath1' },         {
 var morph3 = KUTE.fromTo('#startpath1-clone', { path: '#startpath1-clone' },   { path: '#endpath1' });
 var morph4 = KUTE.fromTo('#startpath2',       { path: '#startpath2' },         { path: '#endpath2' });
 </code></pre>
-            <p>As with the previous example, you should change which path will morph to which path so that their points travel the least possible distance and the morph animation looks visually appealing. In the next example, we have used a <code>mask</code>                where we included the subpaths of both start and end shape, just to get the same visual as the originals.</p>
+            <p>As with the previous example, you should change which path will morph to which path so that their points travel the least possible distance and the morph animation looks visually appealing. In the next 
+                example, we have used a <code>mask</code> where we included the subpaths of both start and end shape, just to get the same visual as the originals.</p>
             <div class="featurettes">
                 <svg class="example-box-model example-box" id="multi-morph-example-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 513">
                 <defs>
@@ -285,28 +293,30 @@ var morph4 = KUTE.fromTo('#startpath2',       { path: '#startpath2' },         {
                     <a id="compliMorphBtn" class="btn btn-red" href="javascript:void(0)">Start</a>
                 </div>
             </div>
-            <p>So you have many options to improve the visual and performance for your complex animation ideas. The SVG Plugin for KUTE.js uses approximatelly the same algorithm as D3.js for determining the coordinates for tween, it's super light, it's a
-                lighter script, it might be a better solution for your applications.</p>
+            <p>So you have many options to improve the visual and performance for your complex animation ideas. The SVG Plugin for KUTE.js uses approximatelly the same algorithm as D3.js for determining the coordinates 
+                for tween, it's super light, it's a lighter script, it might be a better solution for your applications.</p>
 
             <h4>Recommendations</h4>
             <ul>
                 <li>The SVG morph animation is very expensive so try to optimize the number of morph animations that run at the same time.</li>
-                <li>When morphing subpaths/multipaths instead of cloning shapes to have same number of shapes in both starting and ending shapes, you should also consider a fade and/or scale animation to improve the overal animation performance, don't forget
-                    about mobile devices.</li>
-                <li>Large displays would need best resolution possible so a small <code>morphPrecision</code> value (1-10) would be required, assuming performant hardware are powering the displays. For small displays you can get quite comfortable with almost
-                    any value, including the default value.</li>
+                <li>When morphing subpaths/multipaths instead of cloning shapes to have same number of shapes in both starting and ending shapes, you should also consider a fade and/or scale animation to improve the 
+                    overal animation performance, don't forget about mobile devices.</li>
+                <li>Large displays would need best resolution possible so a small <code>morphPrecision</code> value (1-10) would be required, assuming performant hardware are powering the displays. For small displays 
+                    you can get quite comfortable with almost any value, including the default value.</li>
                 <li>Polygons with only <code>lineto</code> path commands are best for performance.</li>
                 <li>Faster animation speed could be a great trick to hide any polygonal "artefacts". Strokes are also very useful for hiding the polygons' edges.</li>
                 <li>Don't forget about the <a href="http://codepen.io/thednp/pen/YGayLg">path morph utility</a>, it's gonna make your work a lot easier.</li>
-                <li>The SVG morph performance is the same for both <code>.to()</code> and <code>.fromTo()</code> methods, but the ones that use the second method will start faster, because the values have been prepared already and for the first method the
-                    processing of the two paths happens on tween start delaying the animation, so keep that in mind when working with syncing multiple tweens, the <code>.to()</code> based morph will always start later. Of course this assumes the you cache
-                    the tween objects first and start the animation later, if not (you start the animation on object creation), both methods will be delayed.</li>
+                <li>The SVG morph performance is the same for both <code>.to()</code> and <code>.fromTo()</code> methods, but the ones that use the second method will start faster, because the values have been prepared 
+                    already and for the first method the processing of the two paths happens on tween start delaying the animation, so keep that in mind when working with syncing multiple tweens, the <code>.to()</code> 
+                    based morph will always start later. Of course this assumes the you cache the tween objects first and start the animation later, if not (you start the animation on object creation), both methods will 
+                    be delayed.</li>
             </ul>
 
             <h3>Drawing Stroke</h3>
-            <p>Next, we're going to animate the stroking of some elements. Starting with KUTE.js version 1.5.2, along with <code>&lt;path></code> shapes, <code>&lt;circle></code>, <code>&lt;ellipse></code>, <code>&lt;rect></code>, <code>&lt;line></code>,
-                <code>&lt;polyline></code> and <code>&lt;polygon></code> shapes are also supported; the script uses the SVG standard <code>.getTotalLength()</code> method for <code>&lt;path></code> shapes, while the others use some helper methods. Here
-                some code examples:</p>
+            <p>Next, we're going to animate the stroking of some elements. Starting with KUTE.js version 1.5.2, along with <code>&lt;path></code> shapes, <code>&lt;circle></code>, <code>&lt;ellipse></code>, <code>&lt;rect></code>,
+                 <code>&lt;line></code>, <code>&lt;polyline></code> and <code>&lt;polygon></code> shapes are also supported; the script uses the SVG standard <code>.getTotalLength()</code> method for <code>&lt;path></code> 
+                 shapes, while the others use some helper methods. Here some code examples:</p>
+
             <pre><code class="language-javascript">// draw the stroke from 0-10% to 90-100%
 var tween1 = KUTE.fromTo('selector1',{draw:'0% 10%'}, {draw:'90% 100%'});
 
@@ -316,6 +326,7 @@ var tween2 = KUTE.fromTo('selector1',{draw:'0% 0%'}, {draw:'0% 100%'});
 // draw the stroke from full length to 50%
 var tween3 = KUTE.fromTo('selector1',{draw:'0% 100%'}, {draw:'50% 50%'});
 </code></pre>
+
             <p>We're gonna chain these tweens and start the animation real quick.</p>
             <div class="featurettes">
                 <svg style="width:600px" class="example-box-model example-box" id="draw-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2046 513">
@@ -329,17 +340,20 @@ var tween3 = KUTE.fromTo('selector1',{draw:'0% 100%'}, {draw:'50% 50%'});
                     <a id="drawBtn" class="btn btn-blue" href="javascript:void(0)">Start</a>
                 </div>
             </div>
-            <p>Remember: the <code class="bg-indigo">draw</code> property also accepts absolute values, eg. <code>draw: '0 150'</code>; the <code>.to()</code> method takes <code>0% 100%</code> as start value for your tweens when <code>stroke-dasharray</code>                and <code>stroke-dashoffset</code> are not set.</p>
+            <p>Remember: the <code class="bg-indigo">draw</code> property also accepts absolute values, eg. <code>draw: '0 150'</code>; the <code>.to()</code> method takes <code>0% 100%</code> as start value for your 
+                tweens when <code>stroke-dasharray</code> and <code>stroke-dashoffset</code> are not set.</p>
 
             <h3>SVG Transforms</h3>
-            <p>Starting with KUTE.js 1.5.2, the SVG Plugin features a new tween property for cross browser SVG transforms, but was coded as a separate set of methods for SVG only, to keep performance tight and solve most browser inconsistencies. A very simple
-                roadmap was described <a href="https://github.com/thednp/kute.js/issues/31" target="_blank">here</a>; in brief we needed to find a way to enable SVG transforms in a <a href="https://css-tricks.com/transforms-on-svg-elements/" target="_blank">reliable and cross-browser</a>                supported fashion.</p>
-            <p>With KUTE.js 1.6.0 the SVG transform is a bigger part of the SVG Plugin for two reasons: first is the ability to use the <code>transformOrigin</code> just like for CSS3 transforms and secondly the unique way to normalize translation to work
-                with the transform origin in a way that the animation is just as consistent as for CSS3 transforms on non-SVG elements. Also the value processing is consistent with the <a href="https://www.w3.org/TR/SVG/coords.html#EstablishingANewUserSpace">working draft</a>.</p>
-            <p>While you can still use regular <a href="examples.html">CSS3 transforms</a> for SVGs on browsers like Google Chrome, Opera and others, Firefox struggles big time with the percentage based <code>transform-origin</code> values and ALL Internet
-                Explorer versions have no implementation for CSS3 transforms on SVG elements.</p>
-            <p>KUTE.js SVG Plugin comes with a better way to animate transforms on SVGs shapes reliably on all browsers, by the use of the <code>transform</code> presentation attribute and the <code class="bg-indigo">svgTransform</code> tween property with
-                a special notation:</p>
+            <p>Starting with KUTE.js 1.5.2, the SVG Plugin features a new tween property for cross browser SVG transforms, but was coded as a separate set of methods for SVG only, to keep performance tight and solve 
+                most browser inconsistencies. A very simple roadmap was described <a href="https://github.com/thednp/kute.js/issues/31" target="_blank">here</a>; in brief we needed to find a way to enable SVG transforms 
+                in a <a href="https://css-tricks.com/transforms-on-svg-elements/" target="_blank">reliable and cross-browser</a> supported fashion.</p>
+            <p>With KUTE.js 1.6.0 the SVG transform is a bigger part of the SVG Plugin for two reasons: first is the ability to use the <code>transformOrigin</code> just like for CSS3 transforms and secondly the unique 
+                way to normalize translation to work with the transform origin in a way that the animation is just as consistent as for CSS3 transforms on non-SVG elements. Also the value processing is consistent with 
+                the <a href="https://www.w3.org/TR/SVG/coords.html#EstablishingANewUserSpace">working draft</a>.</p>
+            <p>While you can still use regular <a href="examples.html">CSS3 transforms</a> for SVGs on browsers like Google Chrome, Opera and others, Firefox struggles big time with the percentage based 
+                <code>transform-origin</code> values and ALL Internet Explorer versions have no implementation for CSS3 transforms on SVG elements.</p>
+            <p>KUTE.js SVG Plugin comes with a better way to animate transforms on SVGs shapes reliably on all browsers, by the use of the <code>transform</code> presentation attribute and the 
+                <code class="bg-indigo">svgTransform</code> tween property with a special notation:</p>
 
             <pre><code class="language-javascript">// using the svgTransform property works in all SVG enabled browsers
 var tween2 = KUTE.to('shape', {svgTransform: { translate: [150,100], rotate: 45, skewX: 15, skewY: 20, scale: 1.5 }});
@@ -348,36 +362,42 @@ var tween2 = KUTE.to('shape', {svgTransform: { translate: [150,100], rotate: 45,
 var tween1 = KUTE.to('shape', { translate: [150,100], rotate: 45, skewX: 15, skewY: 20, scale: 1.5 }, { transformOrigin: '50% 50%' });
 </code></pre>
 
-            <p>As you can see we have some familiar notation, but an important notice here is that <code class="bg-indigo">svgTransform</code> tween property treat all SVG transform functions as if you are using the <code>50% 50%</code> of the shape box
-                at all times by default, even if the default value is "0px 0px 0px" on SVGs in most browsers.</p>
-            <p>Perhaps the most important thing to remember is the fact that SVG tranformations always use SVG coordinates system, and the <code>transform</code> attribute accepts no measurement units such as degrees or pixels. For these reasons the <code>transformOrigin</code>                tween option can also accept array values just in case you need coordinates relative to the parent <code>&lt;svg></code> element. Also values like <i>top left</i> values will work.</p>
-            <p>In the following examples we showcase the animation of CSS3 transform applied to SVG shapes (LEFT) as well as <code class="bg-indigo">svgTransform</code> based animations (RIGHT). I highly encourage you to test all of them in all browsers,
-                and as a word ahead, animations in Webkit browsers will look identical, while others are inconsistent or not responding to DOM changes. Let's break it down to pieces.</p>
+            <p>As you can see we have some familiar notation, but an important notice here is that <code class="bg-indigo">svgTransform</code> tween property treat all SVG transform functions as if you are using the 
+                <code>50% 50%</code> of the shape box at all times by default, even if the default value is "0px 0px 0px" on SVGs in most browsers.</p>
+            <p>Perhaps the most important thing to remember is the fact that SVG tranformations always use SVG coordinates system, and the <code>transform</code> attribute accepts no measurement units such as degrees 
+                or pixels. For these reasons the <code>transformOrigin</code> tween option can also accept array values just in case you need coordinates relative to the parent <code>&lt;svg></code> element. Also values 
+                like <i>top left</i> values will work.</p>
+            <p>In the following examples we showcase the animation of CSS3 transform applied to SVG shapes (LEFT) as well as <code class="bg-indigo">svgTransform</code> based animations (RIGHT). I highly encourage you 
+                to test all of them in all browsers, and as a word ahead, animations in Webkit browsers will look identical, while others are inconsistent or not responding to DOM changes. Let's break it down to pieces.</p>
 
             <h4>SVG Rotation</h4>
-            <p>Our first chapter of the SVG transform is all about rotations, perhaps the most important part here. As of with KUTE.js 1.6.0 the <code class="bg-indigo">svgTransform</code> will only accept single value for the angle value <code>rotate: 45</code>,
-                the rotation will go around the shape's center point by default, again, contrary to the browsers' default value and you can set a <code>transformOrigin</code> tween option to override the behavior.</p>
-            <p>The argument for this implementation is that this is something you would expect from regular HTML elements rotation and probably most needed, not to mention the amount of savings in the codebase department. Let's have a look at a quick demo:</p>
+            <p>Our first chapter of the SVG transform is all about rotations, perhaps the most important part here. As of with KUTE.js 1.6.0 the <code class="bg-indigo">svgTransform</code> will only accept single value 
+                for the angle value <code>rotate: 45</code>, the rotation will go around the shape's center point by default, again, contrary to the browsers' default value and you can set a <code>transformOrigin</code> 
+                tween option to override the behavior.</p>
+            <p>The argument for this implementation is that this is something you would expect from regular HTML elements rotation and probably most needed, not to mention the amount of savings in the codebase department. 
+                Let's have a look at a quick demo:</p>
+
             <div class="featurettes">
                 <svg id="svgRotate" class="example-box-model example-box" style="width:320px; overflow: visible;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1085 513">
-                <path class="bg-olive" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
-                <path class="bg-blue" transform="translate(580)" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
-            </svg>
+                    <path class="bg-olive" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
+                    <path class="bg-blue" transform="translate(580)" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
+                </svg>
 
                 <div class="example-buttons">
                     <a id="rotateBtn" class="btn btn-red" href="javascript:void(0)">Start</a>
                 </div>
             </div>
-            <p>The first tween uses the CSS3 transform notation and the animation clearly shows the shape rotating around it's center coordinate, as we've set <code>transformOrigin</code> option to <i>50% 50%</i>, but this animation doesn't work in IE browsers,
-                while in Firefox is inconsistent with the SVG coordinate system. The second tween uses the <code>rotate: 360</code> notation and the animation shows the shape rotating around it's own central point and without any option, an animation
-                that DO WORK in all SVG enabled browsers.</p>
-            <p>When for CSS3 transforms we could have used values such as <i>center bottom</i> as <code>transform-origin</code> (also not supported in all modern browsers for SVGs), the entire processing was basically in/by the browser, however when it comes
-                to SVGs the plugin here will compute the <code>transformOrigin</code> tween setting value accordingly to use a shape's <code>.getBBox()</code> value to determine for instance the coordinates for <i>25% 75%</i> position or <i>center top</i>.</p>
+            <p>The first tween uses the CSS3 transform notation and the animation clearly shows the shape rotating around it's center coordinate, as we've set <code>transformOrigin</code> option to <i>50% 50%</i>, but this 
+                animation doesn't work in IE browsers, while in Firefox is inconsistent with the SVG coordinate system. The second tween uses the <code>rotate: 360</code> notation and the animation shows the shape rotating 
+                around it's own central point and without any option, an animation that DO WORK in all SVG enabled browsers.</p>
+            <p>When for CSS3 transforms we could have used values such as <i>center bottom</i> as <code>transform-origin</code> (also not supported in all modern browsers for SVGs), the entire processing was basically in/by 
+                the browser, however when it comes to SVGs the plugin here will compute the <code>transformOrigin</code> tween setting value accordingly to use a shape's <code>.getBBox()</code> value to determine for instance 
+                the coordinates for <i>25% 75%</i> position or <i>center top</i>.</p>
 
-            <p>In other cases you may want to rotate shapes around the center point of the parent <code>&lt;svg></code> or <code>&lt;g></code> element, and we use it's <code>.getBBox()</code> to determine the <i>50% 50%</i> coordinate, so here's how to deal
-                with it:</p>
+            <p>In other cases you may want to rotate shapes around the center point of the parent <code>&lt;svg></code> or <code>&lt;g></code> element, and we use it's <code>.getBBox()</code> to determine the <i>50% 50%</i> 
+                coordinate, so here's how to deal with it:</p>
 
-            <pre><code class="language-javascript">// rotate around parent svg's "50% 50%" coordinate as transform-origin
+<pre><code class="language-javascript">// rotate around parent svg's "50% 50%" coordinate as transform-origin
 // get the bounding box of the parent element
 var svgBB = element.ownerSVGElement.getBBox(); // returns an object of the parent &lt;svg> element
 
@@ -397,32 +417,34 @@ var rotationTween = KUTE.to(element, {svgTransform: {rotate: 150}}, { transformO
 
             <div class="featurettes">
                 <svg id="svgRotate1" class="example-box-model example-box" style="width:320px; overflow: visible;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1085 513">
-                <path class="bg-olive" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
-                <path class="bg-blue" transform="translate(580)" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
-            </svg>
+                    <path class="bg-olive" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
+                    <path class="bg-blue" transform="translate(580)" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
+                </svg>
 
                 <div class="example-buttons">
                     <a id="rotateBtn1" class="btn btn-red" href="javascript:void(0)">Start</a>
                 </div>
             </div>
-            <p>Note that this is the only SVG transform example in which we have adapted the <code>transform-origin</code> for the CSS3 transform rotation so that both animations look consistent in all browsers, and if you are interested in learning about
-                this fix, similar to the above, just we are adding "px" to the calculated value, but you better make sure to check <a href="./assets/js/svg.js">svg.js</a> file.</p>
+            <p>Note that this is the only SVG transform example in which we have adapted the <code>transform-origin</code> for the CSS3 transform rotation so that both animations look consistent in all browsers, and if you are 
+                interested in learning about this fix, similar to the above, just we are adding "px" to the calculated value, but you better make sure to check <a href="./assets/js/svg.js">svg.js</a> file.</p>
 
             <h4>SVG Translation</h4>
-            <p>In this example we'll have a look at translations, so when setting <code>translate: [150,0]</code>, the first value is X (horizontal) coordinate to which the shape will translate to and the second value is Y (vertical) coordinate for translation.
-                When <code>translate: 150</code> notation is used, the script will understand that's the X value and the Y value is 0 just like for the regular HTML elements transformation. Let's have a look at a quick demo:</p>
+            <p>In this example we'll have a look at translations, so when setting <code>translate: [150,0]</code>, the first value is X (horizontal) coordinate to which the shape will translate to and the second value is 
+                Y (vertical) coordinate for translation. When <code>translate: 150</code> notation is used, the script will understand that's the X value and the Y value is 0 just like for the regular HTML elements 
+                transformation. Let's have a look at a quick demo:</p>
+            
             <div class="featurettes">
                 <svg id="svgTranslate" class="example-box-model example-box" style="width:320px; overflow: visible;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1085 513">
-                <path class="bg-green" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
-                <path class="bg-orange" transform="translate(580)" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
-            </svg>
+                    <path class="bg-green" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
+                    <path class="bg-orange" transform="translate(580)" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
+                </svg>
 
                 <div class="example-buttons">
                     <a id="translateBtn" class="btn btn-blue" href="javascript:void(0)">Start</a>
                 </div>
             </div>
-            <p>The first tween uses the CSS3 <code>translate: 580</code> notation for the end value, while the second tween uses the <code>translate: [0,0]</code> as <code class="bg-indigo">svgTransform</code> value. For the second example the values are
-                unitless and are relative to the <code>viewBox</code> attribute.</p>
+            <p>The first tween uses the CSS3 <code>translate: 580</code> notation for the end value, while the second tween uses the <code>translate: [0,0]</code> as <code class="bg-indigo">svgTransform</code> value. 
+                For the second example the values are unitless and are relative to the <code>viewBox</code> attribute.</p>
 
             <h4>SVG Skew</h4>
             <p>For skews for SVGs we have a very simple notation: <code>skewX: 25</code> or <code>skewY: -25</code> as SVGs don't support the <code>skew: [X,Y]</code> function. Here's a quick demo:</p>
@@ -436,28 +458,30 @@ var rotationTween = KUTE.to(element, {svgTransform: {rotate: 150}}, { transformO
                     <a id="skewBtn" class="btn btn-red" href="javascript:void(0)">Start</a>
                 </div>
             </div>
-            <p>The first tween skews the shape on both X and Y axis in a chain via regular CSS3 transforms and the second tween skews the shape on X and Y axis via the <code class="bg-indigo">svgTransform</code> tween property. You will notice translation
-                kicking in to set the transform origin and the example also showcases the fact that chain transformations for SVGs via <code>transform</code> attribute works just as for the CSS3 transformations.</p>
+            <p>The first tween skews the shape on both X and Y axis in a chain via regular CSS3 transforms and the second tween skews the shape on X and Y axis via the <code class="bg-indigo">svgTransform</code> tween 
+                property. You will notice translation kicking in to set the transform origin and the example also showcases the fact that chain transformations for SVGs via <code>transform</code> attribute works just 
+                as for the CSS3 transformations.</p>
 
             <h4>SVG Scaling</h4>
-            <p>Another transform example for SVGs is the scale. Unlike translations, for scale animation the plugin only accepts single value like <code>scale: 1.5</code>, for both X (horizontal) axis and Y (vertical) axis, to keep it simple and even if
-                SVGs do support <code>scale(X,Y)</code>. But because the scaling on SVGs depends very much on the shape's position, the script will always try to adjust the translation to make the animation look as we would expect. A quick demo:</p>
+            <p>Another transform example for SVGs is the scale. Unlike translations, for scale animation the plugin only accepts single value like <code>scale: 1.5</code>, for both X (horizontal) axis and Y (vertical) axis, 
+                to keep it simple and even if SVGs do support <code>scale(X,Y)</code>. But because the scaling on SVGs depends very much on the shape's position, the script will always try to adjust the translation to 
+                make the animation look as we would expect. A quick demo:</p>
             <div class="featurettes">
                 <svg id="svgScale" class="example-box-model example-box" style="width:320px; overflow: visible;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1085 513">
-                <path class="bg-lime" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
-                <path class="bg-olive" transform="translate(580)" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
-            </svg>
+                    <path class="bg-lime" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
+                    <path class="bg-olive" transform="translate(580)" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
+                </svg>
 
                 <div class="example-buttons">
                     <a id="scaleBtn" class="btn btn-pink" href="javascript:void(0)">Start</a>
                 </div>
             </div>
-            <p>The first tween scales the shape at <code>scale: 1.5</code> via regular CSS3 transforms, and the second tween scales down the shape at <code>scale: 0.5</code> value via <code class="bg-indigo">svgTransform</code>. If you inspect the elements,
-                you will notice for the second shape translation is involved, and this is to keep <code>transform-origin</code> at an expected <i>50% 50%</i> value. A similar case as with the skews.</p>
+            <p>The first tween scales the shape at <code>scale: 1.5</code> via regular CSS3 transforms, and the second tween scales down the shape at <code>scale: 0.5</code> value via <code class="bg-indigo">svgTransform</code>. 
+                If you inspect the elements, you will notice for the second shape translation is involved, and this is to keep <code>transform-origin</code> at an expected <i>50% 50%</i> value. A similar case as with the skews.</p>
 
             <h4>SVG Mixed Transform Functions</h4>
-            <p>Our last transform example for SVGs is the mixed transformation. Just like for the other examples the plugin will try to adjust the rotation <code>transform-origin</code> to make it look as you would expect it from regular HTML elements. Let's
-                combine 3 functions at the same time and see what happens:</p>
+            <p>Our last transform example for SVGs is the mixed transformation. Just like for the other examples the plugin will try to adjust the rotation <code>transform-origin</code> to make it look as you would expect it 
+                from regular HTML elements. Let's combine 3 functions at the same time and see what happens:</p>
             <div class="featurettes">
                 <svg id="svgMixed" class="example-box-model example-box" style="width: 320px; overflow: visible;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1085 513" xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:space="preserve" version="1.1">
                 <path class="bg-green" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
@@ -468,16 +492,19 @@ var rotationTween = KUTE.to(element, {svgTransform: {rotate: 150}}, { transformO
                     <a id="mixedBtn" class="btn btn-teal" href="javascript:void(0)">Start</a>
                 </div>
             </div>
-            <p>Both shapes are scaled at <code>scale: 1.5</code>, translated to <code>translate: 250</code> and skewed at <code>skewX: -15</code>. If you inspect the elements, you will notice the second shape's translation is different from what we've set
-                in the tween object, and this is to keep <code>transform-origin</code> at an expected <i>50% 50%</i> value. This means that the plugin will also compensate rotation transform origin when skews are used, so that both CSS3 transform property
-                and SVG transform attribute have an identical animation.</p>
+            <p>Both shapes are scaled at <code>scale: 1.5</code>, translated to <code>translate: 250</code> and skewed at <code>skewX: -15</code>. If you inspect the elements, you will notice the second shape's translation is 
+                different from what we've set in the tween object, and this is to keep <code>transform-origin</code> at an expected <i>50% 50%</i> value. This means that the plugin will also compensate rotation transform origin 
+                when skews are used, so that both CSS3 transform property and SVG transform attribute have an identical animation.</p>
 
             <h4>Chained SVG transforms</h4>
-            <p>The SVG Plugin does not work with SVG specific chained transform functions right away (do not confuse with tween chain), but if your SVGs only use this feature to set a custom <code>transform-origin</code>, it should look like this:</p>
-            <pre><code class="language-markup">&lt;svg>
+            <p>The SVG Plugin does not work with SVG specific chained transform functions right away (do not confuse with tween chain), but if your SVGs only use this feature to set a custom <code>transform-origin</code>, 
+                it should look like this:</p>
+
+<pre><code class="language-markup">&lt;svg>
     &lt;circle transform="translate(150,150) rotate(45) scale(1.2) translate(-150,-150)" r="20">&lt;/circle>
 &lt;/svg>
 </code></pre>
+
             <p>Well in this case I would recommend using the values of the first translation as <code>transform-origin</code> for your tween built with the <code>.fromTo()</code> method like so:</p>
             <pre><code class="language-javascript">// a possible workaround for animating a SVG element that uses chained transform functions
 KUTE.fromTo(element,
@@ -502,17 +529,17 @@ KUTE.fromTo(element,
 
             <h4>Recommendations for SVG Transforms</h4>
             <ul>
-                <li>The SVG Plugin coming with KUTE.js version 1.6.0 is successfuly handling all possible combinations of transform functions, and <b>always uses same order of transform functions</b>: <code>translate</code>, <code>rotate</code>, <code>skewX</code>,
-                    <code>skewY</code> and <code>scale</code> to keep animation consistent and with same aspect as for CSS3 transforms on non-SVG elements.</li>
+                <li>The SVG Plugin coming with KUTE.js version 1.6.0 is successfuly handling all possible combinations of transform functions, and <b>always uses same order of transform functions</b>: <code>translate</code>, 
+                    <code>rotate</code>, <code>skewX</code>, <code>skewY</code> and <code>scale</code> to keep animation consistent and with same aspect as for CSS3 transforms on non-SVG elements.</li>
                 <li>Keep in mind that the SVG transforms will use the center of a shape as transform origin by default, contrary to the SVG draft.</li>
                 <li>Keep in mind the adjustments required for rotations, remember the <code>.getBBox()</code> method, it's really useful to set custom <code>transform-origin</code>.</li>
-                <li>By default browsers use <code>overflow: hidden</code> for <code>&lt;svg></code> so child elements are partialy/completely hidden while animating. You might want to set <code>overflow: visible</code> or some browser specific tricks if that
-                    is the case.</li>
-                <li>When using <code>viewBox="0 0 500 500"</code> attribute for <code>&lt;svg></code> and no <code>width</code> and/or <code>height</code> attribute(s), means that you expect the SVG to be scalable and most Internet Explorer versions simply
-                    don't work. You might want to <a href="https://css-tricks.com/scale-svg/" target="_blank">check this tutorial</a>.</li>
-                <li>Similar to the CSS3 transform animation featured in the core engine, the <code class="bg-indigo">svgTransform</code> property DOES stack transform functions for chained tween objects created with the <code>.to()</code> method, you will
-                    have to provide only values for the functions that will change and the plugin will try to keep the unchanged values. However, there's a catch: you need to follow all the properties and I highly recommend checking the example code for
-                    skews in the <a href="./assets/js/svg.js">svg.js</a> file.</li>
+                <li>By default browsers use <code>overflow: hidden</code> for <code>&lt;svg></code> so child elements are partialy/completely hidden while animating. You might want to set <code>overflow: visible</code> 
+                    or some browser specific tricks if that is the case.</li>
+                <li>When using <code>viewBox="0 0 500 500"</code> attribute for <code>&lt;svg></code> and no <code>width</code> and/or <code>height</code> attribute(s), means that you expect the SVG to be scalable and most 
+                    Internet Explorer versions simply don't work. You might want to <a href="https://css-tricks.com/scale-svg/" target="_blank">check this tutorial</a>.</li>
+                <li>Similar to the CSS3 transform animation featured in the core engine, the <code class="bg-indigo">svgTransform</code> property DOES stack transform functions for chained tween objects created with the 
+                    <code>.to()</code> method, you will have to provide only values for the functions that will change and the plugin will try to keep the unchanged values. However, there's a catch: you need to follow all 
+                    the properties and I highly recommend checking the example code for skews in the <a href="./assets/js/svg.js">svg.js</a> file.</li>
                 <li>In other cases when you need maximum control and precision or when shapes are already affected by translation, you might want to use the <code>.fromTo()</code> method with all proper values.</li>
                 <li>Also the <code class="bg-indigo">svgTransform</code> tween property does not support 3D transforms, because they are not supported in all SVG enabled browsers.</li>
             </ul>
@@ -521,7 +548,8 @@ KUTE.fromTo(element,
             <h3>SVG Plugin Tips</h3>
             <ul>
                 <li>The SVG Plugin can be combined with the <a href="attr.html">Attributes Plugin</a> to enable even more advanced/complex animations for SVG elements.</li>
-                <li>Since SVG morph scripting works only with <code>path</code> or <code>glyph</code> elements, you might need a <code>convertToPath</code> feature, so <a href="https://github.com/Waest/SVGPathConverter" target="_blank">check this out</a>.</li>
+                <li>Since SVG morph scripting works only with <code>path</code> or <code>glyph</code> elements, you might need a <code>convertToPath</code> feature, so 
+                    <a href="https://github.com/Waest/SVGPathConverter" target="_blank">check this out</a>.</li>
             </ul>
 
         </div>
