@@ -3,7 +3,9 @@
 <!--[if IE 8]><html class="ie ie8" lang="en"><![endif]-->
 <!--[if IE 9]><html class="ie ie9" lang="en"><![endif]-->
 
-<!--[if gte IE 10 | !IE ]><!--> <html lang="en"> <!--<![endif]-->
+<!--[if gte IE 10 | !IE ]><!-->
+<html lang="en">
+<!--<![endif]-->
 
 <head>
     <meta charset="utf-8">
@@ -12,148 +14,155 @@
     <meta name="description" content="The Attributes Plugin for KUTE.js enables animation for any numeric presentation attribute.">
     <meta name="keywords" content="kute,kute.js,animation,javascript animations,tweening engine,animation engine,presentation attributes,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
-    <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
+    <link rel="shortcut icon" href="./assets/img/favicon.png">
+    <!-- TO DO -->
 
     <title>KUTE.js Attributes Plugin | Javascript Animation Engine</title>
-	
+
     <!-- RESET CSS -->
     <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
-	
+
     <!-- DEMO KUTE CSS -->
     <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
 
-	<!-- Ion Icons -->
+    <!-- Ion Icons -->
     <link type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
-		
-	<!-- Synthax highlighter -->
-	<link href="./assets/css/prism.css" rel="stylesheet">
+
+    <!-- Synthax highlighter -->
+    <link href="./assets/css/prism.css" rel="stylesheet">
 
     <!-- Polyfill -->
-    <script src="./assets/js/minifill.js"> </script>
-	
-	<!-- legacy browsers support via polyfill 
-	<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
-	<!--[if IE]>
-		<script src="https://cdn.jsdelivr.net/minifill/0.0.2/minifill.min.js"> </script>
-		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-	<![endif]-->
+    <script src="./assets/js/minifill.js">
+    </script>
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- legacy browsers support via polyfill, you must remove the above when used
+    <script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
+
 </head>
 
 <body>
-  <div class="fill overlay"></div>
-  
-  <div class="site-wrapper">
- 
-	<div class="navbar-wrapper">
-      <div class="content-wrap">
-		<a href="index.html"><h1>KUTE.<span>js</span></h1></a>
-		<ul class="nav">
-			<li class="btn-group"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
-                <ul class="subnav">
-                    <li><a href="features.html">Feature Overview</a></li>
-                    <li><a href="properties.html">Supported Properties</a></li>
-                </ul>            
-            </li>
-			<li class="btn-group active">
-                <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
-                <ul class="subnav">
-                    <li><a href="examples.html">Core Engine</a></li>
-                    <li><a href="css.html">CSS Plugin </a></li>
-                    <li><a href="svg.html">SVG Plugin </a></li>
-                    <li><a href="text.html">Text Plugin </a></li>
-                    <li class="active"><a href="attr.html">Attributes Plugin </a></li>
-                </ul>
-            </li>
-			<li class="btn-group">
-                <a href="#" data-function="toggle">API <span class="caret"></span></a>
-                <ul class="subnav">
-                    <li><a href="start.html">Getting Started</a></li>
-                    <li><a href="api.html">Public Methods</a></li>
-                    <li><a href="options.html">Tween Options</a></li>
-                    <li><a href="easing.html">Easing Functions</a></li>
-                    <li><a href="extend.html">Extend Guide</a></li>
-                </ul>
-            </li>
-			<li><a href="about.html">About</a></li>
-		</ul>
-      </div>
-    </div>
+    <div class="fill overlay"></div>
 
-	<div class="content-wrap">
-		<h2>Attributes Plugin</h2>
-		<p>The KUTE.js Attributes Plugin extends the core engine and enables animation for any numeric presentation attribute, with or without a measurement unit or what we know as suffix. The plugin can be a great asset for creating complex animations in combination with the <a href="svg.html">SVG Plugin</a> as we'll see in the following examples. As a quick refference, the basic synthax goes like this:</p>
+    <div class="site-wrapper">
 
-<pre><code class="language-javascript">// basic synthax for unitless attributes
+        <div class="navbar-wrapper">
+            <div class="content-wrap">
+                <a href="index.html"><h1>KUTE.<span>js</span></h1></a>
+                <ul class="nav">
+                    <li class="btn-group"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
+                        <ul class="subnav">
+                            <li><a href="features.html">Feature Overview</a></li>
+                            <li><a href="properties.html">Supported Properties</a></li>
+                        </ul>
+                    </li>
+                    <li class="btn-group active">
+                        <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
+                        <ul class="subnav">
+                            <li><a href="examples.html">Core Engine</a></li>
+                            <li><a href="css.html">CSS Plugin </a></li>
+                            <li><a href="svg.html">SVG Plugin </a></li>
+                            <li><a href="text.html">Text Plugin </a></li>
+                            <li class="active"><a href="attr.html">Attributes Plugin </a></li>
+                        </ul>
+                    </li>
+                    <li class="btn-group">
+                        <a href="#" data-function="toggle">API <span class="caret"></span></a>
+                        <ul class="subnav">
+                            <li><a href="start.html">Getting Started</a></li>
+                            <li><a href="api.html">Public Methods</a></li>
+                            <li><a href="options.html">Tween Options</a></li>
+                            <li><a href="easing.html">Easing Functions</a></li>
+                            <li><a href="extend.html">Extend Guide</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-wrap">
+            <h2>Attributes Plugin</h2>
+            <p>The KUTE.js Attributes Plugin extends the core engine and enables animation for any numeric presentation attribute, with or without a measurement unit or what we know as suffix. The plugin can be a great asset for creating complex animations
+                in combination with the <a href="svg.html">SVG Plugin</a> as we'll see in the following examples. As a quick refference, the basic synthax goes like this:</p>
+
+            <pre><code class="language-javascript">// basic synthax for unitless attributes
 var myAttrTween = KUTE.to('selector', {attr: {attributeName: 75}});
 
 // OR for attributes that are ALWAYS suffixed / have a measurement unit
 var mySufAttrTween = KUTE.to('selector', {attr:{attributeName: '15%'}});
 </code></pre>
 
-        <p>The Attributes Plugin does support color attributes such as <code>fill</code> or <code>stroke</code> starting with KUTE.js v1.5.8, but doesn't support attributes with multiple values like <code>stroke-dasharray</code>, <code>viewBox</code> or <code>transform</code> for simplicity reasons. To animate the stroke/fill or transform attribute, the <a href="svg.html">SVG Plugin</a> has some handy solutions for you. Despite the limitations of this plugin, you have access to just about any SVGElement/Element <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute" target="_blank">presentation attribute</a> available.</p>
+            <p>The Attributes Plugin does support color attributes such as <code>fill</code> or <code>stroke</code> starting with KUTE.js v1.5.8, but doesn't support attributes with multiple values like <code>stroke-dasharray</code>, <code>viewBox</code>                or <code>transform</code> for simplicity reasons. To animate the stroke/fill or transform attribute, the <a href="svg.html">SVG Plugin</a> has some handy solutions for you. Despite the limitations of this plugin, you have access to just
+                about any SVGElement/Element <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute" target="_blank">presentation attribute</a> available.</p>
 
-		<h3>Attributes Namespace</h3>
-		<p>Starting with KUTE.js version 1.5.5, the Attributes Plugin can handle all possible single value attributes with both dashed string and non-dashed string notation. Let's have a look at an example so you can get the idea:</p>
-<pre><code class="language-javascript">// dashed attribute notation
+            <h3>Attributes Namespace</h3>
+            <p>Starting with KUTE.js version 1.5.5, the Attributes Plugin can handle all possible single value attributes with both dashed string and non-dashed string notation. Let's have a look at an example so you can get the idea:</p>
+            <pre><code class="language-javascript">// dashed attribute notation
 var myDashedAttrStringTween = KUTE.to('selector', {attr: {'stroke-width': 75}});
 
 // non-dashed attribute notation
 var myNonDashedAttrStringTween = KUTE.to('selector', {attr:{strokeWidth: '15px'}});
 </code></pre>
-        <p>The <code>strokeWidth</code> example is very interesting because this attribute along with many others can work with <code>px</code>, <code>%</code> or with no unit/suffix.</p>
-        
-		<h3>Color Attributes</h3>
-        <p>Starting with KUTE.js version 1.5.7, the Attributes Plugin can also animate color attributes: <code>fill</code>, <code>stroke</code> and <code>stopColor</code>. If the elements are affected by their CSS counterparts, the effect is not visible, so always make sure you know what you're doing.</p>
-<pre><code class="language-javascript">// some fill rgb, rgba, hex
+            <p>The <code>strokeWidth</code> example is very interesting because this attribute along with many others can work with <code>px</code>, <code>%</code> or with no unit/suffix.</p>
+
+            <h3>Color Attributes</h3>
+            <p>Starting with KUTE.js version 1.5.7, the Attributes Plugin can also animate color attributes: <code>fill</code>, <code>stroke</code> and <code>stopColor</code>. If the elements are affected by their CSS counterparts, the effect is not visible,
+                so always make sure you know what you're doing.</p>
+            <pre><code class="language-javascript">// some fill rgb, rgba, hex
 var fillTween = KUTE.to('#element-to-fill', {attr: { fill: 'red' }});
-    
+
 // some stopColor or 'stop-color'
 var stopColorTween = KUTE.to('#element-to-do-stop-color', {attr: {stopColor: 'rgb(0,66,99)'}});
 </code></pre>
-        
-		<div class="featurettes">
-            <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 615 615">
+
+            <div class="featurettes">
+                <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 615 615">
 
                 <path id="fill" fill="#673AB7" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
-                    c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>            
+                    c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>
             </svg>
-	
-			<div class="example-buttons">
-				<a id="fillBtn" class="btn btn-blue" href="javascript:void(0)">Start</a>	
-			</div>
-		</div>
-        <p>If in this example the <code>fill</code> attribute value would reference a gradient, then <i>rgba(0,0,0,0)</i> is used.</p>
 
-		<h3>Unitless Attributes</h3>
-		<p>In the first example, let's play with the attributes of a <code>&lt;circle&gt;</code> element: radius and center coordinates.</p>
-<pre><code class="language-javascript">// radius attribute
+                <div class="example-buttons">
+                    <a id="fillBtn" class="btn btn-blue" href="javascript:void(0)">Start</a>
+                </div>
+            </div>
+            <p>If in this example the <code>fill</code> attribute value would reference a gradient, then <i>rgba(0,0,0,0)</i> is used.</p>
+
+            <h3>Unitless Attributes</h3>
+            <p>In the first example, let's play with the attributes of a <code>&lt;circle&gt;</code> element: radius and center coordinates.</p>
+            <pre><code class="language-javascript">// radius attribute
 var radiusTween = KUTE.to('#circle', {attr: {r: 75}});
-    
+
 // coordinates of the circle center
 var coordinatesTween = KUTE.to('#circle', {attr:{cx:0,cy:0}});
-</code></pre>       
-        <p>A quick demo with the above:<p>
-		<div class="featurettes">
-            <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
+</code></pre>
+            <p>A quick demo with the above:
+                <p>
+                    <div class="featurettes">
+                        <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
                 <circle class="bg-orange" id="circle" cx="75" cy="75" r="40" />
             </svg>
-	
-			<div class="example-buttons">
-				<a id="circleBtn" class="btn btn-orange" href="javascript:void(0)">Start</a>	
-			</div>
-		</div>
-        
-		<h3>Suffixed Attributes</h3>
-        <p>Similar to the example on gradients with <a href="svg.html">SVG Plugin</a>, we can also animate the gradient positions, and the plugin will make sure to always include the suffix for you, as in this example the <code>%</code> unit is found in the current value and used as unit for the DOM update:</p>
-<pre><code class="language-javascript">// gradient positions to middle
+
+                        <div class="example-buttons">
+                            <a id="circleBtn" class="btn btn-orange" href="javascript:void(0)">Start</a>
+                        </div>
+                    </div>
+
+                    <h3>Suffixed Attributes</h3>
+                    <p>Similar to the example on gradients with <a href="svg.html">SVG Plugin</a>, we can also animate the gradient positions, and the plugin will make sure to always include the suffix for you, as in this example the <code>%</code> unit
+                        is found in the current value and used as unit for the DOM update:</p>
+                    <pre><code class="language-javascript">// gradient positions to middle
 var closingGradient = KUTE.to('#gradient', {attr: {x1:'49%', x2:'49%', y1:'49%', y2:'49%'}});
-    
+
 // gradient positions rotated
 var rotatingGradient = KUTE.to('#gradient', {attr: {x1:'49%', x2:'51%', y1:'51%', y2:'51%'}});
 </code></pre>
-        
-		<div class="featurettes">
-            <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 615 615">
+
+                    <div class="featurettes">
+                        <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 615 615">
                 <defs>
                     <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
                         <stop offset="0%" style="stop-color: #e91b1f; stop-opacity:1"></stop>
@@ -161,47 +170,53 @@ var rotatingGradient = KUTE.to('#gradient', {attr: {x1:'49%', x2:'51%', y1:'51%'
                     </linearGradient>
                 </defs>
                 <path fill="url(#gradient)" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
-                    c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>            
+                    c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>
             </svg>
-	
-			<div class="example-buttons">
-				<a id="gradBtn" class="btn btn-pink" href="javascript:void(0)">Start</a>	
-			</div>
-		</div>
-        <p>This plugin is quite handy and a great addition to the <a href="svg.html">SVG Plugin</a>.</p>
 
-	</div>
+                        <div class="example-buttons">
+                            <a id="gradBtn" class="btn btn-pink" href="javascript:void(0)">Start</a>
+                        </div>
+                    </div>
+                    <p>This plugin is quite handy and a great addition to the <a href="svg.html">SVG Plugin</a>.</p>
 
-    <ul id="share" class="nav">
-        <li>Share </li>
-        <li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
-        <li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute_js animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></li>
-        <li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
-    </ul>
+        </div>
 
-      <!-- FOOTER -->
-     <footer>
-		<div class="content-wrap">
-			<p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
-			<p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
-		</div>
-    </footer>
+        <ul id="share" class="nav">
+            <li>Share </li>
+            <li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
+            <li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute_js animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></li>
+            <li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
+        </ul>
 
- </div><!-- /.site-wrapper -->
- 
+        <!-- FOOTER -->
+        <footer>
+            <div class="content-wrap">
+                <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+                <p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
+            </div>
+        </footer>
+
+    </div>
+    <!-- /.site-wrapper -->
 
 
-<!-- JavaScript
+
+    <!-- JavaScript
 ================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->	
+    <!-- Placed at the end of the document so the pages load faster -->
 
-<!-- highlighter -->
-<script src="./assets/js/prism.js" type="text/javascript"></script>
+    <!-- highlighter -->
+    <script src="./assets/js/prism.js" type="text/javascript"></script>
 
-<!--<script src="http://cdn.jsdelivr.net/kute.js/1.6.0/kute.min.js"></script>  KUTE CDN -->
-<script src="./src/kute.min.js"></script> <!-- KUTE.js core -->
-<script src="./src/kute-attr.min.js"></script> <!-- KUTE.js Attributes Plugin -->
-<script src="./assets/js/scripts.js"></script> <!-- global scripts stuff -->
-<script src="./assets/js/attr.js"></script> <!-- css plugin examples -->
+    <!--<script src="http://cdn.jsdelivr.net/kute.js/1.6.0/kute.min.js"></script>  KUTE CDN -->
+    <script src="./src/kute.min.js"></script>
+    <!-- KUTE.js core -->
+    <script src="./src/kute-attr.min.js"></script>
+    <!-- KUTE.js Attributes Plugin -->
+    <script src="./assets/js/scripts.js"></script>
+    <!-- global scripts stuff -->
+    <script src="./assets/js/attr.js"></script>
+    <!-- css plugin examples -->
 </body>
+
 </html>

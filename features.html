@@ -3,7 +3,9 @@
 <!--[if IE 8]><html class="ie ie8" lang="en"><![endif]-->
 <!--[if IE 9]><html class="ie ie9" lang="en"><![endif]-->
 
-<!--[if !IE ]><!--> <html lang="en"> <!--<![endif]-->
+<!--[if !IE ]><!-->
+<html lang="en">
+<!--<![endif]-->
 
 <head>
     <meta charset="utf-8">
@@ -12,162 +14,190 @@
     <meta name="description" content="An in-depth overview with all KUTE.js features, browser compatibility and performance.">
     <meta name="keywords" content="kute,kute.js,animation,javascript animation,tweening engine,animation engine,kute.js fetures,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
-    <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
+    <link rel="shortcut icon" href="./assets/img/favicon.png">
 
     <title>KUTE.js Features | Javascript Animation Engine</title>
-	
+
     <!-- RESET CSS -->
     <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
-	
+
     <!-- DEMO KUTE CSS -->
     <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
-	
-	<!-- Ion Icons -->
+
+    <!-- Ion Icons -->
     <link type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
 
     <!-- Polyfill -->
-    <script src="./assets/js/minifill.js"> </script>
-    
-	<!-- legacy browsers support via polyfill 
-	<script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
-	<!--[if IE]>
-		<script src="https://cdn.jsdelivr.net/minifill/0.0.2/minifill.min.js"> </script>
-		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-	<![endif]-->
+    <script src="./assets/js/minifill.js"></script>
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- legacy browsers support via polyfill, you must remove the above when used
+    <script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
 
 </head>
 
 <body>
-  <div class="fill overlay"></div>
-  
-  <div class="site-wrapper">
- 
-	<div class="navbar-wrapper">
-      <div class="content-wrap">
-		<a href="index.html"><h1>KUTE.<span>js</span></h1></a>
-		<ul class="nav">
-			<li class="btn-group active"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
-                <ul class="subnav">
-                    <li class="active"><a href="features.html">Feature Overview</a></li>
-                    <li><a href="properties.html">Supported Properties</a></li>
-                </ul>            
-            </li>
-			<li class="btn-group">
-                <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
-                <ul class="subnav">
-                    <li><a href="examples.html">Core Engine</a></li>
-                    <li><a href="css.html">CSS Plugin </a></li>
-                    <li><a href="svg.html">SVG Plugin </a></li>
-                    <li><a href="text.html">Text Plugin </a></li>
-                    <li><a href="attr.html">Attributes Plugin </a></li>
+    <div class="fill overlay"></div>
+
+    <div class="site-wrapper">
+
+        <div class="navbar-wrapper">
+            <div class="content-wrap">
+                <a href="index.html"><h1>KUTE.<span>js</span></h1></a>
+                <ul class="nav">
+                    <li class="btn-group active"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
+                        <ul class="subnav">
+                            <li class="active"><a href="features.html">Feature Overview</a></li>
+                            <li><a href="properties.html">Supported Properties</a></li>
+                        </ul>
+                    </li>
+                    <li class="btn-group">
+                        <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
+                        <ul class="subnav">
+                            <li><a href="examples.html">Core Engine</a></li>
+                            <li><a href="css.html">CSS Plugin </a></li>
+                            <li><a href="svg.html">SVG Plugin </a></li>
+                            <li><a href="text.html">Text Plugin </a></li>
+                            <li><a href="attr.html">Attributes Plugin </a></li>
+                        </ul>
+                    </li>
+                    <li class="btn-group">
+                        <a href="#" data-function="toggle">API <span class="caret"></span></a>
+                        <ul class="subnav">
+                            <li><a href="start.html">Getting Started</a></li>
+                            <li><a href="api.html">Public Methods</a></li>
+                            <li><a href="options.html">Tween Options</a></li>
+                            <li><a href="easing.html">Easing Functions</a></li>
+                            <li><a href="extend.html">Extend Guide</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="about.html">About</a></li>
                 </ul>
-            </li>
-			<li class="btn-group">
-                <a href="#" data-function="toggle">API <span class="caret"></span></a>
-                <ul class="subnav">
-                    <li><a href="start.html">Getting Started</a></li>
-                    <li><a href="api.html">Public Methods</a></li>
-                    <li><a href="options.html">Tween Options</a></li>
-                    <li><a href="easing.html">Easing Functions</a></li>
-                    <li><a href="extend.html">Extend Guide</a></li>
-                </ul>
-            </li>
-			<li><a href="about.html">About</a></li>
-		</ul>
-      </div>
+            </div>
+        </div>
+
+        <div class="content-wrap">
+            <h2>Features Overview</h2>
+            <h3 id="performance">Badass Performance</h3>
+            <p>KUTE.js was developed with best practices in mind for <strong>fastest code execution</strong> and <strong>memory efficiency</strong>, but performance varies from case to case, as well as for all the other Javascript based animation engines.
+                As a quick note on <a href="about.html#how">how it works</a>, well for the most part values are cached for the entire duration of the animation so that the repetitive tasks run smoothly, uninterruptible and avoid layout thrashing. We all
+                know the more properties used or the more elements to animate at the same time, the more power is required.</p>
+
+            <p><span class="ion-ios-cog media"></span>Of course some would argue on many aspects, but we all trade something for the sake of something else, such as convenience and/or flexibility or fork a project that's already great to make it.. better.
+                For the sake of performance or simply willing to provide a feature, some trade/neglect other elements such as syncronisation (check this <a href="https://www.youtube.com/watch?v=1ZWugkJV5Ks" target="_blank">video</a>), code simplicity
+                (lots of CSS for a <a href="https://daneden.github.io/animate.css/" target="_blank">custom animation</a>) and more other.</p>
+            <p>To learn more about how performance can vary from case to case, check out <a href="about.html#performance">this section</a>, it's very informative.</p>
+        </div>
+
+        <div class="content-wrap">
+            <h3 id="extensible">Extensible Prototype</h3>
+            <p>KUTE.js already packs quite alot of features, and that is thanks to its flexible nature that allows you to easily extend to your heart's desire. Whether you like to extend with CSS properties, easing functions, HTML presentation attributes
+                or anything that Javascript can touch, even if it's not possible with CSS transitions or other Javascript libraries, KUTE.js makes it super easy. </p>
+            <p>For instance if you want to be able to animate the <code>filter</code> property, you only need three functions: one for preparing the property values needed for tween object build-up, a second function to read current value and the last one
+                for the DOM update callback, everything else is nicely taken care of. KUTE.js also provides very useful utilities for processing strings, HEX/RGBA colors and other tools you can use for your own plugin's processing.</p>
+            <p>You may want to head over to the <a href="extend.html">extend</a> page for an indepth guide on how to write your own plugin/extension.</p>
+        </div>
+
+        <div class="content-wrap">
+            <h3 id="prefix">Auto Browser Prefix</h3>
+            <p>KUTE.js uses a simple function to determine the vendor prefix and checks if the prefix is required. In any case it caches the prefixed/unprefixed property name in a variable to make it available when needed. This applies to the following CSS3
+                properties: <code>transform</code>, <code>perspective</code>, <code>perspective-origin</code>, <code>border-radius</code> and the <code>requestAnimationFrame</code> Javascript method.</p>
+            <p><span class="ion-paper-airplane media"></span>We aren't only targeting properly browsers for CSS3 styling, but also increase performance because we don't need to update the styling on every frame for all browsers (and their versions) at once,
+                just the right and only one; <strong>less</strong> string concatenation = <strong>more</strong> performance. This asumes you are NOT styling the above CSS3 properties using your stylesheets to avoid glitches with legacy browsers.</p>
+            <p>This feature is useful mostly for Safari, older Firefox and Opera versions and Internet Explorer 9.</p>
+        </div>
+
+        <div class="content-wrap">
+            <h3 id="compatibility">Browser Compatibility</h3>
+            <p>KUTE.js covers all <strong>modern</strong> browsers but also provides fallback options for legacy browsers. The <strong>prefix free</strong> feature mentioned above is one way to enable smooth Javascript based animations on older versions
+                Gecko/Webkit/IE browsers for <code>transform</code> and <code>border-radius</code>. Generally, KUTE.js is built around most used properties, so I highly recommend checking the <a href="http://caniuse.com" target="_blank">can I use</a>                website for a very detailed properties support list on many browsers and versions. For instance, some legacy browsers may support <a href="http://caniuse.com/#feat=transforms2d">2D transforms</a> or <a href="http://caniuse.com/#feat=transforms3d">3D transforms</a>                so make sure you know what browsers support and <a href="http://browserhacks.com/" target="_blank">how to target them</a> before you get to work with a complete browser supported animation setup.</p>
+            <p><span class="ion-android-globe media"></span>I've put a lot of work in making KUTE.js work with all Internet Explorer versions starting with IE8 and it really works with the help of <a href="https://polyfill.io/" target="_blank">polyfills</a>                and the appropriate code to detect them. All you need to do is to let the browser breathe, espectially IE8 needs to have resize handlers as minimal as possible. On the other side, IE9 really shines with 2D transforms animation, something
+                that's impossible with CSS <code>transition</code>.</p>
+            <p>Speaking of polyfills, KUTE.js no longer requires <code>window.requestAnimationFrame()</code> for the main thread, but it does require the <code>window.performance.now()</code> for checking the current time, <code>.indexOf()</code> for array/string
+                checks, <code>window.getComputedStyle()</code> for the <code>.to()</code> method and <code>.addEventListener()</code> for scroll animation. Unlike other developers I didn't include these polyfills in the code to keep it clean, so that
+                YOU decide whether your project need them or not. Also know that when using the recommended <a href="https://polyfill.io/" target="_blank">polyfill service</a> some <strong>browser detection will not work</strong> because they fill the
+                gap and your code won't work as expected. For instance this would check for IE8 browser <code>var isIE = document.all && !document.addEventListener;</code> but the polyfill covers <code>.addEventListener()</code> so you will never succeed.
+                This very demo is a great solution for targeting Microsoft's legacy browsers.</p>
+            <p>As of Safari, we did some tests there too, KUTE.js does it really well.</p>
+        </div>
+
+        <div class="content-wrap">
+            <h3 id="methods">Methods, Tools and Options</h3>
+            <h4>Building Tween Objects</h4>
+            <p>KUTE.js allows you to create tween objects with the help of <code>.to()</code> and <code>.fromTo()</code> methods for a single element, with distinctive functionalities, and the other <code>.allTo()</code> and <code>.allFromTo()</code> that
+                use the first two for collections of elements.</p>
+
+            <p><kbd>KUTE.to('selector', toValues, options)</kbd> method is super simple and straightforward and requires a polyfill for <code>window.getComputedStyle()</code> Javascript method on IE8 and more other legacy browsers in order to read the current
+                property value. If no value is set in the stylesheets or inline style, a property specific value will be used. It also computes the value on animation start, delaying the actual animation and potentially creating sync issues on large amounts
+                of elements, but it has the great ability to stack <code>transform</code> properties as they come in chained tweens. However fixing the sync issues is not that hard, see the example at <a href="api.html#start">start()</a> method API.</p>
+
+            <p><kbd>KUTE.fromTo('selector', fromValues, toValues, options)</kbd> is the other method that's most powerful in terms of performance, flexibility and control on the animation. As an example, while the first method may not process properties'
+                measurement units properly, this method will never fail in that regard, because you can set for both starting values and end values the exact values with the right unit you need.</p>
+
+            <p>It doesn't stack <code>transform</code> properties for chained tweens but you can set all properties to be used in all tweens if you want (end values from previous tween become start values for the next AND unchanged start values become end
+                values), and make sure nothing is left unchecked, to avoid animation glitches. Still, this method is the fastest and bestest for super performance and super control.</p>
+
+            <p><kbd>KUTE.allTo('selector', toValues, options)</kbd> and <kbd>KUTE.allFromTo('selector', fromValues, toValues, options)</kbd> inherit all functionality from the <code>.to()</code> and <code>.fromTo()</code> method respectively, but they apply
+                to collections of elements. Unlike the first two methods that create single element tween objects, these two create collections of tween objects. Be sure to check the <a href="api.html">API</a> documentation on all the methods.</p>
+
+            <h4>Tween Control</h4>
+            <p>Unlike previous versions where animations started right away, starting with version 0.9.5 KUTE.js gives you great animation control methods such as: <code>.start()</code>, <code>.stop()</code>, <code>.pause()</code> and <code>.resume()</code>.
+                These public methods work either when animation is not running, running or is paused. You need to see the <a href="api.html">documentation</a> to learn how these work.</p>
+
+            <h4>Tween Options</h4>
+            <p>Aside from the usual options such as duration, delay, easing, repeat or yoyo, it also comes with specific tween options for <code>transform</code>. For instance 3D rotations require a <code>perspective</code> or a <code>perspective-origin</code>,
+                right? Well, make sure to <a href="options.html">check that out</a>.</p>
+
+            <h4>Callback System</h4>
+            <p>Another important KUTE.js feature is the solid callback system. This allows you to schedule functions to run on animation start, on each frame, on pause / resume, on stop and on complete. The functions bound at start or resume will delay the
+                animation, while the functions running on each frame can potentially influence performance on large amounts of elements so you must use them wisely.</p>
+
+            <h4>Addons</h4>
+            <p>KUTE.js sports some fine tuned addons: jQuery Plugin, <a href="svg.html">SVG Plugin</a>, <a href="text.html">Text Plugin</a>, <a href="attr.html">Attributes Plugin</a>, <a href="css.html">CSS Plugin</a>, cubic bezier easing functions and also
+                physics based easing functions. It also features an extensive guide on <a href="extend.html">how to extend</a>, but I'm open for more features in the future.</p>
+
+            <p>Check the <a href="api.html">documentation</a> on these methods and the <a href="examples.html">examples page</a> for more.</p>
+        </div>
+
+        <div class="content-wrap">
+            <h3>Developer Friendly</h3>
+            <p><span class="ion-happy media"></span>You can develop with KUTE.js for free thanks to the <a href="https://github.com/thednp/kute.js/blob/master/LICENSE" target="_blank">MIT License</a> terms. The terms in short allow you to use the script
+                <strong>for free</strong> in both <strong>personal</strong> and <strong>commercial application</strong> as long as you give <strong>proper credits</strong> to the original author. Also a link back would be appreciated.</p>
+            <p>Also KUTE.js is <a href="api.html">super documented</a>, all features and options are showcased with detailed <a href="examples.html">examples</a> so you can get your hands really dirty.</p>
+
+            <ul id="share" class="nav">
+                <li>Share </li>
+                <li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
+                <li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute_js animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></li>
+                <li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
+            </ul>
+        </div>
+
+        <!-- FOOTER -->
+        <footer>
+            <div class="content-wrap">
+                <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+                <p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
+            </div>
+        </footer>
+
     </div>
-
-	<div class="content-wrap">
-		<h2>Features Overview</h2>
-		<h3 id="performance">Badass Performance</h3>
-		<p>KUTE.js was developed with best practices in mind for <strong>fastest code execution</strong> and <strong>memory efficiency</strong>, but performance varies from case to case, as well as for all the other Javascript based animation engines. As a quick note on <a href="about.html#how">how it works</a>, well for the most part values are cached for the entire duration of the animation so that the repetitive tasks run smoothly, uninterruptible and avoid layout thrashing. We all know the more properties used or the more elements to animate at the same time, the more power is required.</p>
-
-		<p><span class="ion-ios-cog media"></span>Of course some would argue on many aspects, but we all trade something for the sake of something else, such as convenience and/or flexibility or fork a project that's already great to make it.. better. For the sake of performance or simply willing to provide a feature, some trade/neglect other elements such as syncronisation (check this <a href="https://www.youtube.com/watch?v=1ZWugkJV5Ks" target="_blank">video</a>), code simplicity (lots of CSS for a <a href="https://daneden.github.io/animate.css/" target="_blank">custom animation</a>) and more other.</p>
-		<p>To learn more about how performance can vary from case to case, check out <a href="about.html#performance">this section</a>, it's very informative.</p>
-	</div>
-
-	<div class="content-wrap">
-		<h3 id="extensible">Extensible Prototype</h3>
-		<p>KUTE.js already packs quite alot of features, and that is thanks to its flexible nature that allows you to easily extend to your heart's desire. Whether you like to extend with CSS properties, easing functions, HTML presentation attributes or anything that Javascript can touch, even if it's not possible with CSS transitions or other Javascript libraries, KUTE.js makes it super easy. </p>
-		<p>For instance if you want to be able to animate the <code>filter</code> property, you only need three functions: one for preparing the property values needed for tween object build-up, a second function to read current value and the last one for the DOM update callback, everything else is nicely taken care of. KUTE.js also provides very useful utilities for processing strings, HEX/RGBA colors and other tools you can use for your own plugin's processing.</p> 
-		<p>You may want to head over to the <a href="extend.html">extend</a> page for an indepth guide on how to write your own plugin/extension.</p> 
-	</div>
-
-	<div class="content-wrap">
-		<h3 id="prefix">Auto Browser Prefix</h3>
-		<p>KUTE.js uses a simple function to determine the vendor prefix and checks if the prefix is required. In any case it caches the prefixed/unprefixed property name in a variable to make it available when needed. This applies to the following CSS3 properties: <code>transform</code>, <code>perspective</code>, <code>perspective-origin</code>, <code>border-radius</code> and the <code>requestAnimationFrame</code> Javascript method.</p>
-		<p><span class="ion-paper-airplane media"></span>We aren't only targeting properly browsers for CSS3 styling, but also increase performance because we don't need to update the styling on every frame for all browsers (and their versions) at once, just the right and only one; <strong>less</strong> string concatenation = <strong>more</strong> performance. This asumes you are NOT styling the above CSS3 properties using your stylesheets to avoid glitches with legacy browsers.</p> 
-		<p>This feature is useful mostly for Safari, older Firefox and Opera versions and Internet Explorer 9.</p>
-	</div>
-
-	<div class="content-wrap">
-		<h3 id="compatibility">Browser Compatibility</h3>
-		<p>KUTE.js covers all <strong>modern</strong> browsers but also provides fallback options for legacy browsers. The <strong>prefix free</strong> feature mentioned above is one way to enable smooth Javascript based animations on older versions Gecko/Webkit/IE browsers for <code>transform</code> and <code>border-radius</code>. Generally, KUTE.js is built around most used properties, so I highly recommend checking the <a href="http://caniuse.com" target="_blank">can I use</a> website for a very detailed properties support list on many browsers and versions. For instance, some legacy browsers may support <a href="http://caniuse.com/#feat=transforms2d">2D transforms</a> or <a href="http://caniuse.com/#feat=transforms3d">3D transforms</a> so make sure you know what browsers support and <a href="http://browserhacks.com/" target="_blank">how to target them</a> before you get to work with a complete browser supported animation setup.</p> 
-		<p><span class="ion-android-globe media"></span>I've put a lot of work in making KUTE.js work with all Internet Explorer versions starting with IE8 and it really works with the help of <a href="https://polyfill.io/" target="_blank">polyfills</a> and the appropriate code to detect them. All you need to do is to let the browser breathe, espectially IE8 needs to have resize handlers as minimal as possible. On the other side, IE9 really shines with 2D transforms animation, something that's impossible with CSS <code>transition</code>.</p>	
-		<p>Speaking of polyfills, KUTE.js no longer requires <code>window.requestAnimationFrame()</code> for the main thread, but it does require the <code>window.performance.now()</code> for checking the current time, <code>.indexOf()</code> for array/string checks, <code>window.getComputedStyle()</code> for the <code>.to()</code> method and <code>.addEventListener()</code> for scroll animation. Unlike other developers I didn't include these polyfills in the code to keep it clean, so that YOU decide whether your project need them or not. Also know that when using the recommended <a href="https://polyfill.io/"target="_blank">polyfill service</a> some <strong>browser detection will not work</strong> because they fill the gap and your code won't work as expected. For instance this would check for IE8 browser <code>var isIE = document.all && !document.addEventListener;</code> but the polyfill covers <code>.addEventListener()</code> so you will never succeed. This very demo is a great solution for targeting Microsoft's legacy browsers.</p>
-		<p>As of Safari, we did some tests there too, KUTE.js does it really well.</p>
-	</div>
-	
-	<div class="content-wrap">
-		<h3 id="methods">Methods, Tools and Options</h3>
-		<h4>Building Tween Objects</h4>
-		<p>KUTE.js allows you to create tween objects with the help of <code>.to()</code> and <code>.fromTo()</code> methods for a single element, with distinctive functionalities, and the other <code>.allTo()</code> and <code>.allFromTo()</code> that use the first two for collections of elements.</p> 
-		
-        <p><kbd>KUTE.to('selector', toValues, options)</kbd> method is super simple and straightforward and requires a polyfill for <code>window.getComputedStyle()</code> Javascript method on IE8 and more other legacy browsers in order to read the current property value. If no value is set in the stylesheets or inline style, a property specific value will be used. It also computes the value on animation start, delaying the actual animation and potentially creating sync issues on large amounts of elements, but it has the great ability to stack <code>transform</code> properties as they come in chained tweens. However fixing the sync issues is not that hard, see the example at <a href="api.html#start">start()</a> method API.</p>
-		
-        <p><kbd>KUTE.fromTo('selector', fromValues, toValues, options)</kbd> is the other method that's most powerful in terms of performance, flexibility and control on the animation. As an example, while the first method may not process properties' measurement units properly, this method will never fail in that regard, because you can set for both starting values and end values the exact values with the right unit you need.</p> 
-
-		<p>It doesn't stack <code>transform</code> properties for chained tweens but you can set all properties to be used in all tweens if you want (end values from previous tween become start values for the next AND unchanged start values become end values), and make sure nothing is left unchecked, to avoid animation glitches. Still, this method is the fastest and bestest for super performance and super control.</p>
-        
-        <p><kbd>KUTE.allTo('selector', toValues, options)</kbd> and <kbd>KUTE.allFromTo('selector', fromValues, toValues, options)</kbd> inherit all functionality from the <code>.to()</code> and <code>.fromTo()</code> method respectively, but they apply to collections of elements. Unlike the first two methods that create single element tween objects, these two create collections of tween objects. Be sure to check the <a href="api.html">API</a> documentation on all the methods.</p>
-
-		<h4>Tween Control</h4>
-		<p>Unlike previous versions where animations started right away, starting with version 0.9.5 KUTE.js gives you great animation control methods such as: <code>.start()</code>, <code>.stop()</code>, <code>.pause()</code> and <code>.resume()</code>. These public methods work either when animation is not running, running or is paused. You need to see the <a href="api.html">documentation</a> to learn how these work.</p> 
-		
-		<h4>Tween Options</h4>
-		<p>Aside from the usual options such as duration, delay, easing, repeat or yoyo, it also comes with specific tween options for <code>transform</code>. For instance 3D rotations require a <code>perspective</code> or a <code>perspective-origin</code>, right? Well, make sure to <a  href="options.html">check that out</a>.</p>
-		
-		<h4>Callback System</h4>
-		<p>Another important KUTE.js feature is the solid callback system. This allows you to schedule functions to run on animation start, on each frame, on pause / resume, on stop and on complete. The functions bound at start or resume will delay the animation, while the functions running on each frame can potentially influence performance on large amounts of elements so you must use them wisely.</p>
-
-		<h4>Addons</h4>
-		<p>KUTE.js sports some fine tuned addons: jQuery Plugin, <a href="svg.html">SVG Plugin</a>, <a href="text.html">Text Plugin</a>, <a href="attr.html">Attributes Plugin</a>, <a href="css.html">CSS Plugin</a>, cubic bezier easing functions and also physics based easing functions. It also features an extensive guide on <a href="extend.html">how to extend</a>, but I'm open for more features in the future.</p>
-		
-		<p>Check the <a href="api.html">documentation</a> on these methods and the <a href="examples.html">examples page</a> for more.</p>
-	</div>
-
-	<div class="content-wrap">
-		<h3>Developer Friendly</h3>
-		<p><span class="ion-happy media"></span>You can develop with KUTE.js for free thanks to the <a href="https://github.com/thednp/kute.js/blob/master/LICENSE" target="_blank">MIT License</a> terms. The terms in short allow you to use the script <strong>for free</strong> in both <strong>personal</strong> and <strong>commercial application</strong> as long as you give <strong>proper credits</strong> to the original author. Also a link back would be appreciated.</p>
-		<p>Also KUTE.js is <a href="api.html">super documented</a>, all features and options are showcased with detailed <a href="examples.html">examples</a> so you can get your hands really dirty.</p>
-		
-		<ul id="share" class="nav">
-			<li>Share </li>
-			<li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
-            <li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute_js animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></li>
-			<li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
-		</ul>	
-	</div>
-	  
-      <!-- FOOTER -->
-     <footer>
-		<div class="content-wrap">
-			<p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
-			<p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
-		</div>
-    </footer>
-
- </div><!-- /.site-wrapper -->
- 
+    <!-- /.site-wrapper -->
 
 
-<!-- JavaScript
+
+    <!-- JavaScript
 ================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->	
+    <!-- Placed at the end of the document so the pages load faster -->
 
-<!--<script src="http://cdn.jsdelivr.net/kute.js/1.6.0/kute.min.js"></script>  KUTE CDN -->
+    <!--<script src="http://cdn.jsdelivr.net/kute.js/1.6.0/kute.min.js"></script>  KUTE CDN -->
 
-<script src="./src/kute.min.js"></script> <!-- KUTE.js core -->
-<script src="./assets/js/scripts.js"></script> <!-- some stuff -->
+    <script src="./src/kute.min.js"></script>
+    <!-- KUTE.js core -->
+    <script src="./assets/js/scripts.js"></script>
+    <!-- some stuff -->
 </body>
+
 </html>
