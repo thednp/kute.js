@@ -8,125 +8,173 @@
     <meta name="description" content="KUTE.js performance testing page, in comparison with GSAP and Tween.js">
     <meta name="keywords" content="kute,kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
-    <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
+    <link rel="shortcut icon" href="./assets/img/favicon.png">
+    <!-- TO DO -->
 
     <title>KUTE.js | Performance Testing Page</title>
-    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">	
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {background-color: #2e2e2e; color: #999; font-size: 12px; font-family: Helvetica, Arial, Helvetica, sans-serif;}
-        a {color:#ffd626; text-decoration: none}
-        a:hover,a:focus {color:#fff;}
+        body {
+            background-color: #2e2e2e;
+            color: #999;
+            font-size: 12px;
+            font-family: Helvetica, Arial, Helvetica, sans-serif;
+        }
+
+        a {
+            color: #ffd626;
+            text-decoration: none
+        }
+
+        a:hover,
+        a:focus {
+            color: #fff;
+        }
+
         #container {
-            width: 200px; /*height: 200px;*/
+            width: 200px;
+            /*height: 200px;*/
             margin: 0 auto;
             position: relative;
             display: block;
         }
-        iframe {width: 100%; height: 100%; border:0}
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0
+        }
+
         .line {
             width: 200px;
             height: 2px;
             position: absolute;
         }
-        .box { height: 200px }
-        #info {position: absolute; top: 0; left: 0; width: 350px;}
-        .padding {padding: 20px}
-        .btn-group { margin-bottom: 15px; }
-        .btn {font-size: 13px; }
-        .text-note {color: #069}
-        .text-danger {font-weight: bold}
+
+        .box {
+            height: 200px
+        }
+
+        #info {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 350px;
+        }
+
+        .padding {
+            padding: 20px
+        }
+
+        .btn-group {
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            font-size: 13px;
+        }
+
+        .text-note {
+            color: #069
+        }
+
+        .text-danger {
+            font-weight: bold
+        }
     </style>
     <!-- Polyfill -->
-    <script src="./assets/js/minifill.js"> </script>
+    <script src="./assets/js/minifill.js">
+    </script>
 </head>
 
 <body>
-  
-<div id="info" class="padding">
-    <p><a class="back" href="index.html">Back to KUTE.js</a></p>
-    <p>Engine  </p>     
+
+    <div id="info" class="padding">
+        <p><a class="back" href="index.html">Back to KUTE.js</a></p>
+        <p>Engine </p>
         <span id="engine" class="btn-group">
           <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="0">Select <span class="caret"></span></button>
-          <ul class="dropdown-menu" role="menu">
+        <ul class="dropdown-menu" role="menu">
             <li><a id="kute" href="#">KUTE</a></li>
             <li><a id="gsap" href="#">GSAP</a></li>
             <li><a id="tween" href="#">Tween.js</a></li>
-          </ul>
+        </ul>
         </span>
-    
-    <p>Property </p>  
+
+        <p>Property </p>
         <span id="property" class="btn-group">
           <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="0">Select <span class="caret"></span></button>
-          <ul class="dropdown-menu" role="menu">
+        <ul class="dropdown-menu" role="menu">
             <li><a id="left" href="#">left</a></li>
             <li><a id="translateX" href="#">translateX</a></li>
-          </ul>
+        </ul>
         </span>
-      
-      
-      <p>Repeat   </p> 
+
+
+        <p>Repeat </p>
         <span id="repeat" class="btn-group">
           <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="0">Select <span class="caret"></span></button>
-          <ul class="dropdown-menu" role="menu">
+        <ul class="dropdown-menu" role="menu">
             <li><a id="5" href="#">5</a></li>
             <li><a id="10" href="#">10</a></li>
             <li><a id="15" href="#">15</a></li>
             <li><a id="20" href="#">20</a></li>
-          </ul>
+        </ul>
         </span>
-      
-        
-      <p>How many elements to animate:</p> 
+
+
+        <p>How many elements to animate:</p>
         <span id="count" class="btn-group">
             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="0">Select <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu">
-              <li><a id="100" href="#">100</a></li>
-              <li><a id="200" href="#">200</a></li>
-              <li><a id="300" href="#">300</a></li>
-              <li><a id="400" href="#">400</a></li>
-              <li><a id="500" href="#">500</a></li>
-              <li><a id="600" href="#">600</a></li>
-              <li><a id="700" href="#">700</a></li>
-              <li><a id="800" href="#">800</a></li>
-              <li><a id="900" href="#">900</a></li>
-              <li><a id="1000" href="#"><span style="color: red">1000</span></a></li>
-              <li><a id="1500" href="#"><span style="color: red">1500</span></a></li>
-              <li><a id="2000" href="#"><span style="color: red">2000</span></a></li>
-            </ul>
+        <ul class="dropdown-menu" role="menu">
+            <li><a id="100" href="#">100</a></li>
+            <li><a id="200" href="#">200</a></li>
+            <li><a id="300" href="#">300</a></li>
+            <li><a id="400" href="#">400</a></li>
+            <li><a id="500" href="#">500</a></li>
+            <li><a id="600" href="#">600</a></li>
+            <li><a id="700" href="#">700</a></li>
+            <li><a id="800" href="#">800</a></li>
+            <li><a id="900" href="#">900</a></li>
+            <li><a id="1000" href="#"><span style="color: red">1000</span></a></li>
+            <li><a id="1500" href="#"><span style="color: red">1500</span></a></li>
+            <li><a id="2000" href="#"><span style="color: red">2000</span></a></li>
+        </ul>
         </span>
-          
+
         <hr>
-          
+
         <div style="width:100%;clear: both">
-          <button class="btn btn-success" id="start" type="button" style="margin-bottom: 15px">Start</button>
+            <button class="btn btn-success" id="start" type="button" style="margin-bottom: 15px">Start</button>
         </div>
- 
-<!--[if IE]><p class="text-danger">The test page is not intended for Internet Explorer or legacy browsers.</p><![endif]-->
-<!--[if !IE ]><!-->
-<p>These tests are only for modern browsers. In Webkit browsers like Google Chrome and Opera you can enable the FPS metter in developer tools, <a href="https://developer.chrome.com/devtools/docs/rendering-settings" target="_blank">here's how</a>.</p>
-<p class="text-note">Please know that a local copy of this page will outperform the live site demo on Google Chrome, the reason is unknown.</p>
-<!--<![endif]-->         
 
-</div>
+        <!--[if IE]><p class="text-danger">The test page is not intended for Internet Explorer or legacy browsers.</p><![endif]-->
+        <!--[if !IE ]><!-->
+        <p>These tests are only for modern browsers. In Webkit browsers like Google Chrome and Opera you can enable the FPS metter in developer tools, <a href="https://developer.chrome.com/devtools/docs/rendering-settings" target="_blank">here's how</a>.</p>
+        <p class="text-note">Please know that a local copy of this page will outperform the live site demo on Google Chrome, the reason is unknown.</p>
+        <!--<![endif]-->
 
-<div id="container"></div>
+    </div>
 
-	
+    <div id="container"></div>
 
 
-<!-- JavaScript
+
+
+    <!-- JavaScript
 ================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->	
-<!--<script src="http://cdn.jsdelivr.net/kute.js/1.6.0/kute.min.js"></script>  KUTE CDN -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!--<script src="http://cdn.jsdelivr.net/kute.js/1.6.0/kute.min.js"></script>  KUTE CDN -->
 
-<!--[if !IE ]><!-->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.native/1.0.1/bootstrap-native.min.js"></script>
+    <!--[if !IE ]><!-->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.native/1.0.1/bootstrap-native.min.js"></script>
 
-<script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.2/TweenMax.min.js"></script>
-<script src="./assets/js/tween.min.js"></script>
-<script src="./src/kute.min.js"></script>
-<!--<script src="./../kute.js"></script>-->
-<script src="./assets/js/perf.js"></script>
-<!--<![endif]-->  
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.2/TweenMax.min.js"></script>
+    <script src="./assets/js/tween.min.js"></script>
+    <script src="./src/kute.min.js"></script>
+    <!--<script src="./../kute.js"></script>-->
+    <script src="./assets/js/perf.js"></script>
+    <!--<![endif]-->
 </body>
+
 </html>

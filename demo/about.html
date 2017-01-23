@@ -3,7 +3,9 @@
 <!--[if IE 8]><html class="ie ie8" lang="en"><![endif]-->
 <!--[if IE 9]><html class="ie ie9" lang="en"><![endif]-->
 
-<!--[if gte IE 9 | !IE ]><!--> <html lang="en"> <!--<![endif]-->
+<!--[if gte IE 9 | !IE ]><!-->
+<html lang="en">
+<!--<![endif]-->
 
 <head>
     <meta charset="utf-8">
@@ -12,170 +14,238 @@
     <meta name="description" content="About KUTE.js performance, also about the KUTE.js project, code and a short glossary with most used terminology in Javascript animation.">
     <meta name="keywords" content="kute,kute.js,animation,javascript animation,tweening engine,animation engine,about kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
-    <link rel="shortcut icon" href="./assets/img/favicon.png"> <!-- TO DO -->
+    <link rel="shortcut icon" href="./assets/img/favicon.png">
+    <!-- TO DO -->
 
     <title>About KUTE.js | Javascript Animation Engine</title>
-	
+
     <!-- RESET CSS -->
     <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
-	
+
     <!-- DEMO KUTE CSS -->
     <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
 
-	<!-- Ion Icons -->
+    <!-- Ion Icons -->
     <link type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
-    
+
     <!-- Polyfill -->
-    <script src="./assets/js/minifill.js"> </script>
+    <script src="./assets/js/minifill.js">
+    </script>
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <!-- legacy browsers support via polyfill, you must remove the above when used
+  <script src="https://cdn.polyfill.io/v2/polyfill.js?features=default,getComputedStyle|gated"> </script> -->
+
 </head>
 
 <body>
-  <div class="fill overlay"></div>
-  
-  <div class="site-wrapper">
- 
-	<div class="navbar-wrapper">
-      <div class="content-wrap">
-		<a href="index.html"><h1>KUTE.<span>js</span></h1></a>
-		<ul class="nav">
-			<li class="btn-group"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
-                <ul class="subnav">
-                    <li><a href="features.html">Feature Overview</a></li>
-                    <li><a href="properties.html">Supported Properties</a></li>
-                </ul>            
-            </li>
-            <li class="btn-group">
-                <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
-                <ul class="subnav">
-                    <li><a href="examples.html">Core Engine</a></li>
-                    <li><a href="css.html">CSS Plugin </a></li>
-                    <li><a href="svg.html">SVG Plugin </a></li>
-                    <li><a href="text.html">Text Plugin </a></li>
-                    <li><a href="attr.html">Attributes Plugin </a></li>
+    <div class="fill overlay"></div>
+
+    <div class="site-wrapper">
+
+        <div class="navbar-wrapper">
+            <div class="content-wrap">
+                <a href="index.html"><h1>KUTE.<span>js</span></h1></a>
+                <ul class="nav">
+                    <li class="btn-group"><a href="#" data-function="toggle">Features <span class="caret"></span></a>
+                        <ul class="subnav">
+                            <li><a href="features.html">Feature Overview</a></li>
+                            <li><a href="properties.html">Supported Properties</a></li>
+                        </ul>
+                    </li>
+                    <li class="btn-group">
+                        <a href="#" data-function="toggle">Examples <span class="caret"></span></a>
+                        <ul class="subnav">
+                            <li><a href="examples.html">Core Engine</a></li>
+                            <li><a href="css.html">CSS Plugin </a></li>
+                            <li><a href="svg.html">SVG Plugin </a></li>
+                            <li><a href="text.html">Text Plugin </a></li>
+                            <li><a href="attr.html">Attributes Plugin </a></li>
+                        </ul>
+                    </li>
+                    <li class="btn-group">
+                        <a href="#" data-function="toggle">API <span class="caret"></span></a>
+                        <ul class="subnav">
+                            <li><a href="start.html">Getting Started</a></li>
+                            <li><a href="api.html">Public Methods</a></li>
+                            <li><a href="options.html">Tween Options</a></li>
+                            <li><a href="easing.html">Easing Functions</a></li>
+                            <li><a href="extend.html">Extend Guide</a></li>
+                        </ul>
+                    </li>
+                    <li class="active"><a href="about.html">About</a></li>
                 </ul>
-            </li>
-			<li class="btn-group">
-                <a href="#" data-function="toggle">API <span class="caret"></span></a>
-                <ul class="subnav">
-                    <li><a href="start.html">Getting Started</a></li>
-                    <li><a href="api.html">Public Methods</a></li>
-                    <li><a href="options.html">Tween Options</a></li>
-                    <li><a href="easing.html">Easing Functions</a></li>
-                    <li><a href="extend.html">Extend Guide</a></li>
-                </ul>
-            </li>
-			<li class="active"><a href="about.html">About</a></li>
-		</ul>
-      </div>
+            </div>
+        </div>
+
+        <div class="content-wrap">
+
+            <h2>Did you know?</h2>
+            <p><strong>Tween</strong> is a term used by animators and software engineers to define the numeric start, end and the <a href="https://en.wikipedia.org/wiki/Inbetweening" target="_blank"><em>inbetween</em></a> values used in digital animation,
+                while the digital animation uses these tween values on a given frequency (interval) or scaled by hardware capability (monitors refresh rate, GPU vertical sync, etc). The term was introduced to the world of web development by early Javascrpt
+                libraries and later used in dedicated animation libraries such as <a href="https://greensock.com" target="_blank">GSAP</a>, <a href="http://dynamicsjs.com" target="_blank">Dynamics</a>, <a href="http://julian.com/research/velocity/" target="_blank">Velocity</a>,
+                <a href="https://jeremyckahn.github.io/shifty/" target="_blank">Shifty</a>, our own <strong>KUTE.js</strong> here and many others. When used as a verb, it actually reffers to the interpolation of the values.</p>
+            <p><strong>Tween Object</strong> is a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank"><em>Javascript Object</em></a> that stores temporarily or for a given time a set of variables
+                such as tween values, HTML elements to animate, CSS properties and other tween options to be used for animation. To improve performance on repetitive animations, this object can be cached and reused whenever needed. In Javascript animation,
+                the term <strong>tween</strong> actually refers to the <strong>tween object</strong>.</p>
+            <p><strong>polyfill</strong> is a term introduced by Remy Sharp back in 2009 as "a piece of code (or plugin) that provides the technology that you, the developer, expect the browser to provide <em>natively</em>". Basically a polyfill covers what
+                legacy browsers don't support or in other cases corrects the implemented behavior that is different from the standards. <a href="https://remysharp.com/2010/10/08/what-is-a-polyfill" target="_blank">More details</a>.</p>
+            <p><strong>requestAnimationFrame</strong> is a <a href="https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame" target="_blank"><em>Javascript method</em></a> developed to enable hardware acceleration animations for the
+                web today. In Javascript, the <code>window.requestAnimationFrame(callback);</code> method is all we need to setup animations really for all the above mentioned animation engines. Some developers built a <a href="http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/">polyfil</a>                to cover the legacy browsers chaos.</p>
+            <p><strong>JANK</strong> is a term used when browsers miss frames due to long script execution and/or long layout recomposition. JANK is the phenomenon reffering to severe frame drops. Luckily there are people who
+                <a href="http://www.html5rocks.com/en/tutorials/speed/rendering/"
+                    target="_blank">explain all about it</a>, so you don't have to stay in the dark.</p>
+            <p><strong>Methods</strong> are functions that create <strong>tween objects</strong> or control the animation for KUTE.js, so we will encounter mostly <em>main methods</em> and <em>tween control methods</em>. Once a main method is used, then
+                the control methods apply in a specific order.</p>
+
+
+            <h2 id="how">How Does It Work?</h2>
+            <p>Well, first things first: it's smart built. Let's briefly explain the phases:</p>
+            <ol>
+                <li>On first initialization KUTE.js creates some variables such as supported properties and their default values, the user's browser prefix, the true scroll container (some browsers actually scroll the body, while others prefer the HTML tag),
+                    a boolean variable that makes KUTE.js aware it's working with IE8, as well as other variables required during the main thread. This phase is very important for the performance on the next phases.</li>
+                <li>In the next phase it's going to build the tween object with the chosen method according to it's distinct functionalities. If the chosen method is <code>.to()</code> KUTE.js will look for the current values of the properties used or assign
+                    the default values built in the previous phase. For both methods, KUTE.js collects all the data, processes values and options (for instance easing functions need to be processed if you use a string like 'easingElasticOut', right?)
+                    and builds the tween object, with all properties' values start and values end, measurement units, tween options and callback functions.</li>
+                <li>In the third phase KUTE.js is ready to start the animation, but the animation starts only after the <code>.start()</code> function, if used, has finished. When animation starts, KUTE.js will start <em>ticking</em> on the frequency decided
+                    by <code>requestAnimationFrame</code> or <code>setInterval</code> for legacy browsers, quickly updating the style for the properties and execute the <code>update:function</code> callback if any. Also while animating, KUTE.js will begin
+                    <em>listening</em> for your tween control input such as <code>.pause()</code> or <code>.stop()</code> or any other. Also, when a certain tween control method is used, KUTE.js will execute it's specific callback, if used.</li>
+                <li>When tween animation is finished, the <code>complete:function</code> callback function is executed and then KUTE.js starts the animation for any chained tween, or else will stop ticking with <code>cancelAnimationFrame</code> to save power.</li>
+            </ol>
+            <p>Basically, this is it!</p>
+
+            <h2 id="performance">A Note On Performance</h2>
+            <p>As said before, performance varies from case to case; this chapter aims to explain what you should expect working with animation engines in these various scenarios at maximum stress, usually when your CPU cooler starts to work really hard,
+                and how scalable performance can really be on various machines, operating systems or mobile devices. We'll dig into each case, by property type or anything that can be considered a factor of influence.</p>
+
+            <h3>Function Nesting</h3>
+            <p>This could be one of the most important factors that influence performance, because we neglect this fact most of the time and changing the scope of an animation engine is important to look after. A quick example would be when we create tween
+                objects on events such as <code>click</code>, <code>scroll</code> or <code>resize</code>, we basically set a totally different scope for the animation and we fill the memory with large chunks of trash/jank, especially on events like <code>resize</code>.</p>
+            <p>A better way to handle this is to create the tween objects outside the event handlers and only start the animation with these handlers when certain conditions are met. EG: <code>if (window.clientWidth > 760) { myTween.start() }</code>. Also
+                keep in mind that this approach will eliminate any possible syncronization issues, but creating many animations is a huge temptation and this will create lots of problems for the old browsers, so keep the function nesting to as minimal
+                as possible as a general rule.</p>
+
+            <h3>Translate and Position</h3>
+            <p>While the code execution is the <strong>fastest</strong> for the <em>layout modifiers</em> or what we call <em>box-model</em>, say the <code>position</code> based properties set such as <code>left</code> or <code>top</code>, they may force
+                the entire page layout to change if not absolutelly positioned and thus requires the browser to repaint all elements affected by animated repositioning and their parent elements. On the other side <code>translate</code> doesn't trigger
+                a repaint but involves more complex operations such as more object traversing, string concatenation or check for certain conditions to be met. All of this is because <code>translate</code> is part of <code>transform</code> CSS3 property
+                that has to stack in a single line many more properties such as <code>rotate</code>, <code>skew</code> and <code>scale</code>. <a href="http://www.paulirish.com/2012/why-moving-elements-with-translate-is-better-than-posabs-topleft/" target="_blank">An article</a>                by Paul Irish explains more about differences in performance between position and translation.</p>
+            <p>Also any transform property is sub-pixel enabled and requires one or more decimals for accurate and smooth animation, decreasing overall performance. That said and with the emerging high resolution displays, it's safe to speculate that at
+                least translation could be optimized by rounding the values, while scale, rotation and skew requires three decimals.</p>
+
+            <p><span class="ion-android-plane media"></span>To put it short <code>left</code> executes faster but requires repaint on every frame while <code>translateX</code> or <code>translate3d</code> execute slower but require no repaint on each animation
+                frame. The <strong>winner</strong> is <kbd>left</kbd>, when it comes to code execution speed, but if we also count the elements' size, the larger size the more favor the translation so the <strong>overall winner</strong> is <kbd>translate</kbd>.
+                The more pixels to recompose in the layout, the more time spent on each frame, and this is why translation is better in most cases, and animated positioning is best to be used as fallback animation for legacy browsers.</p>
+
+            <h3>Translate, TranslateX and Translate3D</h3>
+            <p>While running a 2D <code>translate:150</code> animation could score similar performance as <code>translateX:150</code>, interestingly, <code>translate3d:[150,0,0]</code> is slightly faster than the other translations. Some performance <a href="http://jsperf.com/translate3d-vs-xy/28">tests</a>                confirm that <code>translate3d</code> is the prefered property for hardware acceleration. For this reason, <kbd>translate3d</kbd> is the <strong>winner</strong> and KUTE.js always uses it even if you only use <code>translateX</code> or
+                <code>translateY</code> for instance.
+                <p>
+                    <p>Similarly, if you animate the 2D <code>translate</code> this always goes <code>translate(x,y)</code> even if you use <code>translate:150</code> (only for the X axis) or <code>translate:[150,0]</code> (both X and Y axis), for better
+                        performance as well. And by the way, this works great on IE9 and other legacy browsers.</p>
+
+                    <h3>Box Model</h3>
+                    <p><span class="ion-nuclear media"></span>We compared position with transition above, but now we are going to talk about other issues related to <strong>resizers</strong>: <code>width</code>, <code>height</code>, <code>margin</code>,
+                        <code>padding</code> and <code>borderWidth</code> or any of their variations. The code execution is super fast, but when resizing the window while animations are running, the browser is also computing the resize handlers, the animation
+                        performance is very very low on <strong>all</strong> browsers, especially when you animate these resize properties. When this <strong>toxic combination</strong> occurs animating a large amount of elements could crash any browser,
+                        no exception, and I think any developer should know about this.</p>
+                    <p>The <code>resize</code> event triggered by these resizer properties can cause some <strong>severe issues with legacy browsers</strong> such as IE8. These good old browsers don't understand much about Javascript driven layout changes
+                        and thus skip/fail to execute any handlers attached to window resize event bubbles.</p>
+                    <p>A workaound for the resizers' effect on the layout would be to use them only for absolute positioned elements, this way the layout will not need to be repainted and the recomposition is limited to the elements themselves. If not, and
+                        you are required to provide legacy support, you must DISABLE any resize handlers for IE8 and any other browser that runs slow or crashes. You should also consider not using any resize animation for legacy browsers especially when
+                        usability and larger reach is expected.</p>
+
+                    <h3>RGB and HEX</h3>
+                    <p><span class="ion-android-color-palette media"></span>When animating any color property such as (text) <code>color</code> or <code>background-color</code>, KUTE.js always uses/converts to RGB/RGBA, but there is a <code>keepHex:true</code>                        tween option that overrides that. Still some browsers such as Chrome will still show you the computed style for your color as RGB no matter what. The conversion process will decrease performance, making <kbd>RGB</kbd> the <strong>winner</strong>.</p>
+
+                    <h3>TO and FROMTO</h3>
+                    <p>The two main methods for creating animation setups (tween objects) that are coming with KUTE.js are <code>.to()</code> and <code>.fromTo()</code>. While <code>.to()</code> is much more simple and convenient to use, very useful for
+                        tween chaining, it has to process the starting values on every <code>.start()</code> delaying the animation for a few miliseconds depending on the browser and hardware, making <kbd>.fromTo()</kbd> the <strong>winner</strong>. On
+                        a large amount of elements animating at the same time, these scripting based delays can produce some serious syncronization issues, so caution is advised. In that case you should use <code>.fromTo()</code> properly.</p>
+
+                    <h3>Easing Functions</h3>
+                    <p>KUTE.js comes with 3 packs of easing functions: the popular <a href="http://robertpenner.com/easing/" target="_blank">easing functions</a> by Robert Penner, <a href="http://dynamicsjs.com/" target="_blank">dynamics physics</a> easing
+                        functions by Michael Villar and <a href="https://github.com/gre/bezier-easing" target="_blank">bezier-easing</a> by Gaëtan Renaudeau. I've worked very hard to optimize the last 2 as much as possible, but they will never beat Robert
+                        Penner's functions in any performance test, that's an all time <strong>winner</strong>.</p>
+                    <p><span class="ion-shuffle media"></span>The point here is that the more accuracy a function offers, the more power needed, and the result is less performance. For instance the <code>cubic-bezier</code> based functions have a 0.0000001
+                        error margin, while the <code>Exponential</code> easing functions by Robert Penner are somewhat glitchy on long page scrolls or translations. Interestingly, some physics based functions perform exceedingly well, and generally the
+                        difference in performance is fairly negligible even for large amounts of elements, and have no impact on very few elements.</p>
+
+                    <h3>Garbage Collection</h3>
+                    <p><span class="ion-trash-a media"></span>The goal of the development strategy is to be able to execute the script, update layout and repaint, all under 16 miliseconds, so that the animation runs constantly at 60fps. However running some
+                        repeatable animations for a large amount of elements would really give garbage collectors a lot of work and thus some frames take more than 16 miliseconds. The more properties and/or elements, the more work.</p>
+                    <p>While garbage collection is a great way modern browsers use to clean the memory, sometimes the garbage collector can jump in anytime, cousing drops in the order of miliseconds. Still, if it's the case, there are ways to help composing
+                        the layout faster, but we will see that in the performance testing <a href="performance">page</a>.</p>
+
+                    <h3>Property Value Complexity</h3>
+                    <p>Just like the high amount of simultaneous animations influence performance, the property value complexity is also an important factor. If we were to compare all the supported properties in terms of complexity, the list would go like
+                        this (from most expensive to least): path morphing, regular transform, matrix3d (not yet supported), box-shadow / text-shadow, colors, box model<span style="color:red">*</span>, unitless props (scroll, opacity).</p>
+                    <p>The <span style="color:red">*</span> wants to emphasize the fact that box model properties of type resizers have additional performance drawbacks as discussed in a previous chapter.</p>
+
+                    <h3>OSs, Desktops and Mobiles</h3>
+                    <p><span class="ion-social-tux media"></span>The performance tests have been performed mainly on Microsoft Windows 8.1 and Ubuntu Linux 14.04 Trusty Tahr with latest nVidia graphics drivers on both OSs, all set up for maximum performance.
+                        The browsers are obviously Firefox (both OSs), Google Chrome (both OSs), Opera (both OSs) and IE11 (Win8).</p>
+                    <p><span class="ion-social-windows media"></span>The results show <strong>Windows</strong> based browsers came better than Ubuntu based ones, mainly because of DirectX and better drivers that greatly improve hardware accelerated graphics,
+                        while Linux still faces some noticeable issues with vertical sync among many others, but hey it's a work in progress and it's open source!</p>
+
+                    <p><span class="ion-social-chrome media"></span>The browsers' performance goes like this (from best to poorest): <strong>Google Chrome</strong>, Opera, Internet Explorer, Firefox. Yes, Firefox is the slowest on Windows OS. I never tested
+                        anything on iOS or MAC-OS but I believe Safari performs very well with transforms. <a href="http://venturebeat.com/2014/05/12/apple-upgrades-safaris-webkit-to-challenge-googles-chrome-browser/" target="_blank">Some argue</a> that
+                        Safari outperforms Google Chrome due to the latest Webkit upgrade.</p>
+
+                    <p>Also know that legacy browsers don't support <code>requestAnimationFrame</code> and pollyfills usually replace it with <code>setInterval</code>, a clasic Javascript method that's
+                        <a href="https://jsperf.com/requestanimationframe-vs-setinterval-loop/7"
+                            target="_blank">significantly</a> affecting performance, because it's one of the main causes for <a href="http://www.html5rocks.com/en/tutorials/speed/rendering/" target="_blank">lots of JANK</a>.</p>
+
+                    <p>Another important aspect as far as performance goes, the power saving profiles on Windows OS drops performance for desktop computers and especally laptops. Also when a laptop is unplugged, Windows automatically changes power profile
+                        drastically decreasing performance. </p>
+
+                    <p>As for the mobiles, you must know that even if you have an octacore CPU powered phone or tablet is never going to match a desktop and not even a laptop. For a mobile device <a href="https://www.youtube.com/watch?v=YyQYhhy1dZI" target="_blank">these guys</a>                        recommend to keep everything under 7 miliseconds for the smooth experience that most users expect and that the animation performance of a phone is actually up to 5 times lower than a desktop or laptop. I would stress that having
+                        2 or 3 simoultaneous animations on a phone at a certain point is just about enough.</p>
+
+                    <p><span class="ion-android-phone-portrait media"></span>Another thing to keep in mind is that scrollling on a mobile device is actually hardware accelerated animation and thus compete for power drastically reducing performance for any
+                        other CSS or Javascript driven animations. To understand how critical performance is on a mobile device, I highly recommend checking the <a href="https://youtu.be/WrA85a4ZIaM?t=16m6s" target="_blank">Google I/O 2014 presentation</a>.
+                        Now you understand how much performance really matters.</p>
+                    <p><strong>Remember</strong>: do not open any Javascript animation engine performance test with your phone, you may burn your battery, espectially if it's unpluggable.</p>
+
+                    <h2>KUTE.js Project</h2>
+                    <p>KUTE.js continues what was started with <strong>jQueryTween</strong> (removed) and the main goal is to improve usability, compatibility, code quality and performance. KUTE.js includes a jQuery plugin to help you easily implement it
+                        in your jQuery applications, and also packs a set of tools such as bezier and physics based easing functions, all elegantly packed for convenience and distributed via CDN.</p>
+                    <p>It all started with a fork of the popular <a href="https://github.com/tweenjs/tween.js" target="_blank">tween.js</a> and ended up having a KUTE.js version 0.9.5 that's very fast, memory efficient and super easy to use.</p>
+                    <p>In the hystory of the making there were consistent contributions of <a href="https://github.com/dalisoft" target="_blank">Dav</a> aka @dalisoft for features such as play &amp; pause, <a href="text.html">Text Plugin</a>, as well as
+                        for performance related issues. Generally I would stress that the code is a joint work of me and Dav. Big thanks Dav, well done.</p>
+                    <p>Also I would like to thank <a href="http://ingwie.me/" target="_blank">Ingwie Phoenix</a> for the npm/Bower and UMD implementations.</p>
+
+                    <ul id="share" class="nav">
+                        <li>Share </li>
+                        <li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
+                        <li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute_js animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></li>
+                        <li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
+                    </ul>
+        </div>
+
+        <!-- FOOTER -->
+        <footer>
+            <div class="content-wrap">
+                <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+                <p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
+            </div>
+        </footer>
+
     </div>
-
-	<div class="content-wrap">
-		
-		<h2>Did you know?</h2>
-		<p><strong>Tween</strong> is a term used by animators and software engineers to define the numeric start, end and the <a href="https://en.wikipedia.org/wiki/Inbetweening" target="_blank"><em>inbetween</em></a> values used in digital animation, while the digital animation uses these tween values on a given frequency (interval) or scaled by hardware capability (monitors refresh rate, GPU vertical sync, etc). The term was introduced to the world of web development by early Javascrpt libraries and later used in dedicated animation libraries such as <a href="https://greensock.com" target="_blank">GSAP</a>, <a href="http://dynamicsjs.com" target="_blank">Dynamics</a>, <a href="http://julian.com/research/velocity/" target="_blank">Velocity</a>, <a href="https://jeremyckahn.github.io/shifty/" target="_blank">Shifty</a>, our own <strong>KUTE.js</strong> here and many others. When used as a verb, it actually reffers to the interpolation of the values.</p>
-		<p><strong>Tween Object</strong> is a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank"><em>Javascript Object</em></a> that stores temporarily or for a given time a set of variables such as tween values, HTML elements to animate, CSS properties and other tween options to be used for animation. To improve performance on repetitive animations, this object can be cached and reused whenever needed. In Javascript animation, the term <strong>tween</strong> actually refers to the <strong>tween object</strong>.</p>
-		<p><strong>polyfill</strong> is a term introduced by Remy Sharp back in 2009 as "a piece of code (or plugin) that provides the technology that you, the developer, expect the browser to provide <em>natively</em>". Basically a polyfill covers what legacy browsers don't support or in other cases corrects the implemented behavior that is different from the standards. <a href="https://remysharp.com/2010/10/08/what-is-a-polyfill" target="_blank">More details</a>.</p>
-		<p><strong>requestAnimationFrame</strong> is a <a href="https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame" target="_blank"><em>Javascript method</em></a> developed to enable hardware acceleration animations for the web today. In Javascript, the <code>window.requestAnimationFrame(callback);</code> method is all we need to setup animations really for all the above mentioned animation engines. Some developers built a <a href="http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/">polyfil</a> to cover the legacy browsers chaos.</p>
-		<p><strong>JANK</strong> is a term used when browsers miss frames due to long script execution and/or long layout recomposition. JANK is the phenomenon reffering to severe frame drops. Luckily there are people who <a href="http://www.html5rocks.com/en/tutorials/speed/rendering/" target="_blank">explain all about it</a>, so you don't have to stay in the dark.</p>
-		<p><strong>Methods</strong> are functions that create <strong>tween objects</strong> or control the animation for KUTE.js, so we will encounter mostly <em>main methods</em> and <em>tween control methods</em>. Once a main method is used, then the control methods apply in a specific order.</p>
-
-		
-		<h2 id="how">How Does It Work?</h2>
-		<p>Well, first things first: it's smart built. Let's briefly explain the phases:</p>
-		<ol>
-			<li>On first initialization KUTE.js creates some variables such as supported properties and their default values, the user's browser prefix, the true scroll container (some browsers actually scroll the body, while others prefer the HTML tag), a boolean variable that makes KUTE.js aware it's working with IE8, as well as other variables required during the main thread. This phase is very important for the performance on the next phases.</li>
-			<li>In the next phase it's going to build the tween object with the chosen method according to it's distinct functionalities. If the chosen method is <code>.to()</code> KUTE.js will look for the current values of the properties used or assign the default values built in the previous phase. For both methods, KUTE.js collects all the data, processes values and options (for instance easing functions need to be processed if you use a string like 'easingElasticOut', right?) and builds the tween object, with all properties' values start and values end, measurement units, tween options and callback functions.</li>
-			<li>In the third phase KUTE.js is ready to start the animation, but the animation starts only after the <code>.start()</code> function, if used, has finished. When animation starts, KUTE.js will start <em>ticking</em> on the frequency decided by <code>requestAnimationFrame</code> or <code>setInterval</code> for legacy browsers, quickly updating the style for the properties and execute the <code>update:function</code> callback if any. Also while animating, KUTE.js will begin <em>listening</em> for your tween control input such as <code>.pause()</code> or <code>.stop()</code> or any other. Also, when a certain tween control method is used, KUTE.js will execute it's specific callback, if used.</li>
-			<li>When tween animation is finished, the <code>complete:function</code> callback function is executed and then KUTE.js starts the animation for any chained tween, or else will stop ticking with <code>cancelAnimationFrame</code> to save power.</li>
-		</ol>
-		<p>Basically, this is it!</p>
-		
-		<h2 id="performance">A Note On Performance</h2>
-		<p>As said before, performance varies from case to case; this chapter aims to explain what you should expect working with animation engines in these various scenarios at maximum stress, usually when your CPU cooler starts to work really hard, and how scalable performance can really be on various machines, operating systems or mobile devices. We'll dig into each case, by property type or anything that can be considered a factor of influence.</p>
-		
-		<h3>Function Nesting</h3>
-		<p>This could be one of the most important factors that influence performance, because we neglect this fact most of the time and changing the scope of an animation engine is important to look after. A quick example would be when we create tween objects on events such as <code>click</code>, <code>scroll</code> or <code>resize</code>, we basically set a totally different scope for the animation and we fill the memory with large chunks of trash/jank, especially on events like <code>resize</code>.</p> 
-        <p>A better way to handle this is to create the tween objects outside the event handlers and only start the animation with these handlers when certain conditions are met. EG: <code>if (window.clientWidth > 760) { myTween.start() }</code>. Also keep in mind that this approach will eliminate any possible syncronization issues, but creating many animations is a huge temptation and this will create lots of problems for the old browsers, so keep the function nesting to as minimal as possible as a general rule.</p>
-        
-		<h3>Translate and Position</h3>
-		<p>While the code execution is the <strong>fastest</strong> for the <em>layout modifiers</em> or what we call <em>box-model</em>, say the <code>position</code> based properties set such as <code>left</code> or <code>top</code>, they may force the entire page layout to change if not absolutelly positioned and thus requires the browser to repaint all elements affected by animated repositioning and their parent elements. On the other side <code>translate</code> doesn't trigger a repaint but involves more complex operations such as more object traversing, string concatenation or check for certain conditions to be met. All of this is because <code>translate</code> is part of <code>transform</code> CSS3 property that has to stack in a single line many more properties such as <code>rotate</code>, <code>skew</code> and <code>scale</code>. <a href="http://www.paulirish.com/2012/why-moving-elements-with-translate-is-better-than-posabs-topleft/" target="_blank">An article</a> by Paul Irish explains more about differences in performance between position and translation.</p>
-		<p>Also any transform property is sub-pixel enabled and requires one or more decimals for accurate and smooth animation, decreasing overall performance. That said and with the emerging high resolution displays, it's safe to speculate that at least translation could be optimized by rounding the values, while scale, rotation and skew requires three decimals.</p>
-
-		<p><span class="ion-android-plane media"></span>To put it short <code>left</code> executes faster but requires repaint on every frame while <code>translateX</code> or <code>translate3d</code> execute slower but require no repaint on each animation frame. The <strong>winner</strong> is <kbd>left</kbd>, when it comes to code execution speed, but if we also count the elements' size, the larger size the more favor the translation so the <strong>overall winner</strong> is <kbd>translate</kbd>. The more pixels to recompose in the layout, the more time spent on each frame, and this is why translation is better in most cases, and animated positioning is best to be used as fallback animation for legacy browsers.</p>
-		
-		<h3>Translate, TranslateX and Translate3D</h3>
-		<p>While running a 2D <code>translate:150</code> animation could score similar performance as <code>translateX:150</code>, interestingly, <code>translate3d:[150,0,0]</code> is slightly faster than the other translations. Some performance <a href="http://jsperf.com/translate3d-vs-xy/28">tests</a> confirm that <code>translate3d</code> is the prefered property for hardware acceleration. For this reason, <kbd>translate3d</kbd> is the <strong>winner</strong> and KUTE.js always uses it even if you only use <code>translateX</code> or <code>translateY</code> for instance.<p> 
-		<p>Similarly, if you animate the 2D <code>translate</code> this always goes <code>translate(x,y)</code> even if you use <code>translate:150</code> (only for the X axis) or <code>translate:[150,0]</code> (both X and Y axis), for better performance as well. And by the way, this works great on IE9 and other legacy browsers.</p>
-		
-		<h3>Box Model</h3>
-		<p><span class="ion-nuclear media"></span>We compared position with transition above, but now we are going to talk about other issues related to <strong>resizers</strong>: <code>width</code>, <code>height</code>, <code>margin</code>, <code>padding</code> and <code>borderWidth</code> or any of their variations. The code execution is super fast, but when resizing the window while animations are running, the browser is also computing the resize handlers, the animation performance is very very low on <strong>all</strong> browsers, especially when you animate these resize properties. When this <strong>toxic combination</strong> occurs animating a large amount of elements could crash any browser, no exception, and I think any developer should know about this.</p>
-		<p>The <code>resize</code> event triggered by these resizer properties can cause some <strong>severe issues with legacy browsers</strong> such as IE8. These good old browsers don't understand much about Javascript driven layout changes and thus skip/fail to execute any handlers attached to window resize event bubbles.</p> 
-		<p>A workaound for the resizers' effect on the layout would be to use them only for absolute positioned elements, this way the layout will not need to be repainted and the recomposition is limited to the elements themselves. If not, and you are required to provide legacy support, you must DISABLE any resize handlers for IE8 and any other browser that runs slow or crashes. You should also consider not using any resize animation for legacy browsers especially when usability and larger reach is expected.</p>
-		
-		<h3>RGB and HEX</h3>
-		<p><span class="ion-android-color-palette media"></span>When animating any color property such as (text) <code>color</code> or <code>background-color</code>, KUTE.js always uses/converts to RGB/RGBA, but there is a <code>keepHex:true</code> tween option that overrides that. Still some browsers such as Chrome will still show you the computed style for your color as RGB no matter what. The conversion process will decrease performance, making <kbd>RGB</kbd> the <strong>winner</strong>.</p>
-		
-		<h3>TO and FROMTO</h3>
-		<p>The two main methods for creating animation setups (tween objects) that are coming with KUTE.js are <code>.to()</code> and <code>.fromTo()</code>. While <code>.to()</code> is much more simple and convenient to use, very useful for tween chaining, it has to process the starting values on every <code>.start()</code> delaying the animation for a few miliseconds depending on the browser and hardware, making <kbd>.fromTo()</kbd> the <strong>winner</strong>. On a large amount of elements animating at the same time, these scripting based delays can produce some serious syncronization issues, so caution is advised. In that case you should use <code>.fromTo()</code> properly.</p>
-	
-		<h3>Easing Functions</h3>
-		<p>KUTE.js comes with 3 packs of easing functions: the popular <a href="http://robertpenner.com/easing/" target="_blank">easing functions</a> by Robert Penner, <a href="http://dynamicsjs.com/" target="_blank">dynamics physics</a> easing functions by Michael Villar and <a href="https://github.com/gre/bezier-easing" target="_blank">bezier-easing</a> by Gaëtan Renaudeau. I've worked very hard to optimize the last 2 as much as possible, but they will never beat Robert Penner's functions in any performance test, that's an all time <strong>winner</strong>.</p>
-		<p><span class="ion-shuffle media"></span>The point here is that the more accuracy a function offers, the more power needed, and the result is less performance. For instance the <code>cubic-bezier</code> based functions have a 0.0000001 error margin, while the <code>Exponential</code> easing functions by Robert Penner are somewhat glitchy on long page scrolls or translations. Interestingly, some physics based functions perform exceedingly well, and generally the difference in performance is fairly negligible even for large amounts of elements, and have no impact on very few elements.</p>
-		
-		<h3>Garbage Collection</h3>
-		<p><span class="ion-trash-a media"></span>The goal of the development strategy is to be able to execute the script, update layout and repaint, all under 16 miliseconds, so that the animation runs constantly at 60fps. However running some repeatable animations for a large amount of elements would really give garbage collectors a lot of work and thus some frames take more than 16 miliseconds. The more properties and/or elements, the more work.</p>		
-		<p>While garbage collection is a great way modern browsers use to clean the memory, sometimes the garbage collector can jump in anytime, cousing drops in the order of miliseconds. Still, if it's the case, there are ways to help composing the layout faster, but we will see that in the performance testing <a href="performance">page</a>.</p>
-	
-		<h3>Property Value Complexity</h3>
-		<p>Just like the high amount of simultaneous animations influence performance, the property value complexity is also an important factor. If we were to compare all the supported properties in terms of complexity, the list would go like this (from most expensive to least): path morphing, regular transform, matrix3d (not yet supported), box-shadow / text-shadow,  colors, box model<span style="color:red">*</span>, unitless props (scroll, opacity).</p>
-        <p>The <span style="color:red">*</span> wants to emphasize the fact that box model properties of type resizers have additional performance drawbacks as discussed in a previous chapter.</p>
-        
-		<h3>OSs, Desktops and Mobiles</h3>
-		<p><span class="ion-social-tux media"></span>The performance tests have been performed mainly on Microsoft Windows 8.1 and Ubuntu Linux 14.04 Trusty Tahr with latest nVidia graphics drivers on both OSs, all set up for maximum performance. The browsers are obviously Firefox (both OSs), Google Chrome (both OSs), Opera (both OSs) and IE11 (Win8).</p> 
-		<p><span class="ion-social-windows media"></span>The results show <strong>Windows</strong> based browsers came better than Ubuntu based ones, mainly because of DirectX and better drivers that greatly improve hardware accelerated graphics, while Linux still faces some noticeable issues with vertical sync among many others, but hey it's a work in progress and it's open source!</p>
-		
-		<p><span class="ion-social-chrome media"></span>The browsers' performance goes like this (from best to poorest): <strong>Google Chrome</strong>, Opera, Internet Explorer, Firefox. Yes, Firefox is the slowest on Windows OS. I never tested anything on iOS or MAC-OS but I believe Safari performs very well with transforms. <a href="http://venturebeat.com/2014/05/12/apple-upgrades-safaris-webkit-to-challenge-googles-chrome-browser/" target="_blank">Some argue</a> that Safari outperforms Google Chrome due to the latest Webkit upgrade.</p>
-
-		<p>Also know that legacy browsers don't support <code>requestAnimationFrame</code> and pollyfills usually replace it with <code>setInterval</code>, a clasic Javascript method that's <a href="https://jsperf.com/requestanimationframe-vs-setinterval-loop/7" target="_blank">significantly</a> affecting performance, because it's one of the main causes for <a href="http://www.html5rocks.com/en/tutorials/speed/rendering/" target="_blank">lots of JANK</a>.</p>
-		
-		<p>Another important aspect as far as performance goes, the power saving profiles on Windows OS drops performance for desktop computers and especally laptops. Also when a laptop is unplugged, Windows automatically changes power profile drastically decreasing performance. </p>
-		
-		<p>As for the mobiles, you must know that even if you have an octacore CPU powered phone or tablet is never going to match a desktop and not even a laptop. For a mobile device <a href="https://www.youtube.com/watch?v=YyQYhhy1dZI" target="_blank">these guys</a> recommend to keep everything under 7 miliseconds for the smooth experience that most users expect and that the animation performance of a phone is actually up to 5 times lower than a desktop or laptop. I would stress that having 2 or 3 simoultaneous animations on a phone at a certain point is just about enough.</p> 
-		
-		<p><span class="ion-android-phone-portrait media"></span>Another thing to keep in mind is that scrollling on a mobile device is actually hardware accelerated animation and thus compete for power drastically reducing performance for any other CSS or Javascript driven animations. To understand how critical performance is on a mobile device, I highly recommend checking the <a href="https://youtu.be/WrA85a4ZIaM?t=16m6s" target="_blank">Google I/O 2014 presentation</a>. Now you understand how much performance really matters.</p>
-		<p><strong>Remember</strong>: do not open any Javascript animation engine performance test with your phone, you may burn your battery, espectially if it's unpluggable.</p>			
-		
-		<h2>KUTE.js Project</h2>
-		<p>KUTE.js continues what was started with <strong>jQueryTween</strong> (removed) and the main goal is to improve usability, compatibility, code quality and performance. KUTE.js includes a jQuery plugin to help you easily implement it in your jQuery applications, and also packs a set of tools such as bezier and physics based easing functions, all elegantly packed for convenience and distributed via CDN.</p>
-		<p>It all started with a fork of the popular <a href="https://github.com/tweenjs/tween.js" target="_blank">tween.js</a> and ended up having a KUTE.js version 0.9.5 that's very fast, memory efficient and super easy to use.</p>
-		<p>In the hystory of the making there were consistent contributions of <a href="https://github.com/dalisoft" target="_blank">Dav</a> aka @dalisoft for features such as play &amp; pause, <a href="text.html">Text Plugin</a>, as well as for performance related issues. Generally I would stress that the code is a joint work of me and Dav. Big thanks Dav, well done.</p>
-		<p>Also I would like to thank <a href="http://ingwie.me/" target="_blank">Ingwie Phoenix</a> for the npm/Bower and UMD implementations.</p>
-		
-		<ul id="share" class="nav">
-			<li>Share </li>
-			<li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
-            <li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute_js animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></li>
-			<li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
-		</ul>
-	</div>
-	  
-      <!-- FOOTER -->
-     <footer>
-		<div class="content-wrap">
-			<p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
-			<p>&copy; 2007 - 2016 &middot; <a href="http://themeforest.net/user/dnp_theme?ref=dnp_theme">dnp_theme</a>.</p>
-		</div>
-    </footer>
-
- </div><!-- /.site-wrapper -->
- 
+    <!-- /.site-wrapper -->
 
 
-<!-- JavaScript
+
+    <!-- JavaScript
 ================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->	
-<script src="./src/kute.min.js"></script> <!-- KUTE.js core -->
-<script src="./assets/js/scripts.js"></script> <!-- some stuff -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="./src/kute.min.js"></script>
+    <!-- KUTE.js core -->
+    <script src="./assets/js/scripts.js"></script>
+    <!-- some stuff -->
 
 </body>
+
 </html>

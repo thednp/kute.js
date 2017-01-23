@@ -1,348 +1,382 @@
-// Document
-// HTMLDocument is an extension of Document.  If the browser has HTMLDocument but not Document, the former will suffice as an alias for the latter.
-if (!this.Document){this.Document = this.HTMLDocument; }
-
-// Element
-if (!window.HTMLElement) { window.HTMLElement = window.Element; }
-
-// Window
-(function(global) {
-	if (global.constructor) {
-		global.Window = global.constructor;
-	} else {
-		(global.Window = global.constructor = new Function('return function Window() {}')()).prototype = this;
-	}
-}(this));
-
-// Date.now
-if(!Date.now){ Date.now = function now() { return new Date().getTime(); }; }
-
-// performance.now
+// minifill.js | MIT | dnp_theme
 (function(){
-	if ("performance" in window == false) {	window.performance = {}; }
-	
-	if ("now" in window.performance == false){	
-		var nowOffset = Date.now();
-		
-		window.performance.now = function now(){
-			return Date.now() - nowOffset;
-		}
-	}
-})();
+
+  // all repeated strings get a single reference
+  // document | window | element + corrections
+  var Doc = 'Document', doc = document, DOCUMENT = this[Doc] || this.HTMLDocument, // IE8
+    WIN = 'Window', win = window, WINDOW =  this.constructor || this[WIN] || Window, // old Safari
+    HTMLELEMENT = 'HTMLElement', documentElement = 'documentElement', ELEMENT = Element,
+
+    // classList related
+    className = 'className', add = 'add', classList = 'classList', remove = 'remove', contains = 'contains',
+    
+    // object | array related
+    prototype = 'prototype', indexOf = 'indexOf', length = 'length',
+
+    // performance
+    now = 'now', performance = 'performance',
+
+    // getComputedStyle
+    getComputedStyle = 'getComputedStyle', currentStyle = 'currentStyle', fontSize = 'fontSize',
+
+    // event related
+    EVENT = 'Event', CustomEvent = 'CustomEvent', IE8EVENTS = '_events', 
+    etype = 'type', target = 'target', currentTarget = 'currentTarget', relatedTarget = 'relatedTarget',
+    cancelable = 'cancelable', bubbles = 'bubbles', cancelBubble = 'cancelBubble', cancelImmediate = 'cancelImmediate', detail = 'detail',
+    addEventListener = 'addEventListener', removeEventListener = 'removeEventListener', dispatchEvent = 'dispatchEvent';
+
+    
+  // Element
+  if (!win[HTMLELEMENT]) { win[HTMLELEMENT] = win[ELEMENT]; }
+
+  // Array[prototype][indexOf]
+  if (!Array[prototype][indexOf]) {
+    Array[prototype][indexOf] = function(searchElement) {
+      if (this === undefined || this === null) {
+        throw new TypeError(this + ' is not an object');
+      }
+    
+      var arraylike = this instanceof String ? this.split('') : this,
+        lengthValue = Math.max(Math.min(arraylike[length], 9007199254740991), 0) || 0,
+        index = Number(arguments[1]) || 0;
+    
+      index = (index < 0 ? Math.max(lengthValue + index, 0) : index) - 1;
+    
+      while (++index < lengthValue) {
+        if (index in arraylike && arraylike[index] === searchElement) {
+          return index;
+        }
+      }
+    
+      return -1;
+    };
+  }
+
+  // Date[now]
+  if(!Date[now]){ Date[now] = function() { return new Date().getTime(); }; }
+
+  // performance[now]
+  (function(){
+    if (performance in win == false) {  win[performance] = {}; }
+    
+    if (now in win[performance] == false){  
+      var nowOffset = Date[now]();
+      
+      window[performance][now] = function(){
+        return Date[now]() - nowOffset;
+      }
+    }
+  })();
 
 
-// Array.prototype.indexOf
-if (!Array.prototype.indexOf) {
-	Array.prototype.indexOf = function indexOf(searchElement) {
-		if (this === undefined || this === null) {
-			throw new TypeError(this + 'is not an object');
-		}
-	
-		var	arraylike = this instanceof String ? this.split('') : this,
-			length = Math.max(Math.min(arraylike.length, 9007199254740991), 0) || 0,
-			index = Number(arguments[1]) || 0;
-	
-		index = (index < 0 ? Math.max(length + index, 0) : index) - 1;
-	
-		while (++index < length) {
-			if (index in arraylike && arraylike[index] === searchElement) {
-				return index;
-			}
-		}
-	
-		return -1;
-	};
-}
+  // getComputedStyle
+  if (!(getComputedStyle in win)) {
+    function getComputedStylePixel(element, property, fontSizeValue) {
+      
+      // Internet Explorer sometimes struggles to read currentStyle until the element's document is accessed.
+      var value = element.document && element[currentStyle][property].match(/([\d\.]+)(%|cm|em|in|mm|pc|pt|)/) || [0, 0, ''],
+        size = value[1],
+        suffix = value[2],
+        rootSize;
+  
+      fontSizeValue = !fontSizeValue ? fontSizeValue : /%|em/.test(suffix) && element.parentElement ? getComputedStylePixel(element.parentElement, 'fontSize', null) : 16;
+      rootSize = property == 'fontSize' ? fontSizeValue : /width/i.test(property) ? element.clientWidth : element.clientHeight;
+  
+      return suffix == '%' ? size / 100 * rootSize :
+        suffix == 'cm' ? size * 0.3937 * 96 :
+        suffix == 'em' ? size * fontSizeValue :
+        suffix == 'in' ? size * 96 :
+        suffix == 'mm' ? size * 0.3937 * 96 / 10 :
+        suffix == 'pc' ? size * 12 * 96 / 72 :
+        suffix == 'pt' ? size * 96 / 72 :
+        size;
+    }
+  
+    function setShortStyleProperty(style, property) {
+      var  borderSuffix = property == 'border' ? 'Width' : '',
+        t = property + 'Top' + borderSuffix,
+        r = property + 'Right' + borderSuffix,
+        b = property + 'Bottom' + borderSuffix,
+        l = property + 'Left' + borderSuffix;
+  
+      style[property] = (style[t] == style[r] && style[t] == style[b] && style[t] == style[l] ? [ style[t] ] :
+              style[t] == style[b] && style[l] == style[r] ? [ style[t], style[r] ] :
+              style[l] == style[r] ? [ style[t], style[r], style[b] ] :
+              [ style[t], style[r], style[b], style[l] ]).join(' ');
+    }
+  
+    // <CSSStyleDeclaration>
+    function CSSStyleDeclaration(element) {
+      var style = this,
+      currentStyleValue = element[currentStyle],
+      fontSizeValue = getComputedStylePixel(element, fontSize),
+      unCamelCase = function (match) {
+        return '-' + match.toLowerCase();
+      },
+      property;
+  
+      for (property in currentStyleValue) {
+        Array.prototype.push.call(style, property == 'styleFloat' ? 'float' : property.replace(/[A-Z]/, unCamelCase));
+  
+        if (property == 'width') {
+          style[property] = element.offsetWidth + 'px';
+        } else if (property == 'height') {
+          style[property] = element.offsetHeight + 'px';
+        } else if (property == 'styleFloat') {
+          style.float = currentStyleValue[property];
+        } else if (/margin.|padding.|border.+W/.test(property) && style[property] != 'auto') {
+          style[property] = Math.round(getComputedStylePixel(element, property, fontSizeValue)) + 'px';
+        } else if (/^outline/.test(property)) {
+          // errors on checking outline
+          try {
+            style[property] = currentStyleValue[property];
+          } catch (error) {
+            style.outlineColor = currentStyleValue.color;
+            style.outlineStyle = style.outlineStyle || 'none';
+            style.outlineWidth = style.outlineWidth || '0px';
+            style.outline = [style.outlineColor, style.outlineWidth, style.outlineStyle].join(' ');
+          }
+        } else {
+          style[property] = currentStyleValue[property];
+        }
+      }
+  
+      setShortStyleProperty(style, 'margin');
+      setShortStyleProperty(style, 'padding');
+      setShortStyleProperty(style, 'border');
+  
+      style[fontSize] = Math.round(fontSizeValue) + 'px';    
+    }
+    
+    CSSStyleDeclaration[prototype] = {
+      constructor: CSSStyleDeclaration,
+      // <CSSStyleDeclaration>.getPropertyPriority
+      getPropertyPriority: function () {
+        throw new Error('DOM Exception 9');
+      },
+      // <CSSStyleDeclaration>.getPropertyValue
+      getPropertyValue: function (property) {
+        return this[property.replace(/-\w/g, function (match) {
+          return match[1].toUpperCase();
+        })];
+      },
+      // <CSSStyleDeclaration>.item
+      item: function (index) {
+        return this[index];
+      },
+      // <CSSStyleDeclaration>.removeProperty
+      removeProperty: function () {
+        throw new Error('DOM Exception 7');
+      },
+      // <CSSStyleDeclaration>.setProperty
+      setProperty: function () {
+        throw new Error('DOM Exception 7');
+      },
+      // <CSSStyleDeclaration>.getPropertyCSSValue
+      getPropertyCSSValue: function () {
+        throw new Error('DOM Exception 9');
+      }
+    };    
+  
+    // <Global>.getComputedStyle
+    win[getComputedStyle] = function(element) {
+      return new CSSStyleDeclaration(element);
+    };
+  }  
 
-// getComputedStyle
-if (!('getComputedStyle' in window)) {
-	(function(){
-		function getComputedStylePixel(element, property, fontSize) {
-			
-			// Internet Explorer sometimes struggles to read currentStyle until the element's document is accessed.
-			var value = element.document && element.currentStyle[property].match(/([\d\.]+)(%|cm|em|in|mm|pc|pt|)/) || [0, 0, ''],
-				size = value[1],
-				suffix = value[2],
-				rootSize;
-	
-			fontSize = !fontSize ? fontSize : /%|em/.test(suffix) && element.parentElement ? getComputedStylePixel(element.parentElement, 'fontSize', null) : 16;
-			rootSize = property == 'fontSize' ? fontSize : /width/i.test(property) ? element.clientWidth : element.clientHeight;
-	
-			return suffix == '%' ? size / 100 * rootSize :
-				suffix == 'cm' ? size * 0.3937 * 96 :
-				suffix == 'em' ? size * fontSize :
-				suffix == 'in' ? size * 96 :
-				suffix == 'mm' ? size * 0.3937 * 96 / 10 :
-				suffix == 'pc' ? size * 12 * 96 / 72 :
-				suffix == 'pt' ? size * 96 / 72 :
-				size;
-		}
-	
-		function setShortStyleProperty(style, property) {
-			var	borderSuffix = property == 'border' ? 'Width' : '',
-				t = property + 'Top' + borderSuffix,
-				r = property + 'Right' + borderSuffix,
-				b = property + 'Bottom' + borderSuffix,
-				l = property + 'Left' + borderSuffix;
-	
-			style[property] = (style[t] == style[r] && style[t] == style[b] && style[t] == style[l] ? [ style[t] ] :
-							style[t] == style[b] && style[l] == style[r] ? [ style[t], style[r] ] :
-							style[l] == style[r] ? [ style[t], style[r], style[b] ] :
-							[ style[t], style[r], style[b], style[l] ]).join(' ');
-		}
-	
-		// <CSSStyleDeclaration>
-		function CSSStyleDeclaration(element) {
-			var style = this,
-			currentStyle = element.currentStyle,
-			fontSize = getComputedStylePixel(element, 'fontSize'),
-			unCamelCase = function (match) {
-				return '-' + match.toLowerCase();
-			},
-			property;
-	
-			for (property in currentStyle) {
-				Array.prototype.push.call(style, property == 'styleFloat' ? 'float' : property.replace(/[A-Z]/, unCamelCase));
-	
-				if (property == 'width') {
-					style[property] = element.offsetWidth + 'px';
-				} else if (property == 'height') {
-					style[property] = element.offsetHeight + 'px';
-				} else if (property == 'styleFloat') {
-					style.float = currentStyle[property];
-				} else if (/margin.|padding.|border.+W/.test(property) && style[property] != 'auto') {
-					style[property] = Math.round(getComputedStylePixel(element, property, fontSize)) + 'px';
-				} else if (/^outline/.test(property)) {
-					// errors on checking outline
-					try {
-						style[property] = currentStyle[property];
-					} catch (error) {
-						style.outlineColor = currentStyle.color;
-						style.outlineStyle = style.outlineStyle || 'none';
-						style.outlineWidth = style.outlineWidth || '0px';
-						style.outline = [style.outlineColor, style.outlineWidth, style.outlineStyle].join(' ');
-					}
-				} else {
-					style[property] = currentStyle[property];
-				}
-			}
-	
-			setShortStyleProperty(style, 'margin');
-			setShortStyleProperty(style, 'padding');
-			setShortStyleProperty(style, 'border');
-	
-			style.fontSize = Math.round(fontSize) + 'px';		
-		}
-		
-		CSSStyleDeclaration.prototype = {
-			constructor: CSSStyleDeclaration,
-			// <CSSStyleDeclaration>.getPropertyPriority
-			getPropertyPriority: function () {
-				throw new Error('NotSupportedError: DOM Exception 9');
-			},
-			// <CSSStyleDeclaration>.getPropertyValue
-			getPropertyValue: function (property) {
-				return this[property.replace(/-\w/g, function (match) {
-					return match[1].toUpperCase();
-				})];
-			},
-			// <CSSStyleDeclaration>.item
-			item: function (index) {
-				return this[index];
-			},
-			// <CSSStyleDeclaration>.removeProperty
-			removeProperty: function () {
-				throw new Error('NoModificationAllowedError: DOM Exception 7');
-			},
-			// <CSSStyleDeclaration>.setProperty
-			setProperty: function () {
-				throw new Error('NoModificationAllowedError: DOM Exception 7');
-			},
-			// <CSSStyleDeclaration>.getPropertyCSSValue
-			getPropertyCSSValue: function () {
-				throw new Error('NotSupportedError: DOM Exception 9');
-			}
-		};		
-	
-		// <Global>.getComputedStyle
-		window.getComputedStyle = function getComputedStyle(element) {
-			return new CSSStyleDeclaration(element);
-		};
-	})();
-}
+  // Element.prototype.classList by thednp
+  if( !(classList in ELEMENT[prototype]) ) {
+    var ClassLIST = function(elem){
+      var classArr = elem[className].replace(/^\s+|\s+$/g,'').split(/\s+/) || [];
 
-// Event
-if (!window.Event||!Window.prototype.Event) {
-	(function (){
-		window.Event = Window.prototype.Event = Document.prototype.Event = Element.prototype.Event = function Event(type, eventInitDict) {
-			if (!type) { throw new Error('Not enough arguments'); }
-			var event, 
-				bubbles = eventInitDict && eventInitDict.bubbles !== undefined ? eventInitDict.bubbles : false,
-				cancelable = eventInitDict && eventInitDict.cancelable !== undefined ? eventInitDict.cancelable : false;
-			if ( 'createEvent' in document ) {
-				event = document.createEvent('Event');			
-				event.initEvent(type, bubbles, cancelable);
-			} else {
-				event = document.createEventObject();		
-				event.type = type;
-				event.bubbles = bubbles;
-				event.cancelable = cancelable;	
-			}
-			return event;
-		};
-	})();
-}
+          // methods
+          hasClass = this[contains] = function(classNAME){
+            return classArr[indexOf](classNAME) > -1;
+          },
+          addClass = this[add] = function(classNAME){
+            if (!hasClass(classNAME)) {
+              classArr.push(classNAME);
+              elem[className] = classArr.join(' ');
+            }
+          },
+          removeClass = this[remove] = function(classNAME){
+            if (hasClass(classNAME)) {
+              classArr.splice(classArr[indexOf](classNAME),1);
+              elem[className] = classArr.join(' '); 
+            }
+          },
+          toggleClass = this.toggle = function(classNAME){
+            if ( hasClass(classNAME) ) { removeClass(classNAME); } 
+            else { addClass(classNAME); } 
+          };
+    }
+    Object.defineProperty(ELEMENT[prototype], classList, { get: function () { return new ClassLIST(this); } });
+  }
 
-// CustomEvent
-if (!('CustomEvent' in window) || !('CustomEvent' in Window.prototype)) {
-	(function(){		
-		window.CustomEvent = Window.prototype.CustomEvent = Document.prototype.CustomEvent = Element.prototype.CustomEvent = function CustomEvent(type, eventInitDict) {
-			if (!type) {
-				throw Error('TypeError: Failed to construct "CustomEvent": An event name must be provided.');
-			}
-			var event = new Event(type, eventInitDict);
-			event.detail = eventInitDict && eventInitDict.detail || null;
-			return event;
-		};
-		
-	})()
-}
+  // Event
+  if (!win[EVENT]||!WINDOW[prototype][EVENT]) {
+    win[EVENT] = WINDOW[prototype][EVENT] = DOCUMENT[prototype][EVENT] = ELEMENT[prototype][EVENT] = function(type, eventInitDict) {
+      if (!type) { throw new Error('Not enough arguments'); }
+      var event, 
+        bubblesValue = eventInitDict && eventInitDict[bubbles] !== undefined ? eventInitDict[bubbles] : false,
+        cancelableValue = eventInitDict && eventInitDict[cancelable] !== undefined ? eventInitDict[cancelable] : false;
+      if ( 'createEvent' in doc ) {
+        event = doc.createEvent(EVENT);      
+        event.initEvent(type, bubblesValue, cancelableValue);
+      } else {
+        event = doc.createEventObject();
+        event[etype] = type;
+        event[bubbles] = bubblesValue;
+        event[cancelable] = cancelableValue;
+      }
+      return event;
+    };
+  }
 
-// addEventListener
-if (!window.addEventListener||!Window.prototype.addEventListener) {
-	(function (){
-		window.addEventListener = Window.prototype.addEventListener = Document.prototype.addEventListener = Element.prototype.addEventListener = function addEventListener() {
-			var	element = this,
-				type = arguments[0],
-				listener = arguments[1];
-	
-			if (!element._events) {	element._events = {}; }
-	
-			if (!element._events[type]) {
-				element._events[type] = function (event) {
-					var	list = element._events[event.type].list,
-						events = list.slice(),
-						index = -1,
-						length = events.length,
-						eventElement;
-	
-					event.preventDefault = function preventDefault() {
-						if (event.cancelable !== false) {
-							event.returnValue = false;
-						}
-					};
-	
-					event.stopPropagation = function stopPropagation() {
-						event.cancelBubble = true;
-					};
-	
-					event.stopImmediatePropagation = function stopImmediatePropagation() {
-						event.cancelBubble = true;
-						event.cancelImmediate = true;
-					};
-	
-					event.currentTarget = element;
-					event.relatedTarget = event.fromElement || null;
-					event.target = event.target || event.srcElement || element;
-					event.timeStamp = new Date().getTime();
-	
-					if (event.clientX) {
-						event.pageX = event.clientX + document.documentElement.scrollLeft;
-						event.pageY = event.clientY + document.documentElement.scrollTop;
-					}
-	
-					while (++index < length && !event.cancelImmediate) {
-						if (index in events) {
-							eventElement = events[index];
-	
-							if (list.indexOf(eventElement) !== -1 && typeof eventElement === 'function') {
-								eventElement.call(element, event);
-							}
-						}
-					}
-				};
-	
-				element._events[type].list = [];
-	
-				if (element.attachEvent) {
-					element.attachEvent('on' + type, element._events[type]);
-				}
-			}
-	
-			element._events[type].list.push(listener);
-		};
-	
-		window.removeEventListener = Window.prototype.removeEventListener = Document.prototype.removeEventListener = Element.prototype.removeEventListener = function removeEventListener() {
-			var	element = this,
-				type = arguments[0],
-				listener = arguments[1],
-				index;
-	
-			if (element._events && element._events[type] && element._events[type].list) {
-				index = element._events[type].list.indexOf(listener);
-	
-				if (index !== -1) {
-					element._events[type].list.splice(index, 1);
-	
-					if (!element._events[type].list.length) {
-						if (element.detachEvent) {
-							element.detachEvent('on' + type, element._events[type]);
-						}
-						delete element._events[type];
-					}
-				}
-			}
-		};
-	})();
-}
+  // CustomEvent
+  if (!(CustomEvent in win) || !(CustomEvent in WINDOW[prototype])) {
+    win[CustomEvent] = WINDOW[prototype][CustomEvent] = DOCUMENT[prototype][CustomEvent] = Element[prototype][CustomEvent] = function(type, eventInitDict) {
+      if (!type) {
+        throw Error('CustomEvent TypeError: An event name must be provided.');
+      }
+      var event = new Event(type, eventInitDict);
+      event[detail] = eventInitDict && eventInitDict[detail] || null;
+      return event;
+    };
+  }
 
-// Event dispatcher	/ trigger
-if (!window.dispatchEvent||!Window.prototype.dispatchEvent||!Document.prototype.dispatchEvent||!Element.prototype.dispatchEvent) {
-	(function(){	
-		window.dispatchEvent = Window.prototype.dispatchEvent = Document.prototype.dispatchEvent = Element.prototype.dispatchEvent = function dispatchEvent(event) {
-			if (!arguments.length) {
-				throw new Error('Not enough arguments');
-			}
-	
-			if (!event || typeof event.type !== 'string') {
-				throw new Error('DOM Events Exception 0');
-			}
-	
-			var element = this, type = event.type;
-	
-			try {
-				if (!event.bubbles) {
-					event.cancelBubble = true;
-	
-					var cancelBubbleEvent = function (event) {
-						event.cancelBubble = true;
-	
-						(element || window).detachEvent('on' + type, cancelBubbleEvent);
-					};
-	
-					this.attachEvent('on' + type, cancelBubbleEvent);
-				}
-	
-				this.fireEvent('on' + type, event);
-			} catch (error) {
-				event.target = element;
-	
-				do {
-					event.currentTarget = element;
-	
-					if ('_events' in element && typeof element._events[type] === 'function') {
-						element._events[type].call(element, event);
-					}
-	
-					if (typeof element['on' + type] === 'function') {
-						element['on' + type].call(element, event);
-					}
-	
-					element = element.nodeType === 9 ? element.parentWindow : element.parentNode;
-				} while (element && !event.cancelBubble);
-			}
-	
-			return true;
-		};
-	})();
-}
+  // addEventListener | removeEventListener
+  if (!win[addEventListener]||!WINDOW[prototype][addEventListener]) {
+    win[addEventListener] = WINDOW[prototype][addEventListener] = DOCUMENT[prototype][addEventListener] = ELEMENT[prototype][addEventListener] = function() {
+      var  element = this,
+        type = arguments[0],
+        listener = arguments[1];
+
+      if (!element[IE8EVENTS]) {  element[IE8EVENTS] = {}; }
+
+      if (!element[IE8EVENTS][type]) {
+        element[IE8EVENTS][type] = function (event) {
+          var  list = element[IE8EVENTS][event[etype]].list,
+            events = list.slice(),
+            index = -1,
+            lengthValue = events[length],
+            eventElement;
+
+          event.preventDefault = function() {
+            if (event[cancelable] !== false) {
+              event.returnValue = false;
+            }
+          };
+
+          event.stopPropagation = function() {
+            event[cancelBubble] = true;
+          };
+
+          event.stopImmediatePropagation = function() {
+            event[cancelBubble] = true;
+            event[cancelImmediate] = true;
+          };
+
+          event[currentTarget] = element;
+          event[relatedTarget] = event[relatedTarget] || event.fromElement || null;
+          event[target] = event[target] || event.srcElement || element;
+          event.timeStamp = new Date().getTime();
+
+          if (event.clientX) {
+            event.pageX = event.clientX + doc[documentElement].scrollLeft;
+            event.pageY = event.clientY + doc[documentElement].scrollTop;
+          }
+
+          while (++index < lengthValue && !event[cancelImmediate]) {
+            if (index in events) {
+              eventElement = events[index];
+
+              if (list[indexOf](eventElement) !== -1 && typeof eventElement === 'function') {
+                eventElement.call(element, event);
+              }
+            }
+          }
+        };
+
+        element[IE8EVENTS][type].list = [];
+
+        if (element.attachEvent) {
+          element.attachEvent('on' + type, element[IE8EVENTS][type]);
+        }
+      }
+
+      element[IE8EVENTS][type].list.push(listener);
+    };
+
+    win[removeEventListener] = WINDOW[prototype][removeEventListener] = DOCUMENT[prototype][removeEventListener] = ELEMENT[prototype][removeEventListener] = function() {
+      var element = this,
+        type = arguments[0],
+        listener = arguments[1],
+        index;
+
+      if (element[IE8EVENTS] && element[IE8EVENTS][type] && element[IE8EVENTS][type].list) {
+        index = element[IE8EVENTS][type].list[indexOf](listener);
+
+        if (index !== -1) {
+          element[IE8EVENTS][type].list.splice(index, 1);
+
+          if (!element[IE8EVENTS][type].list[length]) {
+            if (element.detachEvent) {
+              element.detachEvent('on' + type, element[IE8EVENTS][type]);
+            }
+            delete element[IE8EVENTS][type];
+          }
+        }
+      }
+    };
+  }
+
+  // Event dispatcher
+  if (!win[dispatchEvent]||!WINDOW[prototype][dispatchEvent]||!DOCUMENT[prototype][dispatchEvent]||!ELEMENT[prototype][dispatchEvent]) {
+    win[dispatchEvent] = WINDOW[prototype][dispatchEvent] = DOCUMENT[prototype][dispatchEvent] = ELEMENT[prototype][dispatchEvent] = function (event) {
+      if (!arguments[length]) {
+        throw new Error('Not enough arguments');
+      }
+
+      if (!event || typeof event[etype] !== 'string') {
+        throw new Error('DOM Events Exception 0');
+      }
+
+      var element = this, type = event[etype];
+
+      try {
+        if (!event[bubbles]) {
+          event[cancelBubble] = true;
+
+          var cancelBubbleEvent = function (event) {
+            event[cancelBubble] = true;
+
+            (element || win).detachEvent('on' + type, cancelBubbleEvent);
+          };
+
+          this.attachEvent('on' + type, cancelBubbleEvent);
+        }
+
+        this.fireEvent('on' + type, event);
+      } catch (error) {
+        event[target] = element;
+
+        do {
+          event[currentTarget] = element;
+
+          if (IE8EVENTS in element && typeof element[IE8EVENTS][type] === 'function') {
+            element[IE8EVENTS][type].call(element, event);
+          }
+
+          if (typeof element['on' + type] === 'function') {
+            element['on' + type].call(element, event);
+          }
+
+          element = element.nodeType === 9 ? element.parentWindow : element.parentNode;
+        } while (element && !event[cancelBubble]);
+      }
+
+      return true;
+    };
+  }
+}());
