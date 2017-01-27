@@ -7,29 +7,29 @@
 
 (function (root,factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['kute.js'], factory);
+    define(['./kute.js'], factory);
   } else if(typeof module == 'object' && typeof require == 'function') {
-    module.exports = factory(require('kute.js'));
+    module.exports = factory(require('./kute.js'));
   } else if ( typeof root.KUTE !== 'undefined' ) {
     factory(root.KUTE);
   } else {
     throw new Error("SVG Plugin require KUTE.js.");
   }
 }(this, function(KUTE) {
-  'use strict'; 
+  'use strict';
 
   var g = typeof global !== 'undefined' ? global : window, K = KUTE, // connect plugin to KUTE object and global
     DOM = K.dom, parseProperty = K.parseProperty, prepareStart = K.prepareStart, getCurrentStyle = K.getCurrentStyle,
-    trueColor = K.truC, trueDimension = K.truD, crossCheck = K.crossCheck, 
+    trueColor = K.truC, trueDimension = K.truD, crossCheck = K.crossCheck,
     number = g.Interpolate.number, unit = g.Interpolate.unit, color = g.Interpolate.color, // interpolate functions
     defaultOptions = K.defaultOptions, // default tween options since 1.6.1
 
     // browser detection
     isIE = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null ? parseFloat( RegExp.$1 ) : false,
     isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent); // we optimize morph depending on device type
-  
+
   if (isIE&&isIE<9) {return;} // return if SVG API is not supported
-  
+
   // here we go with the plugin
   var pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi, ns = 'http://www.w3.org/2000/svg',
     coords = g.Interpolate.coords = isMobile ? function(a,b,l,v) { // function(array1, array2, length, progress) for SVG morph
@@ -75,27 +75,27 @@
       pr = !!s[dx-1] ? dx-1 : l-1;
       nx = !!s[dx+1] ? dx+1 : 0;
       return Math.abs(s[pr][0] - t.x) < p && Math.abs(s[pr][1] - t.y) < p ? s[pr]
-      : Math.abs(s[nx][0] - t.x) < p && Math.abs(s[nx][1] - t.y) < p ? s[nx] 
-      : Math.abs(s[dx][0] - t.x) < p && Math.abs(s[dx][1] - t.y) < p ? s[dx] 
+      : Math.abs(s[nx][0] - t.x) < p && Math.abs(s[nx][1] - t.y) < p ? s[nx]
+      : Math.abs(s[dx][0] - t.x) < p && Math.abs(s[dx][1] - t.y) < p ? s[dx]
       : [t.x,t.y];
     },
     pathToAbsolute = function(p) { // simple utility for polygons | this is still BETA / a work in progress
       var np = p.match(pathReg), wp = [], l = np.length, s, c, r, x = 0, y = 0;
       for (var i = 0; i<l; i++){
-        np[i] = np[i]; c = np[i][0]; r = new RegExp(c+'[^\\d|\\-]*','i'); 
+        np[i] = np[i]; c = np[i][0]; r = new RegExp(c+'[^\\d|\\-]*','i');
         np[i] = np[i].replace(/(^|[^,])\s*-/g, '$1,-').replace(/(\s+\,|\s|\,)/g,',').replace(r,'').split(',');
         np[i][0] = parseFloat(np[i][0]);
         np[i][1] = parseFloat(np[i][1]);
         if (i === 0) { x+=np[i][0]; y +=np[i][1]; }
         else {
-          x = np[i-1][0]; 
-          y = np[i-1][1]; 
+          x = np[i-1][0];
+          y = np[i-1][1];
           if (/l/i.test(c)) {
             np[i][0] = c === 'l' ? np[i][0] + x : np[i][0];
-            np[i][1] = c === 'l' ? np[i][1] + y : np[i][1];  
+            np[i][1] = c === 'l' ? np[i][1] + y : np[i][1];
           } else if (/h/i.test(c)) {
             np[i][0] = c === 'h' ? np[i][0] + x : np[i][0];
-            np[i][1] = y;  
+            np[i][1] = y;
           } else if (/v/i.test(c)) {
             np[i][0] = x;
             np[i][1] = c === 'v' ? np[i][0] + y : np[i][0];
@@ -106,13 +106,13 @@
     },
     getOnePath = function(p){ return p.split(/z/i).shift() + 'z'; }, // we only tween first path only
     createPath = function (p){ // create a <path> when glyph
-      var createdPath = document.createElementNS(ns,'path'), d = typeof p === 'object' ? p.getAttribute('d') : p; 
+      var createdPath = document.createElementNS(ns,'path'), d = typeof p === 'object' ? p.getAttribute('d') : p;
       createdPath.setAttribute('d',d); return createdPath;
     },
     forcePath = function(p){ // forcePath for glyph elements
-      if (p.tagName === 'glyph') { // perhaps we can also change other SVG tags in the future 
+      if (p.tagName === 'glyph') { // perhaps we can also change other SVG tags in the future
         var c = createPath(p); p.parentNode.appendChild(c); return c;
-      } 
+      }
       return p;
     },
     clone = function(a) {
@@ -143,8 +143,8 @@
         index = this.options.morphIndex;
 
       if (!this._isPolygon) {
-        s = createPath(s); e = createPath(e);  
-        pointsArray = getSegments(s,e,this.options.morphPrecision); 
+        s = createPath(s); e = createPath(e);
+        pointsArray = getSegments(s,e,this.options.morphPrecision);
         s1 = pointsArray[0]; e1 = pointsArray[1]; largerPathLength = e1.length;
       } else {
         s = pathToAbsolute(s); e = pathToAbsolute(e);
@@ -170,7 +170,7 @@
       // reverse arrays
       if (this.options.reverseFirstPath) { s1.reverse(); }
       if (this.options.reverseSecondPath) { e1.reverse(); }
-      
+
       // shift second array to for smallest tween distance
       if (index) {
         var e11 = e1.splice(index,largerPathLength-index);
@@ -180,7 +180,7 @@
       s = e = null;
       return [s1,e1]
     };
-  
+
   // set default morphPrecision since 1.6.1
   defaultOptions.morphPrecision = 15;
 
@@ -188,12 +188,12 @@
   parseProperty.path = function(o,v) {
     if (!('path' in DOM)) {
       DOM.path = function(l,p,a,b,v){
-        l.setAttribute("d", v === 1 ? b.o : 'M' + coords( a['d'],b['d'],b['d'].length,v ) + 'Z' );   
+        l.setAttribute("d", v === 1 ? b.o : 'M' + coords( a['d'],b['d'],b['d'].length,v ) + 'Z' );
       }
     }
     return getPath(v);
   };
-    
+
   prepareStart.path = function(p){
     return this.element.getAttribute('d');
   };
@@ -257,7 +257,7 @@
     },
     getCircleLength = function(el){ // return the length of the circle
       var r = el.getAttribute('r');
-      return 2 * Math.PI * r; 
+      return 2 * Math.PI * r;
     },
     getEllipseLength = function(el) { // returns the length of an ellipse
       var rx = el.getAttribute('rx'), ry = el.getAttribute('ry'),
@@ -281,24 +281,24 @@
       var l = /path|glyph/.test(e.tagName) ? e.getTotalLength() : getTotalLength(e), start, end, d, o;
       if ( v instanceof Object ) {
         return v;
-      } else if (typeof v === 'string') { 
+      } else if (typeof v === 'string') {
         v = v.split(/\,|\s/);
         start = /%/.test(v[0]) ? percent(v[0].trim(),l) : parseFloat(v[0]);
         end = /%/.test(v[1]) ? percent(v[1].trim(),l) : parseFloat(v[1]);
       } else if (typeof v === 'undefined') {
         o = parseFloat(getCurrentStyle(e,'stroke-dashoffset'));
         d = getCurrentStyle(e,'stroke-dasharray').split(/\,/);
-        
+
         start = 0-o;
         end = parseFloat(d[0]) + start || l;
       }
-      return { s: start, e: end, l: l } 
+      return { s: start, e: end, l: l }
     };
-  
+
   parseProperty.draw = function(a,o){ // register the draw property
     if (!('draw' in DOM)) {
       DOM.draw = function(l,p,a,b,v){
-        var pathLength = (a.l*100>>0)/100, start = (number(a.s,b.s,v)*100>>0)/100, end = (number(a.e,b.e,v)*100>>0)/100, 
+        var pathLength = (a.l*100>>0)/100, start = (number(a.s,b.s,v)*100>>0)/100, end = (number(a.e,b.e,v)*100>>0)/100,
         offset = 0 - start, dashOne = end+offset;
         l.style.strokeDashoffset = offset +'px';
         l.style.strokeDasharray = (((dashOne <1 ? 0 : dashOne)*100>>0)/100) + 'px, ' + pathLength + 'px';
@@ -306,7 +306,7 @@
     }
     return getDraw(this.element,o);
   }
-  
+
   prepareStart.draw = function(){
     return getDraw(this.element);
   }
@@ -314,7 +314,7 @@
 
   // SVG Transform
   var parseStringOrigin = function(origin,box){
-      return /[a-zA-Z]/.test(origin) && !/px/.test(origin) ? origin.replace(/top|left/,0).replace(/right|bottom/,100).replace(/center|middle/,50) 
+      return /[a-zA-Z]/.test(origin) && !/px/.test(origin) ? origin.replace(/top|left/,0).replace(/right|bottom/,100).replace(/center|middle/,50)
                                      : /%/.test(origin) ? (box.x + parseFloat(origin) * box.width / 100) : parseFloat(origin);
     },
     parseTransformString = function (a){ // helper function that turns transform value from string to object
@@ -359,14 +359,14 @@
     // register the render function
     if (!('svgTransform' in DOM)) {
       DOM.svgTransform = function(l,p,a,b,v){
-        var x = 0, y = 0, tmp, deg = Math.PI/180, 
+        var x = 0, y = 0, tmp, deg = Math.PI/180,
           scale = 'scale' in b ? number(a.scale,b.scale,v) : 1,
           rotate = 'rotate' in b ? number(a.rotate,b.rotate,v) : 0,
           sin = Math.sin(rotate*deg), cos = Math.cos(rotate*deg),
           skewX = 'skewX' in b ? number(a.skewX,b.skewX,v) : 0,
           skewY = 'skewY' in b ? number(a.skewY,b.skewY,v) : 0,
           complex = rotate||skewX||skewY||scale!==1 || 0;
-        
+
         // start normalizing the translation, we start from last to first (from last chained translation)
         // the normalized translation will handle the transformOrigin tween option and makes sure to have a consistent transformation
         x -= complex ? b.origin[0] : 0; y -= complex ? b.origin[1] : 0; // we start with removing transformOrigin from translation
@@ -378,11 +378,11 @@
         y += 'translate' in b ? number(a.translate[1],b.translate[1],v) : 0;
         x += complex ? b.origin[0] : 0; y += complex ? b.origin[1] : 0; // normalizing ends with the addition of the transformOrigin to the translation
 
-        // finally we apply the transform attribute value 
+        // finally we apply the transform attribute value
         l.setAttribute('transform', ( x||y ? ('translate(' + (x*100>>0)/100 + ( y ? (',' + ((y*100>>0)/100)) : '') + ')') : '' )
                                     +( rotate ? 'rotate(' + (rotate*100>>0)/100 + ')' : '' )
                                     +( skewX ? 'skewX(' + (skewX*10>>0)/10 + ')' : '' )
-                                    +( skewY ? 'skewY(' + (skewY*10>>0)/10 + ')' : '' ) 
+                                    +( skewY ? 'skewY(' + (skewY*10>>0)/10 + ')' : '' )
                                     +( scale !== 1 ? 'scale(' + (scale*1000>>0)/1000 +')' : '' ) );
       }
     }

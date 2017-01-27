@@ -6,9 +6,9 @@
  */
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['kute.js'], factory);
+    define(['./kute.js'], factory);
   } else if(typeof module == 'object' && typeof require == 'function') {
-    module.exports = factory(require('kute.js'));
+    module.exports = factory(require('./kute.js'));
   } else if ( typeof root.KUTE !== 'undefined' ) {
     factory(root.KUTE);
   } else {
@@ -21,7 +21,7 @@
     K = KUTE, DOM = K.dom, prepareStart = K.prepareStart,
     parseProperty = K.parseProperty, number = g.Interpolate.number,
     defaultOptions = K.defaultOptions;
-  
+
   // let's go with the plugin
   var _string = String("abcdefghijklmnopqrstuvwxyz").split(""), // lowercase
     _stringUppercase = String("abcdefghijklmnopqrstuvwxyz".toUpperCase()).split(""), // uppercase
@@ -36,7 +36,7 @@
   prepareStart.text = prepareStart.number = function(p,v){
     return this.element.innerHTML;
   }
-    
+
   parseProperty.text = function(p,v) {
     if ( !( 'text' in DOM ) ) {
       DOM.text = function(l,p,a,b,v,o) {
@@ -47,17 +47,17 @@
             : o.textChars === 'symbols' ? _symbols // textChars is symbols
             : o.textChars ? o.textChars.split('') // textChars is a custom text
             : _string, ll = tp.length,
-            t = tp[(random() * ll)>>0], ix = '', tx = '', fi = a.substring(0), f = b.substring(0); 
+            t = tp[(random() * ll)>>0], ix = '', tx = '', fi = a.substring(0), f = b.substring(0);
 
         // use string.replace(/<\/?[^>]+(>|$)/g, "") to strip HTML tags while animating ? this is definatelly a smart TO DO
-        ix = a !== '' ? fi.substring(fi.length, min(v * fi.length, fi.length)>>0 ) : ''; // initial text, A value 
+        ix = a !== '' ? fi.substring(fi.length, min(v * fi.length, fi.length)>>0 ) : ''; // initial text, A value
         tx = f.substring(0, min(v * f.length, f.length)>>0 ); // end text, B value
         l.innerHTML = v < 1 ? tx + t + ix : b;
       }
     }
     return v;
   }
-    
+
   parseProperty['number'] = function(p,v,l) {
     if ( !( 'number' in DOM ) ) {
       DOM.number = function(l,p,a,b,v) {
