@@ -7,9 +7,9 @@
 
 (function (root,factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['kute.js'], factory);
+    define(['./kute.js'], factory);
   } else if(typeof module == 'object' && typeof require == 'function') {
-    module.exports = factory(require('kute.js'));
+    module.exports = factory(require('./kute.js'));
   } else if ( typeof root.KUTE !== 'undefined' ) {
     factory(root.KUTE);
   } else {
@@ -28,8 +28,8 @@
     svgColors = ['fill','stroke','stop-color'], attributes,
     replaceUppercase = function(a) {
       return a.replace(/[A-Z]/g, "-$&").toLowerCase();
-    }; 
-  
+    };
+
   prepareStart.attr = function(p,v){
     var attrStartValues = {};
     for (var a in v){
@@ -39,8 +39,8 @@
     }
     return attrStartValues;
   };
-  
-  // process attributes object K.pp.attr(t[x]) 
+
+  // process attributes object K.pp.attr(t[x])
   // and also register their render functions
   parseProperty.attr = function(a,o){
     if (!('attr' in DOM)) {
@@ -71,7 +71,7 @@
               }
             }
           }
-          attributesObject[prop+s] = trueDimension(o[p]); 
+          attributesObject[prop+s] = trueDimension(o[p]);
         } else if ( !regex.test(o[p]) || cv === null || cv !== null && !regex.test(cv) ) {
           if (!(prop in attributes)) {
             if (/opacity/i.test(p)) {
@@ -84,8 +84,8 @@
               }
             }
           }
-          attributesObject[prop] = parseFloat(o[p]);     
-        }        
+          attributesObject[prop] = parseFloat(o[p]);
+        }
       } else {
         if (!(prop in attributes)) {
           attributes[prop] = function(l,u,a,b,v) {
