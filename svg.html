@@ -43,8 +43,6 @@
 </head>
 
 <body>
-    <div class="fill overlay"></div>
-
     <div class="site-wrapper">
 
         <div class="navbar-wrapper">
@@ -513,7 +511,7 @@ KUTE.fromTo(element,
     {transformOrigin: [256,256]} // tween options use the transform-origin of the target SVG element
 ).start();
 </code></pre>
-            <p>Before you hit the <kbd>Start</kbd> button, make sure to check the <code>transform</code> attribute value.</p>
+            <p>Before you hit the <kbd>Start</kbd> button, make sure to check the <code>transform</code> attribute value. The below tween will reset the element's transform attribute to original value when the animation is complete.</p>
             <div class="featurettes">
                 <svg id="svgChained" class="example-box-model example-box" style="overflow: visible;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 513" xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:space="preserve" version="1.1">
                 <path class="bg-blue"

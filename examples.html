@@ -42,8 +42,6 @@
 </head>
 
 <body>
-    <div class="fill overlay"></div>
-
     <div class="site-wrapper">
 
         <div class="navbar-wrapper">
@@ -307,13 +305,10 @@ body[data-tweening="scroll"] * { pointer-events: none !important; }
 
 
             <h3 id="crossbrowser">Cross Browser Animation Example</h3>
-            <p>Unlike the examples <a href="http://codepen.io/thednp/pens/public/" target="_blank">hosted on Codepen</a>, most examples here should be supported on legacy browsers. The next example is going to explain more details about how to target browsers
-                according to their supported properties, so stick around. So, if your target audience uses legacy browsers in a significant percent, check to have the proper polyfills and also make sure you target your browsers, here's a
-                <a href="http://browserhacks.com/"
-                    target="_blank">complete reference</a>. Now we are ready:</li>
-                    </ul>
+            <p>Unlike the examples <a href="http://codepen.io/thednp/pens/public/" target="_blank">hosted on Codepen</a>, most examples here should be supported on legacy browsers. The next example is going to explain more details about how to target browsers according to their supported properties, so stick around. So, if your target audience uses legacy browsers in a significant percent, check to have the proper polyfills and also make sure you target your browsers, here's a <a href="http://browserhacks.com/" target="_blank">complete reference</a>. Now we are ready:</p>
+
                     <h4>Collect Information And Cache It</h4>
-                    <pre><code class="language-javascript">// grab an HTML element to build a tween object for it
+<pre><code class="language-javascript">// grab an HTML element to build a tween object for it
 var element = document.getElementById("myElement");
 
 // check for IE legacy browsers
