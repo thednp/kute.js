@@ -18,29 +18,29 @@
     tweens = [], tick = null; // tick must be null!!
 
   //supported properties
-  var _colors = ['color', 'backgroundColor'], // colors 'hex', 'rgb', 'rgba' -- #fff / rgb(0,0,0) / rgba(0,0,0,0)
-    _boxModel  = ['top', 'left', 'width', 'height'], // dimensions / box model
-    _transform  = ['translate3d', 'translateX', 'translateY', 'translateZ', 'rotate', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'skewX', 'skewY', 'scale'], // transform
-    _scroll  = ['scroll'], //scroll, it has no default value, it's calculated on tween start
-    _opacity  = ['opacity'], // opacity
-    _all = _colors.concat( _opacity, _boxModel, _transform), al = _all.length,
-    _defaults = {}; //all properties default values
+  var colorProps = ['color', 'backgroundColor'], // 'hex', 'rgb', 'rgba' '#fff' 'rgb(0,0,0)' / 'rgba(0,0,0,0)' 'red' (IE9+)
+    boxModelProps  = ['top', 'left', 'width', 'height'], 
+    transformFunctions  = ['translate3d', 'translateX', 'translateY', 'translateZ', 'rotate', 'translate', 'rotateX', 'rotateY', 'rotateZ', 'skewX', 'skewY', 'scale'],
+    scrollProp  = ['scroll'], // has no default value, it's calculated on tween start
+    opacityProp  = ['opacity'], // opacity
+    coreProps = colorProps.concat( opacityProp, boxModelProps, transformFunctions), al = coreProps.length,
+    defaultPropsValues = {}; 
 
   //populate default values object
-  for ( var i=0; i<al; i++ ){
-    var p = _all[i];
-    if (_colors.indexOf(p) !== -1){
-      _defaults[p] = 'rgba(0,0,0,0)'; // _defaults[p] = {r:0,g:0,b:0,a:1}; // no unit/suffix
-    } else if ( _boxModel.indexOf(p) !== -1 ) {
-      _defaults[p] = 0;
+  for ( var propertyIndex=0; propertyIndex<al; propertyIndex++ ){
+    var p = coreProps[propertyIndex];
+    if (colorProps.indexOf(p) !== -1){
+      defaultPropsValues[p] = 'rgba(0,0,0,0)'; // defaultPropsValues[p] = {r:0,g:0,b:0,a:1}; // no unit/suffix
+    } else if ( boxModelProps.indexOf(p) !== -1 ) {
+      defaultPropsValues[p] = 0;
     } else if ( p === 'translate3d' ){ // px
-      _defaults[p] = [0,0,0];
+      defaultPropsValues[p] = [0,0,0];
     } else if ( p === 'translate' ){ // px
-      _defaults[p] = [0,0];
+      defaultPropsValues[p] = [0,0];
     } else if ( p === 'rotate' || /X|Y|Z/.test(p) ){ // deg
-      _defaults[p] = 0;
+      defaultPropsValues[p] = 0;
     } else if ( p === 'scale' || p === 'opacity' ){ // unitless
-      _defaults[p] = 1;
+      defaultPropsValues[p] = 1;
     }
     p = null;
   }
@@ -58,47 +58,51 @@
     },
     // tools / utils
     getPrefix = function() { //returns browser prefix
-      var div = document.createElement('div'), i = 0,  pf = ['Moz', 'moz', 'Webkit', 'webkit', 'O', 'o', 'Ms', 'ms'],
-        s = ['MozTransform', 'mozTransform', 'WebkitTransform', 'webkitTransform', 'OTransform', 'oTransform', 'MsTransform', 'msTransform'];
-      for (var i = 0, pl = pf.length; i < pl; i++) { if (s[i] in div.style) { return pf[i]; }  }
-      div = null;
+      var prefixes = ['Moz', 'moz', 'Webkit', 'webkit', 'O', 'o', 'Ms', 'ms'], thePrefix;
+      for (var pIndex = 0, pfl = prefixes.length; pIndex < pfl; pIndex++) { 
+        if (prefixes[pIndex]+'Transform' in document.body.style) { thePrefix = prefixes[pIndex]; break; }  
+      }
+      return thePrefix;
     },
-    property = function(p){ // returns prefixed property | property
-      var r = (!(p in document.body.style)) ? true : false, f = getPrefix(); // is prefix required for property | prefix
-      return r ? f + (p.charAt(0).toUpperCase() + p.slice(1)) : p;
+    property = function(propertyToPrefix){ // returns prefixed property | property
+      var prefixRequired = (!(propertyToPrefix in document.body.style)) ? true : false, prefix = getPrefix(); // is prefix required for property | prefix
+      return prefixRequired ? prefix + (propertyToPrefix.charAt(0).toUpperCase() + propertyToPrefix.slice(1)) : propertyToPrefix;
     },
     selector = function(el,multi){ // a public selector utility
       var nl;
       if (multi){
         nl = el instanceof Object || typeof el === 'object' ? el : document.querySelectorAll(el);
       } else {
-        nl = typeof el === 'object' ? el
-           : /^#/.test(el) ? document.getElementById(el.replace('#','')) : document.querySelector(el);
+        nl = typeof el === 'object' ? el : document.querySelector(el);
       }
       if (nl === null && el !== 'window') throw new TypeError('Element not found or incorrect selector: '+el);
       return nl;
     },
     radToDeg = function(a) { return a*180/Math.PI; },
-    trueDimension = function (d,p) { //true dimension returns { v = value, u = unit }
-      var x = parseInt(d) || 0, mu = ['px','%','deg','rad','em','rem','vh','vw'], y;
-      for (var i=0, l = mu.length; i<l; i++) { if ( typeof d === 'string' && d.indexOf(mu[i]) !== -1 ) { y = mu[i]; break; } }
-      y = y !== undefined ? y : (p ? 'deg' : 'px');
-      return { v: x, u: y };
+    trueDimension = function (dimValue,isAngle) { //true dimension returns { v = value, u = unit }
+      var intValue = parseInt(dimValue) || 0, mUnits = ['px','%','deg','rad','em','rem','vh','vw'], theUnit;
+      for (var mIndex=0; mIndex<mUnits.length; mIndex++) { 
+        if ( typeof dimValue === 'string' && dimValue.indexOf(mUnits[mIndex]) !== -1 ) { 
+          theUnit = mUnits[mIndex]; break; 
+        } 
+      }
+      theUnit = theUnit !== undefined ? theUnit : (isAngle ? 'deg' : 'px');
+      return { v: intValue, u: theUnit };
     },
-    trueColor = function (v) { // replace transparent and transform any color to rgba()/rgb()
-      if (/rgb|rgba/.test(v)) { // first check if it's a rgb string
-        var vrgb = v.replace(/\s|\)/,'').split('(')[1].split(','), y = vrgb[3] ? vrgb[3] : null;
+    trueColor = function (colorString) { // replace transparent and transform any color to rgba()/rgb()
+      if (/rgb|rgba/.test(colorString)) { // first check if it's a rgb string
+        var vrgb = colorString.replace(/\s|\)/,'').split('(')[1].split(','), y = vrgb[3] ? vrgb[3] : null;
         if (!y) {
           return { r: parseInt(vrgb[0]), g: parseInt(vrgb[1]), b: parseInt(vrgb[2]) };
         } else {
           return { r: parseInt(vrgb[0]), g: parseInt(vrgb[1]), b: parseInt(vrgb[2]), a: parseFloat(y) };
         }
-      } else if (/^#/.test(v)) {
-        var fromHex = hexToRGB(v); return { r: fromHex.r, g: fromHex.g, b: fromHex.b };
-      } else if (/transparent|none|initial|inherit/.test(v)) {
+      } else if (/^#/.test(colorString)) {
+        var fromHex = hexToRGB(colorString); return { r: fromHex.r, g: fromHex.g, b: fromHex.b };
+      } else if (/transparent|none|initial|inherit/.test(colorString)) {
         return { r: 0, g: 0, b: 0, a: 0 };
-      } else if (!/^#|^rgb/.test(v) ) { // maybe we can check for web safe colors
-        var h = document.getElementsByTagName('head')[0]; h.style.color = v;
+      } else if (!/^#|^rgb/.test(colorString) ) { // maybe we can check for web safe colors
+        var h = document.getElementsByTagName('head')[0]; h.style.color = colorString;
         var webColor = g.getComputedStyle(h,null).color; webColor = /rgb/.test(webColor) ? webColor.replace(/[^\d,]/g, '').split(',') : [0,0,0];
         h.style.color = ''; return { r: parseInt(webColor[0]), g: parseInt(webColor[1]), b: parseInt(webColor[2]) };
       }
@@ -128,7 +132,7 @@
           var tps = css[i].split(':')[1].split(')'); //all transform properties
           for ( var k=0, tpl = tps.length-1; k< tpl; k++){
             var tpv = tps[k].split('('), tp = tpv[0], tv = tpv[1]; //each transform property
-            if ( _transform.indexOf(tp) !== -1 ){
+            if ( transformFunctions.indexOf(tp) !== -1 ){
               trsf[tp] = /translate3d/.test(tp) ? tv.split(',') : tv;
             }
           }
@@ -148,7 +152,7 @@
             return styleValue;
           }
         } else {
-          return _defaults[p];
+          return defaultPropsValues[p];
         }
       }
     },
@@ -390,7 +394,7 @@
         skewObject = {}, rotateObject = {}, translateObject = {}, transformObject = {};
 
       for (var x in obj) {
-        if (_transform.indexOf(x) !== -1) { // transform object gets built here
+        if (transformFunctions.indexOf(x) !== -1) { // transform object gets built here
           if ( /^translate(?:[XYZ]|3d)$/.test(x) ) { //process translate3d
             var ta = ['X', 'Y', 'Z']; //coordinates //   translate[x] = pp(x, obj[x]);
 
@@ -418,11 +422,11 @@
           }
           propertiesObject[transformProperty] = transformObject;
         } else {
-          if ( _boxModel.indexOf(x) !== -1 ) {
+          if ( boxModelProps.indexOf(x) !== -1 ) {
             propertiesObject[x] = parseProperty.boxModel.call(this,x,obj[x]);
-          } else if (_opacity.indexOf(x) !== -1 || x === 'scroll') {
+          } else if (opacityProp.indexOf(x) !== -1 || x === 'scroll') {
             propertiesObject[x] = parseProperty.unitless.call(this,x,obj[x]);
-          } else if (_colors.indexOf(x) !== -1) {
+          } else if (colorProps.indexOf(x) !== -1) {
             propertiesObject[x] = parseProperty.colors.call(this,x,obj[x]);
           } else if (x in parseProperty) {  // or any other property from css/ attr / svg / third party plugins
             propertiesObject[x] = parseProperty[x].call(this,x,obj[x]);
@@ -477,17 +481,17 @@
         deg = ['rotate','skew'], ax = ['X','Y','Z'];
 
       for (var p in this.valuesStart){
-        if ( _transform.indexOf(p) !== -1 ) {
+        if ( transformFunctions.indexOf(p) !== -1 ) {
           var r2d = (/(rotate|translate|scale)$/.test(p));
           if ( /translate/.test(p) && p !== 'translate' ) {
-            startValues['translate3d'] = currentStyle['translate3d'] || _defaults[p];
+            startValues['translate3d'] = currentStyle['translate3d'] || defaultPropsValues[p];
           } else if ( r2d ) { // 2d transforms
-            startValues[p] = currentStyle[p] || _defaults[p];
+            startValues[p] = currentStyle[p] || defaultPropsValues[p];
           } else if ( !r2d && /rotate|skew/.test(p) ) { // all angles
             for (var d=0; d<2; d++) {
               for (var a = 0; a<3; a++) {
                 var s = deg[d]+ax[a];
-                if (_transform.indexOf(s) !== -1 && (s in this.valuesStart) ) { startValues[s] = currentStyle[s] || _defaults[s]; }
+                if (transformFunctions.indexOf(s) !== -1 && (s in this.valuesStart) ) { startValues[s] = currentStyle[s] || defaultPropsValues[s]; }
               }
             }
           }
@@ -495,9 +499,9 @@
           if ( p !== 'scroll' ) {
             if (p === 'opacity' && isIE8 ) { // handle IE8 opacity
               var currentOpacity = getCurrentStyle(this.element,'filter');
-              startValues['opacity'] = typeof currentOpacity === 'number' ? currentOpacity : _defaults['opacity'];
+              startValues['opacity'] = typeof currentOpacity === 'number' ? currentOpacity : defaultPropsValues['opacity'];
             } else {
-              if ( _all.indexOf(p) !== -1 ) {
+              if ( coreProps.indexOf(p) !== -1 ) {
                 startValues[p] = getCurrentStyle(this.element,p) || d[p];
               } else { // plugins register here
                 startValues[p] = p in prepareStart ? prepareStart[p].call(this,p,this.valuesStart[p]) : 0;
@@ -509,8 +513,8 @@
         }
       }
       for ( var p in currentStyle ){ // also add to startValues values from previous tweens
-        if ( _transform.indexOf(p) !== -1 && (!( p in this.valuesStart )) ) {
-          startValues[p] = currentStyle[p] || _defaults[p];
+        if ( transformFunctions.indexOf(p) !== -1 && (!( p in this.valuesStart )) ) {
+          startValues[p] = currentStyle[p] || defaultPropsValues[p];
         }
       }
 

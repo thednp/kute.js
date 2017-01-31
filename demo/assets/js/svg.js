@@ -228,6 +228,10 @@
     var svgChained = document.getElementById('svgChained');
     var chainedBtn = document.getElementById('chainedBtn');
     var svgc = svgChained.getElementsByTagName('path')[0];
+    var svgcTransform = svgc.getAttribute('transform');
+    var resetSVGTransform = function(){
+        svgc.setAttribute('transform',svgcTransform);
+    };
 
     var svgTween6 = KUTE.fromTo(svgc, 
         { // from
@@ -246,7 +250,7 @@
                 // skewX: -45
             }
         },
-    {transformOrigin: [256,256], yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
+    {transformOrigin: [256,256], complete: resetSVGTransform, yoyo: true, repeat: 1, duration: 1500, easing: "easingCubicOut"});
 
     chainedBtn.addEventListener('click', function(){
         !svgTween6.playing && svgTween6.start();
