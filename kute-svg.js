@@ -32,17 +32,18 @@
 
   // here we go with the plugin
   var pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi, ns = 'http://www.w3.org/2000/svg',
-    coords = g.Interpolate.coords = isMobile ? function(a,b,l,v) { // function(array1, array2, length, progress) for SVG morph
-      var points =[];
+    // function(array1, array2, length, progress) for SVG morph
+    coords = g.Interpolate.coords = isMobile ? function(a,b,l,v) { 
+      var points = [];
       for(var i=0;i<l;i++) { // for each point
         points[i] = [];
         for(var j=0;j<2;j++) { // each point coordinate
-          points[i].push( a[i][j]+(b[i][j]-a[i][j])*v );
+          points[i].push( (a[i][j]+(b[i][j]-a[i][j])*v) >> 0 );
         }
       }
       return points;
-    } : function(a,b,l,v) { // on desktop devices we use more accuracy for morph
-      var points =[];
+    } : function(a,b,l,v) { // on desktop devices we use subpixel accuracy for morph
+      var points = [];
       for(var i=0;i<l;i++) { // for each point
         points[i] = [];
         for(var j=0;j<2;j++) { // each point coordinate

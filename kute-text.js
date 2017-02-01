@@ -23,15 +23,16 @@
     defaultOptions = K.defaultOptions;
 
   // let's go with the plugin
-  var _string = String("abcdefghijklmnopqrstuvwxyz").split(""), // lowercase
-    _stringUppercase = String("abcdefghijklmnopqrstuvwxyz".toUpperCase()).split(""), // uppercase
-    _symbols = String("~!@#$%^&*()_+{}[];'<>,./?\=-").split(""), // symbols
-    _numeric = String("0123456789").split(""), // numeric
-    _alphanumeric = _string.concat(_stringUppercase,_numeric), // alpha numeric
-    _all = _alphanumeric.concat(_symbols), // all caracters
+  var lowerCaseAlpha = String("abcdefghijklmnopqrstuvwxyz").split(""), // lowercase
+    upperCaseAlpha = String("abcdefghijklmnopqrstuvwxyz".toUpperCase()).split(""), // uppercase
+    nonAlpha = String("~!@#$%^&*()_+{}[];'<>,./?\=-").split(""), // symbols
+    numeric = String("0123456789").split(""), // numeric
+    alphaNumeric = lowerCaseAlpha.concat(upperCaseAlpha,numeric), // alpha numeric
+    allTypes = alphaNumeric.concat(nonAlpha), // all caracters
     random = Math.random, min = Math.min;
 
-  defaultOptions.textChars = 'alpha'; // set default textChars tween option since 1.6.1
+  // set default textChars tween option since 1.6.1
+  defaultOptions.textChars = 'alpha'; 
 
   prepareStart.text = prepareStart.number = function(p,v){
     return this.element.innerHTML;
@@ -40,19 +41,19 @@
   parseProperty.text = function(p,v) {
     if ( !( 'text' in DOM ) ) {
       DOM.text = function(l,p,a,b,v,o) {
-        var tp = tp || o.textChars === 'alpha' ? _string // textChars is alpha
-            : o.textChars === 'upper' ? _stringUppercase  // textChars is numeric
-            : o.textChars === 'numeric' ? _numeric  // textChars is numeric
-            : o.textChars === 'alphanumeric' ? _alphanumeric // textChars is alphanumeric
-            : o.textChars === 'symbols' ? _symbols // textChars is symbols
+        var tp = tp || o.textChars === 'alpha' ? lowerCaseAlpha // textChars is alpha
+            : o.textChars === 'upper' ? upperCaseAlpha  // textChars is numeric
+            : o.textChars === 'numeric' ? numeric  // textChars is numeric
+            : o.textChars === 'alphanumeric' ? alphaNumeric // textChars is alphanumeric
+            : o.textChars === 'symbols' ? nonAlpha // textChars is symbols
             : o.textChars ? o.textChars.split('') // textChars is a custom text
-            : _string, ll = tp.length,
-            t = tp[(random() * ll)>>0], ix = '', tx = '', fi = a.substring(0), f = b.substring(0);
+            : lowerCaseAlpha, ll = tp.length,
+            t = tp[(random() * ll)>>0], initialText = '', endText = '', firstLetterA = a.substring(0), firstLetterB = b.substring(0);
 
         // use string.replace(/<\/?[^>]+(>|$)/g, "") to strip HTML tags while animating ? this is definatelly a smart TO DO
-        ix = a !== '' ? fi.substring(fi.length, min(v * fi.length, fi.length)>>0 ) : ''; // initial text, A value
-        tx = f.substring(0, min(v * f.length, f.length)>>0 ); // end text, B value
-        l.innerHTML = v < 1 ? tx + t + ix : b;
+        initialText = a !== '' ? firstLetterA.substring(firstLetterA.length, min(v * firstLetterA.length, firstLetterA.length)>>0 ) : ''; // initial text, A value
+        endText = firstLetterB.substring(0, min(v * firstLetterB.length, firstLetterB.length)>>0 ); // end text, B value
+        l.innerHTML = v < 1 ? endText + t + initialText : b;
       }
     }
     return v;
