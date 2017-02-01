@@ -172,9 +172,10 @@ KUTE.to('selector1',{outlineColor:'#069'}).start();
             <p>A quick reminder: you can also use <code>RGB</code> or <code>RGBA</code>, but the last one is not supported on IE8 and it will fallback to <code>RGB</code>.</p>
 
             <h3>Clip Property</h3>
-            <p>This property allows you to animate the rectangular shape of an element that is set to <code>position:absolute</code>. In CSS this property works like this <code>clip: rect(top,right,bottom,left)</code> forming a rectangular shape that masks
-                an element making parts of it invisible.</p>
+            <p>This property allows you to animate the rectangular shape of an element that is set to <code>position:absolute</code>. In CSS this property works like this <code>clip: rect(top,right,bottom,left)</code> forming a rectangular shape that masks an element making parts of it invisible. While the <code>clip</code> property have been deprecated, it can still be used to emulate a scale animation for legacy browsers in certain cases.</p>
+
             <pre><code class="language-javascript">KUTE.to('selector',{clip:[0,150,100,0]}).start();</code></pre>
+
             <p>A quick example here could look like this:</p>
 
             <div id="clip" class="featurettes" style="min-height: 190px">
@@ -205,7 +206,7 @@ KUTE.to('selector1',{outlineColor:'#069'}).start();
         <ul id="share" class="nav">
             <li>Share </li>
             <li class="hidden-xs"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook"><span class="ion-social-facebook-outline icon"></span></a></li>
-            <li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about @kute_js animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></li>
+            <li class="hidden-xs"><a target="_blank" href="https://twitter.com/home?status=Spread the word about #kutejs animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter"><span class="icon ion-social-twitter-outline"></span></a></li>
             <li class="hidden-xs"><a target="_blank" href="https://plus.google.com/share?url=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Google+"><span class="icon ion-social-googleplus-outline"></span></a></li>
         </ul>
 
