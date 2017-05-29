@@ -341,8 +341,8 @@
             elem[style][tweenProp] = ( v > 0.99 || v < 0.01 ? ((number(a,b,v)*10)>>0)/10 : (number(a,b,v) ) >> 0 ) + 'px';
           }
         }
-        var boxValue = trueDimension(inputValue), offsetValue = tweenProp === 'height' ? offsetHeight : offsetWidth;
-        return boxValue.u === '%' ? boxValue.v * this[element][offsetValue] / 100 : boxValue.v;
+        var boxValue = trueDimension(inputValue), offsetProp = tweenProp === 'height' ? offsetHeight : offsetWidth;
+        return boxValue.u === '%' ? boxValue.v * this[element][offsetProp] / 100 : boxValue.v;
       },
       transform : function(tweenProp,inputValue) {
         if (!(transformProperty in DOM)) {
