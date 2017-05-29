@@ -155,7 +155,7 @@
         b: parseInt(result[3], 16)
       } : null;
     },
-    getInlineStyle = function(el) { // get transform style for element from cssText for .to() method, the sp is for transform property
+    getInlineStyle = function(el) { // get transform style for element from cssText for .to() method
       if (!el) return; // if the scroll applies to `window` it returns as it has no styling
       var css = el[style].cssText[replace](/\s/g,'')[split](';'), transformObject = {}; // the cssText | the resulting transform object
 
@@ -164,7 +164,7 @@
         if ( /transform/i.test(css[i])) {
           var tps = css[i][split](':')[1][split](')'); //all transform properties
           for ( var k=0, tpl = tps[length]-1; k< tpl; k++){
-            var tpv = tps[k][split]('('), tp = tpv[0], tv = tpv[1]; //each transform property
+            var tpv = tps[k][split]('('), tp = tpv[0], tv = tpv[1]; // each transform property, the sp is for transform property
             if ( transformFunctions[indexOf](tp) !== -1 ){
               transformObject[tp] = /translate3d/.test(tp) ? tv[split](',') : tv;
             }
@@ -176,7 +176,7 @@
     getCurrentStyle = function (elem,propertyName) { // get computed style property for element for .to() method
       var styleAttribute = elem[style], computedStyle = g.getComputedStyle(elem,null) || elem.currentStyle, 
         prefixedProp = property(propertyName), //the computed style | prefixed property
-        styleValue = styleAttribute[propertyName] && !/auto|initial|none|unset/.test(styleAttribute[propertyName]) ? styleAttribute[propertyName] : computedStyle[prefixedProp]; // s the property style value
+        styleValue = styleAttribute[propertyName] && !/auto|initial|none|unset/.test(styleAttribute[propertyName]) ? styleAttribute[propertyName] : computedStyle[prefixedProp];
       if ( propertyName !== 'transform' && (prefixedProp in computedStyle || prefixedProp in styleAttribute) ) {
         if ( styleValue ){
           if (prefixedProp === 'filter') { // handle IE8 opacity
@@ -341,8 +341,8 @@
             elem[style][tweenProp] = ( v > 0.99 || v < 0.01 ? ((number(a,b,v)*10)>>0)/10 : (number(a,b,v) ) >> 0 ) + 'px';
           }
         }
-        var boxValue = trueDimension(inputValue);
-        return boxValue.u === '%' ? boxValue.v * this[element][offsetWidth] / 100 : boxValue.v;
+        var boxValue = trueDimension(inputValue), offsetValue = tweenProp === 'height' ? offsetHeight : offsetWidth;
+        return boxValue.u === '%' ? boxValue.v * this[element][offsetValue] / 100 : boxValue.v;
       },
       transform : function(tweenProp,inputValue) {
         if (!(transformProperty in DOM)) {
@@ -433,8 +433,8 @@
 
       for (var x in obj) {
         if (transformFunctions[indexOf](x) !== -1) { // transform object gets built here
+          var prepAxis = ['X', 'Y', 'Z']; //coordinates //   translate[x] = pp(x, obj[x]);
           if ( /^translate(?:[XYZ]|3d)$/.test(x) ) { //process translate3d
-            var prepAxis = ['X', 'Y', 'Z']; //coordinates //   translate[x] = pp(x, obj[x]);
 
             for (var fnIndex = 0; fnIndex < 3; fnIndex++) {
               var translateAxis = prepAxis[fnIndex];
@@ -446,7 +446,7 @@
             }
             transformObject['translate'] = translateObject;
           } else if ( /^rotate(?:[XYZ])$|^skew(?:[XY])$/.test(x) ) { //process rotation/skew
-            var objectName = /rotate/.test(x) ? 'rotate' : 'skew', prepAxis = ['X', 'Y', 'Z'],
+            var objectName = /rotate/.test(x) ? 'rotate' : 'skew',
               rotationOrSkew = objectName === 'rotate' ? rotateObject : skewObject;
             for (var rIndex = 0; rIndex < 3; rIndex++) {
               var oneAxis = prepAxis[rIndex];
