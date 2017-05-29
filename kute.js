@@ -342,7 +342,13 @@
           }
         }
         var boxValue = trueDimension(inputValue);
-        return boxValue.u === '%' ? boxValue.v * this[element][offsetWidth] / 100 : boxValue.v;
+        let offsetValue;
+        if (tweenProp === "height") {
+          offsetValue = offsetHeight;
+        } else if (tweenProp === "width") {
+          offsetValue = offsetWidth;
+        }
+        return boxValue.u === '%' ? boxValue.v * this[element][offsetValue] / 100 : boxValue.v;
       },
       transform : function(tweenProp,inputValue) {
         if (!(transformProperty in DOM)) {
