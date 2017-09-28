@@ -25,29 +25,19 @@
     defaultOptions = K.defaultOptions, // default tween options since 1.6.1
 
     // browser detection
-    isIE = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null ? parseFloat( RegExp.$1 ) : false,
-    isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent); // we optimize morph depending on device type
+    isIE = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null ? parseFloat( RegExp.$1 ) : false;
 
   if (isIE&&isIE<9) {return;} // return if SVG API is not supported
 
   // here we go with the plugin
   var pathReg = /(m[^(h|v|l)]*|[vhl][^(v|h|l|z)]*)/gmi, ns = 'http://www.w3.org/2000/svg',
     // function(array1, array2, length, progress) for SVG morph
-    coords = g.Interpolate.coords = isMobile ? function(a,b,l,v) { 
+    coords = g.Interpolate.coords = function(a,b,l,v) {
       var points = [];
       for(var i=0;i<l;i++) { // for each point
         points[i] = [];
         for(var j=0;j<2;j++) { // each point coordinate
-          points[i].push( (a[i][j]+(b[i][j]-a[i][j])*v) >> 0 );
-        }
-      }
-      return points;
-    } : function(a,b,l,v) { // on desktop devices we use subpixel accuracy for morph
-      var points = [];
-      for(var i=0;i<l;i++) { // for each point
-        points[i] = [];
-        for(var j=0;j<2;j++) { // each point coordinate
-          points[i].push( ((a[i][j]+(b[i][j]-a[i][j])*v) * 10 >> 0)/10 );
+          points[i].push( ((a[i][j]+(b[i][j]-a[i][j])*v) * 1000 >> 0)/1000 );
         }
       }
       return points;
@@ -380,10 +370,10 @@
         x += complex ? b.origin[0] : 0; y += complex ? b.origin[1] : 0; // normalizing ends with the addition of the transformOrigin to the translation
 
         // finally we apply the transform attribute value
-        l.setAttribute('transform', ( x||y ? ('translate(' + (x*100>>0)/100 + ( y ? (',' + ((y*100>>0)/100)) : '') + ')') : '' )
-                                    +( rotate ? 'rotate(' + (rotate*100>>0)/100 + ')' : '' )
-                                    +( skewX ? 'skewX(' + (skewX*10>>0)/10 + ')' : '' )
-                                    +( skewY ? 'skewY(' + (skewY*10>>0)/10 + ')' : '' )
+        l.setAttribute('transform', ( x||y ? ('translate(' + (x*1000>>0)/1000 + ( y ? (',' + ((y*1000>>0)/1000)) : '') + ')') : '' )
+                                    +( rotate ? 'rotate(' + (rotate*1000>>0)/1000 + ')' : '' )
+                                    +( skewX ? 'skewX(' + (skewX*1000>>0)/1000 + ')' : '' )
+                                    +( skewY ? 'skewY(' + (skewY*1000>>0)/1000 + ')' : '' )
                                     +( scale !== 1 ? 'scale(' + (scale*1000>>0)/1000 +')' : '' ) );
       }
     }

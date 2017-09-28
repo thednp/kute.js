@@ -206,16 +206,16 @@
 
     // true scroll container
     html = document[getElementsByTagName]('HTML')[0],
-    scrollContainer = navigator && /webkit/i.test(navigator.userAgent) || document.compatMode == 'BackCompat' ? body : html,
+    // scrollContainer = navigator && /webkit/i.test(navigator.userAgent) || document.compatMode == 'BackCompat' ? body : html,
+    scrollContainer = document.compatMode == 'BackCompat' ? body : html, // webkit browsers are now srolling the HTML
 
     // browser detection
     isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false,
     isIE8 = isIE === 8, // check IE8/IE
-    isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent); // we optimize morph depending on device type
 
 
-  // KUTE.js INTERPOLATORS
-  var interpolate = g.Interpolate = {},
+    // KUTE.js INTERPOLATORS
+    interpolate = g.Interpolate = {},
     number = interpolate.number = function(a,b,v) { // number1, number2, progress
       a = +a; b -= a; return a + b * v;
     },
@@ -227,17 +227,10 @@
       for (c in b) { _c[c] = c !== 'a' ? (number(a[c],b[c],v)>>0 || 0) : (a[c] && b[c]) ? (number(a[c],b[c],v) * 100 >> 0 )/100 : null; }
       return toHex ? rgbToHex( _c.r, _c.g, _c.b ) : !_c.a ? rgb + _c.r + cm + _c.g + cm + _c.b + ep : rgba + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
     },
-    translate = interpolate.translate = isMobile ? function (a,b,u,v){
+    translate = interpolate.translate = function (a,b,u,v){
       var translation = {};
       for (var ax in b){
-        translation[ax] = ( a[ax]===b[ax] ? b[ax] : (a[ax] + ( b[ax] - a[ax] ) * v ) >> 0 ) + u;
-      }
-      return translation.x||translation.y ? 'translate(' + translation.x + ',' + translation.y + ')' :
-        'translate3d(' + translation.translateX + ',' + translation.translateY + ',' + translation.translateZ + ')';
-    } : function (a,b,u,v){
-      var translation = {};
-      for (var ax in b){
-        translation[ax] = ( a[ax]===b[ax] ? b[ax] : ( (a[ax] + ( b[ax] - a[ax] ) * v ) * 100 >> 0 ) / 100 ) + u;
+        translation[ax] = ( a[ax]===b[ax] ? b[ax] : ( (a[ax] + ( b[ax] - a[ax] ) * v ) * 1000 >> 0 ) / 1000 ) + u;
       }
       return translation.x||translation.y ? 'translate(' + translation.x + ',' + translation.y + ')' :
         'translate3d(' + translation.translateX + ',' + translation.translateY + ',' + translation.translateZ + ')';
@@ -245,15 +238,15 @@
     rotate = interpolate.rotate = function (a,b,u,v){
       var rotation = {};
       for ( var rx in b ){
-        rotation[rx] = rx === 'z' ? ('rotate('+ (((a[rx] + (b[rx] - a[rx]) * v) * 100 >> 0 ) / 100) + u + ')')
-                                  : (rx + '(' + (((a[rx] + (b[rx] - a[rx]) * v) * 100 >> 0 ) / 100) + u + ')');
+        rotation[rx] = rx === 'z' ? ('rotate('+ (((a[rx] + (b[rx] - a[rx]) * v) * 1000 >> 0 ) / 1000) + u + ')')
+                                  : (rx + '(' + (((a[rx] + (b[rx] - a[rx]) * v) * 1000 >> 0 ) / 1000) + u + ')');
       }
       return rotation.z ? rotation.z : (rotation.rotateX||'') + (rotation.rotateY||'') + (rotation.rotateZ||'');
     },
     skew = interpolate.skew = function (a,b,u,v){
       var skewProp = {};
       for ( var sx in b ){
-        skewProp[sx] = sx + '(' + (((a[sx] + (b[sx] - a[sx]) * v) * 10 >> 0) / 10) + u + ')';
+        skewProp[sx] = sx + '(' + (((a[sx] + (b[sx] - a[sx]) * v) * 1000 >> 0) / 1000) + u + ')';
       }
       return (skewProp.skewX||'') + (skewProp.skewY||'');
     },
@@ -487,7 +480,7 @@
       if (this[options][yoyo] && this.reversed===true) { reverse.call(this); this.reversed = false; }
       this[playing] = false;
 
-      setTimeout(function(){ if (!tweens[length]) { stop(); } }, 48);  // when all animations are finished, stop ticking after ~3 frames
+      !tweens[length] && stop();  // when all animations are finished, stop ticking after ~3 frames
     },
     preventScroll = function (eventObj) { // prevent mousewheel or touch events while tweening scroll
       var data = body.getAttribute(dataTweening);
@@ -495,15 +488,11 @@
     },
     scrollOut = function(){ //prevent scroll when tweening scroll
       if ( 'scroll' in this[valuesEnd] && body.getAttribute(dataTweening)) {
-        document[removeEventListener](touchOrWheel, preventScroll, false);
-        document[removeEventListener](mouseEnter, preventScroll, false);
         body.removeAttribute(dataTweening);
       }
     },
     scrollIn = function(){
       if ( 'scroll' in this[valuesEnd] && !body.getAttribute(dataTweening)) {
-        document[addEventListener](touchOrWheel, preventScroll, false);
-        document[addEventListener](mouseEnter, preventScroll, false);
         body.setAttribute(dataTweening, 'scroll');
       }
     },
@@ -794,6 +783,9 @@
     allFromTo = function (elements, startObject, endObject, optionsObj) {
       return new TweensFT(selector(elements,true), startObject, endObject, optionsObj);
     };
+
+  document[addEventListener](touchOrWheel, preventScroll, false);
+  document[addEventListener](mouseEnter, preventScroll, false);
 
   return { // export core methods to public for plugins
     property: property, getPrefix: getPrefix, selector: selector, processEasing : processEasing, // utils
