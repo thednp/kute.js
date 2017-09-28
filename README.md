@@ -6,7 +6,8 @@ Along with a simple jQuery plugin, KUTE.js packs plugins for presentation attrib
 Because of it's modularity, KUTE.js makes it super easy to extend or override functionality, making it unique among Javascript animation engines.
 
 # Demo / CDN
-For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>. Thanks to jsdelivr, we have a CDN link <a target="_blank" href="https://data.jsdelivr.com/v1/package/npm/kute.js/">here</a>. We also have cdnjs link <a href="https://cdnjs.com/libraries/kute.js" target="_blank">right here</a>. Sweet!
+For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>. Thanks to jsdelivr, we have a CDN link <a target="_blank" href="https://www.jsdelivr.com/package/npm/kute.js">here</a>. We also have cdnjs link <a href="https://cdnjs.com/libraries/kute.js" target="_blank">right here</a>. Sweet!
+
 [![](https://data.jsdelivr.com/v1/package/npm/kute.js/badge)](https://www.jsdelivr.com/package/npm/kute.js)
 
 # Core Engine - [visit page](http://thednp.github.io/kute.js/examples.html)
