@@ -26,14 +26,14 @@ function classToggles(el){
 }
 
 document.addEventListener('click', function(e){
-    var target = e.target.parentNode.tagName === 'LI' || e.target.parentNode.classList.contains('btn-group') ? e.target : e.target.parentNode, 
+    var target = e.target.parentNode.tagName === 'LI' || e.target.parentNode.classList && e.target.parentNode.classList.contains('btn-group') ? e.target : e.target.parentNode, 
         parent = target.parentNode;
     for (var i = 0, l = toggles.length; i<l; i++ ){
-        if ( (parent.tagName === 'LI' || parent.classList.contains('btn-group')) && toggles[i] === target ) {
+        if ( (parent && parent.tagName === 'LI' || parent && parent.classList && parent.classList.contains('btn-group')) && toggles[i] === target ) {
             classToggles(parent);
         } else {
             closeToggles(toggles[i].parentNode);
         }
     }
-    /^#$/.test(target.getAttribute('href')) && e.preventDefault();
+    target && /^#$/.test(target.getAttribute('href')) && e.preventDefault();
 }, false);
