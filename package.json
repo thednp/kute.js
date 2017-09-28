@@ -1,6 +1,6 @@
 {
   "name": "kute.js",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "description": "Complete Native Javascript animation engine.",
   "main": "kute.js",
   "scripts": {
