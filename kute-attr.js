@@ -62,12 +62,12 @@
             if (/%/.test(prefix)) {
               attributes[prop+s] = function(l,p,a,b,v) {
                 var _p = _p || p.replace(s,'');
-                l.setAttribute(_p, ((number(a.v,b.v,v) * 100>>0)/100) + b.u );
+                l.setAttribute(_p, ((number(a.v,b.v,v) * 1000>>0)/1000) + b.u );
               }
             } else {
               attributes[prop+s] = function(l,p,a,b,v) {
                 var _p = _p || p.replace(s,'');
-                l.setAttribute(_p, (number(a.v,b.v,v)>>0) + b.u );
+                l.setAttribute(_p, ( (number(a.v,b.v,v)*1000>>0)/1000) + b.u );
               }
             }
           }
@@ -76,11 +76,11 @@
           if (!(prop in attributes)) {
             if (/opacity/i.test(p)) {
               attributes[prop] = function(l,o,a,b,v) {
-                l.setAttribute(o, (number(a,b,v) * 100 >> 0) / 100 );
+                l.setAttribute(o, (number(a,b,v) * 1000 >> 0) / 1000 );
               }
             } else {
               attributes[prop] = function(l,o,a,b,v) {
-                l.setAttribute(o, (number(a,b,v) *10 >> 0 ) / 10 );
+                l.setAttribute(o, (number(a,b,v) * 1000 >> 0) / 1000 );
               }
             }
           }

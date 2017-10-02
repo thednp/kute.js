@@ -1,14 +1,17 @@
 # KUTE.js
-A fully fledged native Javascript animation engine with most essential features for web developers, designers and animators, delivering easy to use methods to set up high performance, cross-browser animations. The focus is code quality, flexibility, performance and size (core engine is 17k min and 5.5k gzipped). 
+A fully fledged native JavaScript animation engine with most essential features for web developers, designers and animators, delivering easy to use methods to set up high performance, cross-browser animations. The focus is code quality, flexibility, performance and size (core engine is 17k min and 5.5k gzipped). 
+
+[![NPM Version](https://img.shields.io/npm/v/kute.js.svg?style=flat-square)](https://cdnjs.com/libraries/kute.js)
+[![NPM Downloads](https://img.shields.io/npm/dm/kute.js.svg?style=flat-square)](http://npm-stat.com/charts.html?package=kute.js)
+[![jsDeliver](https://data.jsdelivr.com/v1/package/npm/kute.js/badge)](https://www.jsdelivr.com/package/npm/kute.js)
+[![CDNJS](https://img.shields.io/cdnjs/v/kute.js.svg?style=flat-square)](https://cdnjs.com/libraries/kute.js)
 
 Along with a simple jQuery plugin, KUTE.js packs plugins for presentation attributes, SVG transform, draw SVG strokes and path morphing, text string write up or number countdowns, plus additional CSS properties like colors, border-radius or typographic properties.
 
 Because of it's modularity, KUTE.js makes it super easy to extend or override functionality, making it unique among Javascript animation engines.
 
-# Demo / CDN
-For documentation, examples and other cool tips, check the <a href="http://thednp.github.io/kute.js/">demo</a>. Thanks to jsdelivr, we have a CDN link <a target="_blank" href="https://www.jsdelivr.com/package/npm/kute.js">here</a>. We also have cdnjs link <a href="https://cdnjs.com/libraries/kute.js" target="_blank">right here</a>. Sweet!
-
-[![](https://data.jsdelivr.com/v1/package/npm/kute.js/badge)](https://www.jsdelivr.com/package/npm/kute.js)
+# Demo / Developer Guide
+For documentation, examples and other cool tips, check the [demo](http://thednp.github.io/kute.js/).
 
 # Core Engine - [visit page](http://thednp.github.io/kute.js/examples.html)
 * tween object methods: `.to()`, `.fromTo()`, `.allTo()`, `.allFromTo()`
