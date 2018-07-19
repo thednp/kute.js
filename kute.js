@@ -196,7 +196,11 @@
     removeAll = function () { tweens = []; },
     add = function (tw) { tweens.push(tw); },
     remove = function (tw) { var i = tweens[indexOf](tw); if (i !== -1) { tweens.splice(i, 1); }},
-    stop = function () { if (tick) { _cancelAnimationFrame(tick); tick = null; } },
+    stop = function () { 
+      setTimeout(function(){
+        if (!tweens[length] && tick) { _cancelAnimationFrame(tick); tick = null; } 
+      },64)
+    },
 
     canTouch = ('ontouchstart' in g || navigator && navigator.msMaxTouchPoints) || false, // support Touch?
     touchOrWheel = canTouch ? 'touchstart' : 'mousewheel', mouseEnter = 'mouseenter', //events to prevent on scroll
@@ -480,7 +484,7 @@
       if (this[options][yoyo] && this.reversed===true) { reverse.call(this); this.reversed = false; }
       this[playing] = false;
 
-      !tweens[length] && stop();  // when all animations are finished, stop ticking after ~3 frames
+      stop();  // when all animations are finished, stop ticking after ~3 frames
     },
     preventScroll = function (eventObj) { // prevent mousewheel or touch events while tweening scroll
       var data = body.getAttribute(dataTweening);
