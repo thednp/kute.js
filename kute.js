@@ -197,7 +197,7 @@
     add = function (tw) { tweens.push(tw); },
     remove = function (tw) { var i = tweens[indexOf](tw); if (i !== -1) { tweens.splice(i, 1); }},
     stop = function () { 
-      setTimeout(function(){
+      setTimeout(function(){ // re-added for #81
         if (!tweens[length] && tick) { _cancelAnimationFrame(tick); tick = null; } 
       },64)
     },
@@ -281,7 +281,7 @@
         DOM[tweenProp](this[element],tweenProp,this[valuesStart][tweenProp],this[valuesEnd][tweenProp],progress,this[options]); 
       }
 
-      if (this[options].update) { this[options].update.call(); } // fire the updateCallback
+      if (this[options].update) { this[options].update.call(this); } // fire the updateCallback
 
       if (elapsed === 1) {
         if (this[options][repeat] > 0) {
@@ -296,7 +296,7 @@
           return true;
         } else {
 
-          if (this[options].complete) { this[options].complete.call(); }
+          if (this[options].complete) { this[options].complete.call(this); } // fire the complete callback
 
           scrollOut.call(this); // unbind preventing scroll when scroll tween finished
 
@@ -691,7 +691,7 @@
         this._startTime += this[options][delay];
 
         if (!this._startFired) {
-          if (this[options].start) { this[options].start.call(); }
+          if (this[options].start) { this[options].start.call(this); }
           this._startFired = true;
         }
         !tick && ticker();
@@ -700,7 +700,7 @@
       play : function () {
         if (this.paused && this[playing]) {
           this.paused = false;
-          if (this[options].resume) { this[options].resume.call(); }
+          if (this[options].resume) { this[options].resume.call(this); }
           this._startTime += time.now()  - this._pauseTime;
           add(this);
           !tick && ticker();  // restart ticking if stopped
@@ -713,7 +713,7 @@
           remove(this);
           this.paused = true;
           this._pauseTime = time.now();
-          if (this[options].pause) { this[options].pause.call(); }
+          if (this[options].pause) { this[options].pause.call(this); }
         }
         return this;
       },
@@ -724,7 +724,7 @@
           this.paused = false;
           scrollOut.call(this);
 
-          if (this[options].stop) { this[options].stop.call(); }
+          if (this[options].stop) { this[options].stop.call(this); }
           this.stopChainedTweens();
           close.call(this);
         }
