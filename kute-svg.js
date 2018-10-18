@@ -235,7 +235,7 @@
             len += dist(coord(points[i]), coord(points[i+1]));
           }
         }
-        len += el[tagName] === 'polygon' ? dist(coord(points[0]), coord(points[points[length] - 1])) : 0;
+        len += el.tagName === 'polygon' ? dist(coord(points[0]), coord(points[points[length] - 1])) : 0;
       }
       return len;
     },
