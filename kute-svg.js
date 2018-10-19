@@ -215,7 +215,6 @@
     },
     getPolyLength = function(el){ // getPolygonLength / getPolylineLength - return the length of the Polygon / Polyline
       var points = el.getAttribute('points').split(' '), len = 0;
-      console.log(points)
       if (points.length > 1) {
         var coord = function (p) {
           var c = p.split(',');
