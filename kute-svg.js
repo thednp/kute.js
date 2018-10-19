@@ -215,6 +215,7 @@
     },
     getPolyLength = function(el){ // getPolygonLength / getPolylineLength - return the length of the Polygon / Polyline
       var points = el.getAttribute('points').split(' '), len = 0;
+      console.log(points)
       if (points.length > 1) {
         var coord = function (p) {
           var c = p.split(',');
@@ -235,7 +236,7 @@
             len += dist(coord(points[i]), coord(points[i+1]));
           }
         }
-        len += el.tagName === 'polygon' ? dist(coord(points[0]), coord(points[points[length] - 1])) : 0;
+        len += el.tagName === 'polygon' ? dist(coord(points[0]), coord(points[points.length - 1])) : 0;
       }
       return len;
     },
