@@ -210,8 +210,9 @@
 
     // true scroll container
     html = document[getElementsByTagName]('HTML')[0],
+    scrollContainer = navigator && /(EDGE|Mac)/i.test(navigator.userAgent) ? body : html,
     // scrollContainer = navigator && /webkit/i.test(navigator.userAgent) || document.compatMode == 'BackCompat' ? body : html,
-    scrollContainer = document.compatMode == 'BackCompat' ? body : html, // webkit browsers are now srolling the HTML
+    // scrollContainer = document.compatMode == 'BackCompat' ? body : html, // webkit browsers are now srolling the HTML
 
     // browser detection
     isIE = navigator && (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null) ? parseFloat( RegExp.$1 ) : false,
