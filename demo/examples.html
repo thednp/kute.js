@@ -81,7 +81,7 @@
 
         <div class="content-wrap">
             <h2>Core Engine</h2>
-            <p>KUTE.js core engine can animate by itself a great deal of CSS properties as well as scroll. You can do it all with native Javascript or with jQuery, but before we head over to the more advanced examples, let's have a quick look at these two
+            <p>KUTE.js core engine can animate by itself a great deal of CSS properties as well as scroll. You can do it all with native Javascript without libraries like jQuery, but before we head over to the more advanced examples, let's have a quick look at these two
                 basic examples here. <strong>Note</strong>: the examples are posted on <a href="http://codepen.io/thednp/pens/public/" target="_blank">codepen</a>.</p>
 
             <h3>Basic Native Javascript Example</h3>
@@ -106,21 +106,6 @@ tween.paused // checks if the tween is currenlty active so we can prevent pausin
 </code></pre>
 
             <p>The demo for the above example is <a href="http://codepen.io/thednp/pen/Bozbgg" target="_blank">here</a>.</p>
-
-            <h3>Basic jQuery Example</h3>
-            <p>KUTE.js includes a jQuery Plugin to help you easily implement KUTE.js in your jQuery applications. When using jQuery, the syntax is familiar but works a bit different than plain Javascript due to jQuery's specific code standards. Let's have
-                a look:</p>
-            <pre><code class="language-javascript">// this is the tween object, basically $('selector').method(fromValues, toValue, options)
-var tween = $('selector').fromTo({top: 20}, {top: 100}, {delay: 500});
-</code></pre>
-            <p>We mentioned that the jQuery Plugin is different, and here's why: the above function call uses the <code>allFromTo</code> method to create an <code>Array</code> of objects for each <code>HTML</code> element of chosen selector, but if the selector
-                only returns one element the call returns a single tween object built with <code>fromTo</code> method. For the array of objects we can now apply the exact same tween control methods, except these:</p>
-            <pre><code class="language-javascript">tween.length // check if the tween is an array of objects
-tween.length && tween.tweens[0].playing && tween.tweens[tween.length-1].playing // now we know that one of the tweens is playing
-tween.length && tween.tweens[0].paused && tween.tweens[tween.length-1].paused // now we know that one of the tweens is paused
-</code></pre>
-
-            <p>The demo for the above example is <a href="http://codepen.io/thednp/pen/rryWZQ" target="_blank">here</a>.</p>
 
             <h3>Transform Properties Examples</h3>
             <p>KUTE.js supports almost all about <code>transform</code> as described in the <a href="http://www.w3.org/TR/css3-transforms/" target="_blank">spec</a>: the 2D <code>translate</code>, <code>rotate</code>, <code>skewX</code>, <code>skewY</code>                and <code>scale</code>, as well as the 3D <code>translateX</code>, <code>translateY</code>, <code>translateZ</code>, <code>translate3d</code>, <code>rotateX</code>, <code>rotateY</code>, <code>rotateZ</code> properties. Additionally it
