@@ -57,7 +57,7 @@ For documentation, examples and other cool tips, check the [demo](http://thednp.
 # jQuery Plugin
 This aims to make the KUTE.js script work native within other jQuery apps but it's not always really needed as we will see in the second subchapter here. Since the demos don't insist on this particular plugin, we'll write some basics [right here](https://github.com/thednp/kute.js#using-the-jquery-plugin).
 
-The plugin is just a few bits of code to bridge all of the `KUTE.js` methods to your jQuery apps. The plugin can be found in the [/master](https://github.com/thednp/kute.js/blob/master/kute-jquery.js) folder, CDN repositories and npm packages.
+The plugin is just a few bits of code to bridge all of the `KUTE.js` methods to your jQuery apps. The plugin can be found in the [/experiments](https://github.com/thednp/kute.js/blob/experiments/kute-jquery.js) branch only.
 
 # NPM/Bower
 You can install this through NPM or bower respectively:
