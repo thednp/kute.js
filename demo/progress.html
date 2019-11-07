@@ -11,13 +11,13 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
-    <meta name="description" content="The Text Plugin for KUTE.js enables string manipulation.">
-    <meta name="keywords" content="kute,kute.js,animation,javascript animation,tweening engine,animation engine,text plugin,Javascript,Native Javascript,vanilla javascript,jQuery">
+    <meta name="description" content="A simple tool to showcase control KUTE.js tween objects progress.">
+    <meta name="keywords" content="kute,kute.js,animation,javascript animation,tweening engine,animation engine,progress,Javascript,Native Javascript,vanilla javascript,jQuery">
     <meta name="author" content="dnp_theme">
     <link rel="shortcut icon" href="./assets/img/favicon.png">
     <!-- TO DO -->
 
-    <title>KUTE.js Text Plugin | Javascript Animation Engine</title>
+    <title>KUTE.js Using Update Functions | Javascript Animation Engine</title>
 
     <!-- RESET CSS -->
     <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
@@ -49,6 +49,45 @@
         .red {
             color: red
         }
+        .slider {
+            margin-right: 20px;
+        }
+        input[type="range"] {
+            -webkit-appearance: none !important;
+            width: 100%;
+            height: 12px;
+            background-color: #b0cde4;
+            border: 0;
+            border-radius: 5px;
+            margin: auto;
+            transition: all 0.3s ease;
+        }
+        input[type="range"]:hover {
+            background-color: #a3bdd2;
+        }
+        input[type="range"]:focus {
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none !important;
+            width: 20px;
+            height: 20px;
+            background-color: #2196F3;
+            border-radius: 30px;
+            transition: all 0.5s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background-color: #1b7bc7;
+        }
+        input[type="range"]::-webkit-slider-thumb:active {
+            box-shadow: 0px 0px 1px #1b7bc7;
+        }
+
+        #rangevalue {
+            position: absolute; bottom: 20px; right: 20px;
+        }
+
     </style>
 </head>
 
@@ -71,9 +110,9 @@
                             <li><a href="examples.html">Core Engine</a></li>
                             <li><a href="css.html">CSS Plugin </a></li>
                             <li><a href="svg.html">SVG Plugin </a></li>
-                            <li class="active"><a href="text.html">Text Plugin </a></li>
+                            <li><a href="text.html">Text Plugin </a></li>
                             <li><a href="attr.html">Attributes Plugin </a></li>
-                            <li><a href="progress.html">Tween Progress </a></li>
+                            <li class="active"><a href="progress.html">Tween Progress </a></li>
                         </ul>
                     </li>
                     <li class="btn-group">
@@ -92,66 +131,46 @@
         </div>
 
         <div class="content-wrap">
-            <h2>Text Plugin</h2>
-            <p>The KUTE.js Text Plugin extends the core engine and enables animation for text elements in two ways: either incrementing or decreasing a number in a given string or writing a string character by 
-                character with a very cool effect.</p>
+            <h2>Tween Progress Control</h2>
+            <p>KUTE.js object exposes all required methods in order for it to work, so why not try to do something fun? How about control tween progress? So let's make a quick tool:</p>
+            <ul>
+                <li>We need an <code>&lt;input type="range" min="0" max="1" step="0.00001" /&gt;</code> with these exact <code>min</code>, <code>max</code> and <code>step</code> attributes</li>
+                <li>Now we need a tween object, let's just do a svg morph for instance, but make sure you use <code>KUTE.fromTo()</code> method, the others don't prepare start values for the tween object</li>
+                <li>We also need to make sure nothing controls the progress except the range input, so don't use <code>start()</code> or <code>pause()</code> methods at all, as well as <code>repeat</code> and / or <code>yoyo</code> options</li>
+                <li>Next we attach an <code>input</code> event handler to update the tween progress by using the <code>KUTE.update</code> function, which is the step function triggered on every <code>requestAnimationFrame</code> tick</li>
+            </ul>
 
-<pre><code class="language-javascript">// basic synthax for number increments
-var myNumberTween = KUTE.to('selector', {number: 1500}); // this assumes it will start from current number or from 0
+            <p>A very basic code sample will look like this:</p>
 
-// OR text writing character by character
-var myTextTween = KUTE.to('selector', {text: 'A text string with other &lt;span&gt;substring&lt;/span&gt; should do.'});
+
+<pre><code class="language-javascript">// basic morph, only fromTo and allFromTo should work
+var morphTween = KUTE.fromTo('#rectangle', { path: '#rectangle' }, { path: '#star' }, { morphIndex: 127 });
+
+// the range slider
+var rangeSlider = document.querySelector('input[type="range"');
+
+// do the dew
+rangeSlider.addEventListener('input',function(){
+    var tick = 0.00001; // we need a value that's slightly above 0, math is hard in JavaScript
+    KUTE.update.call(morphTween, this.value * morphTween.options.duration + tick);
+})
 </code></pre>
 
-            <p>The effects of these two properties are very popular, but pay attention to the fact that every 16 miliseconds the browser has to parse the HTML structure around your target elements so caution is 
-                advised. With other words, try to limit the number of simultaneus text animations.</p>
-
-            <h3>Number Incrementing/Decreasing</h3>
-            <p>In the first example, let's animate a number, approximatelly as written above:</p>
+            <p>And now let's see the code in action:</p>
             <div class="featurettes">
-                <p class="text-example">Total number of lines: <span id="numText">0</span></p>
-
-                <div class="example-buttons">
-                    <a id="numBtn" class="btn btn-orange" href="javascript:void(0)">Start</a>
+                <div class="slider">
+                    <input type="range" min="0" max="1" oninput="rangevalue.value=(value*100).toFixed(2)+'%'" value="0" step="0.0001"/>
+                    <output id="rangevalue">0%</output>
                 </div>
+                <svg class="example-box-model example-box" id="morph-example1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+                    <path id="rectangle" class="bg-blue" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
+                        c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>
+                    <path id="star" style="visibility:hidden" d="M301.113,12.011l99.25,179.996l201.864,38.778L461.706,380.808
+                        l25.508,203.958l-186.101-87.287L115.01,584.766l25.507-203.958L0,230.785l201.86-38.778L301.113,12.011"/>
+                </svg>
             </div>
-            <p>The button action will toggle the <code>valuesEnd</code> value for the <code>number</code> property, because tweening a number to itself would produce no effect.</p>
 
-            <h3>Writing Text</h3>
-            <p>This feature come with a additional tween option called <kbd>textChars</kbd> for the scrambling text character:</p>
-            <ul>
-                <li><code>alpha</code> use lowercase alphabetical characters, the default value</li>
-                <li><code>upper</code> use UPPERCASE alphabetical characters</li>
-                <li><code>numeric</code> use numerical characters</li>
-                <li><code>symbols</code> use symbols such as #, $, %, etc.</li>
-                <li><code>all</code> use all alpha numeric and symbols.</li>
-                <li><code>YOUR CUSTOM STRING</code> use your own custom characters; eg: <code>'KUTE.JS IS #AWESOME'</code>.</li>
-            </ul>
-            <div class="featurettes">
-                <p class="text-example" id="headText">Click the Start button on the right.</p>
-
-                <div class="example-buttons">
-                    <a id="headBtn" class="btn btn-blue" href="javascript:void(0)">Start</a>
-                </div>
-            </div>
-            <p>Keep in mind that the <code>yoyo</code> feature will NOT un-write / delete character by character the string, but will write the previous text instead.</p>
-
-            <h3>Combining Both</h3>
-            <div class="featurettes">
-                <div class="columns">
-                    <div class="col2" style="width: 80px">
-                        <p class="text-example" id="comNum">0</p>
-                    </div>
-                    <div class="col2" style="text-align: left">
-                        <p class="text-example" id="comText">Clicks so far?</p>
-                    </div>
-                </div>
-                <div class="example-buttons">
-                    <a id="comBtn" class="btn btn-olive" href="javascript:void(0)">Start</a>
-                </div>
-            </div>
-            <p>In this example we've used the <code>textChars</code> option with <code>symbols</code> and <code>all</code> values respectively, but combining the two text properties and some other KUTE.js 
-                features can really spice up some content. Have fun!</p>
+            <p>We might argue that we want to use other methods in combination with this method, or use this method while animations are running, but there are other libraries out there that can do that already. This example here is just to showcase KUTE.js can do this too.</p>
 
             <ul id="share" class="nav">
                 <li>Share </li>
@@ -184,11 +203,12 @@ var myTextTween = KUTE.to('selector', {text: 'A text string with other &lt;span&
     <!--<script src="http://cdn.jsdelivr.net/kute.js/1.6.0/kute.min.js"></script>  KUTE CDN -->
     <script src="./src/kute.min.js"></script>
     <!-- KUTE.js core -->
-    <script src="./src/kute-text.min.js"></script>
+    <script src="./src/kute-svg.min.js"></script>
+    
     <!-- KUTE.js Text Plugin -->
     <script src="./assets/js/scripts.js"></script>
     <!-- global scripts stuff -->
-    <script src="./assets/js/text.js"></script>
+    <script src="./assets/js/progress.js"></script>
     <!-- css plugin examples -->
 </body>
 
