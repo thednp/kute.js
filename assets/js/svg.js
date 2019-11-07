@@ -2,7 +2,7 @@
 
     // invalidate for unsupported browsers
     var isIE = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) !== null ? parseFloat( RegExp.$1 ) : false;
-    if (isIE&&isIE<9) {return;} // return if SVG API is not supported
+    if (isIE&&isIE<9) { (function(){return; }()) } // return if SVG API is not supported
 
     // basic morph
     var morphTween = KUTE.to('#rectangle', { path: '#star' }, {
