@@ -1,11 +1,33 @@
 {
   "name": "kute.js",
-  "version": "1.6.7",
-  "description": "Complete Native Javascript animation engine.",
-  "main": "kute.js",
+  "version": "2.0.0",
+  "description": "JavaScript animation engine of the future is called KUTE.js.",
+  "main": "dist/kute.min.js",
+  "module": "dist/kute.esm.js",
+  "jsnext": "src/index.js",
+  "files": [
+    "dist/*.{js,map}",
+    "src/**/*.{js,map}",
+    "src/*.{js,map}"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "min": "node build.js"
+    "help": "rollup --help",
+    "build": "npm-run-all --parallel copy-build build-*",
+    "custom": "rollup -c --environment",
+    "copy-build": "rollup -c --environment INPUTFILE:src/index.js,OUTPUTFILE:demo/src/kute.min.js,DIST:standard,MIN:true,FORMAT:umd -c",
+    "build-standard": "rollup --environment DIST:standard,MIN:false,FORMAT:umd -c",
+    "build-standard-min": "rollup --environment DIST:standard,MIN:true,FORMAT:umd -c",
+    "build-standard-esm": "rollup --environment DIST:standard,MIN:false,FORMAT:esm -c",
+    "build-standard-esm-min": "rollup --environment DIST:standard,MIN:true,FORMAT:esm -c",
+    "build-base": "rollup --environment DIST:base,MIN:false,FORMAT:umd -c",
+    "build-base-min": "rollup --environment DIST:base,MIN:true,FORMAT:umd -c",
+    "build-extra": "rollup --environment DIST:extra,MIN:false,FORMAT:umd -c",
+    "build-extra-min": "rollup --environment DIST:extra,MIN:true,FORMAT:umd -c",
+    "polyfill": "npm-run-all --parallel pln plnm copy-polyfill",
+    "copy-polyfill": "rollup --environment INPUTFILE:src/util/polyfill.js,OUTPUTFILE:demo/src/polyfill.min.js,FORMAT:esm,MIN:true,POLYFILL:true -c",
+    "pln": "rollup --environment INPUTFILE:src/util/polyfill.js,OUTPUTFILE:dist/polyfill.js,FORMAT:esm,MIN:false,POLYFILL:true -c",
+    "plnm": "rollup --environment INPUTFILE:src/util/polyfill.js,OUTPUTFILE:dist/polyfill.min.js,FORMAT:esm,MIN:true,POLYFILL:true -c"
   },
   "repository": {
     "type": "git",
@@ -15,11 +37,13 @@
     "kute.js",
     "svg morph",
     "svg transform",
+    "css3 transform",
+    "matrix transform",
     "tweening engine",
     "animation engine",
     "javascript animation engine",
     "javascript animation",
-    "animations",
+    "animation",
     "native javascript"
   ],
   "author": "thednp",
@@ -29,6 +53,17 @@
   },
   "homepage": "http://thednp.github.io/kute.js",
   "dependencies": {
-    "uglify-js": "^2.7.3"
+    "cubic-bezier-easing": "^1.0.2",
+    "minifill": "^0.0.7",
+    "shorter-js": "^0.0.4"
+  },
+  "devDependencies": {
+    "@rollup/plugin-buble": "^0.21.3",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^7.1.3",
+    "npm-run-all": "^4.1.5",
+    "rollup": "^1.32.1",
+    "rollup-plugin-cleanup": "^3.1.1",
+    "rollup-plugin-terser": "^5.3.0"
   }
 }

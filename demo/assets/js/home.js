@@ -1,110 +1,68 @@
-// vars
-var textOpened = false,
-    block = document.getElementById('blocks'),
-	bs = block.querySelectorAll('.bg'),
-	h2 = document.querySelector('h2'),
-	lead = document.querySelector('.lead'),
-	btns = document.querySelector('.btns').querySelectorAll('.btn'),
-	b = block.querySelector('.bg'),
-	isIE = /ie/.test(document.documentElement.className),
-	isIE8 = /ie8/.test(document.documentElement.className),
-	isIE10 = /MSIE|10.0/.test(navigator.userAgent),
-	replay = document.querySelector('.btn.replay');
+var frontpage = document.getElementsByClassName('frontpage'),
+		rectangle = document.getElementById('rectangle'),
+		star = document.getElementById('star'),
+		hexagon = document.getElementById('hexagon'),
+		cat = document.getElementById('cat'),
+		circle = document.getElementById('circle'),
+		head = document.getElementById('head'),
+		winkyFace = document.getElementById('winky-face'),
+		dropInitial = document.getElementById('drop-initial'),
+		drop = document.getElementById('drop'),
+		mouth = document.getElementById('mouth'),
+		eyeLeft = document.getElementById('eye-left'),
+		eyeRight = document.getElementById('eye-right'),
+		heading = document.querySelector('h2.nomargin'),
+		plead = document.querySelector('p.lead')
 
+var t0 = KUTE.to(rectangle,{translateX:0, opacity:1 }, { easing:'easingCubicOut'}),
+		t1 = KUTE.fromTo(rectangle,{path:rectangle, attr: {fill: rectangle.getAttribute('fill') }}, {path:star, attr: {fill: star.getAttribute('fill') }}, {morphPrecision: 5, easing:'easingCubicOut'}),
+		t2 = KUTE.fromTo(rectangle,{path:star, rotateZ: 0, attr: {fill: rectangle.getAttribute('fill') }}, {path:hexagon, rotateZ: 360, attr: {fill: hexagon.getAttribute('fill') }}, {morphPrecision: 5, easing:'easingCubicOut'}),
+		t3 = KUTE.fromTo(rectangle,{path:hexagon, attr: {fill: rectangle.getAttribute('fill') }}, {path:cat, attr: {fill: cat.getAttribute('fill') }}, {morphPrecision: 5, easing:'easingCubicOut'}),
+		t4 = KUTE.fromTo(rectangle,{path:cat, attr: {fill: rectangle.getAttribute('fill') }}, {path:circle, attr: {fill: circle.getAttribute('fill') }}, {morphPrecision: 5, easing:'easingCubicOut'}),
+		t5 = KUTE.fromTo(rectangle,{path:circle, attr: {fill: rectangle.getAttribute('fill') }}, {path:head, attr: {fill: head.getAttribute('fill') }}, {morphPrecision: 5, easing:'easingCubicOut'}),
+		t6 = KUTE.fromTo(dropInitial,{path: dropInitial,opacity:1},{path: drop,opacity:1}, {morphPrecision: 5, easing:'easingCubicOut', onComplete: mergeLogo}),
+		t7 = KUTE.to(mouth,{opacity:1}),
+		t8 = KUTE.to(eyeLeft,{opacity:1}),
+		t9 = KUTE.to(eyeRight,{opacity:1}),
+		t10 = KUTE.fromTo(winkyFace,{opacity:0,translateY:50},{opacity:1,translateY:0},{easing:'easingCubicOut'}),
+		t11 = KUTE.to(eyeLeft,{path:'#eye-left-closed'}, {morphPrecision: 5}, {easing:'easingCubicOut'}),
+		t12 = KUTE.to(eyeRight,{path:'#eye-right-closed'}, {morphPrecision: 5}, {easing:'easingCubicOut'}),
+		t13 = KUTE.to(mouth,{path:'#mouth-happy'}, {morphPrecision: 5, easing:'easingCubicOut', duration:3500}),
+		loop1 = KUTE.to(rectangle,{ attr: {fill: '#52aef7' }}, {duration: 1500}),
+		loop2 = KUTE.to(rectangle,{ attr: {fill: '#f98f6d' }}, {duration: 1500}),
+		loop3 = KUTE.to(rectangle,{ attr: {fill: '#f95054' }}, {duration: 1500}),
+		loop4 = KUTE.to(rectangle,{ attr: {fill: '#ffd626' }}, {duration: 1500}),
+		loop5 = KUTE.to(rectangle,{ attr: {fill: '#d661ea' }}, {duration: 1500}),
+		showText = KUTE.to(heading,{opacity: 1},{duration: 3000}),
+		showText1 = KUTE.fromTo(heading,{ text: ''},{ text:heading.getAttribute('data-text')},{duration: 1500}),
+		showText2 = KUTE.fromTo(plead,{ text:''}, { text:plead.getAttribute('data-text')},{duration: 3500, onComplete: textComplete}),
+		showBTNS = KUTE.allFromTo('.btns .btn',{opacity: 0, translate3d: [150,50,0]}, {opacity: 1, translate3d: [0,0,0]},{duration: 500, offset: 250, delay: 500, easing: 'easingBackOut'})
 
-// resize and show the blocks
-window.addEventListener('load',resizeHandler,false);
-window.addEventListener('load',showBlocks,false);
-window.addEventListener('resize',resizeHandler,false);
-replay.addEventListener('click',runOnClick,false);
-
-function resizeHandler(e) {
-	var css = window.getComputedStyle(b,null),
-		bw = parseInt(css.width), i = 0;
-	for (i;i<9;i++){
-		bs[i].style.minHeight = bw+'px';
-		if (e.type==='load'){
-			bs[i].style.left = -bw+'px';
-		}	
-	}
+function mergeLogo(){
+	rectangle.setAttribute('d', rectangle.getAttribute('d')+ drop.getAttribute('d') )
+	dropInitial.style.opacity = 0
+}
+function textComplete(){
+	heading.removeAttribute('data-text')
+	plead.removeAttribute('data-text')
+	showBTNS.start()
 }
 
-function showBlocks() {
-	var i = 0, dl, css = window.getComputedStyle(b),
-		bw = parseInt(css.width), d = isIE || (/%/.test(css.width)) ? 300 : bw*3, ra, fn;
-	for (i;i<9;i++){
-		if ( i === 0 || i === 3 || i === 6 ) {
-			dl = 200 + i*bw;
-		} else if ( i === 1 || i === 4 || i === 7 ) {
-			dl = 400 + i*bw;
-		} else if ( i === 2 || i === 5 || i === 8 ) {
-			dl = 600 + i*bw;
-		}
-		fn = i === 0 ? openTheAnimations : null;
-		ra = i === 8 ? runAnimations : null;
-		KUTE.to(bs[i], {opacity:1,left:0}, {duration: d, delay: dl, complete: ra, easing: 'easingQuadraticOut', start: fn}).start();
-	}
-}
+t0.chain(t1)
+t1.chain(t2)
+t2.chain(t3)
+t3.chain(t4)
+t4.chain([t5,t6])
+t6.chain([t7,t8,t9])
+t9.chain([t10,t11,t12,t13])
 
-function runOnClick() {
-	if ( !/animating/.test(block.className) ) {
-		runAnimations();
-	}
-}
+t8.chain([loop1,showText,showText1])
+showText1.chain(showText2)
 
-function doBlockAnimations() {
-	var i = 0;
-	for (i;i<9;i++){
-		var rd = getRandomInt(-300,300), rs = getRandomInt(0.1,5), sc = parseFloat(rs*0.5),
-			fn = i===8 ? closeTheAnimations : null,
-			t1 = KUTE.to(bs[i], { translate:rd}, { duration:1500, easing: 'easingQuadraticInOut', delay: 1500 }),
-			t2 = KUTE.to(bs[i], { rotate:720}, { duration:1500, easing: 'easingQuadraticOut' }),
-			t3 = KUTE.fromTo(bs[i], { translate:rd, borderRadius: '0%', scale:1, rotate:720}, { borderRadius: '100%', translate:rd, scale:rs, rotate:0}, { duration:1000, easing: 'easingQuadraticOut' }),
-			t4 = KUTE.to(bs[i], { scale: sc}, { duration:1000, easing: 'easingQuadraticIn' }),
-			t5 = KUTE.fromTo(bs[i], { translate:rd, borderRadius: '100%', scale:sc }, { translate:0, borderRadius: '0%', scale:1 }, { delay: 100, duration:1500, easing: 'easingBounceOut' }),
-			t6 = KUTE.to(bs[i], { backgroundColor: '#fff'}, { easing: 'easingCircularOut', delay: 550+i*50, duration:450, yoyo: true, repeat: 1, complete: fn });
-			
-		
-		t1.start();
-		t1.chain(t2);
-		t2.chain(t3);
-		t3.chain(t4);
-		t4.chain(t5);
-		t5.chain(t6);
+loop1.chain(loop2)
+loop2.chain(loop3)
+loop3.chain(loop4)
+loop4.chain(loop5)
+loop5.chain(loop1)
 
-	}	
-}
-function openTheAnimations() {
-	if (!/animating/.test(block.className)){
-		replay.style.display = 'none';
-		block.className += ' animating';
-	}
-}
-function closeTheAnimations() {
-	if (/animating/.test(block.className)){
-		replay.style.display = 'inline';
-		block.className = block.className.replace( ' animating', '');
-	}
-}
-
-function runAnimations() {
-    var fn = !textOpened ? openText : null,
-	    t1 = KUTE.fromTo(block,{left:0},{left:150},{duration:1000, easing: 'easingCubicIn', start: openTheAnimations}).start(),
-		t2 = KUTE.fromTo(block,{left:150},{left:0},{duration:2500, easing: 'easingElasticOut', start: openTheAnimations}),
-		t3 = KUTE.fromTo(block,{rotateZ:0,rotateY:-10},{rotateZ:-20,rotateY:25},{duration:2500, easing: 'easingQuadraticInOut'}).start(),
-		t4 = KUTE.fromTo(block,{rotateZ:-20,rotateY:385},{rotateZ:0,rotateY:-10},{duration:3500, delay: 3600, easing: 'easingQuadraticInOut', start: fn});	
-
-	t1.chain(t2);
-	t3.chain(t4);
-
-	doBlockAnimations();
-}
-
-function openText(){
-    var hd = KUTE.to(h2, {text: 'Welcome Developers!'}, {delay: 4500, duration:2000, easing: 'easingCubicInOut'}).start(),
-	    ld = KUTE.to(lead, {text: 'KUTE.js is a Javascript animation engine with <strong>top performance</strong>, memory efficient & modular code. It delivers a whole bunch of tools to help you create great custom animations.'}, {duration:4000, easing: 'easingCubicInOut'});
-	    btnst = KUTE.allFromTo(btns, {rotate: 45, opacity: 0 }, { rotate: 0, opacity: 1 }, {transformOrigin: '250px center 0px', offset: 200, duration:700, easing: 'easingCubicInOut'});
-	hd.chain(ld);
-    ld.chain(btnst);
-    textOpened = true;
-}
+t0.start()

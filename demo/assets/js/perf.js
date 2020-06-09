@@ -51,23 +51,23 @@ function random(min, max) {
 
 // the variables
 var container = document.getElementById('container');
-
-// vendor prefix handle for Tween.js
-var transformProperty = KUTE.property('transform'), tws = [];
-
+var tws = [];
 
 function complete(){
 	document.getElementById('info').style.display = 'block';
 	container.innerHTML = '';
 	tws = [];
+	if (engine==='tween') {
+		stop()
+	}
 }
 
-function updateLeft(){
-	this.div.style['left'] = Math.floor(this.left) +'px';
+function updateLeft(obj){
+	obj.div.style.left = obj.left +'px';
 }					
 
-function updateTranslate(){
-	this.div.style[transformProperty] = 'translate3d('+ Math.floor(this.x * 10) / 10 + 'px,0px,0px)';
+function updateTranslate(obj){
+	obj.div.style.transform = 'translate3d('+ ((obj.x * 10) / 10 >>0) + 'px,0px,0px)';
 }
 
 function buildObjects(){
@@ -88,9 +88,13 @@ function buildObjects(){
 		
 		createTest(count,property,engine,repeat);
 		// since our engines don't do sync, we make it our own here
-		if (engine==='tween'||engine==='kute') {
+		if (engine==='kute') {
 				document.getElementById('info').style.display = 'none';
-				start();	
+				startKUTE();	
+		}
+		if (engine==='tween') {
+				document.getElementById('info').style.display = 'none';
+				startTWEEN();	
 		}
 	} else {
 
@@ -108,11 +112,26 @@ function buildObjects(){
 	}
 }
 
-function start() {
-		var now = window.performance.now(), count = tws.length;
-		for (var t =0; t<count; t++){
-				tws[t].start(now+count/16)
-		}
+function animate( time ) {
+	requestAnimationFrame( animate );
+	TWEEN.update( time );
+}
+
+function stop(){
+	cancelAnimationFrame(animate)
+}
+
+function startKUTE() {
+	var now = window.performance.now(), count = tws.length;
+	for (var t =0; t<count; t++){
+			tws[t].start(now+count/16)
+	}
+}
+function startTWEEN() {
+	for (var t in TWEEN._tweens){
+		TWEEN._tweens[t].start()
+	}
+	animate()
 }
 
 function createTest(count, property, engine, repeat) {
@@ -136,12 +155,18 @@ function createTest(count, property, engine, repeat) {
 			fromValues = engine==="tween" ? { left: left, div: div } : { left: left };
 			toValues = { left: toLeft }
 		} else {
-			div.style[transformProperty] = 'translate3d('+left + 'px,0px,0px)';
 			if (engine==="kute"){
-				fromValues = { translateX: left }
-				toValues = { translateX: toLeft }
-			} else if ((engine==="gsap") || (engine==="tween")) {
+				// fromValues = { translateX: left }
+				// toValues = { translateX: toLeft }
+				fromValues = { transform: {translate3d: [left,0,0] }}
+				toValues = { transform: {translate3d: [toLeft,0,0] }}
+				// fromValues = { transform: {translateX: left }}
+				// toValues = { transform: {translateX: toLeft }}
+			} else if ( engine==="gsap" ) {
 				fromValues = engine==='gsap' ? { x: left } : { x: left, div : div }
+				toValues = { x: toLeft }				
+			} else if (engine==="tween") {
+				fromValues = { x: left, div : div }
 				toValues = { x: toLeft }				
 			}
 		}
@@ -150,7 +175,7 @@ function createTest(count, property, engine, repeat) {
 	
 		// perf test
 		if (engine==='kute') {
-			tws.push(KUTE.fromTo(div, fromValues, toValues, { easing: 'easingQuadraticInOut', repeat: repeat, yoyo: true, duration: 1000, complete: fn }));
+			tws.push(KUTE.fromTo(div, fromValues, toValues, { easing: KUTE.Easing.easingQuadraticInOut, repeat: repeat, yoyo: true, duration: 1000, onComplete: fn }));
 		} else if (engine==='gsap') {
 			if (property==="left"){
 				TweenMax.fromTo(div, 1, fromValues, {left : toValues.left, repeat : repeat, yoyo : true, ease : Quad.easeInOut, onComplete: fn });							
@@ -165,17 +190,9 @@ function createTest(count, property, engine, repeat) {
 				update = updateTranslate;
 			}			
 			
-			tws.push(new TWEEN.Tween(fromValues).to(toValues,1000).easing( TWEEN.Easing.Quadratic.InOut ).onComplete( complete ).onUpdate( update).repeat(repeat).yoyo(true));		
+			TWEEN.add(new TWEEN.Tween(fromValues).to(toValues,1000).easing( TWEEN.Easing.Quadratic.InOut ).onComplete( complete ).onUpdate( update).repeat(repeat).yoyo(true));		
 		}
 	}
-	if (engine==='tween') {
-		var animate = function( time ) {
-			requestAnimationFrame( animate );
-			TWEEN.update( time );
-		}
-		animate();
-	}
-
 }
 // the start  button handle
 document.getElementById('start').addEventListener('click', buildObjects, false);
