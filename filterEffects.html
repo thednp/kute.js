@@ -128,19 +128,19 @@ let fe4 = KUTE.to('selector4', {filter :{ url: '#mySVGFilter', opacity: 40, drop
 </code></pre>
 
           <div id="filter-examples" class="featurettes">
-              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">
-                  <defs>
-                      <filter id="mySVGFilter">
-                          <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
-                          <feOffset dx="5" dy="5" result="offsetblur"/>
-                          <feFlood flood-color="#000000"/>
-                          <feComposite in2="offsetblur" operator="in"/>
-                          <feMerge>
-                              <feMergeNode/>
-                              <feMergeNode in="SourceGraphic"/>
-                          </feMerge>
-                      </filter>
-                  </defs>
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <defs>
+                  <filter id="mySVGFilter">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+                    <feOffset dx="5" dy="5" result="offsetblur"/>
+                    <feFlood flood-color="#000000"/>
+                    <feComposite in2="offsetblur" operator="in"/>
+                    <feMerge>
+                      <feMergeNode/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
               </svg>
               <div class="example-item example-box" style="background: url('https://picsum.photos/400/300') center center no-repeat; filter: url(#mySVGFilter)">FE1</div>
               <div class="example-item example-box" style="background: url('https://picsum.photos/400/300') center center no-repeat; filter: url(#mySVGFilter)">FE2</div>
