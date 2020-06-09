@@ -183,43 +183,41 @@ var closingGradient = KUTE.to('#gradient', {attr: {x1:'49%', x2:'49%', y1:'49%',
 var rotatingGradient = KUTE.to('#gradient', {attr: {x1:'49%', x2:'51%', y1:'51%', y2:'51%'}});
 </code></pre>
 
-          <div class="featurettes">
-              <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 615 615">
-                  <defs>
-                      <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                          <stop offset="0%" style="stop-color: #e91b1f; stop-opacity:1"></stop>
-                          <stop offset="100%" style="stop-color: #2196F3; stop-opacity:1"></stop>
-                      </linearGradient>
-                  </defs>
-                  <path fill="url(#gradient)" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
-                  c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>
-              </svg>
+        <div class="featurettes">
+          <svg class="example-box-model example-box" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 615 615">
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color: #e91b1f; stop-opacity:1"></stop>
+                <stop offset="100%" style="stop-color: #2196F3; stop-opacity:1"></stop>
+              </linearGradient>
+            </defs>
+              <path fill="url(#gradient)" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531
+              c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>
+          </svg>
 
-              <div class="example-buttons">
-                  <a id="gradBtn" class="btn btn-pink" href="javascript:void(0)">Start</a>
-              </div>
+          <div class="example-buttons">
+              <a id="gradBtn" class="btn btn-pink" href="javascript:void(0)">Start</a>
           </div>
-
-          <h3>Notes</h3>
-          <ul>
-              <li>The power of this little gem comes from the fact that it can work with internally undefined/unknown attributes, as well as with attributes that are not yet present in the W3 draft. As long as you provide valid values specific
-                  to the attribute, the component will assign an update function and will always double check for the current value to determine if it needs a suffix or if the attribute name needs adjustments 
-                  (EG: <code>fillOpacity</code> becomes <code>fill-opacity</code>).</li>
-              <li>This component is a great addition to complement any SVG related component as well as a great complement to <a href="filterEffects.html">Filter Effects</a> component.</li>
-              <li>Remember to check your elements markup for changes, your animation might not be visible because equivalent CSS is used.</li>
-              <li>This component is bundled with the standard <i>kute.js</i> and <i>kute-extra.js</i> distribution files.</li>
-
-          </ul>
-
-          <!-- FOOTER -->
-          <footer>
-              <div class="content-wrap">
-                  <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
-                  <p>&copy; 2015 - 2020 &middot; <a href="https://github.com/thednp">thednp</a>.</p>
-              </div>
-          </footer>
-
         </div>
+
+        <h3>Notes</h3>
+        <ul>
+          <li>The power of this little gem comes from the fact that it can work with internally undefined/unknown attributes, as well as with attributes that are not yet present in the W3 draft. As long as you provide valid values specific
+              to the attribute, the component will assign an update function and will always double check for the current value to determine if it needs a suffix or if the attribute name needs adjustments 
+              (EG: <code>fillOpacity</code> becomes <code>fill-opacity</code>).</li>
+          <li>This component is a great addition to complement any SVG related component as well as a great complement to <a href="filterEffects.html">Filter Effects</a> component.</li>
+          <li>Remember to check your elements markup for changes, your animation might not be visible because equivalent CSS is used.</li>
+          <li>This component is bundled with the standard <i>kute.js</i> and <i>kute-extra.js</i> distribution files.</li>
+        </ul>
+      </div>
+
+      <!-- FOOTER -->
+      <footer>
+          <div class="content-wrap">
+              <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+              <p>&copy; 2015 - 2020 &middot; <a href="https://github.com/thednp">thednp</a>.</p>
+          </div>
+      </footer>
     </div><!-- /.site-wrapper -->
 
     <!-- JavaScript
