@@ -366,10 +366,9 @@
   };
   TweenConstructor.Tween = TweenBase;
 
-  var TC = TweenConstructor.Tween;
   function fromTo(element, startObject, endObject, optionsObj) {
     optionsObj = optionsObj || {};
-    return new TC(selector(element), startObject, endObject, optionsObj)
+    return new TweenConstructor.Tween(selector(element), startObject, endObject, optionsObj)
   }
 
   function perspective(a, b, u, v) {
