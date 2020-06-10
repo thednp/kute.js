@@ -1,6 +1,7 @@
-import KUTE from '../core/globals.js'
-import {defaultValues,Components} from '../core/objects.js'
-import {numbers,arrays} from '../core/interpolate.js'
+import KUTE from '../objects/KUTE.js'
+import defaultValues from '../objects/defaultValues.js'
+import Components from '../objects/Components.js'
+import {numbers,arrays} from '../objects/Interpolate.js'
 
 // const transformMatrix = { property : 'transform', defaultValue: {}, interpolators: {} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
 

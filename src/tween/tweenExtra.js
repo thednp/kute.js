@@ -1,4 +1,4 @@
-import {TweenConstructor} from '../core/globals.js'
+import TweenConstructor from '../objects/TweenConstructor.js'
 import Tween from './tween.js'
 
 // to do

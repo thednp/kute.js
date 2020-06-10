@@ -1,10 +1,15 @@
 
-import KUTE, {TweenConstructor} from '../core/globals.js'
-// import {TweenConstructor} from '../core/globals.js'
+import KUTE from '../objects/KUTE.js'
+import TweenConstructor from '../objects/TweenConstructor.js'
+
 import TweenBase from './tweenBase.js'
-import {add,remove,Tick,Ticker} from '../core/internals.js'
-import {crossCheck,defaultOptions} from '../core/objects.js'
-import {prepareObject,getStartValues} from '../core/process.js'
+import add from '../core/add.js'
+import remove from '../core/remove.js'
+import defaultOptions from '../objects/defaultOptions.js'
+import crossCheck from '../objects/crossCheck.js'
+import prepareObject from '../process/prepareObject.js'
+import getStartValues from '../process/getStartValues.js'
+import {Tick,Ticker} from '../core/Render.js'
 
 defaultOptions.repeat = 0
 defaultOptions.repeatDelay = 0

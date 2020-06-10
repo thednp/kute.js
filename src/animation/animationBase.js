@@ -1,5 +1,11 @@
-import {supportedProperties,defaultOptions,onStart,onComplete,crossCheck,linkProperty,Util} from '../core/objects.js'
-import Interpolate from '../core/interpolate.js'
+import supportedProperties from '../objects/supportedProperties.js'
+import defaultOptions from '../objects/defaultOptions.js'
+import onStart from '../objects/onStart.js'
+import onComplete from '../objects/onComplete.js'
+import crossCheck from '../objects/crossCheck.js'
+import linkProperty from '../objects/linkProperty.js'
+import Util from '../objects/Util.js'
+import Interpolate from '../objects/Interpolate.js'
 
 // Animation class 
 export default class AnimationBase {

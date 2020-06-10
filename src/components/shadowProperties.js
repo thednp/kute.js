@@ -1,9 +1,10 @@
-import KUTE from '../core/globals.js'
-import {defaultValues,Components} from '../core/objects.js' 
-import {getStyleForProperty} from '../core/process.js' 
-import {numbers} from '../core/interpolate.js' 
+import KUTE from '../objects/KUTE.js'
+import defaultValues from '../objects/defaultValues.js' 
+import Components from '../objects/Components.js' 
+import getStyleForProperty from '../process/getStyleForProperty.js' 
+import trueColor from '../util/trueColor.js' 
+import {numbers} from '../objects/Interpolate.js' 
 import {colors} from './colorProperties.js' 
-import {trueColor} from '../util/util.js' 
 
 // Component Properties
 const shadowProps = ['boxShadow','textShadow']

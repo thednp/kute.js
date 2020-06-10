@@ -1,6 +1,8 @@
-import KUTE,{TweenConstructor} from '../core/globals.js'
-import {numbers} from '../core/interpolate.js' 
-import {defaultOptions,Components} from '../core/objects.js';
+import KUTE from '../objects/KUTE.js'
+import TweenConstructor from '../objects/TweenConstructor.js'
+import {numbers} from '../objects/Interpolate.js' 
+import defaultOptions from '../objects/defaultOptions.js'
+import Components from '../objects/Components.js'
 
 // Component Util
 // utility for multi-child targets

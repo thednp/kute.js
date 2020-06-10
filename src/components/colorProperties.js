@@ -1,8 +1,9 @@
-import KUTE from '../core/globals.js'
-import {defaultValues,Components} from '../core/objects.js'
-import {getStyleForProperty} from '../core/process.js' 
-import {numbers} from '../core/interpolate.js' 
-import {trueColor} from '../util/util.js' 
+import KUTE from '../objects/KUTE.js'
+import defaultValues from '../objects/defaultValues.js'
+import Components from '../objects/Components.js'
+import getStyleForProperty from '../process/getStyleForProperty.js' 
+import trueColor from '../util/trueColor.js' 
+import {numbers} from '../objects/Interpolate.js' 
 
 // Component Interpolation
 // rgba1, rgba2, progress

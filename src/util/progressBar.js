@@ -1,5 +1,6 @@
+import KUTE from '../objects/KUTE.js'
+import TweenConstructor from '../objects/TweenConstructor.js'
 import selector from './selector.js'
-import KUTE,{TweenConstructor} from '../core/globals.js'
 
 export default class ProgressBar {
   constructor(element, tween){

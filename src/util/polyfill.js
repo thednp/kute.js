@@ -1,4 +1,3 @@
-import 'minifill/src/Multi.addEventListener.js'
-import 'minifill/src/Date.now.js'
-import 'minifill/src/window.performance.now.js'
-import 'minifill/src/window.requestAnimationFrame.js'
+import 'minifill/src/Array.from.js'
+import 'minifill/src/Array.prototype.includes.js'
+import 'minifill/src/String.prototype.includes.js'

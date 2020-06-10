@@ -1,8 +1,9 @@
-import KUTE from '../core/globals.js'
-import {defaultValues,Components} from '../core/objects.js'
-import {trueDimension} from '../util/util.js'
-import {getStyleForProperty} from '../core/process.js'
-import {units} from '../core/interpolate.js' 
+import KUTE from '../objects/KUTE.js'
+import defaultValues from '../objects/defaultValues.js'
+import Components from '../objects/Components.js'
+import getStyleForProperty from '../process/getStyleForProperty.js'
+import trueDimension from '../util/trueDimension.js'
+import {units} from '../objects/Interpolate.js' 
 
 // const borderRadius = { category : 'borderRadius', properties : [..], defaultValues: {..}, interpolation: {units} }
 
@@ -43,7 +44,6 @@ export const baseRadiusOps = {
   component: 'borderRadiusProps',
   category: 'borderRadius',
   properties: radiusProps,
-  // defaultValues: radiusValues,
   Interpolate: {units},
   functions: {onStart: radiusOnStart}
 }

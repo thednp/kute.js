@@ -1,8 +1,9 @@
-import KUTE from '../core/globals.js'
-import {defaultValues,Components} from '../core/objects.js'
-import {getStyleForProperty} from '../core/process.js'
-import {numbers} from '../core/interpolate.js' 
-import {trueDimension} from '../util/util.js'
+import KUTE from '../objects/KUTE.js'
+import defaultValues from '../objects/defaultValues.js'
+import Components from '../objects/Components.js'
+import getStyleForProperty from '../process/getStyleForProperty.js'
+import {numbers} from '../objects/Interpolate.js' 
+import trueDimension from '../util/trueDimension.js'
 
 // const bgPosProp = { property : 'backgroundPosition', defaultValue: [0,0], interpolators: {numbers} }, functions = { prepareStart, prepareProperty, onStart }
 
@@ -41,7 +42,6 @@ export const bgPositionFunctions = {
 export const baseBgPosOps = {
   component: 'BgPositionProp',
   property: 'backgroundPosition',
-  // defaultValue: [50,50],
   Interpolate: {numbers},
   functions: {onStart: onStartBgPos}
 }

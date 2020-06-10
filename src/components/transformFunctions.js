@@ -1,6 +1,7 @@
-import KUTE from '../core/globals.js'
-import {defaultValues,Components} from '../core/objects.js'
-import {getInlineStyle} from '../core/process.js'
+import KUTE from '../objects/KUTE.js'
+import defaultValues from '../objects/defaultValues.js'
+import Components from '../objects/Components.js'
+import getInlineStyle from '../process/getInlineStyle.js'
 
 // const transformFunctions = { property : 'transform', subProperties, defaultValues, Interpolate: {translate,rotate,skew,scale}, functions } // same to svg transform, attr
 

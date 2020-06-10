@@ -1,8 +1,11 @@
-import KUTE from '../core/globals.js'
-import {defaultValues, onStart, Components} from '../core/objects.js'
-import {numbers} from '../core/interpolate.js' 
-import {trueColor,trueDimension} from '../util/util.js' 
-import {colors} from './colorProperties.js/'
+import KUTE from '../objects/KUTE.js'
+import defaultValues from '../objects/defaultValues.js'
+import onStart from '../objects/onStart.js'
+import Components from '../objects/Components.js'
+import {numbers} from '../objects/Interpolate.js' 
+import trueColor from '../util/trueColor.js' 
+import trueDimension from '../util/trueDimension.js' 
+import {colors} from './colorProperties.js'
 
 // Component Name
 let ComponentName = 'htmlAttributes'

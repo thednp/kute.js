@@ -1,6 +1,6 @@
 {
   "name": "kute.js",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "JavaScript animation engine of the future is called KUTE.js.",
   "main": "dist/kute.min.js",
   "module": "dist/kute.esm.js",
@@ -54,8 +54,8 @@
   "homepage": "http://thednp.github.io/kute.js",
   "dependencies": {
     "cubic-bezier-easing": "^1.0.2",
-    "minifill": "^0.0.7",
-    "shorter-js": "^0.0.4"
+    "minifill": "^0.0.8",
+    "shorter-js": "^0.0.7"
   },
   "devDependencies": {
     "@rollup/plugin-buble": "^0.21.3",

@@ -1,16 +1,14 @@
-import {
-  supportedProperties,
-  defaultValues,
-  defaultOptions,
-  prepareProperty,
-  prepareStart,
-  onStart,
-  onComplete,
-  crossCheck,
-  linkProperty,
-  Util
-} from '../core/objects.js'
-import Interpolate from '../core/interpolate.js'
+import supportedProperties from '../objects/supportedProperties.js'
+import defaultValues from '../objects/defaultValues.js'
+import defaultOptions from '../objects/defaultOptions.js'
+import prepareProperty from '../objects/prepareProperty.js'
+import prepareStart from '../objects/prepareStart.js'
+import onStart from '../objects/onStart.js'
+import onComplete from '../objects/onComplete.js'
+import crossCheck from '../objects/crossCheck.js'
+import linkProperty from '../objects/linkProperty.js'
+import Util from '../objects/Util.js'
+import Interpolate from '../objects/Interpolate.js'
 
 // Animation class 
 // * builds KUTE components 

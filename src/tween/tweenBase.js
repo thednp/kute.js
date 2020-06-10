@@ -1,7 +1,15 @@
-import KUTE, {TweenConstructor} from '../core/globals.js'
-import {onStart,onComplete,defaultOptions,Util} from '../core/objects.js'
-// import {Util} from '../core/objects.js'
-import {Tick,Ticker,linkInterpolation,add,stop,remove} from '../core/internals.js'
+import KUTE from '../objects/KUTE.js'
+import TweenConstructor from '../objects/TweenConstructor.js'
+import onStart from '../objects/onStart.js'
+import onComplete from '../objects/onComplete.js'
+import defaultOptions from '../objects/defaultOptions.js'
+import Util from '../objects/Util.js'
+
+import {Tick,Ticker,stop} from '../core/Render.js'
+
+import add from '../core/add.js'
+import remove from '../core/remove.js'
+import linkInterpolation from '../core/linkInterpolation.js'
 
 // single Tween object construct
 // TweenBase is meant to be use for pre-processed values

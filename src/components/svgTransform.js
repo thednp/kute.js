@@ -1,6 +1,6 @@
-import KUTE from '../core/globals.js'
-import {numbers} from '../core/interpolate.js'
-import {Components} from '../core/objects.js'
+import KUTE from '../objects/KUTE.js'
+import {numbers} from '../objects/Interpolate.js'
+import Components from '../objects/Components.js'
 
 // const svgTransform = { property : 'svgTransform', subProperties, defaultValue, Interpolate: {numbers}, functions }
 

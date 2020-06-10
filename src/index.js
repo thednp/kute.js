@@ -1,8 +1,11 @@
 import {version as Version} from './../package.json'
-import Objects, {Util,Components} from './core/objects.js'
-import Process from './core/process.js'
-import Internals,{Render} from './core/internals.js'
-import Interpolate from './core/interpolate.js'
+import Util from './objects/Util.js'
+import Components from './objects/Components.js'
+import Objects from './objects/Objects.js'
+import Process from './process/Process.js'
+import Internals from './core/Internals.js'
+import Render from './core/Render.js'
+import Interpolate from './objects/Interpolate.js'
 import CubicBezier from 'cubic-bezier-easing'
 import Easing from './easing/easing-bezier.js' // and CubicBezier easing functions
 import Selector from './util/selector.js'
@@ -10,7 +13,11 @@ import Selector from './util/selector.js'
 // TweenConstructor
 import Tween from './tween/tween.js'
 import TweenCollection from './tween/tweenCollection.js'
-import {to,fromTo,allTo,allFromTo} from './core/interface.js'
+// interface
+import to from './interface/to.js'
+import fromTo from './interface/fromTo.js'
+import allTo from './interface/allTo.js'
+import allFromTo from './interface/allFromTo.js'
 
 // import {default as Animation} from './animation/animationDevelopment.js'
 import Animation from './animation/animation.js'

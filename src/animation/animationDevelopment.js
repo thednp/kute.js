@@ -1,5 +1,10 @@
-import {prepareProperty,prepareStart,onStart,onComplete,crossCheck} from '../core/objects.js'
-import Interpolate from '../core/interpolate.js'
+import prepareProperty from '../objects/prepareProperty.js'
+import prepareStart from '../objects/prepareStart.js'
+import onStart from '../objects/onStart.js'
+import onComplete from '../objects/onComplete.js'
+import crossCheck from '../objects/crossCheck.js'
+import Interpolate from '../objects/Interpolate.js'
+
 import Animation from './animation.js'
 
 // AnimationDevelopment class 

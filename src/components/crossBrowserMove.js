@@ -1,8 +1,9 @@
-import KUTE from '../core/globals.js'
-import {trueProperty} from '../util/util.js'
-import {getInlineStyle} from '../core/process.js'
-import {defaultValues,Components} from '../core/objects.js'
-import {numbers} from '../core/interpolate.js' 
+import KUTE from '../objects/KUTE.js'
+import getInlineStyle from '../process/getInlineStyle.js'
+import defaultValues from '../objects/defaultValues.js'
+import Components from '../objects/Components.js'
+import trueProperty from '../util/trueProperty.js'
+import {numbers} from '../objects/Interpolate.js' 
 
 // Component Const
 const transformProperty = trueProperty('transform');

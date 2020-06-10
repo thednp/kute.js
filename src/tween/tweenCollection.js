@@ -1,5 +1,6 @@
-import KUTE, {TweenConstructor} from '../core/globals.js'
-import {defaultOptions} from '../core/objects.js'
+import KUTE from '../objects/KUTE.js'
+import TweenConstructor from '../objects/TweenConstructor.js'
+import defaultOptions from '../objects/defaultOptions.js'
 
 // KUTE.js Tween Collection
 // ========================

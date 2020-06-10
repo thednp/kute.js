@@ -1,4 +1,4 @@
-import {Util} from '../core/objects.js'
+import Util from '../objects/Util.js'
 import CubicBezier from 'cubic-bezier-easing'
 
 const Easing = {

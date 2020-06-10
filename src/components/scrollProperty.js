@@ -1,20 +1,20 @@
-import KUTE from '../core/globals.js'
-import {numbers} from '../core/interpolate.js'
-import {Components} from '../core/objects.js'
+import KUTE from '../objects/KUTE.js'
+import {numbers} from '../objects/Interpolate.js'
+import Components from '../objects/Components.js'
 
 import {on} from 'shorter-js/src/event/on.js'
 import {off} from 'shorter-js/src/event/off.js'
 import {supportPassive} from 'shorter-js/src/boolean/supportPassive.js'
 import {mouseHoverEvents} from 'shorter-js/src/strings/mouseHoverEvents.js'
+import {supportTouch} from 'shorter-js/src/boolean/supportTouch.js'
 
 // Component Util
 // events preventing scroll
-const canTouch = ('ontouchstart' in window || navigator && navigator.msMaxTouchPoints) || false // support Touch?
-const touchOrWheel = canTouch ? 'touchstart' : 'mousewheel'
+const touchOrWheel = supportTouch ? 'touchstart' : 'mousewheel'
 
 // true scroll container
 // very important and specific to the component
-const scrollContainer = navigator && /(EDGE|Mac)/i.test(navigator.userAgent) ? document.body : document.getElementsByTagName('HTML')[0]
+const scrollContainer = navigator && /(EDGE|Mac)/i.test(navigator.userAgent) ? document.body : document.documentElement
 
 // scroll event options
 // it's important to stop propagating when animating scroll

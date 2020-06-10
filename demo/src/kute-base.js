@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Base v2.0.0 (http://thednp.github.io/kute.js)
+* KUTE.js Base v2.0.1 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,27 +9,31 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.0";
+  var version = "2.0.1";
 
-  var Tweens = [];
-  var supportedProperties = {};
   var defaultOptions = {
     duration: 700,
     delay: 0,
     easing: 'linear'
   };
-  var crossCheck = {};
-  var onComplete = {};
-  var onStart = {};
+
   var linkProperty = {};
-  var Util = {};
-  var BaseObjects = {
+
+  var onStart = {};
+
+  var onComplete = {};
+
+  var supportedProperties = {};
+
+  var Objects = {
     defaultOptions: defaultOptions,
     linkProperty: linkProperty,
-    onComplete: onComplete,
     onStart: onStart,
+    onComplete: onComplete,
     supportedProperties: supportedProperties
   };
+
+  var Util = {};
 
   function linear (t) { return t; }
   function easingQuadraticIn (t) { return t*t; }
@@ -70,11 +74,24 @@
   }
   Util.processEasing = processEasing;
 
-  var globalObject = typeof (global) !== 'undefined' ? global
-                            : typeof(self) !== 'undefined' ? self
-                            : typeof(window) !== 'undefined' ? window : {};
-  var TweenConstructor = {};
+  var Tweens = [];
+
+  function add (tw) { return Tweens.push(tw); }
+
+  function remove (tw) {
+    var i = Tweens.indexOf(tw);
+    i !== -1 && Tweens.splice(i, 1);
+  }
+
+  function getAll () { return Tweens; }
+
+  function removeAll () { Tweens.length = 0; }
+
   var KUTE = {};
+
+  var globalObject = typeof (global) !== 'undefined' ? global
+                    : typeof(self) !== 'undefined' ? self
+                    : typeof(window) !== 'undefined' ? window : {};
 
   function numbers(a, b, v) {
     a = +a; b -= a; return a + b * v;
@@ -95,22 +112,6 @@
     arrays: arrays
   };
 
-  var add = function(tw) { Tweens.push(tw); };
-  var remove = function(tw) { var i = Tweens.indexOf(tw); if (i !== -1) { Tweens.splice(i, 1); }};
-  var getAll = function() { return Tweens };
-  var removeAll = function() { Tweens.length = 0; };
-  var Tick = 0;
-  function Ticker(time) {
-    var i = 0;
-    while ( i < Tweens.length ) {
-      if ( Tweens[i].update(time) ) {
-        i++;
-      } else {
-        Tweens.splice(i, 1);
-      }
-    }
-    Tick = requestAnimationFrame(Ticker);
-  }
   var Time = {};
   if (typeof (self) === 'undefined' && typeof (process) !== 'undefined' && process.hrtime) {
   	Time.now = function () {
@@ -122,7 +123,19 @@
   		 self.performance.now !== undefined) {
   	Time.now = self.performance.now.bind(self.performance);
   }
-  function stop () {
+  var Tick = 0;
+  var Ticker = function (time) {
+    var i = 0;
+    while ( i < Tweens.length ) {
+      if ( Tweens[i].update(time) ) {
+        i++;
+      } else {
+        Tweens.splice(i, 1);
+      }
+    }
+    Tick = requestAnimationFrame(Ticker);
+  };
+  function stop() {
     setTimeout(function () {
       if (!Tweens.length && Tick) {
         cancelAnimationFrame(Tick);
@@ -142,15 +155,23 @@
       }
     },64);
   }
-  function linkInterpolation(){
+  var Render = {Tick: Tick,Ticker: Ticker,Tweens: Tweens,Time: Time};
+  for ( var blob in Render ) {
+    if (!KUTE[blob]) {
+      KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
+    }
+  }
+  globalObject["_KUTE"] = KUTE;
+
+  function linkInterpolation() {
     var this$1 = this;
     var loop = function ( component ) {
       var componentLink = linkProperty[component];
       var componentProps = supportedProperties[component];
       for ( var fnObj in componentLink ) {
         if ( typeof(componentLink[fnObj]) === 'function'
-            && Object.keys(this$1.valuesEnd).some(function (i) { return componentProps.includes(i)
-            || i=== 'attr' && Object.keys(this$1.valuesEnd[i]).some(function (j) { return componentProps.includes(j); }); } ) )
+            && Object.keys(this$1.valuesEnd).some(function (i) { return componentProps && componentProps.includes(i)
+            || i=== 'attr' && Object.keys(this$1.valuesEnd[i]).some(function (j) { return componentProps && componentProps.includes(j); }); } ) )
         {
           !KUTE[fnObj] && (KUTE[fnObj] = componentLink[fnObj]);
         } else {
@@ -172,13 +193,7 @@
     };
     for (var component in linkProperty)loop( component );
   }
-  var Render = {Tick: Tick,Ticker: Ticker,Tweens: Tweens,Time: Time};
-  for (var blob in Render ) {
-    if (!KUTE[blob]) {
-      KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
-    }
-  }
-  globalObject["_KUTE"] = KUTE;
+
   var Internals = {
     add: add,
     remove: remove,
@@ -206,6 +221,8 @@
       console.error(("KUTE.js - Element(s) not found: " + el + "."));
     }
   }
+
+  var crossCheck = {};
 
   var AnimationBase = function AnimationBase(Component){
     this.Component = Component;
@@ -253,6 +270,8 @@
     }
     return {name:ComponentName}
   };
+
+  var TweenConstructor = {};
 
   var TweenBase = function TweenBase(targetElement, startObject, endObject, options){
     this.element = targetElement;
@@ -488,9 +507,10 @@
 
   var mouseHoverEvents = ('onmouseleave' in document) ? [ 'mouseenter', 'mouseleave'] : [ 'mouseover', 'mouseout' ];
 
-  var canTouch = ('ontouchstart' in window || navigator && navigator.msMaxTouchPoints) || false;
-  var touchOrWheel = canTouch ? 'touchstart' : 'mousewheel';
-  var scrollContainer = navigator && /(EDGE|Mac)/i.test(navigator.userAgent) ? document.body : document.getElementsByTagName('HTML')[0];
+  var supportTouch = ('ontouchstart' in window || navigator.msMaxTouchPoints)||false;
+
+  var touchOrWheel = supportTouch ? 'touchstart' : 'mousewheel';
+  var scrollContainer = navigator && /(EDGE|Mac)/i.test(navigator.userAgent) ? document.body : document.documentElement;
   var passiveHandler = supportPassive ? { passive: false } : false;
   function preventScroll(e) {
     this.scrolling && e.preventDefault();
@@ -538,6 +558,25 @@
     Util: { preventScroll: preventScroll, scrollIn: scrollIn, scrollOut: scrollOut, scrollContainer: scrollContainer, passiveHandler: passiveHandler, getScrollTargets: getScrollTargets }
   };
 
+  function getPrefix() {
+    var thePrefix, prefixes = ['Moz', 'moz', 'Webkit', 'webkit', 'O', 'o', 'Ms', 'ms'];
+    for (var i = 0, pfl = prefixes.length; i < pfl; i++) {
+      if (((prefixes[i]) + "Transform") in document.body.style) {
+        thePrefix = prefixes[i]; break;
+      }
+    }
+    return thePrefix;
+  }
+
+  function trueProperty(property) {
+    return !(property in document.body.style)
+            ? getPrefix() + (property.charAt(0).toUpperCase() + property.slice(1))
+            : property;
+  }
+
+  var transformProperty = trueProperty('transform');
+  var supportTransform = transformProperty in document.body.style ? 1 : 0;
+
   var BaseTransform = new AnimationBase(baseTransformOps);
   var BaseBoxModel = new AnimationBase(baseBoxModelOps);
   var BaseOpacity = new AnimationBase(baseOpacityOps);
@@ -552,7 +591,7 @@
     },
     TweenBase: TweenBase,
     fromTo: fromTo,
-    Objects: BaseObjects,
+    Objects: Objects,
     Easing: Easing,
     Util: Util,
     Render: Render,

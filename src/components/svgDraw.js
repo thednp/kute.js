@@ -1,7 +1,7 @@
-import KUTE from '../core/globals.js'
-import {numbers} from '../core/interpolate.js'
-import {Components} from '../core/objects.js'
-import {getStyleForProperty} from '../core/process.js'
+import KUTE from '../objects/KUTE.js'
+import {numbers} from '../objects/Interpolate.js'
+import Components from '../objects/Components.js'
+import getStyleForProperty from '../process/getStyleForProperty.js'
 
 // const svgDraw = { property : 'draw', defaultValue, Interpolate: {numbers} }, functions = { prepareStart, prepareProperty, onStart }
 
