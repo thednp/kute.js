@@ -1,8 +1,6 @@
 import KUTE from '../objects/KUTE.js'
-import TweenConstructor from '../objects/TweenConstructor.js'
 import defaultOptions from '../objects/defaultOptions.js'
-
-let TC = TweenConstructor.Tween
+import TC from '../interface/TC.js'
 
 // KUTE.js Tween Collection
 // ========================
@@ -13,8 +11,6 @@ export default class TweenCollection {
 
     // set default offset
     !('offset' in defaultOptions) && (defaultOptions.offset = 0);
-
-    // call in the tween constructor
 
     Ops = Ops || {}
     Ops.delay = Ops.delay || defaultOptions.delay;

@@ -1,5 +1,5 @@
 import KUTE from '../objects/KUTE.js'
-import TweenConstructor from '../objects/TweenConstructor.js'
+import TC from '../interface/TC.js'
 import {numbers} from '../objects/Interpolate.js' 
 import defaultOptions from '../objects/defaultOptions.js'
 import Components from '../objects/Components.js'
@@ -81,8 +81,6 @@ function setSegments(target,newText){
 
 export function createTextTweens(target,newText,options){
   if (target.playing) return;
-
-  const TC = TweenConstructor.Tween
 
   options = options || {}
   options.duration = options.duration === 'auto' ? 'auto' : isFinite(options.duration*1) ? options.duration*1 : 1000;

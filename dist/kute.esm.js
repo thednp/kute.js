@@ -1,9 +1,9 @@
 /*!
-* KUTE.js Standard v2.0.1 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.0.2 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
-var version = "2.0.1";
+var version = "2.0.2";
 
 var Util = {};
 
@@ -621,6 +621,7 @@ var Tween = (function (TweenBase) {
 TweenConstructor.Tween = Tween;
 
 var TC = TweenConstructor.Tween;
+
 var TweenCollection = function TweenCollection(els,vS,vE,Ops){
   var this$1 = this;
   this.tweens = [];
@@ -685,12 +686,12 @@ TweenCollection.prototype.getMaxDuration = function getMaxDuration (){
 function to(element, endObject, optionsObj) {
   optionsObj = optionsObj || {};
   optionsObj.resetStart = endObject;
-  return new TweenConstructor.Tween(selector(element), endObject, endObject, optionsObj)
+  return new TC(selector(element), endObject, endObject, optionsObj)
 }
 
 function fromTo(element, startObject, endObject, optionsObj) {
   optionsObj = optionsObj || {};
-  return new TweenConstructor.Tween(selector(element), startObject, endObject, optionsObj)
+  return new TC(selector(element), startObject, endObject, optionsObj)
 }
 
 function allTo(elements, endObject, optionsObj) {
@@ -1081,7 +1082,6 @@ function setSegments(target,newText){
 }
 function createTextTweens(target,newText,options){
   if (target.playing) { return; }
-  var TC = TweenConstructor.Tween;
   options = options || {};
   options.duration = options.duration === 'auto' ? 'auto' : isFinite(options.duration*1) ? options.duration*1 : 1000;
   var segs = setSegments(target,newText);
