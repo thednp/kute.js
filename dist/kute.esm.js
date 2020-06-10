@@ -620,11 +620,11 @@ var Tween = (function (TweenBase) {
 }(TweenBase));
 TweenConstructor.Tween = Tween;
 
+var TC = TweenConstructor.Tween;
 var TweenCollection = function TweenCollection(els,vS,vE,Ops){
   var this$1 = this;
   this.tweens = [];
   !('offset' in defaultOptions) && (defaultOptions.offset = 0);
-  var TC = TweenConstructor.Tween;
   Ops = Ops || {};
   Ops.delay = Ops.delay || defaultOptions.delay;
   var options = [];
@@ -661,7 +661,7 @@ TweenCollection.prototype.chain = function chain (args) {
   var lastTween = this.tweens[this.length-1];
   if (args instanceof TweenCollection){
     lastTween.chain(args.tweens);
-  } else if (args instanceof TweenConstructor){
+  } else if (args instanceof TC){
     lastTween.chain(args);
   } else {
     throw new TypeError('KUTE.js - invalid chain value')
@@ -682,17 +682,15 @@ TweenCollection.prototype.getMaxDuration = function getMaxDuration (){
   return Math.max(durations)
 };
 
-var TC = TweenConstructor.Tween;
 function to(element, endObject, optionsObj) {
   optionsObj = optionsObj || {};
   optionsObj.resetStart = endObject;
-  return new TC(selector(element), endObject, endObject, optionsObj)
+  return new TweenConstructor.Tween(selector(element), endObject, endObject, optionsObj)
 }
 
-var TC$1 = TweenConstructor.Tween;
 function fromTo(element, startObject, endObject, optionsObj) {
   optionsObj = optionsObj || {};
-  return new TC$1(selector(element), startObject, endObject, optionsObj)
+  return new TweenConstructor.Tween(selector(element), startObject, endObject, optionsObj)
 }
 
 function allTo(elements, endObject, optionsObj) {

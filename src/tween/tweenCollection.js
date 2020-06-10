@@ -2,6 +2,8 @@ import KUTE from '../objects/KUTE.js'
 import TweenConstructor from '../objects/TweenConstructor.js'
 import defaultOptions from '../objects/defaultOptions.js'
 
+let TC = TweenConstructor.Tween
+
 // KUTE.js Tween Collection
 // ========================
 
@@ -13,7 +15,6 @@ export default class TweenCollection {
     !('offset' in defaultOptions) && (defaultOptions.offset = 0);
 
     // call in the tween constructor
-    const TC = TweenConstructor.Tween
 
     Ops = Ops || {}
     Ops.delay = Ops.delay || defaultOptions.delay;
@@ -55,7 +56,7 @@ export default class TweenCollection {
     let lastTween = this.tweens[this.length-1]
     if (args instanceof TweenCollection){
       lastTween.chain(args.tweens); 
-    } else if (args instanceof TweenConstructor){
+    } else if (args instanceof TC){
       lastTween.chain(args); 
     } else {
       throw new TypeError('KUTE.js - invalid chain value')
