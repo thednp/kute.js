@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Base v2.0.1 (http://thednp.github.io/kute.js)
+* KUTE.js Base v2.0.2 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.1";
+  var version = "2.0.2";
 
   var defaultOptions = {
     duration: 700,
@@ -366,9 +366,11 @@
   };
   TweenConstructor.Tween = TweenBase;
 
+  var TC = TweenConstructor.Tween;
+
   function fromTo(element, startObject, endObject, optionsObj) {
     optionsObj = optionsObj || {};
-    return new TweenConstructor.Tween(selector(element), startObject, endObject, optionsObj)
+    return new TC(selector(element), startObject, endObject, optionsObj)
   }
 
   function perspective(a, b, u, v) {
