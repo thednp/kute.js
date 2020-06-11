@@ -116,67 +116,66 @@ var myBSTween1 = KUTE.to('selector', {boxShadow: '10px 10px #069'}).start();
 
 // or a fromTo with string and array, hex and rgb
 var myBSTween2 = KUTE.fromTo(
-    'selector',                         // target
-    {boxShadow: [0, 0, 0, '#069']},     // from
-    {boxShadow: '5px 5px rgb(0,0,0)'})  // to
-    .start();
+  'selector',                         // target
+  {boxShadow: [0, 0, 0, '#069']},     // from
+  {boxShadow: '5px 5px rgb(0,0,0)'})  // to
+  .start();
 
 // maybe you want to animate an inset boxShadow?
 var myBSTween3 = KUTE.fromTo(
-    'selector',                                // target
-    {boxShadow: [5, 5, 0, '#069', 'inset']},   // from
-    {boxShadow: '0px 0px rgb(0,0,0)'})         // to
-    .start();
+  'selector',                                // target
+  {boxShadow: [5, 5, 0, '#069', 'inset']},   // from
+  {boxShadow: '0px 0px rgb(0,0,0)'})         // to
+  .start();
 </code></pre>
 
-          <div id="boxShadow" class="featurettes">
-              <div class="example-item example-box bg-lime"></div>
-                  
-              <div class="example-buttons">
-                  <a class="btn btn-pink" href="javascript:void(0)">Start</a>	
-              </div>
-          </div>
+        <div id="boxShadow" class="featurettes">
+          <div class="example-item example-box bg-lime"></div>
+            <div class="example-buttons">
+              <a class="btn btn-pink" href="javascript:void(0)">Start</a>	
+            </div>
+        </div>
 
-          <h3>Text Shadow</h3>
+        <h3>Text Shadow</h3>
 
 <pre><code class="language-javascript">// tween to a string value
 var myTSTween1 = KUTE.to('selector', {textShadow: '10px 10px #069'}).start();
 
 // or a fromTo with string and array, hex and rgb
 var myTSTween2 = KUTE.fromTo(
-    'selector',                          // target
-    {textShadow: [0, 0, 0, '#069']},     // from
-    {textShadow: '5px 5px rgb(0,0,0)'})  // to
-    .start();
+  'selector',                          // target
+  {textShadow: [0, 0, 0, '#069']},     // from
+  {textShadow: '5px 5px rgb(0,0,0)'})  // to
+  .start();
 </code></pre>
 
-          <div id="textShadow" class="featurettes">
-              <div class="text-example">Sample Text</div>
-                  
-              <div class="example-buttons">
-                  <a class="btn btn-orange" href="javascript:void(0)">Start</a>	
-              </div>
+        <div id="textShadow" class="featurettes">
+          <div class="text-example">Sample Text</div>
+              
+          <div class="example-buttons">
+            <a class="btn btn-orange" href="javascript:void(0)">Start</a>	
           </div>
+        </div>
 
-          <h3>Notes</h3>
-          <ul>
-              <li>The component will NOT handle multiple shadows per target at the same time.</li>
-              <li>The component features a solid value processing script, it can handle a great deal of combinations of input values.</li>
-              <li>I highly recommend that you check the <a href="./assets/js/boxShadow.js">boxShadow.js</a> for more insight.</li>
-              <li>This component is bundled with the <i>kute-extra.js</i> distribution file.</li>
-          </ul>
-      
-      </div>
-
-      <!-- FOOTER -->
-      <footer>
-          <div class="content-wrap">
-              <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
-              <p>&copy; 2015 - 2020 &middot; <a href="https://github.com/thednp">thednp</a>.</p>
-          </div>
-      </footer>
-
+        <h3>Notes</h3>
+        <ul>
+          <li>The component will NOT handle multiple shadows per target at the same time.</li>
+          <li>The component features a solid value processing script, it can handle a great deal of combinations of input values.</li>
+          <li>I highly recommend that you check the <a href="./assets/js/boxShadow.js">boxShadow.js</a> for more insight.</li>
+          <li>This component is bundled with the <i>demo/src/kute-extra.js</i> file.</li>
+        </ul>
+    
     </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="content-wrap">
+        <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+        <p>&copy; 2015 - 2020 &middot; <a href="https://github.com/thednp">thednp</a>.</p>
+      </div>
+    </footer>
+
+  </div>
     <!-- /.site-wrapper -->
 
 
@@ -184,12 +183,12 @@ var myTSTween2 = KUTE.fromTo(
 ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
 
-    <script src="./src/polyfill.min.js"></script>
-    <script src="./src/kute-extra.min.js"></script>
-    <script src="./assets/js/prism.js"></script>
+  <script src="./src/polyfill.min.js"></script>
+  <script src="./src/kute-extra.min.js"></script>
+  <script src="./assets/js/prism.js"></script>
 
-    <script src="./assets/js/shadowProperties.js"></script>
-    <script src="./assets/js/scripts.js"></script>
+  <script src="./assets/js/shadowProperties.js"></script>
+  <script src="./assets/js/scripts.js"></script>
 </body>
 
 </html>
