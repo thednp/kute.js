@@ -17,6 +17,11 @@ body {
 
 .condensed { font-family: "Roboto Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: normal !important;}
 
+/* smooth scroll */
+html {
+	scroll-behavior: smooth;
+}
+
 /* WRAPPER STYLES
 -------------------------------------------------- */
 .content-wrap { max-width: 80%; position: relative;  margin: 0 auto;  clear: both; }

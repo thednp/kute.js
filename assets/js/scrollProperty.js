@@ -11,3 +11,13 @@ button.addEventListener('click', function(e){
 	!scrollTween.playing && scrollTween.start()
 },false);
 /*  SCROLL EXAMPLE  */
+
+// scroll top?
+var toTop = document.getElementById('toTop'),
+    toTopTween = KUTE.to( window, { scroll: 0 }, {easing: 'easingQuarticOut', duration : 1500  } );
+
+function topHandler(e){
+	e.preventDefault(); 
+  toTopTween.start();
+}
+toTop.addEventListener('click',topHandler,false);

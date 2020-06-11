@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Base v2.0.2 (http://thednp.github.io/kute.js)
+* KUTE.js Base v2.0.3 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.2";
+  var version = "2.0.3";
 
   var defaultOptions = {
     duration: 700,
@@ -474,114 +474,9 @@
     functions: {onStart: onStartOpacity}
   };
 
-  function on (element, event, handler, options) {
-    options = options || false;
-    element.addEventListener(event, handler, options);
-  }
-
-  function off (element, event, handler, options) {
-    options = options || false;
-    element.removeEventListener(event, handler, options);
-  }
-
-  function one (element, event, handler, options) {
-    on(element, event, function handlerWrapper(e){
-      if (e.target === element) {
-        handler(e);
-        off(element, event, handlerWrapper, options);
-      }
-    }, options);
-  }
-
-  var supportPassive = (function () {
-    var result = false;
-    try {
-      var opts = Object.defineProperty({}, 'passive', {
-        get: function() {
-          result = true;
-        }
-      });
-      one(document, 'DOMContentLoaded', function (){}, opts);
-    } catch (e) {}
-    return result;
-  })();
-
-  var mouseHoverEvents = ('onmouseleave' in document) ? [ 'mouseenter', 'mouseleave'] : [ 'mouseover', 'mouseout' ];
-
-  var supportTouch = ('ontouchstart' in window || navigator.msMaxTouchPoints)||false;
-
-  var touchOrWheel = supportTouch ? 'touchstart' : 'mousewheel';
-  var scrollContainer = navigator && /(EDGE|Mac)/i.test(navigator.userAgent) ? document.body : document.documentElement;
-  var passiveHandler = supportPassive ? { passive: false } : false;
-  function preventScroll(e) {
-    this.scrolling && e.preventDefault();
-  }
-  function getScrollTargets(){
-    var el = this.element;
-    return el === scrollContainer ? { el: document, st: document.body } : { el: el, st: el}
-  }
-  function scrollIn(){
-    var targets = getScrollTargets.call(this);
-    if ( 'scroll' in this.valuesEnd && !targets.el.scrolling) {
-      targets.el.scrolling = 1;
-      on( targets.el, mouseHoverEvents[0], preventScroll, passiveHandler);
-      on( targets.el, touchOrWheel, preventScroll, passiveHandler);
-      targets.st.style.pointerEvents = 'none';
-    }
-  }
-  function scrollOut(){
-    var targets = getScrollTargets.call(this);
-    if ( 'scroll' in this.valuesEnd && targets.el.scrolling) {
-      targets.el.scrolling = 0;
-      off( targets.el, mouseHoverEvents[0], preventScroll, passiveHandler);
-      off( targets.el, touchOrWheel, preventScroll, passiveHandler);
-      targets.st.style.pointerEvents = '';
-    }
-  }
-  function onStartScroll(tweenProp){
-    if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
-        elem.scrollTop = (numbers(a,b,v))>>0;
-      };
-    }
-  }
-  function onCompleteScroll(tweenProp){
-    scrollOut.call(this);
-  }
-  var baseScrollOps = {
-    component: 'scrollProperty',
-    property: 'scroll',
-    Interpolate: {numbers: numbers},
-    functions: {
-      onStart: onStartScroll,
-      onComplete: onCompleteScroll
-    },
-    Util: { preventScroll: preventScroll, scrollIn: scrollIn, scrollOut: scrollOut, scrollContainer: scrollContainer, passiveHandler: passiveHandler, getScrollTargets: getScrollTargets }
-  };
-
-  function getPrefix() {
-    var thePrefix, prefixes = ['Moz', 'moz', 'Webkit', 'webkit', 'O', 'o', 'Ms', 'ms'];
-    for (var i = 0, pfl = prefixes.length; i < pfl; i++) {
-      if (((prefixes[i]) + "Transform") in document.body.style) {
-        thePrefix = prefixes[i]; break;
-      }
-    }
-    return thePrefix;
-  }
-
-  function trueProperty(property) {
-    return !(property in document.body.style)
-            ? getPrefix() + (property.charAt(0).toUpperCase() + property.slice(1))
-            : property;
-  }
-
-  var transformProperty = trueProperty('transform');
-  var supportTransform = transformProperty in document.body.style ? 1 : 0;
-
   var BaseTransform = new AnimationBase(baseTransformOps);
   var BaseBoxModel = new AnimationBase(baseBoxModelOps);
   var BaseOpacity = new AnimationBase(baseOpacityOps);
-  var BaseScroll = new AnimationBase(baseScrollOps);
   var indexBase = {
     Animation: AnimationBase,
     Components: {
