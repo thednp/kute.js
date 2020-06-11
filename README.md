@@ -19,13 +19,13 @@ KUTE.js is redeveloped for maximum performance on modern browsers. Some legacy b
 
 # Special Thanks
 * [Mike Bostock](https://bost.ocks.org/mike/) for his awesome [D3.js](https://github.com/d3/d3), one of the sources for our reworked [SVGMorph](http://thednp.github.io/kute.js/svgMorph.html) component.
-* [Noah Veltman](https://github.com/veltman) for his awesome [flubber](https://github.com/veltman/flubber), another one of the sources for the svgMorph component.
+* [Noah Veltman](https://github.com/veltman) for his awesome [flubber](https://github.com/veltman/flubber), another one of the sources for the SVGMorph component.
 * [Andrew Willems](https://stackoverflow.com/users/5218951/andrew-willems) for his awesome [Stackoverflow answer](https://stackoverflow.com/questions/35560989/javascript-how-to-determine-a-svg-path-draw-direction) resulting in the creation of our [SVGCubicMorph](http://thednp.github.io/kute.js/svgCubicMorph.html) component.
-* [Dmitry Baranovskiy](https://dmitry.baranovskiy.com/) for his awesome [Raphael.js](https://dmitrybaranovskiy.github.io/raphael/), another source for out SVGCubicMorph.
+* [Dmitry Baranovskiy](https://dmitry.baranovskiy.com/) for his awesome [Raphael.js](https://dmitrybaranovskiy.github.io/raphael/), another source for our SVGCubicMorph component.
 * [@dalisoft](https://github.com/dalisoft) contributed a great deal to the performance and functionality of previous versions of KUTE.js.
 
 # Contributions
-* [Contributors / Collaborators](https://github.com/thednp/kute.js/graphs/contributors)
+* [Contributors &amp; Collaborators](https://github.com/thednp/kute.js/graphs/contributors)
 
 # License
 [MIT License](https://github.com/thednp/kute.js/blob/master/LICENSE)
