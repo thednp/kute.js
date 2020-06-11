@@ -342,10 +342,10 @@ var tween2 = KUTE.to('#triangle', { path: '#square' }).start();
       <ul>
         <li>Since <b>SVG Morph</b> animation works only with <code>path</code> elements, you might need a <code>convertToPath</code> feature, so 
           <a href="https://github.com/Waest/SVGPathConverter" target="_blank">grab one here</a> and get to working.</li>
-        <li>In some cases your start and end shapes don't have a very close size, you might need to use <a href="https://github.com/fontello/svgpath">SVGPath</a> tools to apply a scale transformation to your shapes'
-          path commands.</li>
-        <li>The morphing animation is expensive so try to optimize the number of morph animations that run at the same time. When morphing sub-paths/multipaths instead of cloning shapes to have same number 
-          of shapes in both starting and ending shapes, you should also consider a fade and/or scale animation to improve the overal animation performance, don't forget about mobile devices.</li>
+        <li>In some cases your start and end shapes don't have a very close size, you can use your vector graphics editor of choice or something like <a href="https://github.com/fontello/svgpath">SVGPath</a> tools to
+          apply a scale transformation to your shapes' path commands.</li>
+        <li>The morphing animation is expensive so try to optimize the number of morph animations that run at the same time. When morphing sub-paths/multi-paths instead of cloning shapes to have same number 
+          of shapes in both starting and ending shapes, you should also consider a fade and/or scale animation to improve the overal animation performance, mobile devices still don.</li>
         <li>Large displays would need best resolution possible so a small <code>morphPrecision</code> value (1-10) would be required, assuming performant hardware are powering the displays. For small displays 
           you can get quite comfortable with almost any value, including the default value.</li>
         <li>Because you have the tools at hand, you can also try to use a <code>morphPrecision</code> value for every resolution. Take some time to experiement, you might find a better <code>morphPrecision</code> 

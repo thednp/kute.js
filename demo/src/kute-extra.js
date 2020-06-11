@@ -1505,15 +1505,6 @@
     }
     return { s: start, e: end, l: length };
   };
-  function paintDraw(elem,a,b,v){
-    var pathLength = (a.l*100>>0)/100,
-        start = (numbers(a.s,b.s,v)*100>>0)/100,
-        end = (numbers(a.e,b.e,v)*100>>0)/100,
-        offset = 0 - start,
-        dashOne = end+offset;
-    elem.style.strokeDashoffset = offset + "px";
-    elem.style.strokeDasharray = (((dashOne <1 ? 0 : dashOne)*100>>0)/100) + "px, " + pathLength + "px";
-  }
   function getDrawValue(){
     return getDraw(this.element);
   }
@@ -1522,7 +1513,15 @@
   }
   function onStartDraw(tweenProp){
     if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem,a,b,v) { return paintDraw(elem,a,b,v); };
+      KUTE[tweenProp] = function (elem,a,b,v) {
+        var pathLength = (a.l*100>>0)/100,
+          start = (numbers(a.s,b.s,v)*100>>0)/100,
+          end = (numbers(a.e,b.e,v)*100>>0)/100,
+          offset = 0 - start,
+          dashOne = end+offset;
+        elem.style.strokeDashoffset = offset + "px";
+        elem.style.strokeDasharray = (((dashOne <1 ? 0 : dashOne)*100>>0)/100) + "px, " + pathLength + "px";
+      };
     }
   }
   var svgDrawFunctions = {
@@ -1534,7 +1533,7 @@
     component: 'svgDraw',
     property: 'draw',
     defaultValue: '0% 0%',
-    Interpolate: {numbers: numbers,paintDraw: paintDraw},
+    Interpolate: {numbers: numbers},
     functions: svgDrawFunctions,
     Util: {
       getRectLength: getRectLength,

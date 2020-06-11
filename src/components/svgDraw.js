@@ -97,40 +97,9 @@ export const getDraw = (e, v) => {
   return { s: start, e: end, l: length };
 }
 
-export const getBaseDraw = (e, v) => {
-  let length = e.getTotalLength(), start, end, d, o;
-
-  if ( v instanceof Object ) {
-    return v;
-  } else if (typeof v === 'string') {
-    v = v.split(/\,|\s/);
-    start = /%/.test(v[0]) ? percent(v[0].trim(),length) : parseFloat(v[0]);
-    end = /%/.test(v[1]) ? percent(v[1].trim(),length) : parseFloat(v[1]);
-  } else if (typeof v === 'undefined') {
-    o = parseFloat(getStyleForProperty(e,'stroke-dashoffset'));
-    d = getStyleForProperty(e,'stroke-dasharray').split(/\,/);
-
-    start = 0-o;
-    end = parseFloat(d[0]) + start || length;
-  }
-  return { s: start, e: end, l: length };
-}
-
 export function resetDraw(elem) {
   elem.style.strokeDashoffset = ``;
   elem.style.strokeDasharray = ``;
-}
-
-// Component Interpolation
-export function paintDraw(elem,a,b,v){
-  let pathLength = (a.l*100>>0)/100,
-      start = (numbers(a.s,b.s,v)*100>>0)/100,
-      end = (numbers(a.e,b.e,v)*100>>0)/100,
-      offset = 0 - start,
-      dashOne = end+offset;
-  
-  elem.style.strokeDashoffset = `${offset}px`;
-  elem.style.strokeDasharray = `${((dashOne <1 ? 0 : dashOne)*100>>0)/100}px, ${pathLength}px`;
 }
 
 // Component Functions
@@ -142,7 +111,16 @@ export function prepareDraw(a,o){
 }
 export function onStartDraw(tweenProp){
   if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = (elem,a,b,v) => paintDraw(elem,a,b,v)
+    KUTE[tweenProp] = (elem,a,b,v) => {
+      let pathLength = (a.l*100>>0)/100,
+        start = (numbers(a.s,b.s,v)*100>>0)/100,
+        end = (numbers(a.e,b.e,v)*100>>0)/100,
+        offset = 0 - start,
+        dashOne = end+offset;
+      
+      elem.style.strokeDashoffset = `${offset}px`;
+      elem.style.strokeDasharray = `${((dashOne <1 ? 0 : dashOne)*100>>0)/100}px, ${pathLength}px`;
+    }
   }
 }
 
@@ -157,7 +135,7 @@ const svgDrawFunctions = {
 export const baseSVGDrawOps = {
   component: 'svgDraw',
   property: 'draw',
-  Interpolate: {numbers,paintDraw},
+  Interpolate: {numbers},
   functions: {onStart:onStartDraw}
 }
 
@@ -166,7 +144,7 @@ export const svgDrawOps = {
   component: 'svgDraw',
   property: 'draw',
   defaultValue: '0% 0%',
-  Interpolate: {numbers,paintDraw},
+  Interpolate: {numbers},
   functions: svgDrawFunctions,
   // Export to global for faster execution
   Util: {
