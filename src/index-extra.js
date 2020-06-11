@@ -40,23 +40,6 @@ import {textOps} from './components/textProperties.js'
 import {textWriteOps} from './components/textWrite.js'
 import {matrixTransformOps} from './components/transformMatrix.js'
 
-// const BackgroundPosition = new Animation(bgPosOps)
-// const BorderRadius = new Animation(radiusOps)
-// const BoxModel = new Animation(boxModelOps)
-// const ColorProperties = new Animation(colorsOps)
-// const ClipProperty = new Animation(clipOps)
-// const FilterEffects = new Animation(filterOps)
-// const HTMLAttributes = new Animation(attrOps)
-// const OpacityProperty = new Animation(opacityOps)
-// const TextProperties = new Animation(textOps)
-// const TextWrite = new Animation(textWriteOps)
-// const TransformMatrix = new Animation(matrixTransformOps)
-// const ScrollProperty = new Animation(scrollOps)
-// const ShadowProperties = new Animation(shadowOps)
-// const SVGCubicMorph = new Animation(svgCubicMorphOps)
-// const SVGDraw = new Animation(svgDrawOps)
-// const SVGTransform = new Animation(svgTransformOps)
-
 for (let component in Components) {
   let compOps = Components[component]
   Components[component] = new Animation(compOps)

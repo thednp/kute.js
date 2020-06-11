@@ -22,6 +22,10 @@
   <!-- Synthax highlighter -->
   <link href="./assets/css/prism.css" rel="stylesheet">
 
+  <style>
+    html {scroll-behavior: auto;}
+  </style>
+
 </head>
 
 <body>
@@ -149,7 +153,8 @@ KUTE.to('#myElement',{scroll: 0 }).start()
         <li>The scroll animation is not as smooth as with transform animations, it has no access at sub-pixel level, but you can play around
           with various easing functions and durations to find the best possible outcome.</li>
         <li>All pages in this documentation have a <code>&lt;a&gt;Back to top&lt;/a&gt;</code> button at the bottom, just in case you didn't notice.</li>
-        <li>The component is an essential part in ALL KUTE.js distributions.</li>
+        <li>The component is only bundled with the <code>demo/src/kute-extra.js</code> file. That is thanks to <code>scroll-behavior</code>, but you can 
+          use this component to enable scrolling for legacy browsers.</li>
       </ul>
 
     </div>
@@ -170,7 +175,7 @@ KUTE.to('#myElement',{scroll: 0 }).start()
   <!-- Placed at the end of the document so the pages load faster -->
 
   <script src="./src/polyfill.min.js"></script>
-  <script src="./src/kute.min.js"></script>
+  <script src="./src/kute-extra.min.js"></script>
   <script src="./assets/js/prism.js"></script>
 
   <script src="./assets/js/scrollProperty.js"></script>

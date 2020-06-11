@@ -1,9 +1,9 @@
 /*!
-* KUTE.js Standard v2.0.2 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.0.3 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
-var version = "2.0.2";
+var version = "2.0.3";
 
 var Util = {};
 
@@ -1309,104 +1309,6 @@ var transformOps = {
   },
 };
 Components.TransformFunctions = transformOps;
-
-function on (element, event, handler, options) {
-  options = options || false;
-  element.addEventListener(event, handler, options);
-}
-
-function off (element, event, handler, options) {
-  options = options || false;
-  element.removeEventListener(event, handler, options);
-}
-
-function one (element, event, handler, options) {
-  on(element, event, function handlerWrapper(e){
-    if (e.target === element) {
-      handler(e);
-      off(element, event, handlerWrapper, options);
-    }
-  }, options);
-}
-
-var supportPassive = (function () {
-  var result = false;
-  try {
-    var opts = Object.defineProperty({}, 'passive', {
-      get: function() {
-        result = true;
-      }
-    });
-    one(document, 'DOMContentLoaded', function (){}, opts);
-  } catch (e) {}
-  return result;
-})();
-
-var mouseHoverEvents = ('onmouseleave' in document) ? [ 'mouseenter', 'mouseleave'] : [ 'mouseover', 'mouseout' ];
-
-var supportTouch = ('ontouchstart' in window || navigator.msMaxTouchPoints)||false;
-
-var touchOrWheel = supportTouch ? 'touchstart' : 'mousewheel';
-var scrollContainer = navigator && /(EDGE|Mac)/i.test(navigator.userAgent) ? document.body : document.documentElement;
-var passiveHandler = supportPassive ? { passive: false } : false;
-function preventScroll(e) {
-  this.scrolling && e.preventDefault();
-}
-function getScrollTargets(){
-  var el = this.element;
-  return el === scrollContainer ? { el: document, st: document.body } : { el: el, st: el}
-}
-function scrollIn(){
-  var targets = getScrollTargets.call(this);
-  if ( 'scroll' in this.valuesEnd && !targets.el.scrolling) {
-    targets.el.scrolling = 1;
-    on( targets.el, mouseHoverEvents[0], preventScroll, passiveHandler);
-    on( targets.el, touchOrWheel, preventScroll, passiveHandler);
-    targets.st.style.pointerEvents = 'none';
-  }
-}
-function scrollOut(){
-  var targets = getScrollTargets.call(this);
-  if ( 'scroll' in this.valuesEnd && targets.el.scrolling) {
-    targets.el.scrolling = 0;
-    off( targets.el, mouseHoverEvents[0], preventScroll, passiveHandler);
-    off( targets.el, touchOrWheel, preventScroll, passiveHandler);
-    targets.st.style.pointerEvents = '';
-  }
-}
-function getScroll(){
-  this.element = ('scroll' in this.valuesEnd) && (!this.element || this.element === window) ? scrollContainer : this.element;
-  scrollIn.call(this);
-  return this.element === scrollContainer ? (window.pageYOffset || scrollContainer.scrollTop) : this.element.scrollTop;
-}
-function prepareScroll(prop,value){
-  return parseInt(value);
-}
-function onStartScroll(tweenProp){
-  if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = function (elem, a, b, v) {
-      elem.scrollTop = (numbers(a,b,v))>>0;
-    };
-  }
-}
-function onCompleteScroll(tweenProp){
-  scrollOut.call(this);
-}
-var scrollFunctions = {
-  prepareStart: getScroll,
-  prepareProperty: prepareScroll,
-  onStart: onStartScroll,
-  onComplete: onCompleteScroll
-};
-var scrollOps = {
-  component: 'scrollProperty',
-  property: 'scroll',
-  defaultValue: 0,
-  Interpolate: {numbers: numbers},
-  functions: scrollFunctions,
-  Util: { preventScroll: preventScroll, scrollIn: scrollIn, scrollOut: scrollOut, scrollContainer: scrollContainer, passiveHandler: passiveHandler, getScrollTargets: getScrollTargets }
-};
-Components.ScrollProperty = scrollOps;
 
 var percent = function (v, l) { return parseFloat(v) / 100 * l; };
 var getRectLength = function (el) {

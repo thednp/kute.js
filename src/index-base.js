@@ -17,13 +17,11 @@ import fromTo from './interface/fromTo.js'
 import {baseTransformOps} from './components/transformFunctions.js'
 import {baseBoxModelOps} from './components/boxModel.js'
 import {baseOpacityOps} from './components/opacityProperty.js'
-import {baseScrollOps} from './components/scrollProperty.js'
-import {baseCrossBrowserMoveOps} from './components/crossBrowserMove.js'
+// import {baseCrossBrowserMoveOps} from './components/crossBrowserMove.js'
 
 const BaseTransform = new Animation(baseTransformOps)
 const BaseBoxModel = new Animation(baseBoxModelOps)
 const BaseOpacity = new Animation(baseOpacityOps)
-const BaseScroll = new Animation(baseScrollOps)
 // const BaseCrossBrowserMove = new Animation(baseCrossBrowserMoveOps)
 // support for kute-base.js ends here
 
