@@ -1,9 +1,9 @@
-import KUTE from '../objects/KUTE.js'
+import KUTE from '../objects/kute.js'
 import getStyleForProperty from '../process/getStyleForProperty.js'
 import defaultValues from '../objects/defaultValues.js'
-import Components from '../objects/Components.js'
+import Components from '../objects/components.js'
 import trueColor from '../util/trueColor.js'
-import {numbers} from '../objects/Interpolate.js' 
+import {numbers} from '../objects/interpolate.js' 
 import {colors} from './colorProperties.js' 
 
 // const filterEffects = { property : 'filter', subProperties: {}, defaultValue: {}, interpolators: {} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }

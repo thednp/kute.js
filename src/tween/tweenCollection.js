@@ -1,6 +1,6 @@
-import KUTE from '../objects/KUTE.js'
+import KUTE from '../objects/kute.js'
 import defaultOptions from '../objects/defaultOptions.js'
-import TC from '../interface/TC.js'
+import TC from '../interface/tc.js'
 
 // KUTE.js Tween Collection
 // ========================

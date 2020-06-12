@@ -1,9 +1,9 @@
-import KUTE from '../objects/KUTE.js'
+import KUTE from '../objects/kute.js'
 import defaultValues from '../objects/defaultValues.js'
-import Components from '../objects/Components.js'
+import Components from '../objects/components.js'
 import getStyleForProperty from '../process/getStyleForProperty.js'
 import trueDimension from '../util/trueDimension.js'
-import {units} from '../objects/Interpolate.js' 
+import {units} from '../objects/interpolate.js' 
 
 // const opacity = { category : 'textProperties', defaultValues: [0,0,0,0], interpolators: {numbers} }, functions = { prepareStart, prepareProperty, onStart:{} }
 

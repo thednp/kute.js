@@ -1,8 +1,8 @@
-import KUTE from '../objects/KUTE.js'
+import KUTE from '../objects/kute.js'
 import defaultValues from '../objects/defaultValues.js'
-import Components from '../objects/Components.js'
+import Components from '../objects/components.js'
 import getStyleForProperty from '../process/getStyleForProperty.js'
-import {numbers} from '../objects/Interpolate.js' 
+import {numbers} from '../objects/interpolate.js' 
 import trueDimension from '../util/trueDimension.js'
 
 // const bgPosProp = { property : 'backgroundPosition', defaultValue: [0,0], interpolators: {numbers} }, functions = { prepareStart, prepareProperty, onStart }

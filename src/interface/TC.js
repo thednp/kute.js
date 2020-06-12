@@ -1,3 +1,3 @@
-import TweenConstructor from '../objects/TweenConstructor.js'
+import TweenConstructor from '../objects/tweenConstructor.js'
 
 export default TweenConstructor.Tween

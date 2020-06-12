@@ -1,6 +1,6 @@
-import KUTE from '../objects/KUTE.js'
-import {numbers} from '../objects/Interpolate.js'
-import Components from '../objects/Components.js'
+import KUTE from '../objects/kute.js'
+import {numbers} from '../objects/interpolate.js'
+import Components from '../objects/components.js'
 
 import {on} from 'shorter-js/src/event/on.js'
 import {off} from 'shorter-js/src/event/off.js'

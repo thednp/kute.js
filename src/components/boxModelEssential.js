@@ -5,14 +5,6 @@ import getStyleForProperty from '../process/getStyleForProperty.js'
 import trueDimension from '../util/trueDimension.js' 
 import {numbers} from '../objects/interpolate.js' 
 
-// Component Properties
-const boxModelProperties = ['top', 'left', 'width', 'height', 'right', 'bottom', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 
-                          'padding', 'paddingTop','paddingBottom', 'paddingLeft', 'paddingRight', 
-                          'margin', 'marginTop','marginBottom', 'marginLeft', 'marginRight', 
-                          'borderWidth', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'outlineWidth']
-const boxModelValues = {}
-boxModelProperties.map(x => boxModelValues[x] = 0);
-
 // Component Functions
 export function boxModelOnStart(tweenProp){
   if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
@@ -29,24 +21,30 @@ export function prepareBoxModel(tweenProp,value){
   const boxValue = trueDimension(value), offsetProp = tweenProp === 'height' ? 'offsetHeight' : 'offsetWidth';
   return boxValue.u === '%' ? boxValue.v * this.element[offsetProp] / 100 : boxValue.v;
 }
-const boxPropsOnStart = {}
-boxModelProperties.map(x => boxPropsOnStart[x] = boxModelOnStart );
+
+// Component Base Props
+const essentialBoxProps = ['top','left','width','height']
+const essentialBoxPropsValues = {top:0,left:0,width:0,height:0}
+const essentialBoxOnStart = {}
+essentialBoxProps.map(x=>essentialBoxOnStart[x] = boxModelOnStart)
 
 // All Component Functions
-const boxModelFunctions = {
+const essentialBoxModelFunctions = {
   prepareStart: getBoxModel,
   prepareProperty: prepareBoxModel,
-  onStart: boxPropsOnStart
+  onStart: essentialBoxOnStart
 }
 
-// Component Full Component
-export const boxModelOps = {
+
+// Component Essential
+export const essentialBoxModelOps = {
   component: 'boxModelProps',
   category: 'boxModel',
-  properties: boxModelProperties,
-  defaultValues: boxModelValues,
+  properties: ['top','left','width','height'],
+  defaultValues: essentialBoxPropsValues,
   Interpolate: {numbers},
-  functions: boxModelFunctions
+  functions: essentialBoxModelFunctions,
+  Util:{trueDimension}
 }
 
-Components.BoxModelProperties = boxModelOps
+Components.BoxModelEssentialProperties = essentialBoxModelOps

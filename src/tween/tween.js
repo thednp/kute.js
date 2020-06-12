@@ -1,6 +1,6 @@
 
-import KUTE from '../objects/KUTE.js'
-import TweenConstructor from '../objects/TweenConstructor.js'
+import KUTE from '../objects/kute.js'
+import TweenConstructor from '../objects/tweenConstructor.js'
 
 import TweenBase from './tweenBase.js'
 import add from '../core/add.js'
@@ -9,7 +9,7 @@ import defaultOptions from '../objects/defaultOptions.js'
 import crossCheck from '../objects/crossCheck.js'
 import prepareObject from '../process/prepareObject.js'
 import getStartValues from '../process/getStartValues.js'
-import {Tick,Ticker} from '../core/Render.js'
+import {Tick,Ticker} from '../core/render.js'
 
 defaultOptions.repeat = 0
 defaultOptions.repeatDelay = 0

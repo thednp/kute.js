@@ -1,8 +1,8 @@
-import KUTE from '../objects/KUTE.js'
-import TC from '../interface/TC.js'
-import {numbers} from '../objects/Interpolate.js' 
+import KUTE from '../objects/kute.js'
+import TC from '../interface/tc.js'
+import {numbers} from '../objects/interpolate.js' 
 import defaultOptions from '../objects/defaultOptions.js'
-import Components from '../objects/Components.js'
+import Components from '../objects/components.js'
 
 // Component Util
 // utility for multi-child targets

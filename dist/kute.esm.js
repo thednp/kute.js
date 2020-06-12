@@ -791,12 +791,6 @@ function trueDimension (dimValue, isAngle) {
   return { v: intValue, u: theUnit };
 }
 
-var boxModelProperties = ['top', 'left', 'width', 'height', 'right', 'bottom', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight',
-                          'padding', 'paddingTop','paddingBottom', 'paddingLeft', 'paddingRight',
-                          'margin', 'marginTop','marginBottom', 'marginLeft', 'marginRight',
-                          'borderWidth', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'outlineWidth'];
-var boxModelValues = {};
-boxModelProperties.map(function (x) { return boxModelValues[x] = 0; });
 function boxModelOnStart(tweenProp){
   if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
     KUTE[tweenProp] = function (elem, a, b, v) {
@@ -811,22 +805,25 @@ function prepareBoxModel(tweenProp,value){
   var boxValue = trueDimension(value), offsetProp = tweenProp === 'height' ? 'offsetHeight' : 'offsetWidth';
   return boxValue.u === '%' ? boxValue.v * this.element[offsetProp] / 100 : boxValue.v;
 }
-var boxPropsOnStart = {};
-boxModelProperties.map(function (x) { return boxPropsOnStart[x] = boxModelOnStart; } );
-var boxModelFunctions = {
+var essentialBoxProps = ['top','left','width','height'];
+var essentialBoxPropsValues = {top:0,left:0,width:0,height:0};
+var essentialBoxOnStart = {};
+essentialBoxProps.map(function (x){ return essentialBoxOnStart[x] = boxModelOnStart; });
+var essentialBoxModelFunctions = {
   prepareStart: getBoxModel,
   prepareProperty: prepareBoxModel,
-  onStart: boxPropsOnStart
+  onStart: essentialBoxOnStart
 };
-var boxModelOps = {
+var essentialBoxModelOps = {
   component: 'boxModelProps',
   category: 'boxModel',
-  properties: boxModelProperties,
-  defaultValues: boxModelValues,
+  properties: ['top','left','width','height'],
+  defaultValues: essentialBoxPropsValues,
   Interpolate: {numbers: numbers},
-  functions: boxModelFunctions
+  functions: essentialBoxModelFunctions,
+  Util:{trueDimension: trueDimension}
 };
-Components.BoxModelProperties = boxModelOps;
+Components.BoxModelEssentialProperties = essentialBoxModelOps;
 
 function hexToRGB (hex) {
   var hexShorthand = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;

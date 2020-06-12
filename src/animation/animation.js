@@ -7,8 +7,8 @@ import onStart from '../objects/onStart.js'
 import onComplete from '../objects/onComplete.js'
 import crossCheck from '../objects/crossCheck.js'
 import linkProperty from '../objects/linkProperty.js'
-import Util from '../objects/Util.js'
-import Interpolate from '../objects/Interpolate.js'
+import Util from '../objects/util.js'
+import Interpolate from '../objects/interpolate.js'
 
 // Animation class 
 // * builds KUTE components 

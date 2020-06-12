@@ -1,4 +1,4 @@
-import TweenConstructor from '../objects/TweenConstructor.js'
+import TweenConstructor from '../objects/tweenConstructor.js'
 import Tween from './tween.js'
 
 // to do

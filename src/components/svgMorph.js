@@ -1,7 +1,7 @@
-import KUTE from '../objects/KUTE.js'
+import KUTE from '../objects/kute.js'
 import selector from '../util/selector.js' 
 import defaultOptions from '../objects/defaultOptions.js' 
-import Components from '../objects/Components.js' 
+import Components from '../objects/components.js' 
 
 // const SVGMorph = { property : 'path', defaultValue: [], interpolators: {numbers,coords} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
 

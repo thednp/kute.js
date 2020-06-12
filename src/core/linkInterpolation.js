@@ -1,4 +1,4 @@
-import KUTE from '../objects/KUTE.js'
+import KUTE from '../objects/kute.js'
 import linkProperty from '../objects/linkProperty.js'
 import supportedProperties from '../objects/supportedProperties.js'
 

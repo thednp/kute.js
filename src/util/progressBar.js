@@ -1,5 +1,5 @@
-import KUTE from '../objects/KUTE.js'
-import TweenConstructor from '../objects/TweenConstructor.js'
+import KUTE from '../objects/kute.js'
+import TweenConstructor from '../objects/tweenConstructor.js'
 import selector from './selector.js'
 
 export default class ProgressBar {

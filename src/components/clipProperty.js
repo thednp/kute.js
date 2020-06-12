@@ -1,8 +1,8 @@
-import KUTE from '../objects/KUTE.js'
-import Components from '../objects/Components.js'
+import KUTE from '../objects/kute.js'
+import Components from '../objects/components.js'
 import getStyleForProperty from '../process/getStyleForProperty.js' 
 import trueDimension from '../util/trueDimension.js' 
-import {numbers} from '../objects/Interpolate.js'
+import {numbers} from '../objects/interpolate.js'
 
 // Component Functions
 export function getClip(tweenProp,v){

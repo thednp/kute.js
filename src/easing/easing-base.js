@@ -1,4 +1,4 @@
-import Util from '../objects/Util.js'
+import Util from '../objects/util.js'
 
 // Robert Penner's Easing Functions
 export function linear (t) { return t; }

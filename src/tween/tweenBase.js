@@ -1,11 +1,11 @@
-import KUTE from '../objects/KUTE.js'
-import TweenConstructor from '../objects/TweenConstructor.js'
+import KUTE from '../objects/kute.js'
+import TweenConstructor from '../objects/tweenConstructor.js'
 import onStart from '../objects/onStart.js'
 import onComplete from '../objects/onComplete.js'
 import defaultOptions from '../objects/defaultOptions.js'
-import Util from '../objects/Util.js'
+import Util from '../objects/util.js'
 
-import {Tick,Ticker,stop} from '../core/Render.js'
+import {Tick,Ticker,stop} from '../core/render.js'
 
 import add from '../core/add.js'
 import remove from '../core/remove.js'

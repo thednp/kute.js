@@ -3,7 +3,7 @@ import prepareStart from '../objects/prepareStart.js'
 import onStart from '../objects/onStart.js'
 import onComplete from '../objects/onComplete.js'
 import crossCheck from '../objects/crossCheck.js'
-import Interpolate from '../objects/Interpolate.js'
+import Interpolate from '../objects/interpolate.js'
 
 import Animation from './animation.js'
 
