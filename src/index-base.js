@@ -1,11 +1,11 @@
 import {version as Version} from './../package.json'
+import Render from './core/Render.js'
+import Interpolate from './objects/Interpolate.js'
 import Objects from './objects/ObjectsBase.js'
 import Util from './objects/Util.js'
 import Easing from './easing/easing-base.js'
 import Internals from './core/Internals.js'
-import Render from './core/Render.js'
 import Selector from './util/selector.js'
-import Interpolate from './objects/Interpolate.js'
 
 import Animation from './animation/animationBase.js'
 

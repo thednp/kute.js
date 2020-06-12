@@ -148,29 +148,29 @@
 
 <pre><code class="language-javascript">// using the svgTransform property works in all SVG enabled browsers
 var tween2 = KUTE.to(
-    'shape',                // target
-    {                       // to
-        svgTransform: { 
-            translate: [150,100], 
-            rotate: 45, 
-            skewX: 15, skewY: 20, 
-            scale: 1.5 
-        }
+  'shape',                // target
+  {                       // to
+    svgTransform: { 
+      translate: [150,100], 
+      rotate: 45, 
+      skewX: 15, skewY: 20, 
+      scale: 1.5 
     }
+  }
 );
 
 // transformMatrix can animate SVGElement targets on modern browsers
 // requires adding styling like `transform-origin:50% 50%` to the target element
 var tween1 = KUTE.to(
-    'shape',            // target
-    {                   // to
-        transform: { 
-            translate3d: [150,100,0], 
-            rotate3d: [0,0,45], 
-            skew: [15,20], 
-            scale3d: [1.5,1.5,1] 
-        } 
-    }
+  'shape',            // target
+  {                   // to
+    transform: { 
+      translate3d: [150,100,0], 
+      rotate3d: [0,0,45], 
+      skew: [15,20], 
+      scale3d: [1.5,1.5,1] 
+    } 
+  }
 );
 </code></pre>
 
@@ -356,7 +356,7 @@ KUTE.fromTo(element,
             <li>While you can still use regular CSS3 transforms for SVG elements, everything is fine with Google Chrome, Opera and other webkit browsers, but older Firefox versions struggle with the percentage based 
                 <code>transformOrigin</code> values and ALL Internet Explorer versions have no implementation for CSS3 transforms on SVG elements, which means that the SVG Transform component will become a fallback 
                 component to handle legacy browsers in the future. Guess who's taking over :)</li>
-            <li>This component is bundled with the standard <i>kute.js</i> distribution file and the <i>demo/src/kute-extra.js</i> file.</li>
+            <li>This component is bundled with the <i>demo/src/kute-extra.js</i> file.</li>
 
         </ul>
 

@@ -5,9 +5,85 @@
 */
 var version = "2.0.3";
 
-var Util = {};
+var KUTE = {};
 
-var Components = {};
+var Tweens = [];
+
+var globalObject = typeof (global) !== 'undefined' ? global
+                  : typeof(self) !== 'undefined' ? self
+                  : typeof(window) !== 'undefined' ? window : {};
+
+function numbers(a, b, v) {
+  a = +a; b -= a; return a + b * v;
+}
+function units(a, b, u, v) {
+  a = +a; b -= a; return ( a + b * v ) + u;
+}
+function arrays(a,b,v){
+  var result = [];
+  for ( var i=0, l=b.length; i<l; i++ ) {
+    result[i] = ((a[i] + (b[i] - a[i]) * v) * 1000 >> 0 ) / 1000;
+  }
+  return result
+}
+var Interpolate = {
+  numbers: numbers,
+  units: units,
+  arrays: arrays
+};
+
+var onStart = {};
+
+var Time = {};
+if (typeof (self) === 'undefined' && typeof (process) !== 'undefined' && process.hrtime) {
+	Time.now = function () {
+		var time = process.hrtime();
+		return time[0] * 1000 + time[1] / 1000000;
+	};
+} else if (typeof (self) !== 'undefined' &&
+         self.performance !== undefined &&
+		 self.performance.now !== undefined) {
+	Time.now = self.performance.now.bind(self.performance);
+}
+var Tick = 0;
+var Ticker = function (time) {
+  var i = 0;
+  while ( i < Tweens.length ) {
+    if ( Tweens[i].update(time) ) {
+      i++;
+    } else {
+      Tweens.splice(i, 1);
+    }
+  }
+  Tick = requestAnimationFrame(Ticker);
+};
+function stop() {
+  setTimeout(function () {
+    if (!Tweens.length && Tick) {
+      cancelAnimationFrame(Tick);
+      Tick = null;
+      for (var obj in onStart) {
+        if (typeof (onStart[obj]) === 'function') {
+          KUTE[obj] && (delete KUTE[obj]);
+        } else {
+          for (var prop in onStart[obj]) {
+            KUTE[prop] && (delete KUTE[prop]);
+          }
+        }
+      }
+      for (var i in Interpolate) {
+        KUTE[i] && (delete KUTE[i]);
+      }
+    }
+  },64);
+}
+var Render = {Tick: Tick,Ticker: Ticker,Tweens: Tweens,Time: Time};
+for ( var blob in Render ) {
+  if (!KUTE[blob]) {
+    KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
+  }
+}
+globalObject["_KUTE"] = KUTE;
 
 var supportedProperties = {};
 
@@ -25,8 +101,6 @@ var prepareStart = {};
 
 var crossCheck = {};
 
-var onStart = {};
-
 var onComplete = {};
 
 var linkProperty = {};
@@ -41,6 +115,61 @@ var Objects = {
   onStart: onStart,
   onComplete: onComplete,
   linkProperty: linkProperty
+};
+
+var Util = {};
+
+var Components = {};
+
+function add (tw) { return Tweens.push(tw); }
+
+function remove (tw) {
+  var i = Tweens.indexOf(tw);
+  i !== -1 && Tweens.splice(i, 1);
+}
+
+function getAll () { return Tweens; }
+
+function removeAll () { Tweens.length = 0; }
+
+function linkInterpolation() {
+  var this$1 = this;
+  var loop = function ( component ) {
+    var componentLink = linkProperty[component];
+    var componentProps = supportedProperties[component];
+    for ( var fnObj in componentLink ) {
+      if ( typeof(componentLink[fnObj]) === 'function'
+          && Object.keys(this$1.valuesEnd).some(function (i) { return componentProps && componentProps.includes(i)
+          || i=== 'attr' && Object.keys(this$1.valuesEnd[i]).some(function (j) { return componentProps && componentProps.includes(j); }); } ) )
+      {
+        !KUTE[fnObj] && (KUTE[fnObj] = componentLink[fnObj]);
+      } else {
+        for ( var prop in this$1.valuesEnd ) {
+          for ( var i in this$1.valuesEnd[prop] ) {
+            if ( typeof(componentLink[i]) === 'function' ) {
+              !KUTE[i] && (KUTE[i] = componentLink[i]);
+            } else {
+              for (var j in componentLink[fnObj]){
+                if (componentLink[i] && typeof(componentLink[i][j]) === 'function' ) {
+                  !KUTE[j] && (KUTE[j] = componentLink[i][j]);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+  for (var component in linkProperty)loop( component );
+}
+
+var Internals = {
+  add: add,
+  remove: remove,
+  getAll: getAll,
+  removeAll: removeAll,
+  stop: stop,
+  linkInterpolation: linkInterpolation
 };
 
 function getInlineStyle(el) {
@@ -125,135 +254,6 @@ var Process = {
   getStyleForProperty: getStyleForProperty,
   getStartValues: getStartValues,
   prepareObject: prepareObject
-};
-
-var Tweens = [];
-
-function add (tw) { return Tweens.push(tw); }
-
-function remove (tw) {
-  var i = Tweens.indexOf(tw);
-  i !== -1 && Tweens.splice(i, 1);
-}
-
-function getAll () { return Tweens; }
-
-function removeAll () { Tweens.length = 0; }
-
-var KUTE = {};
-
-var globalObject = typeof (global) !== 'undefined' ? global
-                  : typeof(self) !== 'undefined' ? self
-                  : typeof(window) !== 'undefined' ? window : {};
-
-function numbers(a, b, v) {
-  a = +a; b -= a; return a + b * v;
-}
-function units(a, b, u, v) {
-  a = +a; b -= a; return ( a + b * v ) + u;
-}
-function arrays(a,b,v){
-  var result = [];
-  for ( var i=0, l=b.length; i<l; i++ ) {
-    result[i] = ((a[i] + (b[i] - a[i]) * v) * 1000 >> 0 ) / 1000;
-  }
-  return result
-}
-var Interpolate = {
-  numbers: numbers,
-  units: units,
-  arrays: arrays
-};
-
-var Time = {};
-if (typeof (self) === 'undefined' && typeof (process) !== 'undefined' && process.hrtime) {
-	Time.now = function () {
-		var time = process.hrtime();
-		return time[0] * 1000 + time[1] / 1000000;
-	};
-} else if (typeof (self) !== 'undefined' &&
-         self.performance !== undefined &&
-		 self.performance.now !== undefined) {
-	Time.now = self.performance.now.bind(self.performance);
-}
-var Tick = 0;
-var Ticker = function (time) {
-  var i = 0;
-  while ( i < Tweens.length ) {
-    if ( Tweens[i].update(time) ) {
-      i++;
-    } else {
-      Tweens.splice(i, 1);
-    }
-  }
-  Tick = requestAnimationFrame(Ticker);
-};
-function stop() {
-  setTimeout(function () {
-    if (!Tweens.length && Tick) {
-      cancelAnimationFrame(Tick);
-      Tick = null;
-      for (var obj in onStart) {
-        if (typeof (onStart[obj]) === 'function') {
-          KUTE[obj] && (delete KUTE[obj]);
-        } else {
-          for (var prop in onStart[obj]) {
-            KUTE[prop] && (delete KUTE[prop]);
-          }
-        }
-      }
-      for (var i in Interpolate) {
-        KUTE[i] && (delete KUTE[i]);
-      }
-    }
-  },64);
-}
-var Render = {Tick: Tick,Ticker: Ticker,Tweens: Tweens,Time: Time};
-for ( var blob in Render ) {
-  if (!KUTE[blob]) {
-    KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
-  }
-}
-globalObject["_KUTE"] = KUTE;
-
-function linkInterpolation() {
-  var this$1 = this;
-  var loop = function ( component ) {
-    var componentLink = linkProperty[component];
-    var componentProps = supportedProperties[component];
-    for ( var fnObj in componentLink ) {
-      if ( typeof(componentLink[fnObj]) === 'function'
-          && Object.keys(this$1.valuesEnd).some(function (i) { return componentProps && componentProps.includes(i)
-          || i=== 'attr' && Object.keys(this$1.valuesEnd[i]).some(function (j) { return componentProps && componentProps.includes(j); }); } ) )
-      {
-        !KUTE[fnObj] && (KUTE[fnObj] = componentLink[fnObj]);
-      } else {
-        for ( var prop in this$1.valuesEnd ) {
-          for ( var i in this$1.valuesEnd[prop] ) {
-            if ( typeof(componentLink[i]) === 'function' ) {
-              !KUTE[i] && (KUTE[i] = componentLink[i]);
-            } else {
-              for (var j in componentLink[fnObj]){
-                if (componentLink[i] && typeof(componentLink[i][j]) === 'function' ) {
-                  !KUTE[j] && (KUTE[j] = componentLink[i][j]);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  };
-  for (var component in linkProperty)loop( component );
-}
-
-var Internals = {
-  add: add,
-  remove: remove,
-  getAll: getAll,
-  removeAll: removeAll,
-  stop: stop,
-  linkInterpolation: linkInterpolation
 };
 
 var CubicBezier = function CubicBezier(p1x, p1y, p2x, p2y, functionName) {
@@ -2022,131 +2022,6 @@ var svgMorphOps = {
     exactRing: exactRing,approximateRing: approximateRing,measure: measure,rotateRing: rotateRing,polygonLength: polygonLength,polygonArea: polygonArea,addPoints: addPoints,bisect: bisect,normalizeRing: normalizeRing,validRing: validRing,getInterpolationPoints: getInterpolationPoints}
 };
 Components.SVGMorph = svgMorphOps;
-
-function parseStringOrigin (origin, ref) {
-  var x = ref.x;
-  var width = ref.width;
-  return /[a-zA-Z]/.test(origin) && !/px/.test(origin)
-    ? origin.replace(/top|left/,0).replace(/right|bottom/,100).replace(/center|middle/,50)
-    : /%/.test(origin) ? (x + parseFloat(origin) * width / 100) : parseFloat(origin);
-}
-function parseTransformString (a) {
-  var d = a && /\)/.test(a) ? a.substring(0, a.length-1).split(/\)\s|\)/) : 'none', c = {};
-  if (d instanceof Array) {
-    for (var j=0, jl = d.length; j<jl; j++){
-      var p = d[j].trim().split('(');
-      c[p[0]] = p[1];
-    }
-  }
-  return c;
-}
-function parseTransformSVG (p,v){
-  var svgTransformObject = {};
-  var bb = this.element.getBBox();
-  var cx = bb.x + bb.width/2;
-  var cy = bb.y + bb.height/2;
-  var origin = this._transformOrigin;
-  var translation;
-  origin = typeof (origin) !== 'undefined' ? (origin.constructor === Array ? origin : origin.split(/\s/)) : [cx,cy];
-  origin[0] = typeof origin[0] === 'number' ? origin[0] : parseStringOrigin(origin[0],bb);
-  origin[1] = typeof origin[1] === 'number' ? origin[1] : parseStringOrigin(origin[1],bb);
-  svgTransformObject.origin = origin;
-  for ( var i in v ) {
-    if (i === 'rotate'){
-      svgTransformObject[i] = typeof v[i] === 'number' ? v[i] : v[i] instanceof Array ? v[i][0] : v[i].split(/\s/)[0]*1;
-    } else if (i === 'translate'){
-      translation = v[i] instanceof Array ? v[i] : /\,|\s/.test(v[i]) ? v[i].split(',') : [v[i],0];
-      svgTransformObject[i] = [translation[0]*1||0, translation[1]*1||0];
-    } else if (/skew/.test(i)) {
-      svgTransformObject[i] = v[i]*1||0;
-    } else if (i === 'scale'){
-      svgTransformObject[i] = parseFloat(v[i])||1;
-    }
-  }
-  return svgTransformObject;
-}
-function svgTransformOnStart (tweenProp){
-  if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-    KUTE[tweenProp] = function (l, a, b, v) {
-      var x = 0;
-      var y = 0;
-      var tmp;
-      var deg = Math.PI/180;
-      var scale = 'scale' in b ? numbers(a.scale,b.scale,v) : 1;
-      var rotate = 'rotate' in b ? numbers(a.rotate,b.rotate,v) : 0;
-      var sin = Math.sin(rotate*deg);
-      var cos = Math.cos(rotate*deg);
-      var skewX = 'skewX' in b ? numbers(a.skewX,b.skewX,v) : 0;
-      var skewY = 'skewY' in b ? numbers(a.skewY,b.skewY,v) : 0;
-      var complex = rotate||skewX||skewY||scale!==1 || 0;
-      x -= complex ? b.origin[0] : 0;y -= complex ? b.origin[1] : 0;
-      x *= scale;y *= scale;
-      y += skewY ? x*Math.tan(skewY*deg) : 0;x += skewX ? y*Math.tan(skewX*deg) : 0;
-      tmp = cos*x - sin*y;
-      y = rotate ? sin*x + cos*y : y;x = rotate ? tmp : x;
-      x += 'translate' in b ? numbers(a.translate[0],b.translate[0],v) : 0;
-      y += 'translate' in b ? numbers(a.translate[1],b.translate[1],v) : 0;
-      x += complex ? b.origin[0] : 0;y += complex ? b.origin[1] : 0;
-      l.setAttribute('transform', ( x||y ? (("translate(" + ((x*1000>>0)/1000) + (y ? (("," + ((y*1000>>0)/1000))) : '') + ")")) : '' )
-                                 +( rotate ? ("rotate(" + ((rotate*1000>>0)/1000) + ")") : '' )
-                                 +( skewX ? ("skewX(" + ((skewX*1000>>0)/1000) + ")") : '' )
-                                 +( skewY ? ("skewY(" + ((skewY*1000>>0)/1000) + ")") : '' )
-                                 +( scale !== 1 ? ("scale(" + ((scale*1000>>0)/1000) + ")") : '' ) );
-    };
-  }
-}
-function prepareSvgTransform(p,v){
-  return parseTransformSVG.call(this,p,v);
-}
-function getStartSvgTransform (tweenProp,value) {
-  var transformObject = {};
-  var currentTransform = parseTransformString(this.element.getAttribute('transform'));
-  for (var i in value) {
-    transformObject[i] = i in currentTransform ? currentTransform[i] : (i==='scale'?1:0);
-  }
-  return transformObject;
-}
-function svgTransformCrossCheck(prop) {
-  if (!this._resetStart) { return; }
-  if ( this.valuesEnd[prop] ) {
-    var valuesStart = this.valuesStart[prop];
-    var valuesEnd = this.valuesEnd[prop];
-    var currentTransform = parseTransformSVG.call(this, prop, parseTransformString(this.element.getAttribute('transform')) );
-    for ( var i in currentTransform ) {
-      valuesStart[i] = currentTransform[i];
-    }
-    var parentSVG = this.element.ownerSVGElement;
-    var startMatrix = parentSVG.createSVGTransformFromMatrix(
-      parentSVG.createSVGMatrix()
-      .translate(-valuesStart.origin[0],-valuesStart.origin[1])
-      .translate('translate' in valuesStart ? valuesStart.translate[0] : 0,'translate' in valuesStart ? valuesStart.translate[1] : 0)
-      .rotate(valuesStart.rotate||0).skewX(valuesStart.skewX||0).skewY(valuesStart.skewY||0).scale(valuesStart.scale||1)
-      .translate(+valuesStart.origin[0],+valuesStart.origin[1])
-    );
-    valuesStart.translate = [startMatrix.matrix.e,startMatrix.matrix.f];
-    for ( var i$1 in valuesStart) {
-      if ( !(i$1 in valuesEnd) || i$1==='origin') {
-        valuesEnd[i$1] = valuesStart[i$1];
-      }
-    }
-  }
-}
-var svgTransformFunctions = {
-  prepareStart: getStartSvgTransform,
-  prepareProperty: prepareSvgTransform,
-  onStart: svgTransformOnStart,
-  crossCheck: svgTransformCrossCheck
-};
-var svgTransformOps = {
-  component: 'svgTransformProperty',
-  property: 'svgTransform',
-  defaultOptions: {transformOrigin:'50% 50%'},
-  defaultValue: {translate:0, rotate:0, skewX:0, skewY:0, scale:1},
-  Interpolate: {numbers: numbers},
-  functions: svgTransformFunctions,
-  Util: { parseStringOrigin: parseStringOrigin, parseTransformString: parseTransformString, parseTransformSVG: parseTransformSVG }
-};
-Components.SVGTransformProperty = svgTransformOps;
 
 for (var component in Components) {
   var compOps = Components[component];

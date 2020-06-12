@@ -121,14 +121,14 @@
           <h3>Examples</h3>
           <p>Let's have a look at some sample tween objects and a quick example:</p>
 
-            <pre><code class="language-javascript">let fe1 = KUTE.to('selector1', {filter :{ blur: 5 }})
+<pre><code class="language-javascript">let fe1 = KUTE.to('selector1', {filter :{ blur: 5 }})
 let fe2 = KUTE.to('selector2', {filter :{ sepia: 50, invert: 80 }})
 let fe3 = KUTE.to('selector3', {filter :{ saturate: 150, brightness: 90 }})
 let fe4 = KUTE.to('selector4', {filter :{ url: '#mySVGFilter', opacity: 40, dropShadow:[5,5,5,'olive'] }})
 </code></pre>
 
           <div id="filter-examples" class="featurettes">
-              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <svg style="display: none;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <defs>
                   <filter id="mySVGFilter">
                     <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>

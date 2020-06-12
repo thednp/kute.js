@@ -11,6 +11,86 @@
 
   var version = "2.0.3";
 
+  var KUTE = {};
+
+  var Tweens = [];
+
+  var globalObject = typeof (global) !== 'undefined' ? global
+                    : typeof(self) !== 'undefined' ? self
+                    : typeof(window) !== 'undefined' ? window : {};
+
+  function numbers(a, b, v) {
+    a = +a; b -= a; return a + b * v;
+  }
+  function units(a, b, u, v) {
+    a = +a; b -= a; return ( a + b * v ) + u;
+  }
+  function arrays(a,b,v){
+    var result = [];
+    for ( var i=0, l=b.length; i<l; i++ ) {
+      result[i] = ((a[i] + (b[i] - a[i]) * v) * 1000 >> 0 ) / 1000;
+    }
+    return result
+  }
+  var Interpolate = {
+    numbers: numbers,
+    units: units,
+    arrays: arrays
+  };
+
+  var onStart = {};
+
+  var Time = {};
+  if (typeof (self) === 'undefined' && typeof (process) !== 'undefined' && process.hrtime) {
+  	Time.now = function () {
+  		var time = process.hrtime();
+  		return time[0] * 1000 + time[1] / 1000000;
+  	};
+  } else if (typeof (self) !== 'undefined' &&
+           self.performance !== undefined &&
+  		 self.performance.now !== undefined) {
+  	Time.now = self.performance.now.bind(self.performance);
+  }
+  var Tick = 0;
+  var Ticker = function (time) {
+    var i = 0;
+    while ( i < Tweens.length ) {
+      if ( Tweens[i].update(time) ) {
+        i++;
+      } else {
+        Tweens.splice(i, 1);
+      }
+    }
+    Tick = requestAnimationFrame(Ticker);
+  };
+  function stop() {
+    setTimeout(function () {
+      if (!Tweens.length && Tick) {
+        cancelAnimationFrame(Tick);
+        Tick = null;
+        for (var obj in onStart) {
+          if (typeof (onStart[obj]) === 'function') {
+            KUTE[obj] && (delete KUTE[obj]);
+          } else {
+            for (var prop in onStart[obj]) {
+              KUTE[prop] && (delete KUTE[prop]);
+            }
+          }
+        }
+        for (var i in Interpolate) {
+          KUTE[i] && (delete KUTE[i]);
+        }
+      }
+    },64);
+  }
+  var Render = {Tick: Tick,Ticker: Ticker,Tweens: Tweens,Time: Time};
+  for ( var blob in Render ) {
+    if (!KUTE[blob]) {
+      KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
+    }
+  }
+  globalObject["_KUTE"] = KUTE;
+
   var supportedProperties = {};
 
   var defaultValues = {};
@@ -26,8 +106,6 @@
   var prepareStart = {};
 
   var crossCheck = {};
-
-  var onStart = {};
 
   var onComplete = {};
 
@@ -49,23 +127,55 @@
 
   var Components = {};
 
-  function numbers(a, b, v) {
-    a = +a; b -= a; return a + b * v;
+  function add (tw) { return Tweens.push(tw); }
+
+  function remove (tw) {
+    var i = Tweens.indexOf(tw);
+    i !== -1 && Tweens.splice(i, 1);
   }
-  function units(a, b, u, v) {
-    a = +a; b -= a; return ( a + b * v ) + u;
+
+  function getAll () { return Tweens; }
+
+  function removeAll () { Tweens.length = 0; }
+
+  function linkInterpolation() {
+    var this$1 = this;
+    var loop = function ( component ) {
+      var componentLink = linkProperty[component];
+      var componentProps = supportedProperties[component];
+      for ( var fnObj in componentLink ) {
+        if ( typeof(componentLink[fnObj]) === 'function'
+            && Object.keys(this$1.valuesEnd).some(function (i) { return componentProps && componentProps.includes(i)
+            || i=== 'attr' && Object.keys(this$1.valuesEnd[i]).some(function (j) { return componentProps && componentProps.includes(j); }); } ) )
+        {
+          !KUTE[fnObj] && (KUTE[fnObj] = componentLink[fnObj]);
+        } else {
+          for ( var prop in this$1.valuesEnd ) {
+            for ( var i in this$1.valuesEnd[prop] ) {
+              if ( typeof(componentLink[i]) === 'function' ) {
+                !KUTE[i] && (KUTE[i] = componentLink[i]);
+              } else {
+                for (var j in componentLink[fnObj]){
+                  if (componentLink[i] && typeof(componentLink[i][j]) === 'function' ) {
+                    !KUTE[j] && (KUTE[j] = componentLink[i][j]);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+    for (var component in linkProperty)loop( component );
   }
-  function arrays(a,b,v){
-    var result = [];
-    for ( var i=0, l=b.length; i<l; i++ ) {
-      result[i] = ((a[i] + (b[i] - a[i]) * v) * 1000 >> 0 ) / 1000;
-    }
-    return result
-  }
-  var Interpolate = {
-    numbers: numbers,
-    units: units,
-    arrays: arrays
+
+  var Internals = {
+    add: add,
+    remove: remove,
+    getAll: getAll,
+    removeAll: removeAll,
+    stop: stop,
+    linkInterpolation: linkInterpolation
   };
 
   function getInlineStyle(el) {
@@ -150,116 +260,6 @@
     getStyleForProperty: getStyleForProperty,
     getStartValues: getStartValues,
     prepareObject: prepareObject
-  };
-
-  var Tweens = [];
-
-  function add (tw) { return Tweens.push(tw); }
-
-  function remove (tw) {
-    var i = Tweens.indexOf(tw);
-    i !== -1 && Tweens.splice(i, 1);
-  }
-
-  function getAll () { return Tweens; }
-
-  function removeAll () { Tweens.length = 0; }
-
-  var KUTE = {};
-
-  var globalObject = typeof (global) !== 'undefined' ? global
-                    : typeof(self) !== 'undefined' ? self
-                    : typeof(window) !== 'undefined' ? window : {};
-
-  var Time = {};
-  if (typeof (self) === 'undefined' && typeof (process) !== 'undefined' && process.hrtime) {
-  	Time.now = function () {
-  		var time = process.hrtime();
-  		return time[0] * 1000 + time[1] / 1000000;
-  	};
-  } else if (typeof (self) !== 'undefined' &&
-           self.performance !== undefined &&
-  		 self.performance.now !== undefined) {
-  	Time.now = self.performance.now.bind(self.performance);
-  }
-  var Tick = 0;
-  var Ticker = function (time) {
-    var i = 0;
-    while ( i < Tweens.length ) {
-      if ( Tweens[i].update(time) ) {
-        i++;
-      } else {
-        Tweens.splice(i, 1);
-      }
-    }
-    Tick = requestAnimationFrame(Ticker);
-  };
-  function stop() {
-    setTimeout(function () {
-      if (!Tweens.length && Tick) {
-        cancelAnimationFrame(Tick);
-        Tick = null;
-        for (var obj in onStart) {
-          if (typeof (onStart[obj]) === 'function') {
-            KUTE[obj] && (delete KUTE[obj]);
-          } else {
-            for (var prop in onStart[obj]) {
-              KUTE[prop] && (delete KUTE[prop]);
-            }
-          }
-        }
-        for (var i in Interpolate) {
-          KUTE[i] && (delete KUTE[i]);
-        }
-      }
-    },64);
-  }
-  var Render = {Tick: Tick,Ticker: Ticker,Tweens: Tweens,Time: Time};
-  for ( var blob in Render ) {
-    if (!KUTE[blob]) {
-      KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
-    }
-  }
-  globalObject["_KUTE"] = KUTE;
-
-  function linkInterpolation() {
-    var this$1 = this;
-    var loop = function ( component ) {
-      var componentLink = linkProperty[component];
-      var componentProps = supportedProperties[component];
-      for ( var fnObj in componentLink ) {
-        if ( typeof(componentLink[fnObj]) === 'function'
-            && Object.keys(this$1.valuesEnd).some(function (i) { return componentProps && componentProps.includes(i)
-            || i=== 'attr' && Object.keys(this$1.valuesEnd[i]).some(function (j) { return componentProps && componentProps.includes(j); }); } ) )
-        {
-          !KUTE[fnObj] && (KUTE[fnObj] = componentLink[fnObj]);
-        } else {
-          for ( var prop in this$1.valuesEnd ) {
-            for ( var i in this$1.valuesEnd[prop] ) {
-              if ( typeof(componentLink[i]) === 'function' ) {
-                !KUTE[i] && (KUTE[i] = componentLink[i]);
-              } else {
-                for (var j in componentLink[fnObj]){
-                  if (componentLink[i] && typeof(componentLink[i][j]) === 'function' ) {
-                    !KUTE[j] && (KUTE[j] = componentLink[i][j]);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    };
-    for (var component in linkProperty)loop( component );
-  }
-
-  var Internals = {
-    add: add,
-    remove: remove,
-    getAll: getAll,
-    removeAll: removeAll,
-    stop: stop,
-    linkInterpolation: linkInterpolation
   };
 
   var CubicBezier = function CubicBezier(p1x, p1y, p2x, p2y, functionName) {

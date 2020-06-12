@@ -1,13 +1,13 @@
 import {version as Version} from './../package.json'
-import Util from './objects/Util.js'
-import Components from './objects/Components.js'
-import Objects from './objects/Objects.js'
-import Process from './process/Process.js'
-import Internals from './core/Internals.js'
 import Render from './core/Render.js'
 import Interpolate from './objects/Interpolate.js'
+import Objects from './objects/Objects.js'
+import Util from './objects/Util.js'
+import Components from './objects/Components.js'
+import Internals from './core/Internals.js'
+import Process from './process/Process.js'
 import CubicBezier from 'cubic-bezier-easing'
-import Easing from './easing/easing-bezier.js' // and CubicBezier easing functions
+import Easing from './easing/easing-bezier.js'
 import Selector from './util/selector.js'
 
 // TweenConstructor
@@ -31,7 +31,6 @@ import {textWriteOps} from './components/textWrite.js'
 import {transformOps} from './components/transformFunctions.js'
 import {svgDrawOps} from './components/svgDraw.js'
 import {svgMorphOps} from './components/svgMorph.js'
-import {svgTransformOps} from './components/svgTransform.js'
 
 // init components
 for (let component in Components) {

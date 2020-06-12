@@ -1,11 +1,11 @@
 import {version as Version} from './../package.json'
+import Render from './core/Render.js'
+import Interpolate from './objects/Interpolate.js'
 import Objects from './objects/Objects.js'
 import Util from './objects/Util.js'
 import Components from './objects/Components.js'
-import Interpolate from './objects/Interpolate.js'
-import Process from './process/Process.js'
 import Internals from './core/Internals.js'
-import Render from './core/Render.js'
+import Process from './process/Process.js'
 import CubicBezier from 'cubic-bezier-easing'
 import Easing from './easing/easing-bezier.js'
 import Selector from './util/selector.js'
@@ -48,24 +48,6 @@ for (let component in Components) {
 export default {
   Animation,
   Components,
-  // Components: {
-  //   BackgroundPosition,
-  //   BorderRadius,
-  //   BoxModel,
-  //   ColorProperties,
-  //   ClipProperty,
-  //   FilterEffects,
-  //   HTMLAttributes,
-  //   OpacityProperty,
-  //   TextProperties,
-  //   TextWrite,
-  //   TransformMatrix,
-  //   ScrollProperty,
-  //   ShadowProperties,
-  //   SVGCubicMorph,
-  //   SVGDraw,
-  //   SVGTransform
-  // },
 
   // Tween Interface
   TweenExtra,
