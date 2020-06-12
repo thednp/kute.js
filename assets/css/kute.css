@@ -183,6 +183,7 @@ svg.example-box { width: auto; height: auto; }*/
 
 .easing-example {float: none; font-size: 24px; width: 320px}
 .example-buttons {position: absolute; top: 18px; right:0}
+.example-buttons + .example-buttons { top: auto; bottom: 18px}
 
 /* text properties example */
 h1.example-item {

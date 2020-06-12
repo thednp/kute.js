@@ -120,7 +120,7 @@ KUTE.to('#myElement',{scroll: 0 }).start()
 
       <div id="scrollProperty" class="featurettes">
         <div class="example-item" style="height:170px; overflow:hidden; max-width: calc(100% - 60px);">
-          <h4 class="text-dark" style="margin-top:10px">KUTE.js works here</h4>
+          <h4 class="text-dark" style="margin-top:10px">KUTE.js Scroll Property</h4>
           <p>Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy 
             foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive 
             innovation via workplace diversity and empowerment.</p>
@@ -146,10 +146,9 @@ KUTE.to('#myElement',{scroll: 0 }).start()
       </div>
 
       <div class="featurettes">
-        <div class="example-item" style="height:170px; overflow:auto; max-width: calc(100% - 60px); scroll-behavior: smooth;">
-          <h4 id="sample-title" class="text-dark" style="margin-top:10px">Scroll Behavior Works here</h4>
-          <p><a onclick="function kickScroll(e){e.preventDefault}" href="#sample-title2">Click to scroll to bottom</a>, 
-            leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy 
+        <div class="example-item" style="height:170px; overflow:auto; max-width: calc(100% - 80px); scroll-behavior: smooth;">
+          <h4 id="sample-title" class="text-dark" style="margin-top:10px">scroll-behavior: smooth</h4>
+          <p>Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy 
             foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive 
             innovation via workplace diversity and empowerment.</p>
 
@@ -170,7 +169,12 @@ KUTE.to('#myElement',{scroll: 0 }).start()
           <p>Collaboratively administrate empowered markets via plug-and-play networks. Dynamically procrastinate B2C users after installed 
             base benefits. Dramatically visualize customer directed convergence without revolutionary ROI.</p>
         </div>
-        <div class="example-buttons"><a class="btn btn-olive" onclick="function kickScroll(e){e.preventDefault}" href="#sample-title">Top</a></div>
+        <div class="example-buttons">
+          <a class="btn btn-indigo" onclick="function kickScroll(e){e.preventDefault}" href="#sample-title2">Bottom</a>
+        </div>
+        <div class="example-buttons">
+          <a class="btn btn-olive" onclick="function kickScroll(e){e.preventDefault}" href="#sample-title">Top</a>
+        </div>
       </div>
       <p>The above shows a comparison of the <b>Scroll Property</b> component with the <code>scroll-behavior: smooth</code> CSS; while this browser 
         feature shows excellent performance it lacks the flexibility and support for legacy browsers.</p>
