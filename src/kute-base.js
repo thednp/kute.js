@@ -11,6 +11,86 @@
 
   var version = "2.0.3";
 
+  var KUTE = {};
+
+  var Tweens = [];
+
+  var globalObject = typeof (global) !== 'undefined' ? global
+                    : typeof(self) !== 'undefined' ? self
+                    : typeof(window) !== 'undefined' ? window : {};
+
+  function numbers(a, b, v) {
+    a = +a; b -= a; return a + b * v;
+  }
+  function units(a, b, u, v) {
+    a = +a; b -= a; return ( a + b * v ) + u;
+  }
+  function arrays(a,b,v){
+    var result = [];
+    for ( var i=0, l=b.length; i<l; i++ ) {
+      result[i] = ((a[i] + (b[i] - a[i]) * v) * 1000 >> 0 ) / 1000;
+    }
+    return result
+  }
+  var Interpolate = {
+    numbers: numbers,
+    units: units,
+    arrays: arrays
+  };
+
+  var onStart = {};
+
+  var Time = {};
+  if (typeof (self) === 'undefined' && typeof (process) !== 'undefined' && process.hrtime) {
+  	Time.now = function () {
+  		var time = process.hrtime();
+  		return time[0] * 1000 + time[1] / 1000000;
+  	};
+  } else if (typeof (self) !== 'undefined' &&
+           self.performance !== undefined &&
+  		 self.performance.now !== undefined) {
+  	Time.now = self.performance.now.bind(self.performance);
+  }
+  var Tick = 0;
+  var Ticker = function (time) {
+    var i = 0;
+    while ( i < Tweens.length ) {
+      if ( Tweens[i].update(time) ) {
+        i++;
+      } else {
+        Tweens.splice(i, 1);
+      }
+    }
+    Tick = requestAnimationFrame(Ticker);
+  };
+  function stop() {
+    setTimeout(function () {
+      if (!Tweens.length && Tick) {
+        cancelAnimationFrame(Tick);
+        Tick = null;
+        for (var obj in onStart) {
+          if (typeof (onStart[obj]) === 'function') {
+            KUTE[obj] && (delete KUTE[obj]);
+          } else {
+            for (var prop in onStart[obj]) {
+              KUTE[prop] && (delete KUTE[prop]);
+            }
+          }
+        }
+        for (var i in Interpolate) {
+          KUTE[i] && (delete KUTE[i]);
+        }
+      }
+    },64);
+  }
+  var Render = {Tick: Tick,Ticker: Ticker,Tweens: Tweens,Time: Time};
+  for ( var blob in Render ) {
+    if (!KUTE[blob]) {
+      KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
+    }
+  }
+  globalObject["_KUTE"] = KUTE;
+
   var defaultOptions = {
     duration: 700,
     delay: 0,
@@ -18,8 +98,6 @@
   };
 
   var linkProperty = {};
-
-  var onStart = {};
 
   var onComplete = {};
 
@@ -74,8 +152,6 @@
   }
   Util.processEasing = processEasing;
 
-  var Tweens = [];
-
   function add (tw) { return Tweens.push(tw); }
 
   function remove (tw) {
@@ -86,82 +162,6 @@
   function getAll () { return Tweens; }
 
   function removeAll () { Tweens.length = 0; }
-
-  var KUTE = {};
-
-  var globalObject = typeof (global) !== 'undefined' ? global
-                    : typeof(self) !== 'undefined' ? self
-                    : typeof(window) !== 'undefined' ? window : {};
-
-  function numbers(a, b, v) {
-    a = +a; b -= a; return a + b * v;
-  }
-  function units(a, b, u, v) {
-    a = +a; b -= a; return ( a + b * v ) + u;
-  }
-  function arrays(a,b,v){
-    var result = [];
-    for ( var i=0, l=b.length; i<l; i++ ) {
-      result[i] = ((a[i] + (b[i] - a[i]) * v) * 1000 >> 0 ) / 1000;
-    }
-    return result
-  }
-  var Interpolate = {
-    numbers: numbers,
-    units: units,
-    arrays: arrays
-  };
-
-  var Time = {};
-  if (typeof (self) === 'undefined' && typeof (process) !== 'undefined' && process.hrtime) {
-  	Time.now = function () {
-  		var time = process.hrtime();
-  		return time[0] * 1000 + time[1] / 1000000;
-  	};
-  } else if (typeof (self) !== 'undefined' &&
-           self.performance !== undefined &&
-  		 self.performance.now !== undefined) {
-  	Time.now = self.performance.now.bind(self.performance);
-  }
-  var Tick = 0;
-  var Ticker = function (time) {
-    var i = 0;
-    while ( i < Tweens.length ) {
-      if ( Tweens[i].update(time) ) {
-        i++;
-      } else {
-        Tweens.splice(i, 1);
-      }
-    }
-    Tick = requestAnimationFrame(Ticker);
-  };
-  function stop() {
-    setTimeout(function () {
-      if (!Tweens.length && Tick) {
-        cancelAnimationFrame(Tick);
-        Tick = null;
-        for (var obj in onStart) {
-          if (typeof (onStart[obj]) === 'function') {
-            KUTE[obj] && (delete KUTE[obj]);
-          } else {
-            for (var prop in onStart[obj]) {
-              KUTE[prop] && (delete KUTE[prop]);
-            }
-          }
-        }
-        for (var i in Interpolate) {
-          KUTE[i] && (delete KUTE[i]);
-        }
-      }
-    },64);
-  }
-  var Render = {Tick: Tick,Ticker: Ticker,Tweens: Tweens,Time: Time};
-  for ( var blob in Render ) {
-    if (!KUTE[blob]) {
-      KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
-    }
-  }
-  globalObject["_KUTE"] = KUTE;
 
   function linkInterpolation() {
     var this$1 = this;
