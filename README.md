@@ -8,11 +8,36 @@ A modern JavaScript animation engine built on ES6/ES7 standards with most essent
 
 KUTE.js packs a series of components for presentation attributes, SVG transform, draw SVG strokes and path morphing, text string write up or number countdowns, plus additional CSS properties like colors, border-radius or typographic properties.
 
-# Demo
 For components documentation, examples and other cool tips, check the [demo](http://thednp.github.io/kute.js/).
 
+
+# Components
+KUTE.js includes 18 components, but not all of them are bundled with the default distribution package:
+
+* [backgroundPosition](http://thednp.github.io/kute.js/backgroundPosition.html) - enables the animation for the `backgroundPosition` CSS property
+* [borderRadius](http://thednp.github.io/kute.js/borderRadius.html) - enables the animation for all the **borderRadius** properties
+* [boxModel](http://thednp.github.io/kute.js/boxModel.html) - enables the animation for the **boxModel** properties like `top` , `left`, `width`, etc
+* [clipProperty](http://thednp.github.io/kute.js/clipProperty.html) - enables the animation for the `clip` property
+* [colorProperties](http://thednp.github.io/kute.js/colorProperties.html) - enables the animation for the **color** properties like `color`, `backgroundColor`
+* [filterEffects](http://thednp.github.io/kute.js/filterEffects.html) - enables the animation for the `filter` property
+* [htmlAttributes](http://thednp.github.io/kute.js/htmlAttributes.html) - enables the animation for any numeric as well as some color based **HTML Attributes** 
+* [opacityProperty](http://thednp.github.io/kute.js/opacityProperty.html) - enables the animation for the `opacity` property
+* [scrollProperty](http://thednp.github.io/kute.js/scrollProperty.html) - enables the animation for the window/Element `scrollTop` Object property
+* [shadowProperties](http://thednp.github.io/kute.js/shadowProperties.html) - enables the animation for the **shadowProperties** properties: `textShadow` &amp; `boxShadow`
+* [svgCubicMorph](http://thednp.github.io/kute.js/svgCubicMorph.html) - enables the animation for the `d` Presentation Attribute of the `<path>` SVGElement targets; this implements some [Raphael.js](https://dmitrybaranovskiy.github.io/raphael/) functionality
+* [svgMorph](http://thednp.github.io/kute.js/svgMorph.html) - enables the animation for the `d` Presentation Attribute of the `<path>` SVGElement targets; this component implements some [D3.js](https://github.com/d3/d3) and [flubber](https://github.com/veltman/flubber) functionality
+* [svgDraw](http://thednp.github.io/kute.js/svgDraw.html) - enables the animation for the `strokeDasharray` and `strokeDashoffset` CSS properties specific to `<path>` SVGElement
+* [svgTransform](http://thednp.github.io/kute.js/svgTransform.html) - enables the animation for the `transform` presentation attribute
+* [textProperties](http://thednp.github.io/kute.js/textProperties.html) - enables the animation for numeric `HTMLTextElement` related CSS properties like `fontSize` or `letterSpacing`
+* [textWrite](http://thednp.github.io/kute.js/textWrite.html) - enables the animation for the content of various strings
+* [transformFunctions](http://thednp.github.io/kute.js/transformFunctions.html) - enables the animation for the `transform` CSS3 property, the default component bundled with the official build
+* [transformMatrix](http://thednp.github.io/kute.js/transformMatrix.html) - enables the animation for the `transform` CSS3 property; this component implements `DOMMatrix()` API and is super light
+
+All above mentioned components have a BASE version which doesn't include value processing, and their purpose is to provide a way to ship your super light version of your application.
+
+
 # Wiki
-For a complete developer guide, usage and stuff like npm, visit the [wiki](https://github.com/thednp/kute.js/wiki).
+For a complete developer guide, usage and stuff like npm, visit [the wiki](https://github.com/thednp/kute.js/wiki).
 
 # Browser Support
 KUTE.js is redeveloped for maximum performance on modern browsers. Some legacy browsers might some help, so give them a small polyfill set with most essential features required by KUTE.js to work, powered by [minifill](https://github.com/thednp/minifill), try it. For broader projects you might want to consider <a href="https://cdn.polyfill.io/v2/docs/">polyfills</a>. 
