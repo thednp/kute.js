@@ -101,14 +101,11 @@
 
   var onComplete = {};
 
-  var supportedProperties = {};
-
   var Objects = {
     defaultOptions: defaultOptions,
     linkProperty: linkProperty,
     onStart: onStart,
     onComplete: onComplete,
-    supportedProperties: supportedProperties
   };
 
   var Util = {};
@@ -163,6 +160,8 @@
 
   function removeAll () { Tweens.length = 0; }
 
+  var supportedProperties = {};
+
   function linkInterpolation() {
     var this$1 = this;
     var loop = function ( component ) {
@@ -209,7 +208,7 @@
       if (multi){
         requestedElem = el instanceof HTMLCollection
                      || el instanceof NodeList
-                     || el instanceof Array && el[0] instanceof Element
+                     || el instanceof Array && el.every(function (x) { return x instanceof Element; })
                       ? el : document.querySelectorAll(el);
       } else {
         requestedElem = el instanceof Element
@@ -222,16 +221,12 @@
     }
   }
 
-  var crossCheck = {};
-
   var AnimationBase = function AnimationBase(Component){
-    this.Component = Component;
-    return this.setComponent()
+    return this.setComponent(Component)
   };
-  AnimationBase.prototype.setComponent = function setComponent (){
-    var Component = this.Component;
+  AnimationBase.prototype.setComponent = function setComponent (Component){
     var ComponentName = Component.component;
-    var Functions = { onStart: onStart, onComplete: onComplete, crossCheck: crossCheck };
+    var Functions = { onStart: onStart, onComplete: onComplete };
     var Category = Component.category;
     var Property = Component.property;
     supportedProperties[ComponentName] = Component.properties || Component.subProperties || Component.property;
@@ -242,8 +237,8 @@
     }
     if (Component.functions) {
       for (var fn in Functions) {
-        if (fn in Component.functions && ['onStart','onComplete'].includes(fn)) {
-          if (typeof (Component.functions[fn]) === 'function' ) {
+        if (fn in Component.functions) {
+          if ( typeof (Component.functions[fn]) === 'function') {
             !Functions[fn][ComponentName] && (Functions[fn][ComponentName] = {});
             !Functions[fn][ComponentName][ Category||Property ] && (Functions[fn][ComponentName][ Category||Property ] = Component.functions[fn]);
           } else {
@@ -257,8 +252,15 @@
     }
     if (Component.Interpolate) {
       for (var fn$1 in Component.Interpolate) {
-        if (!Interpolate[fn$1]) {
-          Interpolate[fn$1] = Component.Interpolate[fn$1];
+        var compIntObj = Component.Interpolate[fn$1];
+        if ( typeof(compIntObj) === 'function' && !Interpolate[fn$1] ) {
+          Interpolate[fn$1] = compIntObj;
+        } else {
+          for ( var sfn in compIntObj ) {
+            if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fn$1] ) {
+              Interpolate[fn$1] = compIntObj[sfn];
+            }
+          }
         }
       }
       linkProperty[ComponentName] = Component.Interpolate;
@@ -341,6 +343,14 @@
     this._startFired = false;
     stop.call(this);
   };
+  TweenBase.prototype.chain = function chain (args) {
+    this._chain = [];
+    this._chain = args.length ? args : this._chain.concat(args);
+    return this;
+  };
+  TweenBase.prototype.stopChainedTweens = function stopChainedTweens () {
+    this._chain && this._chain.length && this._chain.map(function (tw){ return tw.stop(); });
+  };
   TweenBase.prototype.update = function update (time) {
     time = time !== undefined ? time : KUTE.Time();
     var elapsed, progress;
@@ -360,6 +370,9 @@
       }
       this.playing = false;
       this.close();
+      if (this._chain !== undefined && this._chain.length){
+        this._chain.map(function (tw){ return tw.start(); });
+      }
       return false;
     }
     return true;
@@ -373,73 +386,49 @@
     return new TC(selector(element), startObject, endObject, optionsObj)
   }
 
-  function perspective(a, b, u, v) {
-    return ("perspective(" + (((a + (b - a) * v) * 1000 >> 0 ) / 1000) + u + ")")
-  }
-  function translate3d(a, b, u, v) {
-    var translateArray = [];
-    for (var ax=0; ax<3; ax++){
-      translateArray[ax] = ( a[ax]||b[ax] ? ( (a[ax] + ( b[ax] - a[ax] ) * v ) * 1000 >> 0 ) / 1000 : 0 ) + u;
-    }
-    return ("translate3d(" + (translateArray.join(',')) + ")");
-  }
-  function rotate3d(a, b, u, v) {
-    var rotateStr = '';
-    rotateStr += a[0]||b[0] ? ("rotateX(" + (((a[0] + (b[0] - a[0]) * v) * 1000 >> 0 ) / 1000) + u + ")") : '';
-    rotateStr += a[1]||b[1] ? ("rotateY(" + (((a[1] + (b[1] - a[1]) * v) * 1000 >> 0 ) / 1000) + u + ")") : '';
-    rotateStr += a[2]||b[2] ? ("rotateZ(" + (((a[2] + (b[2] - a[2]) * v) * 1000 >> 0 ) / 1000) + u + ")") : '';
-    return rotateStr
-  }
-  function translate(a, b, u, v) {
-    var translateArray = [];
-    translateArray[0] = ( a[0]===b[0] ? b[0] : ( (a[0] + ( b[0] - a[0] ) * v ) * 1000 >> 0 ) / 1000 ) + u;
-    translateArray[1] = a[1]||b[1] ? (( a[1]===b[1] ? b[1] : ( (a[1] + ( b[1] - a[1] ) * v ) * 1000 >> 0 ) / 1000 ) + u) : '0';
-    return ("translate(" + (translateArray.join(',')) + ")");
-  }
-  function rotate(a, b, u, v) {
-    return ("rotate(" + (((a + (b - a) * v) * 1000 >> 0 ) / 1000) + u + ")")
-  }
-  function skew(a, b, u, v) {
-    var skewArray = [];
-    skewArray[0] = ( a[0]===b[0] ? b[0] : ( (a[0] + ( b[0] - a[0] ) * v ) * 1000 >> 0 ) / 1000 ) + u;
-    skewArray[1] = a[1]||b[1] ? (( a[1]===b[1] ? b[1] : ( (a[1] + ( b[1] - a[1] ) * v ) * 1000 >> 0 ) / 1000 ) + u) : '0';
-    return ("skew(" + (skewArray.join(',')) + ")");
-  }
-  function scale (a, b, v) {
-    return ("scale(" + (((a + (b - a) * v) * 1000 >> 0 ) / 1000) + ")");
-  }
-  function onStartTransform(tweenProp){
-    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
-        elem.style[tweenProp] =
-            (a.perspective||b.perspective ? perspective(a.perspective,b.perspective,'px',v) : '')
-          + (a.translate3d ? translate3d(a.translate3d,b.translate3d,'px',v):'')
-          + (a.translate ? translate(a.translate,b.translate,'px',v):'')
-          + (a.rotate3d ? rotate3d(a.rotate3d,b.rotate3d,'deg',v):'')
-          + (a.rotate||b.rotate ? rotate(a.rotate,b.rotate,'deg',v):'')
-          + (a.skew ? skew(a.skew,b.skew,'deg',v):'')
-          + (a.scale||b.scale ? scale(a.scale,b.scale,v):'');
-      };
-    }
-  }
-  var supportedTransformProperties = [
-    'perspective',
-    'translate3d', 'translateX', 'translateY', 'translateZ', 'translate',
-    'rotate3d', 'rotateX', 'rotateY', 'rotateZ', 'rotate',
-    'skewX', 'skewY', 'skew',
-    'scale'
-  ];
-  var baseTransformOps = {
-    component: 'transformFunctions',
+  var matrixComponent = 'transformMatrix';
+  var CSS3Matrix = typeof(DOMMatrix) !== 'undefined' ? DOMMatrix
+                   : typeof(WebKitCSSMatrix) !== 'undefined' ? WebKitCSSMatrix
+                   : typeof(CSSMatrix) !== 'undefined' ? CSSMatrix
+                   : typeof(MSCSSMatrix) !== 'undefined' ? MSCSSMatrix
+                   : null;
+  var onStartTransform = {
+    transform : function(tweenProp) {
+      if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
+        KUTE[tweenProp] = function (elem, a, b, v) {
+          var matrix = new CSS3Matrix(), transformObject = {};
+          for ( var p in b ) {
+            transformObject[p] = p === 'perspective' ? numbers(a[p],b[p],v) : arrays(a[p],b[p],v);
+          }
+          transformObject.perspective && (matrix.m34 = -1/transformObject.perspective);
+          matrix = transformObject.translate3d ? (matrix.translate(transformObject.translate3d[0],transformObject.translate3d[1],transformObject.translate3d[2])) : matrix;
+          matrix = transformObject.rotate3d ? (matrix.rotate(transformObject.rotate3d[0],transformObject.rotate3d[1],transformObject.rotate3d[2])) : matrix;
+          if (transformObject.skew) {
+            matrix = transformObject.skew[0] ? matrix.skewX(transformObject.skew[0]) : matrix;
+            matrix = transformObject.skew[1] ? matrix.skewY(transformObject.skew[1]) : matrix;
+          }
+          matrix = transformObject.scale3d ? (matrix.scale(transformObject.scale3d[0],transformObject.scale3d[1],transformObject.scale3d[2])): matrix;
+          elem.style[tweenProp] = matrix.toString();
+        };
+      }
+    },
+    CSS3Matrix: function(prop) {
+      if (this.valuesEnd.transform){
+        !KUTE[prop] && (KUTE[prop] = CSS3Matrix);
+      }
+    },
+  };
+  var baseMatrixTransform = {
+    component: matrixComponent,
     property: 'transform',
-    subProperties: supportedTransformProperties,
     functions: {onStart: onStartTransform},
     Interpolate: {
-      perspective: perspective,
-      translate3d: translate3d,
-      rotate3d: rotate3d,
-      translate: translate, rotate: rotate, scale: scale, skew: skew
-    },
+      perspective: numbers,
+      translate3d: arrays,
+      rotate3d: arrays,
+      skew: arrays,
+      scale3d: arrays
+    }
   };
 
   function boxModelOnStart(tweenProp){
@@ -452,10 +441,9 @@
   var baseBoxProps = ['top','left','width','height'];
   var baseBoxOnStart = {};
   baseBoxProps.map(function (x){ return baseBoxOnStart[x] = boxModelOnStart; });
-  var baseBoxModelOps = {
-    component: 'boxModelProps',
+  var baseBoxModel = {
+    component: 'baseBoxModel',
     category: 'boxModel',
-    properties: baseBoxProps,
     Interpolate: {numbers: numbers},
     functions: {onStart: baseBoxOnStart}
   };
@@ -467,23 +455,22 @@
       };
     }
   }
-  var baseOpacityOps = {
-    component: 'opacityProperty',
+  var baseOpacity = {
+    component: 'baseOpacity',
     property: 'opacity',
     Interpolate: {numbers: numbers},
     functions: {onStart: onStartOpacity}
   };
 
-  var BaseTransform = new AnimationBase(baseTransformOps);
-  var BaseBoxModel = new AnimationBase(baseBoxModelOps);
-  var BaseOpacity = new AnimationBase(baseOpacityOps);
+  var Transform = new AnimationBase(baseMatrixTransform);
+  var BoxModel = new AnimationBase(baseBoxModel);
+  var Opacity = new AnimationBase(baseOpacity);
   var indexBase = {
     Animation: AnimationBase,
     Components: {
-      BaseTransform: BaseTransform,
-      BaseBoxModel: BaseBoxModel,
-      BaseScroll: BaseScroll,
-      BaseOpacity: BaseOpacity,
+      Transform: Transform,
+      BoxModel: BoxModel,
+      Opacity: Opacity,
     },
     TweenBase: TweenBase,
     fromTo: fromTo,

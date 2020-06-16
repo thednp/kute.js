@@ -361,7 +361,7 @@
       if (multi){
         requestedElem = el instanceof HTMLCollection
                      || el instanceof NodeList
-                     || el instanceof Array && el[0] instanceof Element
+                     || el instanceof Array && el.every(function (x) { return x instanceof Element; })
                       ? el : document.querySelectorAll(el);
       } else {
         requestedElem = el instanceof Element
@@ -444,6 +444,14 @@
     this._startFired = false;
     stop.call(this);
   };
+  TweenBase.prototype.chain = function chain (args) {
+    this._chain = [];
+    this._chain = args.length ? args : this._chain.concat(args);
+    return this;
+  };
+  TweenBase.prototype.stopChainedTweens = function stopChainedTweens () {
+    this._chain && this._chain.length && this._chain.map(function (tw){ return tw.stop(); });
+  };
   TweenBase.prototype.update = function update (time) {
     time = time !== undefined ? time : KUTE.Time();
     var elapsed, progress;
@@ -463,6 +471,9 @@
       }
       this.playing = false;
       this.close();
+      if (this._chain !== undefined && this._chain.length){
+        this._chain.map(function (tw){ return tw.start(); });
+      }
       return false;
     }
     return true;
@@ -578,14 +589,6 @@
           this.valuesStart[reverseProp] = this.valuesRepeat[reverseProp];
         }
     };
-    Tween.prototype.chain = function chain (args) {
-      this._chain = [];
-      this._chain = args.length ? args : this._chain.concat(args);
-      return this;
-    };
-    Tween.prototype.stopChainedTweens = function stopChainedTweens () {
-      this._chain && this._chain.length && this._chain.map(function (tw){ return tw.stop(); });
-    };
     Tween.prototype.update = function update (time) {
       time = time !== undefined ? time : KUTE.Time();
       var elapsed, progress;
@@ -642,7 +645,7 @@
     };
     TweenExtra.prototype.getTotalDuration = function getTotalDuration (){
     };
-    TweenExtra.prototype.callback = function callback (name,fn){
+    TweenExtra.prototype.on = function on (name,fn){
       if ( ['start','stop','update','complete','pause','resume'].indexOf(name) >-1 ) {
         this[("_on" + (name.charAt(0).toUpperCase() + name.slice(1)))] = fn;
       }
@@ -962,6 +965,14 @@
     return { v: intValue, u: theUnit };
   }
 
+  function onStartBgPos(prop){
+    if ( this.valuesEnd[prop] && !KUTE[prop]) {
+      KUTE[prop] = function (elem, a, b, v) {
+        elem.style[prop] = ((numbers(a[0],b[0],v)*100>>0)/100) + "%  " + (((numbers(a[1],b[1],v)*100>>0)/100)) + "%";
+      };
+    }
+  }
+
   function getBgPos(prop){
     return getStyleForProperty(this.element,prop) || defaultValues[prop];
   }
@@ -977,31 +988,21 @@
       return [ trueDimension(posxy[0]).v, trueDimension(posxy[1]).v ];
     }
   }
-  function onStartBgPos(prop){
-    if ( this.valuesEnd[prop] && !KUTE[prop]) {
-      KUTE[prop] = function (elem, a, b, v) {
-        elem.style[prop] = ((numbers(a[0],b[0],v)*100>>0)/100) + "%  " + (((numbers(a[1],b[1],v)*100>>0)/100)) + "%";
-      };
-    }
-  }
   var bgPositionFunctions = {
     prepareStart: getBgPos,
     prepareProperty: prepareBgPos,
     onStart: onStartBgPos
   };
-  var bgPosOps = {
-    component: 'BgPositionProp',
+  var BackgroundPosition = {
+    component: 'backgroundPositionProp',
     property: 'backgroundPosition',
     defaultValue: [50,50],
     Interpolate: {numbers: numbers},
     functions: bgPositionFunctions,
     Util: {trueDimension: trueDimension}
   };
-  Components.BackgroundPositionProperty = bgPosOps;
+  Components.BackgroundPosition = BackgroundPosition;
 
-  var radiusProps = ['borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'];
-  var radiusValues = {};
-  radiusProps.map(function (x) { return radiusValues[x] = 0; });
   function radiusOnStartFn(tweenProp){
     if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
@@ -1009,6 +1010,10 @@
       };
     }
   }
+
+  var radiusProps = ['borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'];
+  var radiusValues = {};
+  radiusProps.map(function (x) { return radiusValues[x] = 0; });
   var radiusOnStart = {};
   radiusProps.forEach(function (tweenProp) {
     radiusOnStart[tweenProp] = radiusOnStartFn;
@@ -1024,8 +1029,8 @@
     prepareProperty: prepareRadius,
     onStart: radiusOnStart
   };
-  var radiusOps = {
-    component: 'borderRadiusProps',
+  var BorderRadius = {
+    component: 'borderRadiusProperties',
     category: 'borderRadius',
     properties: radiusProps,
     defaultValues: radiusValues,
@@ -1033,14 +1038,8 @@
     functions: radiusFunctions,
     Util: {trueDimension: trueDimension}
   };
-  Components.BorderRadiusProperties = radiusOps;
+  Components.BorderRadiusProperties = BorderRadius;
 
-  var boxModelProperties = ['top', 'left', 'width', 'height', 'right', 'bottom', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight',
-                            'padding', 'paddingTop','paddingBottom', 'paddingLeft', 'paddingRight',
-                            'margin', 'marginTop','marginBottom', 'marginLeft', 'marginRight',
-                            'borderWidth', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'outlineWidth'];
-  var boxModelValues = {};
-  boxModelProperties.map(function (x) { return boxModelValues[x] = 0; });
   function boxModelOnStart(tweenProp){
     if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
@@ -1048,6 +1047,23 @@
       };
     }
   }
+  var baseBoxProps = ['top','left','width','height'];
+  var baseBoxOnStart = {};
+  baseBoxProps.map(function (x){ return baseBoxOnStart[x] = boxModelOnStart; });
+  var baseBoxModel = {
+    component: 'baseBoxModel',
+    category: 'boxModel',
+    Interpolate: {numbers: numbers},
+    functions: {onStart: baseBoxOnStart}
+  };
+  Components.BoxModelProperties = baseBoxModel;
+
+  var boxModelProperties = ['top', 'left', 'width', 'height', 'right', 'bottom', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight',
+                            'padding', 'paddingTop','paddingBottom', 'paddingLeft', 'paddingRight',
+                            'margin', 'marginTop','marginBottom', 'marginLeft', 'marginRight',
+                            'borderWidth', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'outlineWidth'];
+  var boxModelValues = {};
+  boxModelProperties.map(function (x) { return boxModelValues[x] = 0; });
   function getBoxModel(tweenProp){
     return getStyleForProperty(this.element,tweenProp) || defaultValues[tweenProp];
   }
@@ -1062,15 +1078,28 @@
     prepareProperty: prepareBoxModel,
     onStart: boxPropsOnStart
   };
-  var boxModelOps = {
-    component: 'boxModelProps',
+  var boxModel = {
+    component: 'boxModelProperties',
     category: 'boxModel',
     properties: boxModelProperties,
     defaultValues: boxModelValues,
     Interpolate: {numbers: numbers},
     functions: boxModelFunctions
   };
-  Components.BoxModelProperties = boxModelOps;
+  Components.BoxModelProperties = boxModel;
+
+  function onStartClip(tweenProp) {
+    if ( this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
+      KUTE[tweenProp] = function (elem, a, b, v) {
+        var h = 0, cl = [];
+        for (h;h<4;h++){
+          var c1 = a[h].v, c2 = b[h].v, cu = b[h].u || 'px';
+          cl[h] = ((numbers(c1,c2,v)*100 >> 0)/100) + cu;
+        }
+        elem.style.clip = "rect(" + cl + ")";
+      };
+    }
+  }
 
   function getClip(tweenProp,v){
     var currentClip = getStyleForProperty(this.element,tweenProp),
@@ -1087,24 +1116,12 @@
       return [ trueDimension(clipValue[0]),  trueDimension(clipValue[1]), trueDimension(clipValue[2]),  trueDimension(clipValue[3]) ];
     }
   }
-  function onStartClip(tweenProp) {
-    if ( this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
-        var h = 0, cl = [];
-        for (h;h<4;h++){
-          var c1 = a[h].v, c2 = b[h].v, cu = b[h].u || 'px';
-          cl[h] = ((numbers(c1,c2,v)*100 >> 0)/100) + cu;
-        }
-        elem.style.clip = "rect(" + cl + ")";
-      };
-    }
-  }
   var clipFunctions = {
     prepareStart: getClip,
     prepareProperty: prepareClip,
     onStart: onStartClip
   };
-  var clipOps = {
+   var clipProperty = {
     component: 'clipProperty',
     property: 'clip',
     defaultValue: [0,0,0,0],
@@ -1112,7 +1129,7 @@
     functions: clipFunctions,
     Util: {trueDimension: trueDimension}
   };
-  Components.ClipProperty = clipOps;
+  Components.ClipProperty = clipProperty;
 
   function hexToRGB (hex) {
     var hexShorthand = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -1155,11 +1172,6 @@
     for (c in b) { _c[c] = c !== 'a' ? (numbers(a[c],b[c],v)>>0 || 0) : (a[c] && b[c]) ? (numbers(a[c],b[c],v) * 100 >> 0 )/100 : null; }
     return !_c.a ? rgb + _c.r + cm + _c.g + cm + _c.b + ep : rgba + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
   }
-  var supportedColors = ['color', 'backgroundColor','borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
-  var defaultColors = {};
-  supportedColors.forEach(function (tweenProp) {
-    defaultColors[tweenProp] = '#000';
-  });
   function onStartColors(tweenProp){
     if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
@@ -1167,6 +1179,12 @@
       };
     }
   }
+
+  var supportedColors = ['color', 'backgroundColor','borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
+  var defaultColors = {};
+  supportedColors.forEach(function (tweenProp) {
+    defaultColors[tweenProp] = '#000';
+  });
   var colorsOnStart = {};
   supportedColors.map(function (x) { return colorsOnStart[x] = onStartColors; });
   function getColor(prop,value) {
@@ -1175,25 +1193,42 @@
   function prepareColor(prop,value) {
     return trueColor(value);
   }
-  var colorsFunctions = {
+  var colorFunctions = {
     prepareStart: getColor,
     prepareProperty: prepareColor,
     onStart: colorsOnStart
   };
-  var colorsOps = {
-    component: 'colorProps',
+  var colorProperties = {
+    component: 'colorProperties',
     category: 'colors',
     properties: supportedColors,
     defaultValues: defaultColors,
     Interpolate: {numbers: numbers,colors: colors},
-    functions: colorsFunctions,
+    functions: colorFunctions,
     Util: {trueColor: trueColor}
   };
-  Components.ColorProperties = colorsOps;
+  Components.ColorProperties = colorProperties;
+
+  var attributes = {};
+  var onStartAttr = {
+    attr : function(tweenProp){
+      if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
+        KUTE[tweenProp] = function (elem, vS, vE, v) {
+          for ( var oneAttr in vE ){
+            KUTE.attributes[oneAttr](elem,oneAttr,vS[oneAttr],vE[oneAttr],v);
+          }
+        };
+      }
+    },
+    attributes : function(tweenProp){
+      if (!KUTE[tweenProp] && this.valuesEnd.attr) {
+        KUTE[tweenProp] = attributes;
+      }
+    }
+  };
 
   var ComponentName = 'htmlAttributes';
   var svgColors = ['fill','stroke','stop-color'];
-  var attributes = {};
   function replaceUppercase (a) { return a.replace(/[A-Z]/g, "-$&").toLowerCase(); }
   function getAttr(tweenProp,value){
     var attrStartValues = {};
@@ -1246,28 +1281,12 @@
     }
     return attributesObject;
   }
-  var onStartAttr = {
-    attr : function(tweenProp){
-      if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-        KUTE[tweenProp] = function (elem, vS, vE, v) {
-          for ( var oneAttr in vE ){
-            KUTE.attributes[oneAttr](elem,oneAttr,vS[oneAttr],vE[oneAttr],v);
-          }
-        };
-      }
-    },
-    attributes : function(tweenProp){
-      if (!KUTE[tweenProp] && this.valuesEnd.attr) {
-        KUTE[tweenProp] = attributes;
-      }
-    }
-  };
   var attrFunctions = {
     prepareStart: getAttr,
     prepareProperty: prepareAttr,
     onStart: onStartAttr
   };
-  var attrOps = {
+  var htmlAttributes = {
     component: ComponentName,
     property: 'attr',
     subProperties: ['fill','stroke','stop-color','fill-opacity','stroke-opacity'],
@@ -1276,7 +1295,7 @@
     functions: attrFunctions,
     Util: { replaceUppercase: replaceUppercase, trueColor: trueColor, trueDimension: trueDimension }
   };
-  Components.HTMLAttributes = attrOps;
+  Components.HTMLAttributes = htmlAttributes;
 
   function dropShadow(a,b,v){
     var params = [], unit = 'px';
@@ -1285,6 +1304,25 @@
     }
     return ("drop-shadow(" + (params.concat( colors(a[3],b[3],v) ).join(' ')) + ")")
   }
+  function onStartFilter(tweenProp) {
+    if ( this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
+      KUTE[tweenProp] = function (elem, a, b, v) {
+        a.dropShadow||b.dropShadow && console.log(dropShadow(a.dropShadow,b.dropShadow,v));
+        elem.style[tweenProp] = (b.url                      ? ("url(" + (b.url) + ")") : '')
+                              + (a.opacity||b.opacity       ? ("opacity(" + (((numbers(a.opacity,b.opacity,v) * 100)>>0)/100) + "%)") : '')
+                              + (a.blur||b.blur             ? ("blur(" + (((numbers(a.blur,b.blur,v) * 100)>>0)/100) + "em)") : '')
+                              + (a.saturate||b.saturate     ? ("saturate(" + (((numbers(a.saturate,b.saturate,v) * 100)>>0)/100) + "%)") : '')
+                              + (a.invert||b.invert         ? ("invert(" + (((numbers(a.invert,b.invert,v) * 100)>>0)/100) + "%)") : '')
+                              + (a.grayscale||b.grayscale   ? ("grayscale(" + (((numbers(a.grayscale,b.grayscale,v) * 100)>>0)/100) + "%)") : '')
+                              + (a.hueRotate||b.hueRotate   ? ("hue-rotate(" + (((numbers(a.hueRotate,b.hueRotate,v) * 100)>>0)/100) + "deg)") : '')
+                              + (a.sepia||b.sepia           ? ("sepia(" + (((numbers(a.sepia,b.sepia,v) * 100)>>0)/100) + "%)") : '')
+                              + (a.brightness||b.brightness ? ("brightness(" + (((numbers(a.brightness,b.brightness,v) * 100)>>0)/100) + "%)") : '')
+                              + (a.contrast||b.contrast     ? ("contrast(" + (((numbers(a.contrast,b.contrast,v) * 100)>>0)/100) + "%)") : '')
+                              + (a.dropShadow||b.dropShadow ? dropShadow(a.dropShadow,b.dropShadow,v) : '');
+      };
+    }
+  }
+
   function replaceDashNamespace(str){
     return str.replace('-r','R').replace('-s','S')
   }
@@ -1348,24 +1386,6 @@
     }
     return filterObject;
   }
-  function onStartFilter(tweenProp) {
-    if ( this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
-        a.dropShadow||b.dropShadow && console.log(dropShadow(a.dropShadow,b.dropShadow,v));
-        elem.style[tweenProp] = (b.url                      ? ("url(" + (b.url) + ")") : '')
-                              + (a.opacity||b.opacity       ? ("opacity(" + (((numbers(a.opacity,b.opacity,v) * 100)>>0)/100) + "%)") : '')
-                              + (a.blur||b.blur             ? ("blur(" + (((numbers(a.blur,b.blur,v) * 100)>>0)/100) + "em)") : '')
-                              + (a.saturate||b.saturate     ? ("saturate(" + (((numbers(a.saturate,b.saturate,v) * 100)>>0)/100) + "%)") : '')
-                              + (a.invert||b.invert         ? ("invert(" + (((numbers(a.invert,b.invert,v) * 100)>>0)/100) + "%)") : '')
-                              + (a.grayscale||b.grayscale   ? ("grayscale(" + (((numbers(a.grayscale,b.grayscale,v) * 100)>>0)/100) + "%)") : '')
-                              + (a.hueRotate||b.hueRotate   ? ("hue-rotate(" + (((numbers(a.hueRotate,b.hueRotate,v) * 100)>>0)/100) + "deg)") : '')
-                              + (a.sepia||b.sepia           ? ("sepia(" + (((numbers(a.sepia,b.sepia,v) * 100)>>0)/100) + "%)") : '')
-                              + (a.brightness||b.brightness ? ("brightness(" + (((numbers(a.brightness,b.brightness,v) * 100)>>0)/100) + "%)") : '')
-                              + (a.contrast||b.contrast     ? ("contrast(" + (((numbers(a.contrast,b.contrast,v) * 100)>>0)/100) + "%)") : '')
-                              + (a.dropShadow||b.dropShadow ? dropShadow(a.dropShadow,b.dropShadow,v) : '');
-      };
-    }
-  }
   function crossCheckFilter(tweenProp){
     if ( this.valuesEnd[tweenProp] ) {
       for (var fn in this.valuesStart[tweenProp]){
@@ -1381,7 +1401,7 @@
     onStart: onStartFilter,
     crossCheck: crossCheckFilter
   };
-  var filterOps = {
+  var filterEffects = {
     component: 'filterEffects',
     property: 'filter',
     defaultValue: {opacity: 100, blur: 0, saturate: 100, grayscale: 0, brightness: 100, contrast: 100, sepia: 0, invert: 0, hueRotate:0, dropShadow: [0,0,0,{r:0,g:0,b:0}], url:''},
@@ -1400,14 +1420,8 @@
     functions: filterFunctions,
     Util: {parseDropShadow: parseDropShadow,parseFilterString: parseFilterString,replaceDashNamespace: replaceDashNamespace,trueColor: trueColor}
   };
-  Components.FilterEffects = filterOps;
+  Components.FilterEffects = filterEffects;
 
-  function getOpacity(tweenProp){
-    return getStyleForProperty(this.element,tweenProp)
-  }
-  function prepareOpacity(tweenProp,value){
-    return parseFloat(value);
-  }
   function onStartOpacity(tweenProp){
     if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
@@ -1415,27 +1429,50 @@
       };
     }
   }
+
+  function getOpacity(tweenProp){
+    return getStyleForProperty(this.element,tweenProp)
+  }
+  function prepareOpacity(tweenProp,value){
+    return parseFloat(value);
+  }
   var opacityFunctions = {
     prepareStart: getOpacity,
     prepareProperty: prepareOpacity,
     onStart: onStartOpacity
   };
-  var opacityOps = {
+  var opacityProperty = {
     component: 'opacityProperty',
     property: 'opacity',
     defaultValue: 1,
     Interpolate: {numbers: numbers},
     functions: opacityFunctions
   };
-  Components.OpacityProperty = opacityOps;
+  Components.OpacityProperty = opacityProperty;
 
-  var percent = function (v, l) { return parseFloat(v) / 100 * l; };
-  var getRectLength = function (el) {
+  function onStartDraw(tweenProp){
+    if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
+      KUTE[tweenProp] = function (elem,a,b,v) {
+        var pathLength = (a.l*100>>0)/100,
+          start = (numbers(a.s,b.s,v)*100>>0)/100,
+          end = (numbers(a.e,b.e,v)*100>>0)/100,
+          offset = 0 - start,
+          dashOne = end+offset;
+        elem.style.strokeDashoffset = offset + "px";
+        elem.style.strokeDasharray = (((dashOne <1 ? 0 : dashOne)*100>>0)/100) + "px, " + pathLength + "px";
+      };
+    }
+  }
+
+  function percent (v,l) {
+    return parseFloat(v) / 100 * l
+  }
+  function getRectLength(el) {
     var w = el.getAttribute('width'),
         h = el.getAttribute('height');
     return (w*2)+(h*2);
-  };
-  var getPolyLength = function (el) {
+  }
+  function getPolyLength(el) {
     var points = el.getAttribute('points').split(' ');
     var len = 0;
     if (points.length > 1) {
@@ -1459,23 +1496,23 @@
       len += el.tagName === 'polygon' ? dist(coord(points[0]), coord(points[points.length - 1])) : 0;
     }
     return len;
-  };
-  var getLineLength = function (el) {
+  }
+  function getLineLength(el) {
     var x1 = el.getAttribute('x1');
     var x2 = el.getAttribute('x2');
     var y1 = el.getAttribute('y1');
     var y2 = el.getAttribute('y2');
     return Math.sqrt(Math.pow( (x2 - x1), 2 )+Math.pow( (y2 - y1), 2 ));
-  };
-  var getCircleLength = function (el) {
+  }
+  function getCircleLength(el) {
     var r = el.getAttribute('r');
     return 2 * Math.PI * r;
-  };
-  var getEllipseLength = function (el) {
+  }
+  function getEllipseLength(el) {
     var rx = el.getAttribute('rx'), ry = el.getAttribute('ry'), len = 2*rx, wid = 2*ry;
     return ((Math.sqrt(.5 * ((len * len) + (wid * wid)))) * (Math.PI * 2)) / 2;
-  };
-  var getTotalLength = function (el) {
+  }
+  function getTotalLength(el) {
     if (/rect/.test(el.tagName)) {
       return getRectLength(el);
     } else if (/circle/.test(el.tagName)) {
@@ -1487,8 +1524,8 @@
     } else if (/line/.test(el.tagName)) {
       return getLineLength(el);
     }
-  };
-  var getDraw = function (e, v) {
+  }
+  function getDraw(e,v) {
     var length = /path|glyph/.test(e.tagName) ? e.getTotalLength() : getTotalLength(e),
         start, end, d, o;
     if ( v instanceof Object ) {
@@ -1504,32 +1541,23 @@
       end = parseFloat(d[0]) + start || length;
     }
     return { s: start, e: end, l: length };
-  };
+  }
+  function resetDraw(elem) {
+    elem.style.strokeDashoffset = "";
+    elem.style.strokeDasharray = "";
+  }
   function getDrawValue(){
     return getDraw(this.element);
   }
   function prepareDraw(a,o){
     return getDraw(this.element,o);
   }
-  function onStartDraw(tweenProp){
-    if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem,a,b,v) {
-        var pathLength = (a.l*100>>0)/100,
-          start = (numbers(a.s,b.s,v)*100>>0)/100,
-          end = (numbers(a.e,b.e,v)*100>>0)/100,
-          offset = 0 - start,
-          dashOne = end+offset;
-        elem.style.strokeDashoffset = offset + "px";
-        elem.style.strokeDasharray = (((dashOne <1 ? 0 : dashOne)*100>>0)/100) + "px, " + pathLength + "px";
-      };
-    }
-  }
   var svgDrawFunctions = {
     prepareStart: getDrawValue,
     prepareProperty: prepareDraw,
     onStart: onStartDraw
   };
-  var svgDrawOps = {
+  var svgDraw = {
     component: 'svgDraw',
     property: 'draw',
     defaultValue: '0% 0%',
@@ -1542,11 +1570,38 @@
       getCircleLength: getCircleLength,
       getEllipseLength: getEllipseLength,
       getTotalLength: getTotalLength,
+      resetDraw: resetDraw,
       getDraw: getDraw,
       percent: percent
     }
   };
-  Components.SVGDraw = svgDrawOps;
+  Components.SVGDraw = svgDraw;
+
+  function toPathString(pathArray) {
+    var newPath = pathArray.map( function (c) {
+      if (typeof(c) === 'string') {
+        return c
+      } else {
+        var c0 = c.shift();
+        return c0 + c.join(',')
+      }
+    });
+    return newPath.join('');
+  }
+  function onStartCubicMorph(tweenProp){
+    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
+      KUTE[tweenProp] = function(elem,a,b,v){
+        var curve = [], path1 = a.curve, path2 = b.curve;
+        for(var i=0, l=path2.length; i<l; i++) {
+          curve.push([path1[i][0]]);
+          for(var j=1,l2=path1[i].length;j<l2;j++) {
+            curve[i].push( (numbers(path1[i][j], path2[i][j], v) * 1000 >>0)/1000 );
+          }
+        }
+        elem.setAttribute("d", v === 1 ? b.original : toPathString(curve) );
+      };
+    }
+  }
 
   var INVALID_INPUT = 'Invalid path value';
   function catmullRom2bezier(crp, z) {
@@ -2057,17 +2112,6 @@
         newPath = rotations[computedIndex];
     return newPath
   }
-  function toPathString(pathArray) {
-    var newPath = pathArray.map( function (c) {
-      if (typeof(c) === 'string') {
-        return c
-      } else {
-        var c0 = c.shift();
-        return c0 + c.join(',')
-      }
-    });
-    return newPath.join('');
-  }
   function getCubicMorph(tweenProp){
     return this.element.getAttribute('d');
   }
@@ -2105,27 +2149,13 @@
       }
     }
   }
-  function onStartCubicMorph(tweenProp){
-    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-      KUTE[tweenProp] = function(elem,a,b,v){
-        var curve = [], path1 = a.curve, path2 = b.curve;
-        for(var i=0, l=path2.length; i<l; i++) {
-          curve.push([path1[i][0]]);
-          for(var j=1,l2=path1[i].length;j<l2;j++) {
-            curve[i].push( (numbers(path1[i][j], path2[i][j], v) * 1000 >>0)/1000 );
-          }
-        }
-        elem.setAttribute("d", v === 1 ? b.original : toPathString(curve) );
-      };
-    }
-  }
   var svgCubicMorphFunctions = {
     prepareStart: getCubicMorph,
     prepareProperty: prepareCubicMorph,
     onStart: onStartCubicMorph,
     crossCheck: crossCheckCubicMorph
   };
-  var svgCubicMorphOps = {
+  var svgCubicMorph = {
     component: 'svgCubicMorph',
     property: 'path',
     defaultValue: [],
@@ -2138,7 +2168,38 @@
       getRotationSegments: getRotationSegments, reverseCurve: reverseCurve, getSegments: getSegments, createPath: createPath
     }
   };
-  Components.SVGCubicMorph = svgCubicMorphOps;
+  Components.SVGCubicMorph = svgCubicMorph;
+
+  function svgTransformOnStart (tweenProp){
+    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
+      KUTE[tweenProp] = function (l, a, b, v) {
+        var x = 0;
+        var y = 0;
+        var tmp;
+        var deg = Math.PI/180;
+        var scale = 'scale' in b ? numbers(a.scale,b.scale,v) : 1;
+        var rotate = 'rotate' in b ? numbers(a.rotate,b.rotate,v) : 0;
+        var sin = Math.sin(rotate*deg);
+        var cos = Math.cos(rotate*deg);
+        var skewX = 'skewX' in b ? numbers(a.skewX,b.skewX,v) : 0;
+        var skewY = 'skewY' in b ? numbers(a.skewY,b.skewY,v) : 0;
+        var complex = rotate||skewX||skewY||scale!==1 || 0;
+        x -= complex ? b.origin[0] : 0;y -= complex ? b.origin[1] : 0;
+        x *= scale;y *= scale;
+        y += skewY ? x*Math.tan(skewY*deg) : 0;x += skewX ? y*Math.tan(skewX*deg) : 0;
+        tmp = cos*x - sin*y;
+        y = rotate ? sin*x + cos*y : y;x = rotate ? tmp : x;
+        x += 'translate' in b ? numbers(a.translate[0],b.translate[0],v) : 0;
+        y += 'translate' in b ? numbers(a.translate[1],b.translate[1],v) : 0;
+        x += complex ? b.origin[0] : 0;y += complex ? b.origin[1] : 0;
+        l.setAttribute('transform', ( x||y ? (("translate(" + ((x*1000>>0)/1000) + (y ? (("," + ((y*1000>>0)/1000))) : '') + ")")) : '' )
+                                   +( rotate ? ("rotate(" + ((rotate*1000>>0)/1000) + ")") : '' )
+                                   +( skewX ? ("skewX(" + ((skewX*1000>>0)/1000) + ")") : '' )
+                                   +( skewY ? ("skewY(" + ((skewY*1000>>0)/1000) + ")") : '' )
+                                   +( scale !== 1 ? ("scale(" + ((scale*1000>>0)/1000) + ")") : '' ) );
+      };
+    }
+  }
 
   function parseStringOrigin (origin, ref) {
     var x = ref.x;
@@ -2182,36 +2243,6 @@
     }
     return svgTransformObject;
   }
-  function svgTransformOnStart (tweenProp){
-    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-      KUTE[tweenProp] = function (l, a, b, v) {
-        var x = 0;
-        var y = 0;
-        var tmp;
-        var deg = Math.PI/180;
-        var scale = 'scale' in b ? numbers(a.scale,b.scale,v) : 1;
-        var rotate = 'rotate' in b ? numbers(a.rotate,b.rotate,v) : 0;
-        var sin = Math.sin(rotate*deg);
-        var cos = Math.cos(rotate*deg);
-        var skewX = 'skewX' in b ? numbers(a.skewX,b.skewX,v) : 0;
-        var skewY = 'skewY' in b ? numbers(a.skewY,b.skewY,v) : 0;
-        var complex = rotate||skewX||skewY||scale!==1 || 0;
-        x -= complex ? b.origin[0] : 0;y -= complex ? b.origin[1] : 0;
-        x *= scale;y *= scale;
-        y += skewY ? x*Math.tan(skewY*deg) : 0;x += skewX ? y*Math.tan(skewX*deg) : 0;
-        tmp = cos*x - sin*y;
-        y = rotate ? sin*x + cos*y : y;x = rotate ? tmp : x;
-        x += 'translate' in b ? numbers(a.translate[0],b.translate[0],v) : 0;
-        y += 'translate' in b ? numbers(a.translate[1],b.translate[1],v) : 0;
-        x += complex ? b.origin[0] : 0;y += complex ? b.origin[1] : 0;
-        l.setAttribute('transform', ( x||y ? (("translate(" + ((x*1000>>0)/1000) + (y ? (("," + ((y*1000>>0)/1000))) : '') + ")")) : '' )
-                                   +( rotate ? ("rotate(" + ((rotate*1000>>0)/1000) + ")") : '' )
-                                   +( skewX ? ("skewX(" + ((skewX*1000>>0)/1000) + ")") : '' )
-                                   +( skewY ? ("skewY(" + ((skewY*1000>>0)/1000) + ")") : '' )
-                                   +( scale !== 1 ? ("scale(" + ((scale*1000>>0)/1000) + ")") : '' ) );
-      };
-    }
-  }
   function prepareSvgTransform(p,v){
     return parseTransformSVG.call(this,p,v);
   }
@@ -2254,7 +2285,7 @@
     onStart: svgTransformOnStart,
     crossCheck: svgTransformCrossCheck
   };
-  var svgTransformOps = {
+  var svgTransform = {
     component: 'svgTransformProperty',
     property: 'svgTransform',
     defaultOptions: {transformOrigin:'50% 50%'},
@@ -2263,7 +2294,7 @@
     functions: svgTransformFunctions,
     Util: { parseStringOrigin: parseStringOrigin, parseTransformString: parseTransformString, parseTransformSVG: parseTransformSVG }
   };
-  Components.SVGTransformProperty = svgTransformOps;
+  Components.SVGTransformProperty = svgTransform;
 
   function on (element, event, handler, options) {
     options = options || false;
@@ -2329,16 +2360,10 @@
       targets.st.style.pointerEvents = '';
     }
   }
-  function getScroll(){
-    this.element = ('scroll' in this.valuesEnd) && (!this.element || this.element === window) ? scrollContainer : this.element;
-    scrollIn.call(this);
-    return this.element === scrollContainer ? (window.pageYOffset || scrollContainer.scrollTop) : this.element.scrollTop;
-  }
-  function prepareScroll(prop,value){
-    return parseInt(value);
-  }
   function onStartScroll(tweenProp){
     if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
+      this.element = ('scroll' in this.valuesEnd) && (!this.element || this.element === window) ? scrollContainer : this.element;
+      scrollIn.call(this);
       KUTE[tweenProp] = function (elem, a, b, v) {
         elem.scrollTop = (numbers(a,b,v))>>0;
       };
@@ -2347,21 +2372,44 @@
   function onCompleteScroll(tweenProp){
     scrollOut.call(this);
   }
+
+  function getScroll(){
+    this.element = ('scroll' in this.valuesEnd) && (!this.element || this.element === window) ? scrollContainer : this.element;
+    return this.element === scrollContainer ? (window.pageYOffset || scrollContainer.scrollTop) : this.element.scrollTop;
+  }
+  function prepareScroll(prop,value){
+    return parseInt(value);
+  }
   var scrollFunctions = {
     prepareStart: getScroll,
     prepareProperty: prepareScroll,
     onStart: onStartScroll,
     onComplete: onCompleteScroll
   };
-  var scrollOps = {
+  var scrollProperty = {
     component: 'scrollProperty',
     property: 'scroll',
     defaultValue: 0,
     Interpolate: {numbers: numbers},
     functions: scrollFunctions,
-    Util: { preventScroll: preventScroll, scrollIn: scrollIn, scrollOut: scrollOut, scrollContainer: scrollContainer, passiveHandler: passiveHandler, getScrollTargets: getScrollTargets }
+    Util: { preventScroll: preventScroll, scrollIn: scrollIn, scrollOut: scrollOut, getScrollTargets: getScrollTargets }
   };
-  Components.ScrollProperty = scrollOps;
+  Components.ScrollProperty = scrollProperty;
+
+  function onStartShadow(tweenProp) {
+    if ( this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
+      KUTE[tweenProp] = function (elem, a, b, v) {
+        var params = [], unit = 'px', sl = tweenProp === 'textShadow' ? 3 : 4,
+            colA = sl === 3 ? a[3] : a[4], colB = sl === 3 ? b[3] : b[4],
+            inset = a[5] && a[5] !== 'none' || b[5] && b[5] !== 'none' ? ' inset' : false;
+        for (var i=0; i<sl; i++){
+          params.push( ((numbers( a[i], b[i], v ) * 1000 >> 0) / 1000) + unit );
+        }
+        elem.style[tweenProp] = inset ? colors(colA,colB,v) + params.join(' ') + inset
+                                      : colors(colA,colB,v) + params.join(' ');
+      };
+    }
+  }
 
   var shadowProps = ['boxShadow','textShadow'];
   function processShadowArray (shadow,tweenProp){
@@ -2400,20 +2448,6 @@
     }
     return value;
   }
-  function onStartShadow(tweenProp) {
-    if ( this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
-        var params = [], unit = 'px', sl = tweenProp === 'textShadow' ? 3 : 4,
-            colA = sl === 3 ? a[3] : a[4], colB = sl === 3 ? b[3] : b[4],
-            inset = a[5] && a[5] !== 'none' || b[5] && b[5] !== 'none' ? ' inset' : false;
-        for (var i=0; i<sl; i++){
-          params.push( ((numbers( a[i], b[i], v ) * 1000 >> 0) / 1000) + unit );
-        }
-        elem.style[tweenProp] = inset ? colors(colA,colB,v) + params.join(' ') + inset
-                                      : colors(colA,colB,v) + params.join(' ');
-      };
-    }
-  }
   var shadowPropOnStart = {};
   shadowProps.map(function (x){ return shadowPropOnStart[x]=onStartShadow; });
   var shadowFunctions = {
@@ -2421,7 +2455,7 @@
     prepareProperty: prepareShadow,
     onStart: shadowPropOnStart
   };
-  var shadowOps = {
+  var shadowProperties = {
     component: 'shadowProperties',
     properties: shadowProps,
     defaultValues: {boxShadow :'0px 0px 0px 0px rgb(0,0,0)', textShadow: '0px 0px 0px rgb(0,0,0)'},
@@ -2429,18 +2463,19 @@
     functions: shadowFunctions,
     Util: { processShadowArray: processShadowArray, trueColor: trueColor }
   };
-  Components.ShadowProperties = shadowOps;
+  Components.ShadowProperties = shadowProperties;
 
-  var textProperties = ['fontSize','lineHeight','letterSpacing','wordSpacing'];
-  var textOnStart = {};
   function textPropOnStart(tweenProp){
     if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
+      KUTE[tweenProp] = function (elem,a,b,v) {
         elem.style[tweenProp] = units(a.v,b.v,b.u,v);
       };
     }
   }
-  textProperties.forEach(function (tweenProp) {
+
+  var textProps = ['fontSize','lineHeight','letterSpacing','wordSpacing'];
+  var textOnStart = {};
+  textProps.forEach(function (tweenProp) {
     textOnStart[tweenProp] = textPropOnStart;
   });
   function getTextProp(prop) {
@@ -2454,16 +2489,66 @@
     prepareProperty: prepareTextProp,
     onStart: textOnStart
   };
-  var textOps = {
+  var textProperties = {
     component: 'textProperties',
-    category: 'textProps',
-    properties: textProperties,
+    category: 'textProperties',
+    properties: textProps,
     defaultValues: {fontSize:0,lineHeight:0,letterSpacing:0,wordSpacing:0},
     Interpolate: {units: units},
     functions: textPropFunctions,
     Util: {trueDimension: trueDimension}
   };
-  Components.TextProperties = textOps;
+  Components.TextProperties = textProperties;
+
+  var lowerCaseAlpha = String("abcdefghijklmnopqrstuvwxyz").split(""),
+      upperCaseAlpha = String("abcdefghijklmnopqrstuvwxyz").toUpperCase().split(""),
+      nonAlpha = String("~!@#$%^&*()_+{}[];'<>,./?\=-").split(""),
+      numeric = String("0123456789").split(""),
+      alphaNumeric = lowerCaseAlpha.concat(upperCaseAlpha,numeric),
+      allTypes = alphaNumeric.concat(nonAlpha);
+  var charSet = {
+    alpha: lowerCaseAlpha,
+    upper: upperCaseAlpha,
+    symbols: nonAlpha,
+    numeric: numeric,
+    alphanumeric: alphaNumeric,
+    all: allTypes,
+  };
+  var onStartWrite = {
+    text: function(tweenProp){
+      if ( !KUTE[tweenProp] && this.valuesEnd[tweenProp] ) {
+        var chars = this._textChars,
+            charsets = chars in charSet ? charSet[chars]
+                    : chars && chars.length ? chars
+                    : charSet[defaultOptions.textChars];
+        KUTE[tweenProp] = function(elem,a,b,v) {
+          var initialText = '',
+              endText = '',
+              firstLetterA = a.substring(0),
+              firstLetterB = b.substring(0),
+              pointer = charsets[(Math.random() * charsets.length)>>0];
+          if (a === ' ') {
+            endText         = firstLetterB.substring(Math.min(v * firstLetterB.length, firstLetterB.length)>>0, 0 );
+            elem.innerHTML = v < 1 ? ( ( endText + pointer  ) ) : (b === '' ? ' ' : b);
+          } else if (b === ' ') {
+            initialText     = firstLetterA.substring(0, Math.min((1-v) * firstLetterA.length, firstLetterA.length)>>0 );
+            elem.innerHTML = v < 1 ? ( ( initialText + pointer  ) ) : (b === '' ? ' ' : b);
+          } else {
+            initialText     = firstLetterA.substring(firstLetterA.length, Math.min(v * firstLetterA.length, firstLetterA.length)>>0 );
+            endText         = firstLetterB.substring(0,                   Math.min(v * firstLetterB.length, firstLetterB.length)>>0 );
+            elem.innerHTML = v < 1 ? ( (endText + pointer + initialText) ) : (b === '' ? ' ' : b);
+          }
+        };
+      }
+    },
+    number: function(tweenProp) {
+      if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
+        KUTE[tweenProp] = function (elem, a, b, v) {
+          elem.innerHTML = numbers(a, b, v)>>0;
+        };
+      }
+    }
+  };
 
   function wrapContentsSpan(el,classNAME){
     var textWriteWrapper;
@@ -2556,20 +2641,6 @@
     };
     return textTween
   }
-  var lowerCaseAlpha = String("abcdefghijklmnopqrstuvwxyz").split(""),
-      upperCaseAlpha = String("abcdefghijklmnopqrstuvwxyz").toUpperCase().split(""),
-      nonAlpha = String("~!@#$%^&*()_+{}[];'<>,./?\=-").split(""),
-      numeric = String("0123456789").split(""),
-      alphaNumeric = lowerCaseAlpha.concat(upperCaseAlpha,numeric),
-      allTypes = alphaNumeric.concat(nonAlpha);
-  var charSet = {
-    alpha: lowerCaseAlpha,
-    upper: upperCaseAlpha,
-    symbols: nonAlpha,
-    numeric: numeric,
-    alphanumeric: alphaNumeric,
-    all: allTypes,
-  };
   function getWrite(tweenProp,value){
     return this.element.innerHTML;
   }
@@ -2580,47 +2651,12 @@
       return value === '' ? ' ' : value
     }
   }
-  var onStartWrite = {
-    text: function(tweenProp){
-      if ( !KUTE[tweenProp] && this.valuesEnd[tweenProp] ) {
-        var chars = this._textChars,
-            charsets = chars in charSet ? charSet[chars]
-                    : chars && chars.length ? chars
-                    : charSet[defaultOptions.textChars];
-        KUTE[tweenProp] = function(elem,a,b,v) {
-          var initialText = '',
-              endText = '',
-              firstLetterA = a.substring(0),
-              firstLetterB = b.substring(0),
-              pointer = charsets[(Math.random() * charsets.length)>>0];
-          if (a === ' ') {
-            endText         = firstLetterB.substring(Math.min(v * firstLetterB.length, firstLetterB.length)>>0, 0 );
-            elem.innerHTML = v < 1 ? ( ( endText + pointer  ) ) : (b === '' ? ' ' : b);
-          } else if (b === ' ') {
-            initialText     = firstLetterA.substring(0, Math.min((1-v) * firstLetterA.length, firstLetterA.length)>>0 );
-            elem.innerHTML = v < 1 ? ( ( initialText + pointer  ) ) : (b === '' ? ' ' : b);
-          } else {
-            initialText     = firstLetterA.substring(firstLetterA.length, Math.min(v * firstLetterA.length, firstLetterA.length)>>0 );
-            endText         = firstLetterB.substring(0,                   Math.min(v * firstLetterB.length, firstLetterB.length)>>0 );
-            elem.innerHTML = v < 1 ? ( (endText + pointer + initialText) ) : (b === '' ? ' ' : b);
-          }
-        };
-      }
-    },
-    number: function(tweenProp) {
-      if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-        KUTE[tweenProp] = function (elem, a, b, v) {
-          elem.innerHTML = numbers(a, b, v)>>0;
-        };
-      }
-    }
-  };
   var textWriteFunctions = {
     prepareStart: getWrite,
     prepareProperty: prepareText,
     onStart: onStartWrite
   };
-  var textWriteOps = {
+  var textWrite = {
     component: 'textWriteProperties',
     category: 'textWrite',
     properties: ['text','number'],
@@ -2630,18 +2666,45 @@
     functions: textWriteFunctions,
     Util: { charSet: charSet, createTextTweens: createTextTweens }
   };
-  Components.TextWriteProperties = textWriteOps;
+  Components.TextWriteProperties = textWrite;
 
-  var componentName = 'transformMatrix';
   var CSS3Matrix = typeof(DOMMatrix) !== 'undefined' ? DOMMatrix
-                          : typeof(WebKitCSSMatrix) !== 'undefined' ? WebKitCSSMatrix
-                          : typeof(CSSMatrix) !== 'undefined' ? CSSMatrix
-                          : typeof(MSCSSMatrix) !== 'undefined' ? MSCSSMatrix
-                          : null;
+                   : typeof(WebKitCSSMatrix) !== 'undefined' ? WebKitCSSMatrix
+                   : typeof(CSSMatrix) !== 'undefined' ? CSSMatrix
+                   : typeof(MSCSSMatrix) !== 'undefined' ? MSCSSMatrix
+                   : null;
+  var onStartTransform = {
+    transform : function(tweenProp) {
+      if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
+        KUTE[tweenProp] = function (elem, a, b, v) {
+          var matrix = new CSS3Matrix(), transformObject = {};
+          for ( var p in b ) {
+            transformObject[p] = p === 'perspective' ? numbers(a[p],b[p],v) : arrays(a[p],b[p],v);
+          }
+          transformObject.perspective && (matrix.m34 = -1/transformObject.perspective);
+          matrix = transformObject.translate3d ? (matrix.translate(transformObject.translate3d[0],transformObject.translate3d[1],transformObject.translate3d[2])) : matrix;
+          matrix = transformObject.rotate3d ? (matrix.rotate(transformObject.rotate3d[0],transformObject.rotate3d[1],transformObject.rotate3d[2])) : matrix;
+          if (transformObject.skew) {
+            matrix = transformObject.skew[0] ? matrix.skewX(transformObject.skew[0]) : matrix;
+            matrix = transformObject.skew[1] ? matrix.skewY(transformObject.skew[1]) : matrix;
+          }
+          matrix = transformObject.scale3d ? (matrix.scale(transformObject.scale3d[0],transformObject.scale3d[1],transformObject.scale3d[2])): matrix;
+          elem.style[tweenProp] = matrix.toString();
+        };
+      }
+    },
+    CSS3Matrix: function(prop) {
+      if (this.valuesEnd.transform){
+        !KUTE[prop] && (KUTE[prop] = CSS3Matrix);
+      }
+    },
+  };
+
+  var matrixComponent = 'transformMatrix';
   function getTransform(tweenProp, value){
     var transformObject = {};
-    if (this.element[componentName]) {
-      var currentValue = this.element[componentName];
+    if (this.element[matrixComponent]) {
+      var currentValue = this.element[matrixComponent];
       for (var vS in currentValue) {
         transformObject[vS] = currentValue[vS];
       }
@@ -2693,38 +2756,11 @@
       console.error(("KUTE.js - \"" + value + "\" is not valid/supported transform function"));
     }
   }
-  var onStartTransform = {
-    transform : function(tweenProp) {
-      if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-        KUTE[tweenProp] = function (elem, a, b, v) {
-          var matrix = new CSS3Matrix();
-          var transformObject = {};
-          for ( var p in b ) {
-            transformObject[p] = p === 'perspective' ? numbers(a[p],b[p],v) : arrays(a[p],b[p],v);
-          }
-          transformObject.perspective && (matrix.m34 = -1/transformObject.perspective);
-          matrix = transformObject.translate3d ? (matrix.translate(transformObject.translate3d[0],transformObject.translate3d[1],transformObject.translate3d[2])) : matrix;
-          matrix = transformObject.rotate3d ? (matrix.rotate(transformObject.rotate3d[0],transformObject.rotate3d[1],transformObject.rotate3d[2])) : matrix;
-          if (transformObject.skew) {
-            matrix = transformObject.skew[0] ? matrix.skewX(transformObject.skew[0]) : matrix;
-            matrix = transformObject.skew[1] ? matrix.skewY(transformObject.skew[1]) : matrix;
-          }
-          matrix = transformObject.scale3d ? (matrix.scale(transformObject.scale3d[0],transformObject.scale3d[1],transformObject.scale3d[2])): matrix;
-          elem.style[tweenProp] = matrix.toString();
-        };
-      }
-    },
-    CSS3Matrix: function(prop) {
-      if (this.valuesEnd.transform){
-        !KUTE[prop] && (KUTE[prop] = CSS3Matrix);
-      }
-    },
-  };
   function onCompleteTransform(tweenProp){
     if (this.valuesEnd[tweenProp]) {
-      this.element[componentName] = {};
+      this.element[matrixComponent] = {};
       for (var tf in this.valuesEnd[tweenProp]){
-        this.element[componentName][tf] = this.valuesEnd[tweenProp][tf];
+        this.element[matrixComponent][tf] = this.valuesEnd[tweenProp][tf];
       }
     }
   }
@@ -2742,8 +2778,8 @@
     onComplete: onCompleteTransform,
     crossCheck: crossCheckTransform
   };
-  var matrixTransformOps = {
-    component: componentName,
+  var matrixTransform = {
+    component: matrixComponent,
     property: 'transform',
     defaultValue: {perspective:400,translate3d:[0,0,0],translateX:0,translateY:0,translateZ:0,rotate3d:[0,0,0],rotateX:0,rotateY:0,rotateZ:0,skew:[0,0],skewX:0,skewY:0,scale3d:[1,1,1],scaleX:1,scaleY:1,scaleZ:1},
     functions: matrixFunctions,
@@ -2755,7 +2791,7 @@
       scale3d: arrays
     }
   };
-  Components.TransformMatrix = matrixTransformOps;
+  Components.TransformMatrix = matrixTransform;
 
   for (var component in Components) {
     var compOps = Components[component];
