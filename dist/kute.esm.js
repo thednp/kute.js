@@ -355,7 +355,7 @@ function selector(el, multi) {
     if (multi){
       requestedElem = el instanceof HTMLCollection
                    || el instanceof NodeList
-                   || el instanceof Array && el[0] instanceof Element
+                   || el instanceof Array && el.every(function (x) { return x instanceof Element; })
                     ? el : document.querySelectorAll(el);
     } else {
       requestedElem = el instanceof Element
@@ -438,6 +438,14 @@ TweenBase.prototype.close = function close () {
   this._startFired = false;
   stop.call(this);
 };
+TweenBase.prototype.chain = function chain (args) {
+  this._chain = [];
+  this._chain = args.length ? args : this._chain.concat(args);
+  return this;
+};
+TweenBase.prototype.stopChainedTweens = function stopChainedTweens () {
+  this._chain && this._chain.length && this._chain.map(function (tw){ return tw.stop(); });
+};
 TweenBase.prototype.update = function update (time) {
   time = time !== undefined ? time : KUTE.Time();
   var elapsed, progress;
@@ -457,6 +465,9 @@ TweenBase.prototype.update = function update (time) {
     }
     this.playing = false;
     this.close();
+    if (this._chain !== undefined && this._chain.length){
+      this._chain.map(function (tw){ return tw.start(); });
+    }
     return false;
   }
   return true;
@@ -571,14 +582,6 @@ var Tween = (function (TweenBase) {
         this.valuesEnd[reverseProp] = tmp;
         this.valuesStart[reverseProp] = this.valuesRepeat[reverseProp];
       }
-  };
-  Tween.prototype.chain = function chain (args) {
-    this._chain = [];
-    this._chain = args.length ? args : this._chain.concat(args);
-    return this;
-  };
-  Tween.prototype.stopChainedTweens = function stopChainedTweens () {
-    this._chain && this._chain.length && this._chain.map(function (tw){ return tw.stop(); });
   };
   Tween.prototype.update = function update (time) {
     time = time !== undefined ? time : KUTE.Time();
@@ -798,6 +801,17 @@ function boxModelOnStart(tweenProp){
     };
   }
 }
+var baseBoxProps = ['top','left','width','height'];
+var baseBoxOnStart = {};
+baseBoxProps.map(function (x){ return baseBoxOnStart[x] = boxModelOnStart; });
+var baseBoxModel = {
+  component: 'baseBoxModel',
+  category: 'boxModel',
+  Interpolate: {numbers: numbers},
+  functions: {onStart: baseBoxOnStart}
+};
+Components.BoxModelProperties = baseBoxModel;
+
 function getBoxModel(tweenProp){
   return getStyleForProperty(this.element,tweenProp) || defaultValues[tweenProp];
 }
@@ -814,8 +828,8 @@ var essentialBoxModelFunctions = {
   prepareProperty: prepareBoxModel,
   onStart: essentialBoxOnStart
 };
-var essentialBoxModelOps = {
-  component: 'boxModelProps',
+var essentialBoxModel = {
+  component: 'essentialBoxModel',
   category: 'boxModel',
   properties: ['top','left','width','height'],
   defaultValues: essentialBoxPropsValues,
@@ -823,7 +837,7 @@ var essentialBoxModelOps = {
   functions: essentialBoxModelFunctions,
   Util:{trueDimension: trueDimension}
 };
-Components.BoxModelEssentialProperties = essentialBoxModelOps;
+Components.BoxModelEssential = essentialBoxModel;
 
 function hexToRGB (hex) {
   var hexShorthand = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -866,11 +880,6 @@ function colors(a, b, v) {
   for (c in b) { _c[c] = c !== 'a' ? (numbers(a[c],b[c],v)>>0 || 0) : (a[c] && b[c]) ? (numbers(a[c],b[c],v) * 100 >> 0 )/100 : null; }
   return !_c.a ? rgb + _c.r + cm + _c.g + cm + _c.b + ep : rgba + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
 }
-var supportedColors = ['color', 'backgroundColor','borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
-var defaultColors = {};
-supportedColors.forEach(function (tweenProp) {
-  defaultColors[tweenProp] = '#000';
-});
 function onStartColors(tweenProp){
   if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
     KUTE[tweenProp] = function (elem, a, b, v) {
@@ -878,6 +887,12 @@ function onStartColors(tweenProp){
     };
   }
 }
+
+var supportedColors = ['color', 'backgroundColor','borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
+var defaultColors = {};
+supportedColors.forEach(function (tweenProp) {
+  defaultColors[tweenProp] = '#000';
+});
 var colorsOnStart = {};
 supportedColors.map(function (x) { return colorsOnStart[x] = onStartColors; });
 function getColor(prop,value) {
@@ -886,25 +901,42 @@ function getColor(prop,value) {
 function prepareColor(prop,value) {
   return trueColor(value);
 }
-var colorsFunctions = {
+var colorFunctions = {
   prepareStart: getColor,
   prepareProperty: prepareColor,
   onStart: colorsOnStart
 };
-var colorsOps = {
-  component: 'colorProps',
+var colorProperties = {
+  component: 'colorProperties',
   category: 'colors',
   properties: supportedColors,
   defaultValues: defaultColors,
   Interpolate: {numbers: numbers,colors: colors},
-  functions: colorsFunctions,
+  functions: colorFunctions,
   Util: {trueColor: trueColor}
 };
-Components.ColorProperties = colorsOps;
+Components.ColorProperties = colorProperties;
+
+var attributes = {};
+var onStartAttr = {
+  attr : function(tweenProp){
+    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
+      KUTE[tweenProp] = function (elem, vS, vE, v) {
+        for ( var oneAttr in vE ){
+          KUTE.attributes[oneAttr](elem,oneAttr,vS[oneAttr],vE[oneAttr],v);
+        }
+      };
+    }
+  },
+  attributes : function(tweenProp){
+    if (!KUTE[tweenProp] && this.valuesEnd.attr) {
+      KUTE[tweenProp] = attributes;
+    }
+  }
+};
 
 var ComponentName = 'htmlAttributes';
 var svgColors = ['fill','stroke','stop-color'];
-var attributes = {};
 function replaceUppercase (a) { return a.replace(/[A-Z]/g, "-$&").toLowerCase(); }
 function getAttr(tweenProp,value){
   var attrStartValues = {};
@@ -957,28 +989,12 @@ function prepareAttr(tweenProp,attrObj){
   }
   return attributesObject;
 }
-var onStartAttr = {
-  attr : function(tweenProp){
-    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-      KUTE[tweenProp] = function (elem, vS, vE, v) {
-        for ( var oneAttr in vE ){
-          KUTE.attributes[oneAttr](elem,oneAttr,vS[oneAttr],vE[oneAttr],v);
-        }
-      };
-    }
-  },
-  attributes : function(tweenProp){
-    if (!KUTE[tweenProp] && this.valuesEnd.attr) {
-      KUTE[tweenProp] = attributes;
-    }
-  }
-};
 var attrFunctions = {
   prepareStart: getAttr,
   prepareProperty: prepareAttr,
   onStart: onStartAttr
 };
-var attrOps = {
+var htmlAttributes = {
   component: ComponentName,
   property: 'attr',
   subProperties: ['fill','stroke','stop-color','fill-opacity','stroke-opacity'],
@@ -987,14 +1003,8 @@ var attrOps = {
   functions: attrFunctions,
   Util: { replaceUppercase: replaceUppercase, trueColor: trueColor, trueDimension: trueDimension }
 };
-Components.HTMLAttributes = attrOps;
+Components.HTMLAttributes = htmlAttributes;
 
-function getOpacity(tweenProp){
-  return getStyleForProperty(this.element,tweenProp)
-}
-function prepareOpacity(tweenProp,value){
-  return parseFloat(value);
-}
 function onStartOpacity(tweenProp){
   if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
     KUTE[tweenProp] = function (elem, a, b, v) {
@@ -1002,19 +1012,76 @@ function onStartOpacity(tweenProp){
     };
   }
 }
+
+function getOpacity(tweenProp){
+  return getStyleForProperty(this.element,tweenProp)
+}
+function prepareOpacity(tweenProp,value){
+  return parseFloat(value);
+}
 var opacityFunctions = {
   prepareStart: getOpacity,
   prepareProperty: prepareOpacity,
   onStart: onStartOpacity
 };
-var opacityOps = {
+var opacityProperty = {
   component: 'opacityProperty',
   property: 'opacity',
   defaultValue: 1,
   Interpolate: {numbers: numbers},
   functions: opacityFunctions
 };
-Components.OpacityProperty = opacityOps;
+Components.OpacityProperty = opacityProperty;
+
+var lowerCaseAlpha = String("abcdefghijklmnopqrstuvwxyz").split(""),
+    upperCaseAlpha = String("abcdefghijklmnopqrstuvwxyz").toUpperCase().split(""),
+    nonAlpha = String("~!@#$%^&*()_+{}[];'<>,./?\=-").split(""),
+    numeric = String("0123456789").split(""),
+    alphaNumeric = lowerCaseAlpha.concat(upperCaseAlpha,numeric),
+    allTypes = alphaNumeric.concat(nonAlpha);
+var charSet = {
+  alpha: lowerCaseAlpha,
+  upper: upperCaseAlpha,
+  symbols: nonAlpha,
+  numeric: numeric,
+  alphanumeric: alphaNumeric,
+  all: allTypes,
+};
+var onStartWrite = {
+  text: function(tweenProp){
+    if ( !KUTE[tweenProp] && this.valuesEnd[tweenProp] ) {
+      var chars = this._textChars,
+          charsets = chars in charSet ? charSet[chars]
+                  : chars && chars.length ? chars
+                  : charSet[defaultOptions.textChars];
+      KUTE[tweenProp] = function(elem,a,b,v) {
+        var initialText = '',
+            endText = '',
+            firstLetterA = a.substring(0),
+            firstLetterB = b.substring(0),
+            pointer = charsets[(Math.random() * charsets.length)>>0];
+        if (a === ' ') {
+          endText         = firstLetterB.substring(Math.min(v * firstLetterB.length, firstLetterB.length)>>0, 0 );
+          elem.innerHTML = v < 1 ? ( ( endText + pointer  ) ) : (b === '' ? ' ' : b);
+        } else if (b === ' ') {
+          initialText     = firstLetterA.substring(0, Math.min((1-v) * firstLetterA.length, firstLetterA.length)>>0 );
+          elem.innerHTML = v < 1 ? ( ( initialText + pointer  ) ) : (b === '' ? ' ' : b);
+        } else {
+          initialText     = firstLetterA.substring(firstLetterA.length, Math.min(v * firstLetterA.length, firstLetterA.length)>>0 );
+          endText         = firstLetterB.substring(0,                   Math.min(v * firstLetterB.length, firstLetterB.length)>>0 );
+          elem.innerHTML = v < 1 ? ( (endText + pointer + initialText) ) : (b === '' ? ' ' : b);
+        }
+      };
+    }
+  },
+  number: function(tweenProp) {
+    if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
+      KUTE[tweenProp] = function (elem, a, b, v) {
+        elem.innerHTML = numbers(a, b, v)>>0;
+      };
+    }
+  }
+};
 
 function wrapContentsSpan(el,classNAME){
   var textWriteWrapper;
@@ -1107,20 +1174,6 @@ function createTextTweens(target,newText,options){
   };
   return textTween
 }
-var lowerCaseAlpha = String("abcdefghijklmnopqrstuvwxyz").split(""),
-    upperCaseAlpha = String("abcdefghijklmnopqrstuvwxyz").toUpperCase().split(""),
-    nonAlpha = String("~!@#$%^&*()_+{}[];'<>,./?\=-").split(""),
-    numeric = String("0123456789").split(""),
-    alphaNumeric = lowerCaseAlpha.concat(upperCaseAlpha,numeric),
-    allTypes = alphaNumeric.concat(nonAlpha);
-var charSet = {
-  alpha: lowerCaseAlpha,
-  upper: upperCaseAlpha,
-  symbols: nonAlpha,
-  numeric: numeric,
-  alphanumeric: alphaNumeric,
-  all: allTypes,
-};
 function getWrite(tweenProp,value){
   return this.element.innerHTML;
 }
@@ -1131,47 +1184,12 @@ function prepareText(tweenProp,value) {
     return value === '' ? ' ' : value
   }
 }
-var onStartWrite = {
-  text: function(tweenProp){
-    if ( !KUTE[tweenProp] && this.valuesEnd[tweenProp] ) {
-      var chars = this._textChars,
-          charsets = chars in charSet ? charSet[chars]
-                  : chars && chars.length ? chars
-                  : charSet[defaultOptions.textChars];
-      KUTE[tweenProp] = function(elem,a,b,v) {
-        var initialText = '',
-            endText = '',
-            firstLetterA = a.substring(0),
-            firstLetterB = b.substring(0),
-            pointer = charsets[(Math.random() * charsets.length)>>0];
-        if (a === ' ') {
-          endText         = firstLetterB.substring(Math.min(v * firstLetterB.length, firstLetterB.length)>>0, 0 );
-          elem.innerHTML = v < 1 ? ( ( endText + pointer  ) ) : (b === '' ? ' ' : b);
-        } else if (b === ' ') {
-          initialText     = firstLetterA.substring(0, Math.min((1-v) * firstLetterA.length, firstLetterA.length)>>0 );
-          elem.innerHTML = v < 1 ? ( ( initialText + pointer  ) ) : (b === '' ? ' ' : b);
-        } else {
-          initialText     = firstLetterA.substring(firstLetterA.length, Math.min(v * firstLetterA.length, firstLetterA.length)>>0 );
-          endText         = firstLetterB.substring(0,                   Math.min(v * firstLetterB.length, firstLetterB.length)>>0 );
-          elem.innerHTML = v < 1 ? ( (endText + pointer + initialText) ) : (b === '' ? ' ' : b);
-        }
-      };
-    }
-  },
-  number: function(tweenProp) {
-    if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
-        elem.innerHTML = numbers(a, b, v)>>0;
-      };
-    }
-  }
-};
 var textWriteFunctions = {
   prepareStart: getWrite,
   prepareProperty: prepareText,
   onStart: onStartWrite
 };
-var textWriteOps = {
+var textWrite = {
   component: 'textWriteProperties',
   category: 'textWrite',
   properties: ['text','number'],
@@ -1181,7 +1199,7 @@ var textWriteOps = {
   functions: textWriteFunctions,
   Util: { charSet: charSet, createTextTweens: createTextTweens }
 };
-Components.TextWriteProperties = textWriteOps;
+Components.TextWriteProperties = textWrite;
 
 function perspective(a, b, u, v) {
   return ("perspective(" + (((a + (b - a) * v) * 1000 >> 0 ) / 1000) + u + ")")
@@ -1218,6 +1236,21 @@ function skew(a, b, u, v) {
 function scale (a, b, v) {
   return ("scale(" + (((a + (b - a) * v) * 1000 >> 0 ) / 1000) + ")");
 }
+function onStartTransform(tweenProp){
+  if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
+    KUTE[tweenProp] = function (elem, a, b, v) {
+      elem.style[tweenProp] =
+          (a.perspective||b.perspective ? perspective(a.perspective,b.perspective,'px',v) : '')
+        + (a.translate3d ? translate3d(a.translate3d,b.translate3d,'px',v):'')
+        + (a.translate ? translate(a.translate,b.translate,'px',v):'')
+        + (a.rotate3d ? rotate3d(a.rotate3d,b.rotate3d,'deg',v):'')
+        + (a.rotate||b.rotate ? rotate(a.rotate,b.rotate,'deg',v):'')
+        + (a.skew ? skew(a.skew,b.skew,'deg',v):'')
+        + (a.scale||b.scale ? scale(a.scale,b.scale,v):'');
+    };
+  }
+}
+
 function getTransform(tweenProperty,value){
   var currentStyle = getInlineStyle(this.element);
   return currentStyle[tweenProperty] ? currentStyle[tweenProperty] : defaultValues[tweenProperty];
@@ -1249,20 +1282,6 @@ function prepareTransform(prop,obj){
   }
   return transformObject;
 }
-function onStartTransform(tweenProp){
-  if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-    KUTE[tweenProp] = function (elem, a, b, v) {
-      elem.style[tweenProp] =
-          (a.perspective||b.perspective ? perspective(a.perspective,b.perspective,'px',v) : '')
-        + (a.translate3d ? translate3d(a.translate3d,b.translate3d,'px',v):'')
-        + (a.translate ? translate(a.translate,b.translate,'px',v):'')
-        + (a.rotate3d ? rotate3d(a.rotate3d,b.rotate3d,'deg',v):'')
-        + (a.rotate||b.rotate ? rotate(a.rotate,b.rotate,'deg',v):'')
-        + (a.skew ? skew(a.skew,b.skew,'deg',v):'')
-        + (a.scale||b.scale ? scale(a.scale,b.scale,v):'');
-    };
-  }
-}
 function crossCheckTransform(tweenProp){
   if (this.valuesEnd[tweenProp]) {
     if ( this.valuesEnd[tweenProp] ) {
@@ -1292,7 +1311,7 @@ var defaultTransformValues = {
   skewX : 0, skewY : 0, skew: [0,0],
   scale : 1
 };
-var transformOps = {
+var transformFunctionsComponent = {
   component: 'transformFunctions',
   property: 'transform',
   subProperties: supportedTransformProperties,
@@ -1303,17 +1322,33 @@ var transformOps = {
     translate3d: translate3d,
     rotate3d: rotate3d,
     translate: translate, rotate: rotate, scale: scale, skew: skew
-  },
+  }
 };
-Components.TransformFunctions = transformOps;
+Components.TransformFunctions = transformFunctionsComponent;
 
-var percent = function (v, l) { return parseFloat(v) / 100 * l; };
-var getRectLength = function (el) {
+function onStartDraw(tweenProp){
+  if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
+    KUTE[tweenProp] = function (elem,a,b,v) {
+      var pathLength = (a.l*100>>0)/100,
+        start = (numbers(a.s,b.s,v)*100>>0)/100,
+        end = (numbers(a.e,b.e,v)*100>>0)/100,
+        offset = 0 - start,
+        dashOne = end+offset;
+      elem.style.strokeDashoffset = offset + "px";
+      elem.style.strokeDasharray = (((dashOne <1 ? 0 : dashOne)*100>>0)/100) + "px, " + pathLength + "px";
+    };
+  }
+}
+
+function percent (v,l) {
+  return parseFloat(v) / 100 * l
+}
+function getRectLength(el) {
   var w = el.getAttribute('width'),
       h = el.getAttribute('height');
   return (w*2)+(h*2);
-};
-var getPolyLength = function (el) {
+}
+function getPolyLength(el) {
   var points = el.getAttribute('points').split(' ');
   var len = 0;
   if (points.length > 1) {
@@ -1337,23 +1372,23 @@ var getPolyLength = function (el) {
     len += el.tagName === 'polygon' ? dist(coord(points[0]), coord(points[points.length - 1])) : 0;
   }
   return len;
-};
-var getLineLength = function (el) {
+}
+function getLineLength(el) {
   var x1 = el.getAttribute('x1');
   var x2 = el.getAttribute('x2');
   var y1 = el.getAttribute('y1');
   var y2 = el.getAttribute('y2');
   return Math.sqrt(Math.pow( (x2 - x1), 2 )+Math.pow( (y2 - y1), 2 ));
-};
-var getCircleLength = function (el) {
+}
+function getCircleLength(el) {
   var r = el.getAttribute('r');
   return 2 * Math.PI * r;
-};
-var getEllipseLength = function (el) {
+}
+function getEllipseLength(el) {
   var rx = el.getAttribute('rx'), ry = el.getAttribute('ry'), len = 2*rx, wid = 2*ry;
   return ((Math.sqrt(.5 * ((len * len) + (wid * wid)))) * (Math.PI * 2)) / 2;
-};
-var getTotalLength = function (el) {
+}
+function getTotalLength(el) {
   if (/rect/.test(el.tagName)) {
     return getRectLength(el);
   } else if (/circle/.test(el.tagName)) {
@@ -1365,8 +1400,8 @@ var getTotalLength = function (el) {
   } else if (/line/.test(el.tagName)) {
     return getLineLength(el);
   }
-};
-var getDraw = function (e, v) {
+}
+function getDraw(e,v) {
   var length = /path|glyph/.test(e.tagName) ? e.getTotalLength() : getTotalLength(e),
       start, end, d, o;
   if ( v instanceof Object ) {
@@ -1382,32 +1417,23 @@ var getDraw = function (e, v) {
     end = parseFloat(d[0]) + start || length;
   }
   return { s: start, e: end, l: length };
-};
+}
+function resetDraw(elem) {
+  elem.style.strokeDashoffset = "";
+  elem.style.strokeDasharray = "";
+}
 function getDrawValue(){
   return getDraw(this.element);
 }
 function prepareDraw(a,o){
   return getDraw(this.element,o);
 }
-function onStartDraw(tweenProp){
-  if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = function (elem,a,b,v) {
-      var pathLength = (a.l*100>>0)/100,
-        start = (numbers(a.s,b.s,v)*100>>0)/100,
-        end = (numbers(a.e,b.e,v)*100>>0)/100,
-        offset = 0 - start,
-        dashOne = end+offset;
-      elem.style.strokeDashoffset = offset + "px";
-      elem.style.strokeDasharray = (((dashOne <1 ? 0 : dashOne)*100>>0)/100) + "px, " + pathLength + "px";
-    };
-  }
-}
 var svgDrawFunctions = {
   prepareStart: getDrawValue,
   prepareProperty: prepareDraw,
   onStart: onStartDraw
 };
-var svgDrawOps = {
+var svgDraw = {
   component: 'svgDraw',
   property: 'draw',
   defaultValue: '0% 0%',
@@ -1420,11 +1446,12 @@ var svgDrawOps = {
     getCircleLength: getCircleLength,
     getEllipseLength: getEllipseLength,
     getTotalLength: getTotalLength,
+    resetDraw: resetDraw,
     getDraw: getDraw,
     percent: percent
   }
 };
-Components.SVGDraw = svgDrawOps;
+Components.SVGDraw = svgDraw;
 
 function coords (a, b, l, v) {
   var points = [];
@@ -1436,6 +1463,16 @@ function coords (a, b, l, v) {
   }
   return points;
 }
+function onStartSVGMorph(tweenProp){
+  if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
+    KUTE[tweenProp] = function (elem, a, b, v) {
+      var path1 = a.pathArray, path2 = b.pathArray, len = path2.length, pathString;
+      pathString = v === 1 ? b.original : ("M" + (coords( path1, path2, len, v ).join('L')) + "Z");
+      elem.setAttribute("d", pathString );
+    };
+  }
+}
+
 var INVALID_INPUT = 'Invalid path value';
 function isFiniteNumber(number) {
   return typeof number === "number" && isFinite(number);
@@ -1676,7 +1713,8 @@ function pathParse(svgPath) {
     err: state.err,
     segments: state.result
   };
-}var SvgPath = function SvgPath(path){
+}
+var SvgPath = function SvgPath(path){
   if (!(this instanceof SvgPath)) { return new SvgPath(path); }
   var pstate = pathParse(path);
   this.segments = pstate.segments;
@@ -1977,15 +2015,6 @@ function prepareSVGMorph(tweenProp,value){
   }
   return pathObject;
 }
-function onStartSVGMorph(tweenProp){
-  if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-    KUTE[tweenProp] = function (elem, a, b, v) {
-      var path1 = a.pathArray, path2 = b.pathArray, len = path2.length, pathString;
-      pathString = v === 1 ? b.original : ("M" + (coords( path1, path2, len, v ).join('L')) + "Z");
-      elem.setAttribute("d", pathString );
-    };
-  }
-}
 function crossCheckSVGMorph(prop){
   if ( this.valuesEnd[prop]){
     var pathArray1 = this.valuesStart[prop].pathArray,
@@ -2006,7 +2035,7 @@ var svgMorphFunctions = {
   onStart: onStartSVGMorph,
   crossCheck: crossCheckSVGMorph
 };
-var svgMorphOps = {
+var svgMorph = {
   component: 'svgMorph',
   property: 'path',
   defaultValue: [],
@@ -2018,7 +2047,7 @@ var svgMorphOps = {
     isDigitStart: isDigitStart,State: State,skipSpaces: skipSpaces,scanFlag: scanFlag,scanParam: scanParam,finalizeSegment: finalizeSegment,scanSegment: scanSegment,pathParse: pathParse,SvgPath: SvgPath,split: split,pathStringToRing: pathStringToRing,
     exactRing: exactRing,approximateRing: approximateRing,measure: measure,rotateRing: rotateRing,polygonLength: polygonLength,polygonArea: polygonArea,addPoints: addPoints,bisect: bisect,normalizeRing: normalizeRing,validRing: validRing,getInterpolationPoints: getInterpolationPoints}
 };
-Components.SVGMorph = svgMorphOps;
+Components.SVGMorph = svgMorph;
 
 for (var component in Components) {
   var compOps = Components[component];

@@ -23,14 +23,14 @@ import allFromTo from './interface/allFromTo.js'
 import Animation from './animation/animation.js'
 
 // components
-import {essentialBoxModelOps} from './components/boxModelEssential.js'
-import {colorsOps} from './components/colorProperties.js'
-import {attrOps} from './components/htmlAttributes.js'
-import {opacityOps} from './components/opacityProperty.js'
-import {textWriteOps} from './components/textWrite.js'
-import {transformOps} from './components/transformFunctions.js'
-import {svgDrawOps} from './components/svgDraw.js'
-import {svgMorphOps} from './components/svgMorph.js'
+import EssentialBoxModel from './components/boxModelEssential.js'
+import ColorsProperties from './components/colorProperties.js'
+import HTMLAttributes from './components/htmlAttributes.js'
+import OpacityProperty from './components/opacityProperty.js'
+import TextWrite from './components/textWrite.js'
+import TransformFunctions from './components/transformFunctions.js'
+import SVGDraw from './components/svgDraw.js'
+import SVGMorph from './components/svgMorph.js'
 
 // init components
 for (let component in Components) {

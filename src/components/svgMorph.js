@@ -2,21 +2,13 @@ import KUTE from '../objects/kute.js'
 import selector from '../util/selector.js' 
 import defaultOptions from '../objects/defaultOptions.js' 
 import Components from '../objects/components.js' 
-
+import {onStartSVGMorph,coords} from './svgMorphBase.js'
+ 
 // const SVGMorph = { property : 'path', defaultValue: [], interpolators: {numbers,coords} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
 
 // Component Interpolation
 // function function(array1, array2, length, progress)
-export function coords (a, b, l, v) {
-  const points = [];
-  for(let i=0;i<l;i++) { // for each point
-    points[i] = [];
-    for(let j=0;j<2;j++) { // each point coordinate
-      points[i].push( ((a[i][j]+(b[i][j]-a[i][j])*v) * 1000 >> 0)/1000 );
-    }
-  }
-  return points;
-}
+
 
 // Component Util
 const INVALID_INPUT = 'Invalid path value'
@@ -319,7 +311,7 @@ function scanSegment(state) {
 }
 
 // Returns array of segments
-export function pathParse(svgPath) {
+function pathParse(svgPath) {
   let state = new State(svgPath), max = state.max;
 
   skipSpaces(state);
@@ -347,9 +339,9 @@ export function pathParse(svgPath) {
     err: state.err,
     segments: state.result
   };
-};
+}
 
-export class SvgPath {
+class SvgPath {
   constructor(path){
     if (!(this instanceof SvgPath)) { return new SvgPath(path); }
   
@@ -727,10 +719,10 @@ function getInterpolationPoints(fromShape, toShape, morphPrecision) {
 
 
 // Component functions
-export function getSVGMorph(tweenProp){
+function getSVGMorph(tweenProp){
   return this.element.getAttribute('d');
 }
-export function prepareSVGMorph(tweenProp,value){
+function prepareSVGMorph(tweenProp,value){
   const pathObject = {}, elem = value instanceof Element ? value : /^\.|^\#/.test(value) ? selector(value) : null,
         pathReg = new RegExp('\\n','ig'); // remove newlines, they brake JSON strings sometimes
 
@@ -744,16 +736,7 @@ export function prepareSVGMorph(tweenProp,value){
   }
   return pathObject;
 }
-export function onStartSVGMorph(tweenProp){
-  if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
-      let path1 = a.pathArray, path2 = b.pathArray, len = path2.length, pathString;
-      pathString = v === 1 ? b.original : `M${coords( path1, path2, len, v ).join('L')}Z`;
-      elem.setAttribute("d", pathString );
-    }
-  }
-}
-export function crossCheckSVGMorph(prop){
+function crossCheckSVGMorph(prop){
   if ( this.valuesEnd[prop]){
     let pathArray1 = this.valuesStart[prop].pathArray,
         pathArray2 = this.valuesEnd[prop].pathArray
@@ -773,26 +756,16 @@ export function crossCheckSVGMorph(prop){
 }
 
 // All Component Functions
-export const svgMorphFunctions = {
+const svgMorphFunctions = {
   prepareStart: getSVGMorph,
   prepareProperty: prepareSVGMorph,
   onStart: onStartSVGMorph,
   crossCheck: crossCheckSVGMorph
 }
 
-// Component Base
-export const baseSVGMorphOps = {
-  component: 'svgMorph',
-  property: 'path',
-  // defaultValue: [],
-  Interpolate: coords,
-  defaultOptions: {morphPrecision : 10, reverseFirstShape: false,},
-  functions: {onStart:onStartSVGMorph}
-}
-
 
 // Component Full
-export const svgMorphOps = {
+const svgMorph = {
   component: 'svgMorph',
   property: 'path',
   defaultValue: [],
@@ -806,4 +779,6 @@ export const svgMorphOps = {
     exactRing,approximateRing,measure,rotateRing,polygonLength,polygonArea,addPoints,bisect,normalizeRing,validRing,getInterpolationPoints}
 }
 
-Components.SVGMorph = svgMorphOps
+export default svgMorph
+
+Components.SVGMorph = svgMorph

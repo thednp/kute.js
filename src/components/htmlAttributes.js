@@ -1,20 +1,17 @@
-import KUTE from '../objects/kute.js'
 import defaultValues from '../objects/defaultValues.js'
 import onStart from '../objects/onStart.js'
 import Components from '../objects/components.js'
 import {numbers} from '../objects/interpolate.js' 
 import trueColor from '../util/trueColor.js' 
 import trueDimension from '../util/trueDimension.js' 
-import {colors} from './colorProperties.js'
+import {colors} from './colorPropertiesBase.js'
+import {attributes,onStartAttr} from './htmlAttributesBase.js'
 
 // Component Name
 let ComponentName = 'htmlAttributes'
 
 // Component Properties
 const svgColors = ['fill','stroke','stop-color'];
-
-// Component Special
-let attributes = {};
 
 // Component Util
 function replaceUppercase (a) { return a.replace(/[A-Z]/g, "-$&").toLowerCase(); }
@@ -71,42 +68,16 @@ export function prepareAttr(tweenProp,attrObj){ // attr (string),attrObj (object
   }
   return attributesObject;
 }
-export const onStartAttr = {
-  attr : function(tweenProp){
-    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-      KUTE[tweenProp] = (elem, vS, vE, v) => {
-        for ( const oneAttr in vE ){
-          KUTE.attributes[oneAttr](elem,oneAttr,vS[oneAttr],vE[oneAttr],v);
-        }
-      }
-    }
-  },
-  attributes : function(tweenProp){
-    if (!KUTE[tweenProp] && this.valuesEnd.attr) {
-      KUTE[tweenProp] = attributes
-    }
-  }
-}
 
 // All Component Functions 
-export const attrFunctions = {
+const attrFunctions = {
   prepareStart: getAttr,
   prepareProperty: prepareAttr,
   onStart: onStartAttr
 }
 
-// Component Base
-export const baseAttrOps = {
-  component: ComponentName,
-  property: 'attr',
-  subProperties: ['fill','stroke','stop-color','fill-opacity','stroke-opacity'], // the Animation class will need some values to validate this Object attribute
-  // defaultValue: {fill : 'rgb(0,0,0)', stroke: 'rgb(0,0,0)', 'stop-color': 'rgb(0,0,0)', opacity: 1, 'stroke-opacity': 1,'fill-opacity': 1}, // same here
-  Interpolate: { numbers,colors },
-  functions: {onStart:onStartAttr}
-}
-
 // Component Full
-export const attrOps = {
+const htmlAttributes = {
   component: ComponentName,
   property: 'attr',
   subProperties: ['fill','stroke','stop-color','fill-opacity','stroke-opacity'], // the Animation class will need some values to validate this Object attribute
@@ -117,4 +88,6 @@ export const attrOps = {
   Util: { replaceUppercase, trueColor, trueDimension }
 }
 
-Components.HTMLAttributes = attrOps
+export default htmlAttributes
+
+Components.HTMLAttributes = htmlAttributes

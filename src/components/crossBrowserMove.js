@@ -1,16 +1,16 @@
-import KUTE from '../objects/KUTE.js'
+import KUTE from '../objects/kute.js'
 import getInlineStyle from '../process/getInlineStyle.js'
 import defaultValues from '../objects/defaultValues.js'
-import Components from '../objects/Components.js'
+import Components from '../objects/components.js'
 import trueProperty from '../util/trueProperty.js'
-import {numbers} from '../objects/Interpolate.js' 
+import {numbers} from '../objects/interpolate.js' 
 
 // Component Const
 const transformProperty = trueProperty('transform');
 const supportTransform = transformProperty in document.body.style ? 1 : 0;
 
 // Component Functions
-export function getComponentCurrentValue(tweenProp,value){
+function getComponentCurrentValue(tweenProp,value){
   let currentTransform = getInlineStyle(this.element);
   let left = this.element.style.left;
   let top = this.element.style.top;
@@ -22,12 +22,13 @@ export function getComponentCurrentValue(tweenProp,value){
                           : defaultValues.move[1];
   return [x,y]
 }
-export function prepareComponentValue(tweenProp,value){
+function prepareComponentValue(tweenProp,value){
   let x = isFinite(value*1) ? parseInt(value) : parseInt(value[0]) || 0;
   let y = parseInt(value[1]) || 0;
 
   return [ x, y ]
 }
+
 export function onStartComponent(tweenProp,value){
   if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
 
@@ -38,10 +39,10 @@ export function onStartComponent(tweenProp,value){
     } else {
       KUTE[tweenProp] = (elem, a, b, v) => {
         if (a[0]||b[0]) {
-            elem.style.left = numbers(a[0],b[0],v)+'px';
+          elem.style.left = numbers(a[0],b[0],v)+'px';
         }
         if (a[1]||b[1]) {
-            elem.style.top = numbers(a[1],b[1],v)+'px';
+          elem.style.top = numbers(a[1],b[1],v)+'px';
         }
       }
     }
@@ -56,21 +57,23 @@ const componentFunctions = {
 }
 
 // Base Component
-export const baseCrossBrowserMoveOps = {
-  component: 'crossBrowserMove',
+export const baseCrossBrowserMove = {
+  component: 'baseCrossBrowserMove',
   property: 'move',
-  Interpolate: numbers,
+  Interpolate: {numbers},
   functions: {onStart:onStartComponent}
 }
 
 // Full Component
-export const crossBrowserMoveOps = {
+const crossBrowserMove = {
   component: 'crossBrowserMove',
   property: 'move',
   defaultValue: [0,0],
-  Interpolate: numbers,
+  Interpolate: {numbers},
   functions: componentFunctions,
   Util: {trueProperty}
 }
 
-Components.CrossBrowserMove = crossBrowserMoveOps
+export default crossBrowserMove
+
+Components.CrossBrowserMove = crossBrowserMove

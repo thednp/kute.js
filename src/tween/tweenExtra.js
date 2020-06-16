@@ -30,7 +30,7 @@ export default class TweenExtra extends Tween {
     // to do
   }
   // set callbacks
-  callback(name,fn){
+  on(name,fn){
     if ( ['start','stop','update','complete','pause','resume'].indexOf(name) >-1 ) {
       this[`_on${name.charAt(0).toUpperCase() + name.slice(1)}`] = fn
     }

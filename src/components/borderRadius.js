@@ -1,9 +1,9 @@
-import KUTE from '../objects/kute.js'
 import defaultValues from '../objects/defaultValues.js'
 import Components from '../objects/components.js'
 import getStyleForProperty from '../process/getStyleForProperty.js'
 import trueDimension from '../util/trueDimension.js'
-import {units} from '../objects/interpolate.js' 
+import {units} from '../objects/interpolate.js'
+import {radiusOnStartFn} from './borderRadiusBase.js'
 
 // const borderRadius = { category : 'borderRadius', properties : [..], defaultValues: {..}, interpolation: {units} }
 
@@ -14,13 +14,6 @@ const radiusValues = {}
 radiusProps.map(x => radiusValues[x] = 0);
 
 // Component Functions
-export function radiusOnStartFn(tweenProp){
-  if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
-      elem.style[tweenProp] = units(a.v,b.v,b.u,v);
-    }
-  }
-}
 const radiusOnStart = {}
 radiusProps.forEach(tweenProp => {
   radiusOnStart[tweenProp] = radiusOnStartFn
@@ -39,18 +32,9 @@ export const radiusFunctions = {
   onStart: radiusOnStart
 }
 
-// Base Component
-export const baseRadiusOps = {
-  component: 'borderRadiusProps',
-  category: 'borderRadius',
-  properties: radiusProps,
-  Interpolate: {units},
-  functions: {onStart: radiusOnStart}
-}
-
 // Full Component
-export const radiusOps = {
-  component: 'borderRadiusProps',
+const BorderRadius = {
+  component: 'borderRadiusProperties',
   category: 'borderRadius',
   properties: radiusProps,
   defaultValues: radiusValues,
@@ -59,4 +43,6 @@ export const radiusOps = {
   Util: {trueDimension}
 }
 
-Components.BorderRadiusProperties = radiusOps
+export default BorderRadius
+
+Components.BorderRadiusProperties = BorderRadius

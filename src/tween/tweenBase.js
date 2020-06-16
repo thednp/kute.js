@@ -78,7 +78,7 @@ export default class TweenBase {
       // fire onStart actions
       for (const obj in onStart) {
         if (typeof (onStart[obj]) === 'function') {
-          onStart[obj].call(this,obj)
+          onStart[obj].call(this,obj) // easing functions
         } else {
           for (const prop in onStart[obj]) {
             onStart[obj][prop].call(this,prop);
@@ -117,6 +117,14 @@ export default class TweenBase {
     this._startFired = false;
     stop.call(this); 
   }
+  chain(args) {
+    this._chain = []
+    this._chain = args.length ? args : this._chain.concat(args); 
+    return this; 
+  }
+  stopChainedTweens() {
+    this._chain && this._chain.length && this._chain.map(tw=>tw.stop())
+  }  
   update(time) {
     time = time !== undefined ? time : KUTE.Time();
 
@@ -151,6 +159,11 @@ export default class TweenBase {
 
       //stop ticking when finished
       this.close();
+
+      // start animating chained tweens
+      if (this._chain !== undefined && this._chain.length){
+        this._chain.map(tw=>tw.start())
+      }
 
       return false;
     }    

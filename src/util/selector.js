@@ -5,7 +5,7 @@ export default function selector(el, multi) {
     if (multi){
       requestedElem = el instanceof HTMLCollection 
                    || el instanceof NodeList 
-                   || el instanceof Array && el[0] instanceof Element 
+                   || el instanceof Array && el.every(x => x instanceof Element)
                     ? el : document.querySelectorAll(el);
     } else {
       requestedElem = el instanceof Element 

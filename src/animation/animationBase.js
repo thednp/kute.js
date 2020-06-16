@@ -2,7 +2,6 @@ import supportedProperties from '../objects/supportedProperties.js'
 import defaultOptions from '../objects/defaultOptions.js'
 import onStart from '../objects/onStart.js'
 import onComplete from '../objects/onComplete.js'
-import crossCheck from '../objects/crossCheck.js'
 import linkProperty from '../objects/linkProperty.js'
 import Util from '../objects/util.js'
 import Interpolate from '../objects/interpolate.js'
@@ -10,14 +9,12 @@ import Interpolate from '../objects/interpolate.js'
 // Animation class 
 export default class AnimationBase {
   constructor(Component){
-    this.Component = Component
-    return this.setComponent()
+    return this.setComponent(Component)
   }
-  setComponent(){
-    const Component = this.Component
+  setComponent(Component){
     const ComponentName = Component.component
     // const Objects = { defaultValues, defaultOptions, Interpolate, linkProperty }
-    const Functions = { onStart, onComplete, crossCheck }
+    const Functions = { onStart, onComplete }
     const Category = Component.category
     const Property = Component.property
 
@@ -34,8 +31,8 @@ export default class AnimationBase {
     // set functions
     if (Component.functions) {
       for (const fn in Functions) {
-        if (fn in Component.functions && ['onStart','onComplete'].includes(fn)) {
-          if (typeof (Component.functions[fn]) === 'function' ) {
+        if (fn in Component.functions) {
+          if ( typeof (Component.functions[fn]) === 'function'  ) {
             // !Functions[fn][ Category||Property ] && (Functions[fn][ Category||Property ] = Component.functions[fn])
             !Functions[fn][ComponentName] && (Functions[fn][ComponentName] = {})
             !Functions[fn][ComponentName][ Category||Property ] && (Functions[fn][ComponentName][ Category||Property ] = Component.functions[fn])
@@ -53,9 +50,15 @@ export default class AnimationBase {
     // set interpolate
     if (Component.Interpolate) {
       for (const fn in Component.Interpolate) {
-        // register new Interpolation functions
-        if (!Interpolate[fn]) {
-          Interpolate[fn] = Component.Interpolate[fn];
+        const compIntObj = Component.Interpolate[fn]
+        if ( typeof(compIntObj) === 'function' && !Interpolate[fn] ) {
+          Interpolate[fn] = compIntObj;
+        } else {
+          for ( const sfn in compIntObj ) {
+            if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fn] ) {
+              Interpolate[fn] = compIntObj[sfn];
+            }
+          }
         }
       }
       linkProperty[ComponentName] = Component.Interpolate

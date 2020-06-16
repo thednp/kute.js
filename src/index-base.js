@@ -14,25 +14,26 @@ import TweenBase from './tween/tweenBase.js'
 // Interface only fromTo
 import fromTo from './interface/fromTo.js'
 
-import {baseTransformOps} from './components/transformFunctions.js'
-import {baseBoxModelOps} from './components/boxModelBase.js'
-import {baseOpacityOps} from './components/opacityProperty.js'
-// import {baseCrossBrowserMoveOps} from './components/crossBrowserMove.js'
+// import baseTransform from './components/transformFunctionsBase.js'
+import baseTransformMatrix from './components/transformMatrixBase.js'
+import baseBoxModel from './components/boxModelBase.js'
+import baseOpacity from './components/opacityPropertyBase.js'
+// import {baseCrossBrowserMove} from './components/crossBrowserMove.js'
 
-const BaseTransform = new Animation(baseTransformOps)
-const BaseBoxModel = new Animation(baseBoxModelOps)
-const BaseOpacity = new Animation(baseOpacityOps)
-// const BaseCrossBrowserMove = new Animation(baseCrossBrowserMoveOps)
+// const Transform = new Animation(baseTransform)
+const Transform = new Animation(baseTransformMatrix)
+const BoxModel = new Animation(baseBoxModel)
+const Opacity = new Animation(baseOpacity)
+// const Move = new Animation(baseCrossBrowserMove)
 // support for kute-base.js ends here
 
 export default {
   Animation,
   Components: {
-    BaseTransform,
-    BaseBoxModel,
-    BaseScroll,
-    BaseOpacity,
-    // BaseCrossBrowserMove
+    Transform,
+    BoxModel,
+    Opacity,
+    // Move
   },
 
   TweenBase,

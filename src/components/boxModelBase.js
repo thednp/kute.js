@@ -18,13 +18,15 @@ const baseBoxOnStart = {}
 baseBoxProps.map(x=>baseBoxOnStart[x] = boxModelOnStart)
 
 // Component Base
-export const baseBoxModelOps = {
-  component: 'boxModelProps',
+const baseBoxModel = {
+  component: 'baseBoxModel',
   category: 'boxModel',
-  properties: baseBoxProps,
+  // properties: baseBoxProps,
   // defaultValues: baseBoxPropsValues,
   Interpolate: {numbers},
   functions: {onStart: baseBoxOnStart}
 }
 
-Components.BoxModelProperties = baseBoxModelOps
+export default baseBoxModel
+
+Components.BoxModelProperties = baseBoxModel

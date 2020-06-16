@@ -1,21 +1,23 @@
-import KUTE from '../objects/kute.js'
 import {numbers} from '../objects/interpolate.js'
 import Components from '../objects/components.js'
 import getStyleForProperty from '../process/getStyleForProperty.js'
+import {onStartDraw} from './svgDrawBase.js'
 
 // const svgDraw = { property : 'draw', defaultValue, Interpolate: {numbers} }, functions = { prepareStart, prepareProperty, onStart }
 
 // Component Util
-const percent = (v, l) => parseFloat(v) / 100 * l
+function percent (v,l) {
+  return parseFloat(v) / 100 * l
+}
 
 // http://stackoverflow.com/a/30376660
-const getRectLength = el => { // returns the length of a Rect
+function getRectLength(el) { // returns the length of a Rect
   let w = el.getAttribute('width'),
       h = el.getAttribute('height');
   return (w*2)+(h*2);
 }
 
-const getPolyLength = el => {
+function getPolyLength(el) {
   // getPolygonLength / getPolylineLength - return the length of the Polygon / Polyline
   const points = el.getAttribute('points').split(' ');
 
@@ -45,7 +47,7 @@ const getPolyLength = el => {
   return len;
 }
 
-const getLineLength = el => { // return the length of the line
+function getLineLength(el) { // return the length of the line
   const x1 = el.getAttribute('x1');
   const x2 = el.getAttribute('x2');
   const y1 = el.getAttribute('y1');
@@ -53,17 +55,17 @@ const getLineLength = el => { // return the length of the line
   return Math.sqrt((x2 - x1) ** 2+(y2 - y1) ** 2);
 }
 
-const getCircleLength = el => { // return the length of the circle
+function getCircleLength(el) { // return the length of the circle
   const r = el.getAttribute('r');
   return 2 * Math.PI * r;
 }
 
-const getEllipseLength = el => { // returns the length of an ellipse
+function getEllipseLength(el) { // returns the length of an ellipse
   const rx = el.getAttribute('rx'), ry = el.getAttribute('ry'), len = 2*rx, wid = 2*ry;
   return ((Math.sqrt(.5 * ((len * len) + (wid * wid)))) * (Math.PI * 2)) / 2;
 }
 
-const getTotalLength = el => { // returns the result of any of the below functions
+function getTotalLength(el) { // returns the result of any of the below functions
   if (/rect/.test(el.tagName)) {
     return getRectLength(el);
   } else if (/circle/.test(el.tagName)) {
@@ -77,7 +79,7 @@ const getTotalLength = el => { // returns the result of any of the below functio
   }
 }
 
-export const getDraw = (e, v) => {
+function getDraw(e,v) {
   let length = /path|glyph/.test(e.tagName) ? e.getTotalLength() : getTotalLength(e),
       start, end, d, o;
 
@@ -97,31 +99,17 @@ export const getDraw = (e, v) => {
   return { s: start, e: end, l: length };
 }
 
-export function resetDraw(elem) {
+function resetDraw(elem) {
   elem.style.strokeDashoffset = ``;
   elem.style.strokeDasharray = ``;
 }
 
 // Component Functions
-export function getDrawValue(){
+function getDrawValue(){
   return getDraw(this.element);
 }
-export function prepareDraw(a,o){
+function prepareDraw(a,o){
   return getDraw(this.element,o);
-}
-export function onStartDraw(tweenProp){
-  if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = (elem,a,b,v) => {
-      let pathLength = (a.l*100>>0)/100,
-        start = (numbers(a.s,b.s,v)*100>>0)/100,
-        end = (numbers(a.e,b.e,v)*100>>0)/100,
-        offset = 0 - start,
-        dashOne = end+offset;
-      
-      elem.style.strokeDashoffset = `${offset}px`;
-      elem.style.strokeDasharray = `${((dashOne <1 ? 0 : dashOne)*100>>0)/100}px, ${pathLength}px`;
-    }
-  }
 }
 
 // All Component Functions
@@ -131,16 +119,8 @@ const svgDrawFunctions = {
   onStart: onStartDraw
 }
 
-// Component Base
-export const baseSVGDrawOps = {
-  component: 'svgDraw',
-  property: 'draw',
-  Interpolate: {numbers},
-  functions: {onStart:onStartDraw}
-}
-
 // Component Full
-export const svgDrawOps = {
+const svgDraw = {
   component: 'svgDraw',
   property: 'draw',
   defaultValue: '0% 0%',
@@ -154,9 +134,12 @@ export const svgDrawOps = {
     getCircleLength,
     getEllipseLength,
     getTotalLength,
+    resetDraw,
     getDraw,
     percent
   }
 }
 
-Components.SVGDraw = svgDrawOps
+export default svgDraw
+
+Components.SVGDraw = svgDraw

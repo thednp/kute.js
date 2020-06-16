@@ -1,9 +1,10 @@
-import KUTE from '../objects/kute.js'
 import Components from '../objects/components.js'
 import selector from '../util/selector.js'
 import {numbers} from '../objects/interpolate.js'
 
-// const SVGMorph = { property : 'path', defaultValue: [], interpolators: {numbers,coords} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
+import {toPathString,onStartCubicMorph} from './svgCubicMorphBase.js'
+
+// const SVGMorph = { property : 'path', defaultValue: [], interpolators: {numbers} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
 
 // Component Util
 const INVALID_INPUT = 'Invalid path value'
@@ -132,7 +133,7 @@ function parsePathString(pathString) {
   }
 }
 
-export function pathToAbsolute(pathArray) {
+function pathToAbsolute(pathArray) {
   pathArray = parsePathString(pathArray);
 
   if (!pathArray || !pathArray.length) {
@@ -350,7 +351,7 @@ function a2c(x1, y1, rx, ry, angle, large_arc_flag, sweep_flag, x2, y2, recursiv
   }
 }
 
-export function processPath (path, d, pcom) {
+function processPath (path, d, pcom) {
   let nx, ny;
   if (!path) {
     return ["C", d.x, d.y, d.x, d.y, d.x, d.y];
@@ -419,7 +420,7 @@ function fixM (path1, path2, a1, a2, i) {
   }
 }
 
-export function fixArc (p, p2, pcoms1, pcoms2, i) {
+function fixArc (p, p2, pcoms1, pcoms2, i) {
   if (p[i].length > 7) {
     p[i].shift();
     const pi = p[i];
@@ -432,7 +433,7 @@ export function fixArc (p, p2, pcoms1, pcoms2, i) {
   }
 }
 
-export function path2curve(path, path2) {
+function path2curve(path, path2) {
   const p = pathToAbsolute(path), // holder for previous path command of original path
         p2 = path2 && pathToAbsolute(path2),
         // p2 = path2 ? pathToAbsolute(path2) : pathToAbsolute('M0,0L0,0'),
@@ -587,23 +588,11 @@ function getRotatedCurve(a,b) {
   return newPath
 }
 
-export function toPathString(pathArray) {
-  let newPath = pathArray.map( (c) => { 
-    if (typeof(c) === 'string') {
-      return c
-    } else {
-      let c0 = c.shift();  
-      return c0 + c.join(',') 
-    }
-  })
-  return newPath.join('');
-}
-
 // Component Functions
-export function getCubicMorph(tweenProp){
+function getCubicMorph(tweenProp){
   return this.element.getAttribute('d');
 }
-export function prepareCubicMorph(tweenProp,value){
+function prepareCubicMorph(tweenProp,value){
   // get path d attribute or create a path from string value
   let pathObject = {}, 
       el = value instanceof SVGElement ? value : /^\.|^\#/.test(value) ? selector(value) : null,
@@ -625,7 +614,7 @@ export function prepareCubicMorph(tweenProp,value){
     throw TypeError(`KUTE.js - ${INVALID_INPUT} ${e}`)
   }
 }
-export function crossCheckCubicMorph(tweenProp){
+function crossCheckCubicMorph(tweenProp){
   if (this.valuesEnd[tweenProp]) {
     let pathCurve1 = this.valuesStart[tweenProp].curve,
         pathCurve2 = this.valuesEnd[tweenProp].curve
@@ -644,40 +633,17 @@ export function crossCheckCubicMorph(tweenProp){
     }
   }
 }
-export function onStartCubicMorph(tweenProp){
-  if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-    KUTE[tweenProp] = function(elem,a,b,v){
-      let curve = [], path1 = a.curve, path2 = b.curve;
-      for(let i=0, l=path2.length; i<l; i++) { // each path command
-        curve.push([path1[i][0]]);
-        for(var j=1,l2=path1[i].length;j<l2;j++) { // each command coordinate
-          curve[i].push( (numbers(path1[i][j], path2[i][j], v) * 1000 >>0)/1000 );
-        }
-      }
-      elem.setAttribute("d", v === 1 ? b.original : toPathString(curve) );
-    }
-  }
-}
 
 // All Component Functions
-export const svgCubicMorphFunctions = {
+const svgCubicMorphFunctions = {
   prepareStart: getCubicMorph,
   prepareProperty: prepareCubicMorph,
   onStart: onStartCubicMorph,
   crossCheck: crossCheckCubicMorph
 }
 
-// Component Base
-export const baseSvgCubicMorphOps = {
-  component: 'svgCubicMorph',
-  property: 'path',
-  // defaultValue: [],
-  Interpolate: {numbers,toPathString},
-  functions: {onStart:onStartCubicMorph}
-}
-
 // Component Full
-export const svgCubicMorphOps = {
+const svgCubicMorph = {
   component: 'svgCubicMorph',
   property: 'path',
   defaultValue: [],
@@ -692,4 +658,6 @@ export const svgCubicMorphOps = {
   }
 }
 
-Components.SVGCubicMorph = svgCubicMorphOps
+export default svgCubicMorph
+
+Components.SVGCubicMorph = svgCubicMorph
