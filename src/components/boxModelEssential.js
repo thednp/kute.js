@@ -32,7 +32,7 @@ const essentialBoxModelFunctions = {
 const essentialBoxModel = {
   component: 'essentialBoxModel',
   category: 'boxModel',
-  properties: ['top','left','width','height'],
+  properties: essentialBoxProps,
   defaultValues: essentialBoxPropsValues,
   Interpolate: {numbers},
   functions: essentialBoxModelFunctions,

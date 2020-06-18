@@ -34,7 +34,7 @@ const Easing = {
 export function processEasing(fn) {
   if ( typeof fn === 'function') {
     return fn;
-  } else if ( typeof fn === 'string' ) {
+  } else if ( typeof Easing[fn] === 'function' ) {
     return Easing[fn]; // regular Robert Penner Easing Functions
   } else {
     return Easing.linear

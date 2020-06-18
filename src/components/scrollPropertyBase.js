@@ -1,9 +1,6 @@
 import KUTE from '../objects/kute.js'
 import {numbers} from '../objects/interpolate.js'
-import Components from '../objects/components.js'
 
-import {on} from 'shorter-js/src/event/on.js'
-import {off} from 'shorter-js/src/event/off.js'
 import {supportPassive} from 'shorter-js/src/boolean/supportPassive.js'
 import {mouseHoverEvents} from 'shorter-js/src/strings/mouseHoverEvents.js'
 import {supportTouch} from 'shorter-js/src/boolean/supportTouch.js'
@@ -28,13 +25,18 @@ export function getScrollTargets(){
   let el = this.element
   return el === scrollContainer ? { el: document, st: document.body } : { el: el, st: el}
 }
+export function toggleScrollEvents(action,element){
+  element[action](  mouseHoverEvents[0], preventScroll, passiveHandler);
+  element[action](  touchOrWheel, preventScroll, passiveHandler);
+}
 export function scrollIn(){
   let targets = getScrollTargets.call(this)
 
   if ( 'scroll' in this.valuesEnd && !targets.el.scrolling) {
     targets.el.scrolling = 1;
-    on( targets.el, mouseHoverEvents[0], preventScroll, passiveHandler);
-    on( targets.el, touchOrWheel, preventScroll, passiveHandler);
+    // on( targets.el, mouseHoverEvents[0], preventScroll, passiveHandler);
+    // on( targets.el, touchOrWheel, preventScroll, passiveHandler);
+    toggleScrollEvents('addEventListener',targets.el)
     targets.st.style.pointerEvents = 'none'
   }
 }
@@ -43,8 +45,10 @@ export function scrollOut(){ //prevent scroll when tweening scroll
 
   if ( 'scroll' in this.valuesEnd && targets.el.scrolling) {
     targets.el.scrolling = 0;
-    off( targets.el, mouseHoverEvents[0], preventScroll, passiveHandler);
-    off( targets.el, touchOrWheel, preventScroll, passiveHandler);
+    // off( targets.el, mouseHoverEvents[0], preventScroll, passiveHandler);
+    // off( targets.el, touchOrWheel, preventScroll, passiveHandler);
+    toggleScrollEvents('removeEventListener',targets.el)
+
     targets.st.style.pointerEvents = ''
   }
 }
@@ -74,7 +78,7 @@ const baseScroll = {
     onComplete: onCompleteScroll
   },
   // unfortunatelly scroll needs all them no matter the packaging
-  Util: { preventScroll, scrollIn, scrollOut, getScrollTargets }
+  Util: { preventScroll, scrollIn, scrollOut, getScrollTargets, supportPassive }
 }
 
 export default baseScroll

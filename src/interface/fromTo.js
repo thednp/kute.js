@@ -1,5 +1,5 @@
 import selector from '../util/selector.js'
-import TC from './tc.js'
+import TC from './tcLink.js'
 
 export default function fromTo(element, startObject, endObject, optionsObj) {
   optionsObj = optionsObj || {}

@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Extra v2.0.3 (http://thednp.github.io/kute.js)
+* KUTE.js Extra v2.0.51 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.3";
+  var version = "2.0.51";
 
   var KUTE = {};
 
@@ -1047,16 +1047,6 @@
       };
     }
   }
-  var baseBoxProps = ['top','left','width','height'];
-  var baseBoxOnStart = {};
-  baseBoxProps.map(function (x){ return baseBoxOnStart[x] = boxModelOnStart; });
-  var baseBoxModel = {
-    component: 'baseBoxModel',
-    category: 'boxModel',
-    Interpolate: {numbers: numbers},
-    functions: {onStart: baseBoxOnStart}
-  };
-  Components.BoxModelProperties = baseBoxModel;
 
   var boxModelProperties = ['top', 'left', 'width', 'height', 'right', 'bottom', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight',
                             'padding', 'paddingTop','paddingBottom', 'paddingLeft', 'paddingRight',
@@ -2296,25 +2286,6 @@
   };
   Components.SVGTransformProperty = svgTransform;
 
-  function on (element, event, handler, options) {
-    options = options || false;
-    element.addEventListener(event, handler, options);
-  }
-
-  function off (element, event, handler, options) {
-    options = options || false;
-    element.removeEventListener(event, handler, options);
-  }
-
-  function one (element, event, handler, options) {
-    on(element, event, function handlerWrapper(e){
-      if (e.target === element) {
-        handler(e);
-        off(element, event, handlerWrapper, options);
-      }
-    }, options);
-  }
-
   var supportPassive = (function () {
     var result = false;
     try {
@@ -2323,14 +2294,16 @@
           result = true;
         }
       });
-      one(document, 'DOMContentLoaded', function (){}, opts);
+      document.addEventListener('DOMContentLoaded', function wrap(){
+        document.removeEventListener('DOMContentLoaded', wrap, opts);
+      }, opts);
     } catch (e) {}
     return result;
   })();
 
   var mouseHoverEvents = ('onmouseleave' in document) ? [ 'mouseenter', 'mouseleave'] : [ 'mouseover', 'mouseout' ];
 
-  var supportTouch = ('ontouchstart' in window || navigator.msMaxTouchPoints)||false;
+  var supportTouch = ('ontouchstart' in window || navigator.msMaxTouchPoints) || false;
 
   var touchOrWheel = supportTouch ? 'touchstart' : 'mousewheel';
   var scrollContainer = navigator && /(EDGE|Mac)/i.test(navigator.userAgent) ? document.body : document.documentElement;
@@ -2342,12 +2315,15 @@
     var el = this.element;
     return el === scrollContainer ? { el: document, st: document.body } : { el: el, st: el}
   }
+  function toggleScrollEvents(action,element){
+    element[action](  mouseHoverEvents[0], preventScroll, passiveHandler);
+    element[action](  touchOrWheel, preventScroll, passiveHandler);
+  }
   function scrollIn(){
     var targets = getScrollTargets.call(this);
     if ( 'scroll' in this.valuesEnd && !targets.el.scrolling) {
       targets.el.scrolling = 1;
-      on( targets.el, mouseHoverEvents[0], preventScroll, passiveHandler);
-      on( targets.el, touchOrWheel, preventScroll, passiveHandler);
+      toggleScrollEvents('addEventListener',targets.el);
       targets.st.style.pointerEvents = 'none';
     }
   }
@@ -2355,8 +2331,7 @@
     var targets = getScrollTargets.call(this);
     if ( 'scroll' in this.valuesEnd && targets.el.scrolling) {
       targets.el.scrolling = 0;
-      off( targets.el, mouseHoverEvents[0], preventScroll, passiveHandler);
-      off( targets.el, touchOrWheel, preventScroll, passiveHandler);
+      toggleScrollEvents('removeEventListener',targets.el);
       targets.st.style.pointerEvents = '';
     }
   }
@@ -2392,7 +2367,7 @@
     defaultValue: 0,
     Interpolate: {numbers: numbers},
     functions: scrollFunctions,
-    Util: { preventScroll: preventScroll, scrollIn: scrollIn, scrollOut: scrollOut, getScrollTargets: getScrollTargets }
+    Util: { preventScroll: preventScroll, scrollIn: scrollIn, scrollOut: scrollOut, getScrollTargets: getScrollTargets, toggleScrollEvents: toggleScrollEvents, supportPassive: supportPassive }
   };
   Components.ScrollProperty = scrollProperty;
 

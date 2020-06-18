@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Base v2.0.3 (http://thednp.github.io/kute.js)
+* KUTE.js Base v2.0.51 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.3";
+  var version = "2.0.51";
 
   var KUTE = {};
 
@@ -141,7 +141,7 @@
   function processEasing(fn) {
     if ( typeof fn === 'function') {
       return fn;
-    } else if ( typeof fn === 'string' ) {
+    } else if ( typeof Easing[fn] === 'function' ) {
       return Easing[fn];
     } else {
       return Easing.linear
@@ -444,6 +444,7 @@
   var baseBoxModel = {
     component: 'baseBoxModel',
     category: 'boxModel',
+    properties: baseBoxProps,
     Interpolate: {numbers: numbers},
     functions: {onStart: baseBoxOnStart}
   };

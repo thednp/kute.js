@@ -1,5 +1,4 @@
 import KUTE from '../objects/kute.js'
-import Components from '../objects/components.js'
 import {numbers} from '../objects/interpolate.js' 
 
 // Component Functions
@@ -21,12 +20,9 @@ baseBoxProps.map(x=>baseBoxOnStart[x] = boxModelOnStart)
 const baseBoxModel = {
   component: 'baseBoxModel',
   category: 'boxModel',
-  // properties: baseBoxProps,
-  // defaultValues: baseBoxPropsValues,
+  properties: baseBoxProps,
   Interpolate: {numbers},
   functions: {onStart: baseBoxOnStart}
 }
 
 export default baseBoxModel
-
-Components.BoxModelProperties = baseBoxModel

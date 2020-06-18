@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Standard v2.0.3 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.0.51 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.3";
+  var version = "2.0.51";
 
   var KUTE = {};
 
@@ -807,16 +807,6 @@
       };
     }
   }
-  var baseBoxProps = ['top','left','width','height'];
-  var baseBoxOnStart = {};
-  baseBoxProps.map(function (x){ return baseBoxOnStart[x] = boxModelOnStart; });
-  var baseBoxModel = {
-    component: 'baseBoxModel',
-    category: 'boxModel',
-    Interpolate: {numbers: numbers},
-    functions: {onStart: baseBoxOnStart}
-  };
-  Components.BoxModelProperties = baseBoxModel;
 
   function getBoxModel(tweenProp){
     return getStyleForProperty(this.element,tweenProp) || defaultValues[tweenProp];
@@ -837,7 +827,7 @@
   var essentialBoxModel = {
     component: 'essentialBoxModel',
     category: 'boxModel',
-    properties: ['top','left','width','height'],
+    properties: essentialBoxProps,
     defaultValues: essentialBoxPropsValues,
     Interpolate: {numbers: numbers},
     functions: essentialBoxModelFunctions,

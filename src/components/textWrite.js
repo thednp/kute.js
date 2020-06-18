@@ -1,4 +1,4 @@
-import TC from '../interface/tc.js'
+import TC from '../interface/tcLink.js'
 import {numbers} from '../objects/interpolate.js' 
 import Components from '../objects/components.js'
 

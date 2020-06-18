@@ -1,7 +1,9 @@
 import {numbers} from '../objects/interpolate.js'
 import Components from '../objects/components.js'
+import {supportPassive} from 'shorter-js/src/boolean/supportPassive.js'
 
-import {scrollContainer,onStartScroll,onCompleteScroll,scrollIn,scrollOut,getScrollTargets,preventScroll} from './scrollPropertyBase.js'
+
+import {scrollContainer,onStartScroll,onCompleteScroll,scrollIn,scrollOut,getScrollTargets,preventScroll,toggleScrollEvents} from './scrollPropertyBase.js'
 
 // Component Functions
 function getScroll(){
@@ -28,7 +30,7 @@ const scrollProperty = {
   Interpolate: {numbers},
   functions: scrollFunctions,
   // export stuff to global
-  Util: { preventScroll, scrollIn, scrollOut, getScrollTargets }
+  Util: { preventScroll, scrollIn, scrollOut, getScrollTargets, toggleScrollEvents, supportPassive }
 }
 
 export default scrollProperty
