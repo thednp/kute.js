@@ -8,7 +8,6 @@ import Internals from './core/internals.js'
 import Process from './process/process.js'
 import CubicBezier from 'cubic-bezier-easing'
 import Easing from './easing/easing-bezier.js'
-// import Easing from './objects/easing.js'
 import Selector from './util/selector.js'
 
 // TweenConstructor
