@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Base v2.0.3 (http://thednp.github.io/kute.js)
+* KUTE.js Base v2.0.6 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.3";
+  var version = "2.0.6";
 
   var KUTE = {};
 
@@ -19,24 +19,7 @@
                     : typeof(self) !== 'undefined' ? self
                     : typeof(window) !== 'undefined' ? window : {};
 
-  function numbers(a, b, v) {
-    a = +a; b -= a; return a + b * v;
-  }
-  function units(a, b, u, v) {
-    a = +a; b -= a; return ( a + b * v ) + u;
-  }
-  function arrays(a,b,v){
-    var result = [];
-    for ( var i=0, l=b.length; i<l; i++ ) {
-      result[i] = ((a[i] + (b[i] - a[i]) * v) * 1000 >> 0 ) / 1000;
-    }
-    return result
-  }
-  var Interpolate = {
-    numbers: numbers,
-    units: units,
-    arrays: arrays
-  };
+  var Interpolate = {};
 
   var onStart = {};
 
@@ -105,49 +88,42 @@
     defaultOptions: defaultOptions,
     linkProperty: linkProperty,
     onStart: onStart,
-    onComplete: onComplete,
+    onComplete: onComplete
   };
 
   var Util = {};
 
-  function linear (t) { return t; }
-  function easingQuadraticIn (t) { return t*t; }
-  function easingQuadraticOut (t) { return t*(2-t); }
-  function easingQuadraticInOut (t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t; }
-  function easingCubicIn (t) { return t*t*t; }
-  function easingCubicOut (t) { return (--t)*t*t+1; }
-  function easingCubicInOut (t) { return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1; }
-  function easingCircularIn (t) { return -(Math.sqrt(1 - (t * t)) - 1); }
-  function easingCircularOut (t) { return Math.sqrt(1 - (t = t - 1) * t); }
-  function easingCircularInOut (t) {  return ((t*=2) < 1) ? -0.5 * (Math.sqrt(1 - t * t) - 1) : 0.5 * (Math.sqrt(1 - (t -= 2) * t) + 1); }
-  function easingBackIn (t) { var s = 1.70158; return t * t * ((s + 1) * t - s); }
-  function easingBackOut (t) { var s = 1.70158; return --t * t * ((s + 1) * t + s) + 1; }
-  function easingBackInOut (t) { var s = 1.70158 * 1.525;  if ((t *= 2) < 1) { return 0.5 * (t * t * ((s + 1) * t - s)); }  return 0.5 * ((t -= 2) * t * ((s + 1) * t + s) + 2); }
+  var connect = {};
+
   var Easing = {
-    linear : linear,
-    easingQuadraticIn : easingQuadraticIn,
-    easingQuadraticOut : easingQuadraticOut,
-    easingQuadraticInOut : easingQuadraticInOut,
-    easingCubicIn : easingCubicIn,
-    easingCubicOut : easingCubicOut,
-    easingCubicInOut : easingCubicInOut,
-    easingCircularIn : easingCircularIn,
-    easingCircularOut : easingCircularOut,
-    easingCircularInOut : easingCircularInOut,
-    easingBackIn : easingBackIn,
-    easingBackOut : easingBackOut,
-    easingBackInOut : easingBackInOut
+    linear : function (t) { return t; },
+    easingQuadraticIn : function (t) { return t*t; },
+    easingQuadraticOut : function (t) { return t*(2-t); },
+    easingQuadraticInOut : function (t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t; },
+    easingCubicIn : function (t) { return t*t*t; },
+    easingCubicOut : function (t) { return (--t)*t*t+1; },
+    easingCubicInOut : function (t) { return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1; },
+    easingCircularIn : function (t) { return -(Math.sqrt(1 - (t * t)) - 1); },
+    easingCircularOut : function (t) { return Math.sqrt(1 - (t = t - 1) * t); },
+    easingCircularInOut : function (t) { return ((t*=2) < 1) ? -0.5 * (Math.sqrt(1 - t * t) - 1) : 0.5 * (Math.sqrt(1 - (t -= 2) * t) + 1); },
+    easingBackIn : function (t) { var s = 1.70158; return t * t * ((s + 1) * t - s) },
+    easingBackOut : function (t) { var s = 1.70158; return --t * t * ((s + 1) * t + s) + 1 },
+    easingBackInOut : function (t) {
+      var s = 1.70158 * 1.525;
+      if ((t *= 2) < 1) { return 0.5 * (t * t * ((s + 1) * t - s)) }
+      return 0.5 * ((t -= 2) * t * ((s + 1) * t + s) + 2)
+    }
   };
   function processEasing(fn) {
     if ( typeof fn === 'function') {
       return fn;
-    } else if ( typeof fn === 'string' ) {
+    } else if ( typeof Easing[fn] === 'function' ) {
       return Easing[fn];
     } else {
       return Easing.linear
     }
   }
-  Util.processEasing = processEasing;
+  connect.processEasing = processEasing;
 
   function add (tw) { return Tweens.push(tw); }
 
@@ -273,8 +249,6 @@
     return {name:ComponentName}
   };
 
-  var TweenConstructor = {};
-
   var TweenBase = function TweenBase(targetElement, startObject, endObject, options){
     this.element = targetElement;
     this.playing = false;
@@ -284,7 +258,7 @@
     this.valuesStart = startObject;
     options = options || {};
     this._resetStart = options.resetStart || 0;
-    this._easing = typeof (options.easing) === 'function' ? options.easing : Util.processEasing(options.easing);
+    this._easing = typeof (options.easing) === 'function' ? options.easing : connect.processEasing(options.easing);
     this._duration = options.duration || defaultOptions.duration;
     this._delay = options.delay || defaultOptions.delay;
     for (var op in options) {
@@ -377,13 +351,23 @@
     }
     return true;
   };
-  TweenConstructor.Tween = TweenBase;
-
-  var TC = TweenConstructor.Tween;
+  connect.tween = TweenBase;
 
   function fromTo(element, startObject, endObject, optionsObj) {
     optionsObj = optionsObj || {};
-    return new TC(selector(element), startObject, endObject, optionsObj)
+    return new connect.tween(selector(element), startObject, endObject, optionsObj)
+  }
+
+  function numbers(a, b, v) {
+    a = +a; b -= a; return a + b * v;
+  }
+
+  function arrays(a,b,v){
+    var result = [];
+    for ( var i=0, l=b.length; i<l; i++ ) {
+      result[i] = ((a[i] + (b[i] - a[i]) * v) * 1000 >> 0 ) / 1000;
+    }
+    return result
   }
 
   var matrixComponent = 'transformMatrix';
@@ -444,6 +428,7 @@
   var baseBoxModel = {
     component: 'baseBoxModel',
     category: 'boxModel',
+    properties: baseBoxProps,
     Interpolate: {numbers: numbers},
     functions: {onStart: baseBoxOnStart}
   };
