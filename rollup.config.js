@@ -6,26 +6,25 @@ import cleanup from 'rollup-plugin-cleanup'
 import json from '@rollup/plugin-json'
 import * as pkg from "./package.json"
 
-const POLYFILL = process.env.POLYFILL === 'true'
-const POLYIN = process.env.INPUTFILE
-const POLYOUT = process.env.OUTPUTFILE
+
+let INPUTFILE = process.env.INPUTFILE
+let OUTPUTFILE = process.env.OUTPUTFILE
 const DIST = process.env.DIST // base|standard|extra
-const NAME = !POLYFILL ? DIST.charAt(0).toUpperCase() + DIST.slice(1):''; // Base|Standard|Extra
+const NAME = DIST.charAt(0).toUpperCase() + DIST.slice(1); // Base|Standard|Extra
 const MIN = process.env.MIN === 'true' // true/false|unset
 const FORMAT = process.env.FORMAT // umd|iife|esm
 
 const year = (new Date).getFullYear()
-const banner = POLYFILL && POLYIN && POLYOUT ? '"use strict";':
+const banner = 
 `/*!
 * KUTE.js ${NAME} v${pkg.version} (${pkg.homepage})
 * Copyright 2015-${year} © ${pkg.author}
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */`
-const miniBanner = POLYFILL && POLYIN && POLYOUT ? banner :
-`// KUTE.js ${NAME} v${pkg.version} | ${pkg.author} © ${year} | ${pkg.license}-License`
+const miniBanner = `// KUTE.js ${NAME} v${pkg.version} | ${pkg.author} © ${year} | ${pkg.license}-License`
 
-const INPUTFILE = POLYFILL && POLYIN || POLYIN ? POLYIN : (DIST === 'standard' ? 'src/index.js' : 'src/index-'+DIST+'.js')
-const OUTPUTFILE = POLYFILL && POLYOUT || POLYOUT ? POLYOUT : (DIST === 'standard' ? 'dist/kute'+(FORMAT==='esm'?'.esm':'')+(MIN?'.min':'')+'.js' : 'demo/src/kute-'+DIST+(FORMAT==='esm'?'.esm':'')+(MIN?'.min':'')+'.js')
+INPUTFILE = INPUTFILE ? INPUTFILE : (DIST === 'standard' ? 'src/index.js' : 'src/index-'+DIST+'.js')
+OUTPUTFILE = OUTPUTFILE ? OUTPUTFILE : ('demo/src/kute'+(DIST!=='standard'?'-'+DIST:'')+(FORMAT==='esm'?'.esm':'')+(MIN?'.min':'')+'.js')
 
 const OUTPUT = {
   file: OUTPUTFILE,

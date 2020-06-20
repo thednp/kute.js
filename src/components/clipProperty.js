@@ -1,7 +1,7 @@
 import Components from '../objects/components.js'
 import getStyleForProperty from '../process/getStyleForProperty.js' 
 import trueDimension from '../util/trueDimension.js' 
-import {numbers} from '../objects/interpolate.js'
+import numbers from '../interpolation/numbers.js' 
 import {onStartClip} from './clipPropertyBase.js'
 
 // Component Functions

@@ -1,49 +1,13 @@
 import KUTE from '../objects/kute.js'
+import perspective from '../interpolation/perspective.js'
+import translate3d from '../interpolation/translate3d.js'
+import rotate3d from '../interpolation/rotate3d.js'
+import translate from '../interpolation/translate.js'
+import rotate from '../interpolation/rotate.js'
+import scale from '../interpolation/scale.js'
+import skew from '../interpolation/skew.js'
 
 // const transformFunctions = { property : 'transform', subProperties, defaultValues, Interpolate: {translate,rotate,skew,scale}, functions } // same to svg transform, attr
-
-// Component Interpolate functions
-export function perspective(a, b, u, v) {
-  return `perspective(${((a + (b - a) * v) * 1000 >> 0 ) / 1000}${u})`
-}
-export function translate3d(a, b, u, v) {
-  let translateArray = [];
-  for (let ax=0; ax<3; ax++){
-    translateArray[ax] = ( a[ax]||b[ax] ? ( (a[ax] + ( b[ax] - a[ax] ) * v ) * 1000 >> 0 ) / 1000 : 0 ) + u;
-  }
-  return `translate3d(${translateArray.join(',')})`;
-}
-export function rotate3d(a, b, u, v) {
-  let rotateStr = ''
-  rotateStr += a[0]||b[0] ? `rotateX(${((a[0] + (b[0] - a[0]) * v) * 1000 >> 0 ) / 1000}${u})` : ''
-  rotateStr += a[1]||b[1] ? `rotateY(${((a[1] + (b[1] - a[1]) * v) * 1000 >> 0 ) / 1000}${u})` : ''
-  rotateStr += a[2]||b[2] ? `rotateZ(${((a[2] + (b[2] - a[2]) * v) * 1000 >> 0 ) / 1000}${u})` : ''
-  return rotateStr
-}
-export function translate(a, b, u, v) {
-  let translateArray = []; 
-  translateArray[0] = ( a[0]===b[0] ? b[0] : ( (a[0] + ( b[0] - a[0] ) * v ) * 1000 >> 0 ) / 1000 ) + u
-  translateArray[1] = a[1]||b[1] ? (( a[1]===b[1] ? b[1] : ( (a[1] + ( b[1] - a[1] ) * v ) * 1000 >> 0 ) / 1000 ) + u) : '0' 
-  return `translate(${translateArray.join(',')})`;
-}
-export function rotate(a, b, u, v) {
-  return `rotate(${((a + (b - a) * v) * 1000 >> 0 ) / 1000}${u})`
-}
-export function skew(a, b, u, v) {
-  let skewArray = []; 
-  skewArray[0] = ( a[0]===b[0] ? b[0] : ( (a[0] + ( b[0] - a[0] ) * v ) * 1000 >> 0 ) / 1000 ) + u
-  skewArray[1] = a[1]||b[1] ? (( a[1]===b[1] ? b[1] : ( (a[1] + ( b[1] - a[1] ) * v ) * 1000 >> 0 ) / 1000 ) + u) : '0' 
-  return `skew(${skewArray.join(',')})`;
-}
-export function skewX(a, b, u, v) {
-  return `skewX(${((a + (b - a) * v) * 1000 >> 0 ) / 1000}${u})`
-}
-export function skewY(a, b, u, v) {
-  return `skewY(${((a + (b - a) * v) * 1000 >> 0 ) / 1000}${u})`
-}
-export function scale (a, b, v) {
-  return `scale(${((a + (b - a) * v) * 1000 >> 0 ) / 1000})`;
-}
 
 // Component Functions
 export function onStartTransform(tweenProp){

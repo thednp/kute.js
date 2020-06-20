@@ -1,6 +1,7 @@
 import defaultValues from '../objects/defaultValues.js'
 import Components from '../objects/components.js'
-import {numbers,arrays} from '../objects/interpolate.js'
+import numbers from '../interpolation/numbers.js' 
+import arrays from '../interpolation/arrays.js' 
 import {onStartTransform} from './transformMatrixBase.js'
 
 // const transformMatrix = { property : 'transform', defaultValue: {}, interpolators: {} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }

@@ -1,6 +1,6 @@
 import KUTE from '../objects/kute.js'
 import defaultOptions from '../objects/defaultOptions.js'
-import TC from '../interface/tcLink.js'
+import connect from '../objects/connect.js'
 
 // KUTE.js Tween Collection
 // ========================
@@ -22,7 +22,7 @@ export default class TweenCollection {
       options[i] = Ops || {}; 
       options[i].delay = i > 0 ? Ops.delay + (Ops.offset||defaultOptions.offset) : Ops.delay;
       if (el instanceof Element) {
-        this.tweens.push( new TC(el, vS, vE, options[i]) );
+        this.tweens.push( new connect.tween(el, vS, vE, options[i]) );
       } else {
         console.error(`KUTE.js - ${el} not instanceof [Element]`)
       }
@@ -52,7 +52,7 @@ export default class TweenCollection {
     let lastTween = this.tweens[this.length-1]
     if (args instanceof TweenCollection){
       lastTween.chain(args.tweens); 
-    } else if (args instanceof TC){
+    } else if (args instanceof connect.tween){
       lastTween.chain(args); 
     } else {
       throw new TypeError('KUTE.js - invalid chain value')

@@ -1,6 +1,6 @@
-import {numbers} from '../objects/interpolate.js'
 import Components from '../objects/components.js'
-import {supportPassive} from 'shorter-js/src/boolean/supportPassive.js'
+import numbers from '../interpolation/numbers.js' 
+import supportPassive from 'shorter-js/src/boolean/supportPassive.js'
 
 
 import {scrollContainer,onStartScroll,onCompleteScroll,scrollIn,scrollOut,getScrollTargets,preventScroll,toggleScrollEvents} from './scrollPropertyBase.js'

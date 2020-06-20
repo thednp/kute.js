@@ -1,7 +1,7 @@
 import defaultValues from '../objects/defaultValues.js'
 import Components from '../objects/components.js'
 import getStyleForProperty from '../process/getStyleForProperty.js'
-import {numbers} from '../objects/interpolate.js' 
+import numbers from '../interpolation/numbers.js' 
 import trueDimension from '../util/trueDimension.js'
 import {onStartBgPos} from './backgroundPositionBase.js'
 

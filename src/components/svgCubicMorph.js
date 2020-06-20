@@ -1,6 +1,6 @@
 import Components from '../objects/components.js'
 import selector from '../util/selector.js'
-import {numbers} from '../objects/interpolate.js'
+import numbers from '../interpolation/numbers.js' 
 
 import {toPathString,onStartCubicMorph} from './svgCubicMorphBase.js'
 

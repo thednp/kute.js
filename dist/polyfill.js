@@ -1,4 +1,9 @@
-"use strict";
+/*!
+  * KUTE.js Polyfill v2.0.6 (http://thednp.github.io/kute.js)
+  * Copyright 2015-2020 © thednp
+  * Licensed under MIT (https://github.com/thednp/bootstrap.native/blob/master/LICENSE)
+  */
+ "use strict";
 if (!Array.from) {
   Array.from = (function () {
     var toStr = Object.prototype.toString;

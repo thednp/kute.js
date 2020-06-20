@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Extra v2.0.51 (http://thednp.github.io/kute.js)
+* KUTE.js Extra v2.0.6 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.51";
+  var version = "2.0.6";
 
   var KUTE = {};
 
@@ -19,24 +19,7 @@
                     : typeof(self) !== 'undefined' ? self
                     : typeof(window) !== 'undefined' ? window : {};
 
-  function numbers(a, b, v) {
-    a = +a; b -= a; return a + b * v;
-  }
-  function units(a, b, u, v) {
-    a = +a; b -= a; return ( a + b * v ) + u;
-  }
-  function arrays(a,b,v){
-    var result = [];
-    for ( var i=0, l=b.length; i<l; i++ ) {
-      result[i] = ((a[i] + (b[i] - a[i]) * v) * 1000 >> 0 ) / 1000;
-    }
-    return result
-  }
-  var Interpolate = {
-    numbers: numbers,
-    units: units,
-    arrays: arrays
-  };
+  var Interpolate = {};
 
   var onStart = {};
 
@@ -311,6 +294,8 @@
     return t2;
   };
 
+  var connect = {};
+
   var Easing = {
     linear :  new CubicBezier(0, 0, 1, 1,'linear'),
     easingSinusoidalIn : new CubicBezier(0.47, 0, 0.745, 0.715,'easingSinusoidalIn'),
@@ -353,7 +338,7 @@
       return Easing.linear
     }
   }
-  Util.processEasing = processBezierEasing;
+  connect.processEasing = processBezierEasing;
 
   function selector(el, multi) {
     try{
@@ -374,8 +359,6 @@
     }
   }
 
-  var TweenConstructor = {};
-
   var TweenBase = function TweenBase(targetElement, startObject, endObject, options){
     this.element = targetElement;
     this.playing = false;
@@ -385,7 +368,7 @@
     this.valuesStart = startObject;
     options = options || {};
     this._resetStart = options.resetStart || 0;
-    this._easing = typeof (options.easing) === 'function' ? options.easing : Util.processEasing(options.easing);
+    this._easing = typeof (options.easing) === 'function' ? options.easing : connect.processEasing(options.easing);
     this._duration = options.duration || defaultOptions.duration;
     this._delay = options.delay || defaultOptions.delay;
     for (var op in options) {
@@ -478,7 +461,7 @@
     }
     return true;
   };
-  TweenConstructor.Tween = TweenBase;
+  connect.tween = TweenBase;
 
   defaultOptions.repeat = 0;
   defaultOptions.repeatDelay = 0;
@@ -627,7 +610,7 @@
     };
     return Tween;
   }(TweenBase));
-  TweenConstructor.Tween = Tween;
+  connect.tween = Tween;
 
   var TweenExtra = (function (Tween) {
     function TweenExtra() {
@@ -655,9 +638,7 @@
     };
     return TweenExtra;
   }(Tween));
-  TweenConstructor.Tween = TweenExtra;
-
-  var TC = TweenConstructor.Tween;
+  connect.tween = TweenExtra;
 
   var TweenCollection = function TweenCollection(els,vS,vE,Ops){
     var this$1 = this;
@@ -670,7 +651,7 @@
       options[i] = Ops || {};
       options[i].delay = i > 0 ? Ops.delay + (Ops.offset||defaultOptions.offset) : Ops.delay;
       if (el instanceof Element) {
-        this$1.tweens.push( new TC(el, vS, vE, options[i]) );
+        this$1.tweens.push( new connect.tween(el, vS, vE, options[i]) );
       } else {
         console.error(("KUTE.js - " + el + " not instanceof [Element]"));
       }
@@ -699,7 +680,7 @@
     var lastTween = this.tweens[this.length-1];
     if (args instanceof TweenCollection){
       lastTween.chain(args.tweens);
-    } else if (args instanceof TC){
+    } else if (args instanceof connect.tween){
       lastTween.chain(args);
     } else {
       throw new TypeError('KUTE.js - invalid chain value')
@@ -728,7 +709,7 @@
     this.element.output = this.element.parentNode.getElementsByTagName('OUTPUT')[0];
     if (!(this.element instanceof HTMLInputElement)) { throw TypeError("Target element is not [HTMLInputElement]") }
     if (this.element.type !=='range') { throw TypeError("Target element is not a range input") }
-    if (!(tween instanceof TweenConstructor.Tween)) { throw TypeError(("tween parameter is not [" + TweenConstructor + "]")) }
+    if (!(tween instanceof connect.tween)) { throw TypeError(("tween parameter is not [" + (connect.tween) + "]")) }
     this.element.setAttribute('value',0);
     this.element.setAttribute('min',0);
     this.element.setAttribute('max',1);
@@ -780,12 +761,12 @@
   function to(element, endObject, optionsObj) {
     optionsObj = optionsObj || {};
     optionsObj.resetStart = endObject;
-    return new TC(selector(element), endObject, endObject, optionsObj)
+    return new connect.tween(selector(element), endObject, endObject, optionsObj)
   }
 
   function fromTo(element, startObject, endObject, optionsObj) {
     optionsObj = optionsObj || {};
-    return new TC(selector(element), startObject, endObject, optionsObj)
+    return new connect.tween(selector(element), startObject, endObject, optionsObj)
   }
 
   function allTo(elements, endObject, optionsObj) {
@@ -952,6 +933,10 @@
     return AnimationDevelopment;
   }(Animation));
 
+  function numbers(a, b, v) {
+    a = +a; b -= a; return a + b * v;
+  }
+
   function trueDimension (dimValue, isAngle) {
     var intValue = parseInt(dimValue) || 0;
     var mUnits = ['px','%','deg','rad','em','rem','vh','vw'];
@@ -1002,6 +987,10 @@
     Util: {trueDimension: trueDimension}
   };
   Components.BackgroundPosition = BackgroundPosition;
+
+  function units(a, b, u, v) {
+    a = +a; b -= a; return ( a + b * v ) + u;
+  }
 
   function radiusOnStartFn(tweenProp){
     if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
@@ -1162,6 +1151,7 @@
     for (c in b) { _c[c] = c !== 'a' ? (numbers(a[c],b[c],v)>>0 || 0) : (a[c] && b[c]) ? (numbers(a[c],b[c],v) * 100 >> 0 )/100 : null; }
     return !_c.a ? rgb + _c.r + cm + _c.g + cm + _c.b + ep : rgba + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
   }
+
   function onStartColors(tweenProp){
     if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
@@ -2601,7 +2591,7 @@
       options.delay = totalDelay;
       options.onComplete = null;
       totalDelay += options.duration;
-      return new TC(el, {text:el.innerHTML}, {text:''}, options );
+      return new connect.tween(el, {text:el.innerHTML}, {text:''}, options );
     }));
     textTween = textTween.concat(newTargets.map(function (el,i){
       var onComplete = function () {target.innerHTML = newText, target.playing = false;};
@@ -2609,7 +2599,7 @@
       options.delay = totalDelay;
       options.onComplete = i === newTargetSegs.length-1 ? onComplete : null;
       totalDelay += options.duration;
-      return new TC(el, {text:''}, {text:newTargetSegs[i].innerHTML}, options );
+      return new connect.tween(el, {text:''}, {text:newTargetSegs[i].innerHTML}, options );
     }));
     textTween.start = function(){
       !target.playing && textTween.map(function (tw){ return tw.start(); }) && (target.playing = true);
@@ -2642,6 +2632,14 @@
     Util: { charSet: charSet, createTextTweens: createTextTweens }
   };
   Components.TextWriteProperties = textWrite;
+
+  function arrays(a,b,v){
+    var result = [];
+    for ( var i=0, l=b.length; i<l; i++ ) {
+      result[i] = ((a[i] + (b[i] - a[i]) * v) * 1000 >> 0 ) / 1000;
+    }
+    return result
+  }
 
   var CSS3Matrix = typeof(DOMMatrix) !== 'undefined' ? DOMMatrix
                    : typeof(WebKitCSSMatrix) !== 'undefined' ? WebKitCSSMatrix

@@ -1,5 +1,5 @@
 import KUTE from '../objects/kute.js'
-import {numbers} from '../objects/interpolate.js' 
+import numbers from '../interpolation/numbers.js'
 import defaultOptions from '../objects/defaultOptions.js'
 
 // Component Values

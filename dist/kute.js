@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Standard v2.0.51 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.0.6 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.51";
+  var version = "2.0.6";
 
   var KUTE = {};
 
@@ -311,6 +311,8 @@
     return t2;
   };
 
+  var connect = {};
+
   var Easing = {
     linear :  new CubicBezier(0, 0, 1, 1,'linear'),
     easingSinusoidalIn : new CubicBezier(0.47, 0, 0.745, 0.715,'easingSinusoidalIn'),
@@ -353,7 +355,7 @@
       return Easing.linear
     }
   }
-  Util.processEasing = processBezierEasing;
+  connect.processEasing = processBezierEasing;
 
   function selector(el, multi) {
     try{
@@ -374,8 +376,6 @@
     }
   }
 
-  var TweenConstructor = {};
-
   var TweenBase = function TweenBase(targetElement, startObject, endObject, options){
     this.element = targetElement;
     this.playing = false;
@@ -385,7 +385,7 @@
     this.valuesStart = startObject;
     options = options || {};
     this._resetStart = options.resetStart || 0;
-    this._easing = typeof (options.easing) === 'function' ? options.easing : Util.processEasing(options.easing);
+    this._easing = typeof (options.easing) === 'function' ? options.easing : connect.processEasing(options.easing);
     this._duration = options.duration || defaultOptions.duration;
     this._delay = options.delay || defaultOptions.delay;
     for (var op in options) {
@@ -478,7 +478,7 @@
     }
     return true;
   };
-  TweenConstructor.Tween = TweenBase;
+  connect.tween = TweenBase;
 
   defaultOptions.repeat = 0;
   defaultOptions.repeatDelay = 0;
@@ -627,9 +627,7 @@
     };
     return Tween;
   }(TweenBase));
-  TweenConstructor.Tween = Tween;
-
-  var TC = TweenConstructor.Tween;
+  connect.tween = Tween;
 
   var TweenCollection = function TweenCollection(els,vS,vE,Ops){
     var this$1 = this;
@@ -642,7 +640,7 @@
       options[i] = Ops || {};
       options[i].delay = i > 0 ? Ops.delay + (Ops.offset||defaultOptions.offset) : Ops.delay;
       if (el instanceof Element) {
-        this$1.tweens.push( new TC(el, vS, vE, options[i]) );
+        this$1.tweens.push( new connect.tween(el, vS, vE, options[i]) );
       } else {
         console.error(("KUTE.js - " + el + " not instanceof [Element]"));
       }
@@ -671,7 +669,7 @@
     var lastTween = this.tweens[this.length-1];
     if (args instanceof TweenCollection){
       lastTween.chain(args.tweens);
-    } else if (args instanceof TC){
+    } else if (args instanceof connect.tween){
       lastTween.chain(args);
     } else {
       throw new TypeError('KUTE.js - invalid chain value')
@@ -695,12 +693,12 @@
   function to(element, endObject, optionsObj) {
     optionsObj = optionsObj || {};
     optionsObj.resetStart = endObject;
-    return new TC(selector(element), endObject, endObject, optionsObj)
+    return new connect.tween(selector(element), endObject, endObject, optionsObj)
   }
 
   function fromTo(element, startObject, endObject, optionsObj) {
     optionsObj = optionsObj || {};
-    return new TC(selector(element), startObject, endObject, optionsObj)
+    return new connect.tween(selector(element), startObject, endObject, optionsObj)
   }
 
   function allTo(elements, endObject, optionsObj) {
@@ -1155,7 +1153,7 @@
       options.delay = totalDelay;
       options.onComplete = null;
       totalDelay += options.duration;
-      return new TC(el, {text:el.innerHTML}, {text:''}, options );
+      return new connect.tween(el, {text:el.innerHTML}, {text:''}, options );
     }));
     textTween = textTween.concat(newTargets.map(function (el,i){
       var onComplete = function () {target.innerHTML = newText, target.playing = false;};
@@ -1163,7 +1161,7 @@
       options.delay = totalDelay;
       options.onComplete = i === newTargetSegs.length-1 ? onComplete : null;
       totalDelay += options.duration;
-      return new TC(el, {text:''}, {text:newTargetSegs[i].innerHTML}, options );
+      return new connect.tween(el, {text:''}, {text:newTargetSegs[i].innerHTML}, options );
     }));
     textTween.start = function(){
       !target.playing && textTween.map(function (tw){ return tw.start(); }) && (target.playing = true);

@@ -1,8 +1,8 @@
 import selector from '../util/selector.js'
-import TC from './tcLink.js'
+import connect from '../objects/connect.js'
 
 export default function to(element, endObject, optionsObj) {
   optionsObj = optionsObj || {}
   optionsObj.resetStart = endObject
-  return new TC(selector(element), endObject, endObject, optionsObj)
+  return new connect.tween(selector(element), endObject, endObject, optionsObj)
 }

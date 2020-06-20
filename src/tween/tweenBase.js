@@ -1,9 +1,8 @@
 import KUTE from '../objects/kute.js'
-import TweenConstructor from '../objects/tweenConstructor.js'
+import connect from '../objects/connect.js'
 import onStart from '../objects/onStart.js'
 import onComplete from '../objects/onComplete.js'
 import defaultOptions from '../objects/defaultOptions.js'
-import Util from '../objects/util.js'
 
 import {Tick,Ticker,stop} from '../core/render.js'
 
@@ -33,7 +32,7 @@ export default class TweenBase {
     // used by to() method and expects object : {} / false
     this._resetStart = options.resetStart || 0; 
     // you can only set a core easing function as default
-    this._easing = typeof (options.easing) === 'function' ? options.easing : Util.processEasing(options.easing);
+    this._easing = typeof (options.easing) === 'function' ? options.easing : connect.processEasing(options.easing);
     this._duration = options.duration || defaultOptions.duration; // duration option | default
     this._delay = options.delay || defaultOptions.delay; // delay option | default
 
@@ -173,4 +172,4 @@ export default class TweenBase {
 }
 
 // Update Tween Interface
-TweenConstructor.Tween = TweenBase
+connect.tween = TweenBase

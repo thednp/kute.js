@@ -1,4 +1,4 @@
-import Util from '../objects/util.js'
+import connect from '../objects/connect.js'
 import CubicBezier from 'cubic-bezier-easing'
 
 const Easing = {
@@ -36,7 +36,7 @@ const Easing = {
   easingBackInOut : new CubicBezier(0.68, -0.55, 0.265, 1.55,'easingBackInOut')
 }
 
-export function processBezierEasing(fn) {
+function processBezierEasing(fn) {
   if ( typeof fn === 'function') {
     return fn;
   } else if (typeof(Easing[fn]) === 'function') {
@@ -52,7 +52,6 @@ export function processBezierEasing(fn) {
   }
 }
 
-// Tween constructor needs to know who will process easing functions
-Util.processEasing = processBezierEasing
+connect.processEasing = processBezierEasing
 
 export default Easing

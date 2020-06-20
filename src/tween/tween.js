@@ -1,7 +1,7 @@
 
 import KUTE from '../objects/kute.js'
-import TweenConstructor from '../objects/tweenConstructor.js'
 import TweenBase from './tweenBase.js'
+import connect from '../objects/connect.js'
 import add from '../core/add.js'
 import remove from '../core/remove.js'
 import defaultOptions from '../objects/defaultOptions.js'
@@ -221,4 +221,4 @@ export default class Tween extends TweenBase {
 }
 
 // Update Tween Interface Update
-TweenConstructor.Tween = Tween
+connect.tween = Tween

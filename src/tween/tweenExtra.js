@@ -1,4 +1,4 @@
-import TweenConstructor from '../objects/tweenConstructor.js'
+import connect from '../objects/connect.js'
 import Tween from './tween.js'
 
 // to do
@@ -42,4 +42,4 @@ export default class TweenExtra extends Tween {
 }
 
 // Tween Interface
-TweenConstructor.Tween = TweenExtra
+connect.tween = TweenExtra

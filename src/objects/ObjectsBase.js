@@ -7,5 +7,5 @@ export default {
   defaultOptions,
   linkProperty,
   onStart,
-  onComplete,
+  onComplete
 }

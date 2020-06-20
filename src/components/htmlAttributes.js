@@ -1,10 +1,10 @@
 import defaultValues from '../objects/defaultValues.js'
 import onStart from '../objects/onStart.js'
 import Components from '../objects/components.js'
-import {numbers} from '../objects/interpolate.js' 
 import trueColor from '../util/trueColor.js' 
 import trueDimension from '../util/trueDimension.js' 
-import {colors} from './colorPropertiesBase.js'
+import numbers from '../interpolation/numbers.js' 
+import colors from '../interpolation/colors.js' 
 import {attributes,onStartAttr} from './htmlAttributesBase.js'
 
 // Component Name

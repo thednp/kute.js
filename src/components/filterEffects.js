@@ -2,8 +2,8 @@ import getStyleForProperty from '../process/getStyleForProperty.js'
 import defaultValues from '../objects/defaultValues.js'
 import Components from '../objects/components.js'
 import trueColor from '../util/trueColor.js'
-import {numbers} from '../objects/interpolate.js' 
-import {colors} from './colorPropertiesBase.js' 
+import numbers from '../interpolation/numbers.js' 
+import colors from '../interpolation/colors.js'
 import {dropShadow,onStartFilter} from './filterEffectsBase.js'
 
 // const filterEffects = { property : 'filter', subProperties: {}, defaultValue: {}, interpolators: {} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }

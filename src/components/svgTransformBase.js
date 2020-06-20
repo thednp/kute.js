@@ -1,5 +1,5 @@
 import KUTE from '../objects/kute.js'
-import {numbers} from '../objects/interpolate.js'
+import numbers from '../interpolation/numbers.js' 
 
 // const svgTransform = { property : 'svgTransform', subProperties, defaultValue, Interpolate: {numbers}, functions }
 

@@ -1,7 +1,6 @@
-import KUTE from '../objects/kute.js'
 import getStyleForProperty from '../process/getStyleForProperty.js'
 import Components from '../objects/components.js'
-import {numbers} from '../objects/interpolate.js'
+import numbers from '../interpolation/numbers.js' 
 import {onStartOpacity} from './opacityPropertyBase.js'
 
 // const opacityProperty = { property : 'opacity', defaultValue: 1, interpolators: {numbers} }, functions = { prepareStart, prepareProperty, onStart }

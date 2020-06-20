@@ -1,6 +1,6 @@
 import KUTE from '../objects/kute.js'
-import {numbers} from '../objects/interpolate.js' 
-import {colors} from './colorPropertiesBase.js' 
+import numbers from '../interpolation/numbers.js' 
+import colors from '../interpolation/colors.js' 
 
 // const filterEffects = { property : 'filter', subProperties: {}, defaultValue: {}, interpolators: {} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
 

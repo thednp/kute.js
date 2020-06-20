@@ -2,7 +2,7 @@ import defaultValues from '../objects/defaultValues.js'
 import Components from '../objects/components.js'
 import getStyleForProperty from '../process/getStyleForProperty.js'
 import trueDimension from '../util/trueDimension.js'
-import {units} from '../objects/interpolate.js'
+import units from '../interpolation/units.js' 
 import {radiusOnStartFn} from './borderRadiusBase.js'
 
 // const borderRadius = { category : 'borderRadius', properties : [..], defaultValues: {..}, interpolation: {units} }

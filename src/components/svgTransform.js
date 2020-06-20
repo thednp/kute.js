@@ -1,5 +1,4 @@
-import KUTE from '../objects/kute.js'
-import {numbers} from '../objects/interpolate.js'
+import numbers from '../interpolation/numbers.js' 
 import Components from '../objects/components.js'
 import {svgTransformOnStart} from './svgTransformBase.js'
 

@@ -4,6 +4,7 @@ import Interpolate from './objects/interpolate.js'
 import Objects from './objects/objectsBase.js'
 import Util from './objects/util.js'
 import Easing from './easing/easing-base.js'
+// import Easing from './objects/easing.js'
 import Internals from './core/internals.js'
 import Selector from './util/selector.js'
 

@@ -1,5 +1,5 @@
 import KUTE from '../objects/kute.js'
-import TweenConstructor from '../objects/tweenConstructor.js'
+import connect from '../objects/connect.js'
 import selector from './selector.js'
 
 export default class ProgressBar {
@@ -13,7 +13,7 @@ export default class ProgressBar {
     // invalidate
     if (!(this.element instanceof HTMLInputElement)) throw TypeError(`Target element is not [HTMLInputElement]`)
     if (this.element.type !=='range') throw TypeError(`Target element is not a range input`)
-    if (!(tween instanceof TweenConstructor.Tween)) throw TypeError(`tween parameter is not [${TweenConstructor}]`)
+    if (!(tween instanceof connect.tween)) throw TypeError(`tween parameter is not [${connect.tween}]`)
 
     this.element.setAttribute('value',0)
     this.element.setAttribute('min',0)

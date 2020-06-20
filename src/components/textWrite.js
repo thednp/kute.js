@@ -1,6 +1,6 @@
-import TC from '../interface/tcLink.js'
-import {numbers} from '../objects/interpolate.js' 
+import connect from '../objects/connect.js'
 import Components from '../objects/components.js'
+import numbers from '../interpolation/numbers.js' 
 
 import {onStartWrite,charSet} from './textWriteBase.js'
 
@@ -99,7 +99,7 @@ export function createTextTweens(target,newText,options){
     options.onComplete = null
 
     totalDelay += options.duration
-    return new TC(el, {text:el.innerHTML}, {text:''}, options );
+    return new connect.tween(el, {text:el.innerHTML}, {text:''}, options );
   }));
   textTween = textTween.concat(newTargets.map((el,i)=> {
     const onComplete = () => {target.innerHTML = newText, target.playing = false};
@@ -109,7 +109,7 @@ export function createTextTweens(target,newText,options){
     options.onComplete = i === newTargetSegs.length-1 ? onComplete : null
     totalDelay += options.duration
 
-    return new TC(el, {text:''}, {text:newTargetSegs[i].innerHTML}, options );
+    return new connect.tween(el, {text:''}, {text:newTargetSegs[i].innerHTML}, options );
   }));
 
   textTween.start = function(){

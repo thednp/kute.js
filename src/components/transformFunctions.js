@@ -1,7 +1,14 @@
 import defaultValues from '../objects/defaultValues.js'
 import Components from '../objects/components.js'
 import getInlineStyle from '../process/getInlineStyle.js'
-import {onStartTransform, perspective,translate3d, rotate3d, translate, rotate, scale, skew} from './transformFunctionsBase.js'
+import perspective from '../interpolation/perspective.js'
+import translate3d from '../interpolation/translate3d.js'
+import rotate3d from '../interpolation/rotate3d.js'
+import translate from '../interpolation/translate.js'
+import rotate from '../interpolation/rotate.js'
+import scale from '../interpolation/scale.js'
+import skew from '../interpolation/skew.js'
+import {onStartTransform} from './transformFunctionsBase.js'
 
 // const transformFunctions = { property : 'transform', subProperties, defaultValues, Interpolate: {translate,rotate,skew,scale}, functions } // same to svg transform, attr
 

@@ -1,6 +1,6 @@
-import {numbers} from '../objects/interpolate.js'
 import Components from '../objects/components.js'
 import getStyleForProperty from '../process/getStyleForProperty.js'
+import numbers from '../interpolation/numbers.js' 
 import {onStartDraw} from './svgDrawBase.js'
 
 // const svgDraw = { property : 'draw', defaultValue, Interpolate: {numbers} }, functions = { prepareStart, prepareProperty, onStart }

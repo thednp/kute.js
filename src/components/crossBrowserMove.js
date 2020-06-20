@@ -3,7 +3,7 @@ import getInlineStyle from '../process/getInlineStyle.js'
 import defaultValues from '../objects/defaultValues.js'
 import Components from '../objects/components.js'
 import trueProperty from '../util/trueProperty.js'
-import {numbers} from '../objects/interpolate.js' 
+import numbers from '../interpolation/numbers.js' 
 
 // Component Const
 const transformProperty = trueProperty('transform');

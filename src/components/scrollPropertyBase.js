@@ -1,9 +1,9 @@
 import KUTE from '../objects/kute.js'
-import {numbers} from '../objects/interpolate.js'
+import numbers from '../interpolation/numbers.js' 
 
-import {supportPassive} from 'shorter-js/src/boolean/supportPassive.js'
-import {mouseHoverEvents} from 'shorter-js/src/strings/mouseHoverEvents.js'
-import {supportTouch} from 'shorter-js/src/boolean/supportTouch.js'
+import supportPassive from 'shorter-js/src/boolean/supportPassive.js'
+import mouseHoverEvents from 'shorter-js/src/strings/mouseHoverEvents.js'
+import supportTouch from 'shorter-js/src/boolean/supportTouch.js'
 
 // Component Util
 // events preventing scroll
@@ -34,8 +34,6 @@ export function scrollIn(){
 
   if ( 'scroll' in this.valuesEnd && !targets.el.scrolling) {
     targets.el.scrolling = 1;
-    // on( targets.el, mouseHoverEvents[0], preventScroll, passiveHandler);
-    // on( targets.el, touchOrWheel, preventScroll, passiveHandler);
     toggleScrollEvents('addEventListener',targets.el)
     targets.st.style.pointerEvents = 'none'
   }
@@ -45,10 +43,7 @@ export function scrollOut(){ //prevent scroll when tweening scroll
 
   if ( 'scroll' in this.valuesEnd && targets.el.scrolling) {
     targets.el.scrolling = 0;
-    // off( targets.el, mouseHoverEvents[0], preventScroll, passiveHandler);
-    // off( targets.el, touchOrWheel, preventScroll, passiveHandler);
     toggleScrollEvents('removeEventListener',targets.el)
-
     targets.st.style.pointerEvents = ''
   }
 }

@@ -1,5 +1,5 @@
 import KUTE from '../objects/kute.js'
-import {units} from '../objects/interpolate.js' 
+import units from '../interpolation/units.js'  
 
 // const opacity = { category : 'textProperties', defaultValues: [], interpolators: {units} }, functions = { prepareStart, prepareProperty, onStart:{} }
 
