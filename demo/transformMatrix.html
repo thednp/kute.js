@@ -171,20 +171,21 @@ let mx4 = KUTE.to('el4', { transform: { translate3d:[-50,-50,-50], rotate3d:[0,-
 
         <h3>Notes</h3>
         <ul>
-            <li>Why no support for the <code>matrix3d</code> function? Simple: we can of course interpolate 16 numbers super fast, but we won't be able to rotate on any axis above 360 degrees. 
-                As <a href="https://stackoverflow.com/a/39870758/803358">explained here</a>, surely for performance reasons the browsers won't try and compute angles above 360 degrees, but simplify 
-                the number crunching because a 370 degree rotation is visualy identical with a 10 degree rotation.</li>
-            <li>The component does NOT include any scripting for matrix decomposition/unmatrix, after several years of research I came to the conclusion that there is no such thing to be reliable. 
-                Such a feature would allow us to kick start animations directly from <code>matrix3d</code> string/array values, but considering the size of this component, I let you draw the conclusions.</li>
-            <li>Despite the "limitations", we have some tricks available: the <code>fromTo()</code> method will never fail and it's much better when performance and sync are a must, and for <code>to()</code> 
-                method we're storing the values from previous animations to have them ready and available for the next chained animation.</li>
-            <li>The performance of this component is identical with the <b>Transform Functions</b> component, which is crazy and awesome, all that thanks to the <b>DOMMatrix</b> API built into our modern browsers. 
-                If that's not good enough, the API will automatically switch from <code>matrix3d</code> to <code>matrix</code> and vice-versa whenever needed to save power. Neat?</li>
-            <li>The <code>rotate3d</code> property makes alot more sense for this component since the <b>DOMMatrix</b> <code>rotate(angleX,angleY,angleZ)</code> method works exactly the same, while the 
-                <code>rotate3d(vectorX,vectorY,vectorZ,angle)</code> function is a thing of the past, according to <a href="https://css-tricks.com/">Chris Coyier</a> nobody use it.</li>
-            <li>Since the component fully utilize the <b>DOMMatrix</b> API, with fallback to each browser compatible API, some browsers still have in 2020 an incomplete CSS3Matrix API, for instance privacy browsers 
-                like Tor won't work with rotations properly for some reason, other proprietary mobile browsers may suffer from same symptoms. In these cases a correction polyfill is required.</li>
-            <li>This component is bundled with the <i>demo/src/kute-extra.js</i> distribution file.</li>  
+          <li>This demo page should work with IE10+ browsers.</li>
+          <li>Why no support for the <code>matrix3d</code> function? Simple: we can of course interpolate 16 numbers super fast, but we won't be able to rotate on any axis above 360 degrees. 
+              As <a href="https://stackoverflow.com/a/39870758/803358">explained here</a>, surely for performance reasons the browsers won't try and compute angles above 360 degrees, but simplify 
+              the number crunching because a 370 degree rotation is visualy identical with a 10 degree rotation.</li>
+          <li>The component does NOT include any scripting for matrix decomposition/unmatrix, after several years of research I came to the conclusion that there is no such thing to be reliable. 
+              Such a feature would allow us to kick start animations directly from <code>matrix3d</code> string/array values, but considering the size of this component, I let you draw the conclusions.</li>
+          <li>Despite the "limitations", we have some tricks available: the <code>fromTo()</code> method will never fail and it's much better when performance and sync are a must, and for <code>to()</code> 
+              method we're storing the values from previous animations to have them ready and available for the next chained animation.</li>
+          <li>The performance of this component is identical with the <b>Transform Functions</b> component, which is crazy and awesome, all that thanks to the <b>DOMMatrix</b> API built into our modern browsers. 
+              If that's not good enough, the API will automatically switch from <code>matrix3d</code> to <code>matrix</code> and vice-versa whenever needed to save power. Neat?</li>
+          <li>The <code>rotate3d</code> property makes alot more sense for this component since the <b>DOMMatrix</b> <code>rotate(angleX,angleY,angleZ)</code> method works exactly the same, while the 
+              <code>rotate3d(vectorX,vectorY,vectorZ,angle)</code> function is a thing of the past, according to <a href="https://css-tricks.com/">Chris Coyier</a> nobody use it.</li>
+          <li>Since the component fully utilize the <b>DOMMatrix</b> API, with fallback to each browser compatible API, some browsers still have in 2020 an incomplete CSS3Matrix API, for instance privacy browsers 
+              like Tor won't work with rotations properly for some reason, other proprietary mobile browsers may suffer from same symptoms. In these cases a correction polyfill is required.</li>
+          <li>This component is bundled with the <i>demo/src/kute-extra.js</i> distribution file.</li>  
         </ul>
       </div>
 

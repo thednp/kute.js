@@ -13,7 +13,7 @@ import {onStartColors} from './colorPropertiesBase.js'
 const supportedColors = ['color', 'backgroundColor','borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor']
 const defaultColors = {}
 
-supportedColors.forEach(tweenProp => {
+supportedColors.map(tweenProp => {
   defaultColors[tweenProp] = '#000'
 });
 

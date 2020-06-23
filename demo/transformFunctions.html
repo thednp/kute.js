@@ -91,7 +91,8 @@
                 <p class="condensed text-right">The component to cover animation for most <b>transform</b> functions with improved performance and faster value processing.</p>
               </div>
               <div class="col9 border">
-                <p class="lead condensed">The KUTE.js <b>Transform Functions</b> enables animation for the CSS3 <b>transform</b> style on <b>Element</b> targets on most modern browsers and specific legacy browsers.</p>
+                <p class="lead condensed">The KUTE.js <b>Transform Functions</b> enables animation for the CSS3 <b>transform</b> style on <b>Element</b> targets on modern browsers. For specific legacy browsers there is another
+                  component called <b>Transform Legacy</b> you will find in the source folders.</p>
                 <p>Starting with KUTE.js version 2.0, you can set the <b>perspective</b> function as a tween property, while you can still rely on a parent's perspective but for less performance.</p>
                 <p>All the previous perspective related options have been removed. The <b>transform</b> CSS3 property itself no longer uses preffixes like <b>webkit</b>, <b>moz</b> or <b>ms</b> since all major 
                   browsers are standardized.</p>
@@ -138,6 +139,8 @@
               <li><kbd class="bg-blue">scale</kbd> function will scale a target element on all axes. Eg. <code>scale:1.5</code> will scale up a target element by 50%. <kbd class="bg-lime">IE9+</kbd></li>
               <li><kbd class="bg-red">matrix</kbd> is not supported by this component, but is implemented in the <a href="transformMatrix.html">transformMatrix</a> component.</li>
             </ul>
+            <p>As a quick note, all input values for <kbd class="bg-blue">translate</kbd>, <kbd class="bg-blue">rotate</kbd> or single axis translation, skew or rotation will be all stacked into <kbd class="bg-blue">translate3d</kbd>,
+              <kbd class="bg-blue">skew</kbd> and <kbd class="bg-blue">rotate3d</kbd> respectivelly; this is to further improve performance on modern browsers.</p>
 
             <h3>Translations</h3>
 
@@ -254,6 +257,7 @@ var tween2 = KUTE.fromTo(
 
           <h3>Notes</h3>
           <ul>
+            <li>This demo page should work with IE10+ browsers.</li>
             <li>The order of the transform functions/properties is always the same: <code>perspective</code>, <code>translation</code>, <code>rotation</code>, <code>skew</code>, <code>scale</code>, this way we can prevent 
                 jumpy/janky animations; one of the reasons is consistency in all transform based components and another reason is the order of execution from the draft for 
                 <a href="https://drafts.csswg.org/css-transforms-2/#recomposing-to-a-3d-matrix">matrix3d recomposition</a>.</li>
@@ -283,6 +287,7 @@ var tween2 = KUTE.fromTo(
     <!-- JavaScript =============================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
 
+    <!-- <script src="./src/polyfill-legacy.min.js"></script> -->
     <script src="./src/polyfill.min.js"></script>
     <script src="./src/kute.js"></script>
     <!-- <script src="../dist/kute.js"></script> -->

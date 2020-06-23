@@ -11,6 +11,7 @@ import skew from '../interpolation/skew.js'
 import {onStartTransform} from './transformFunctionsBase.js'
 
 // const transformFunctions = { property : 'transform', subProperties, defaultValues, Interpolate: {translate,rotate,skew,scale}, functions } // same to svg transform, attr
+// the component developed for modern browsers supporting non-prefixed transform
 
 // Component Functions
 function getTransform(tweenProperty,value){
@@ -19,31 +20,36 @@ function getTransform(tweenProperty,value){
 }
 function prepareTransform(prop,obj){
   let prepAxis = ['X', 'Y', 'Z'], // coordinates
-      translateArray = [], rotateArray = [], skewArray = [], 
       transformObject = {},
+      translateArray = [], rotateArray = [], skewArray = [], 
       arrayFunctions = ['translate3d','translate','rotate3d','skew']
 
   for (const x in obj) {
+    let pv = typeof obj[x] === 'object' && obj[x].length ? obj[x].map(v=>parseInt(v)) : parseInt(obj[x]);
 
     if (arrayFunctions.includes(x)) {
-    const pv = typeof(obj[x]) === 'object' ? obj[x].map(v=>parseInt(v)) : [parseInt(obj[x]),0]
+      let propId = x === 'translate' || x === 'rotate' ? `${x}3d` : x;
 
-    transformObject[x] = x === 'skew' || x === 'translate' ? [pv[0]||0, pv[1]||0]
-                       : [pv[0]||0, pv[1]||0,pv[2]||0] // translate3d | rotate3d
+      transformObject[propId] = x === 'skew' ? (pv.length ? [pv[0]||0, pv[1]||0] : [pv||0,0] )
+                              : x === 'translate' ? (pv.length ? [pv[0]||0, pv[1]||0, pv[2]||0] : [pv||0,0,0] )
+                              : [pv[0]||0, pv[1]||0,pv[2]||0] // translate3d | rotate3d
 
     } else if ( /[XYZ]/.test(x) ) {
-      const fn = x.replace(/[XYZ]/,'');
-      const fnId = fn === 'skew' ? fn : `${fn}3d`;
-      const fnArray = fn === 'translate' ? translateArray
-                    : fn === 'rotate' ? rotateArray
-                    : fn === 'skew' ? skewArray : {}
-      for (let fnIndex = 0; fnIndex < 3; fnIndex++) {
+      let fn = x.replace(/[XYZ]/,''),
+          fnId = fn === 'skew' ? fn : `${fn}3d`,
+          fnLen = fn === 'skew' ? 2 : 3,
+          fnArray = fn === 'translate' ? translateArray
+                  : fn === 'rotate' ? rotateArray
+                  : fn === 'skew' ? skewArray : {}
+      for (let fnIndex = 0; fnIndex < fnLen; fnIndex++) {
         const fnAxis = prepAxis[fnIndex];
         fnArray[fnIndex] = (`${fn}${fnAxis}` in obj) ? parseInt(obj[`${fn}${fnAxis}`]) : 0; 
       }
       transformObject[fnId] = fnArray;
-    } else { // scale | rotate | perspective
-      transformObject[x] = x === 'scale' ? parseFloat(obj[x]) : parseInt(obj[x])
+    } else if (x==='rotate') { //  rotate 
+      transformObject['rotate3d'] = [0,0,pv]
+    } else { // scale | perspective
+      transformObject[x] = x === 'scale' ? parseFloat(obj[x]) : pv
     }
   }
   return transformObject;

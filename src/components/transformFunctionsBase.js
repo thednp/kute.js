@@ -16,9 +16,7 @@ export function onStartTransform(tweenProp){
       elem.style[tweenProp] = 
           (a.perspective||b.perspective ? perspective(a.perspective,b.perspective,'px',v) : '') // one side might be 0
         + (a.translate3d ? translate3d(a.translate3d,b.translate3d,'px',v):'') // array [x,y,z]
-        + (a.translate ? translate(a.translate,b.translate,'px',v):'') // array [x,y]
         + (a.rotate3d ? rotate3d(a.rotate3d,b.rotate3d,'deg',v):'') // array [x,y,z]
-        + (a.rotate||b.rotate ? rotate(a.rotate,b.rotate,'deg',v):'') // one side might be 0
         + (a.skew ? skew(a.skew,b.skew,'deg',v):'') // array [x,y]
         + (a.scale||b.scale ? scale(a.scale,b.scale,v):'') // one side might be 0
     }

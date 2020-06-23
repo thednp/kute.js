@@ -29,6 +29,7 @@ import HTMLAttributes from './components/htmlAttributes.js'
 import OpacityProperty from './components/opacityProperty.js'
 import TextWrite from './components/textWrite.js'
 import TransformFunctions from './components/transformFunctions.js'
+// import TransformFunctions from './components/transformLegacy.js'
 import SVGDraw from './components/svgDraw.js'
 import SVGMorph from './components/svgMorph.js'
 

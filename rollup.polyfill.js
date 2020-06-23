@@ -22,8 +22,8 @@ const miniBanner = `// KUTE.js Polyfill v${pkg.version} | ${year} © ${pkg.autho
 const MIN = process.env.MIN === 'true' // true/false|unset
 const FORMAT = 'esm' // umd|iife|esm|cjs
 
-const INPUTFILE = './src/util/polyfill.js'
-const OUTPUTFILE = process.env.OUTPUTFILE ? process.env.OUTPUTFILE : './dist/polyfill'+(MIN?'.min':'')+'.js'
+const INPUTFILE = process.env.INPUTFILE ? process.env.INPUTFILE : 'src/util/polyfill.js'
+const OUTPUTFILE = process.env.OUTPUTFILE ? process.env.OUTPUTFILE : 'dist/polyfill'+(MIN?'.min':'')+'.js'
 
 const OUTPUT = {
   file: OUTPUTFILE,

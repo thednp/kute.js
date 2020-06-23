@@ -66,7 +66,7 @@ export default class TweenBase {
     add(this);
     this.playing = true;
     
-    this._startTime = time || KUTE.Time();
+    this._startTime = typeof time !== 'undefined' ? time : KUTE.Time();
     this._startTime += this._delay;
 
     if (!this._startFired) {

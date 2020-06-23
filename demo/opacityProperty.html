@@ -121,6 +121,7 @@ let fadeInTween = KUTE.to('selector1',{opacity:1}).start()
           
           <h3>Notes</h3>
           <ul>
+            <li>This demo should work with IE9+ browsers.</li>
             <li>Support for the specific IE8 <code>filter:alpha(opacity=50)</code> have been dropped.</li>
             <li>Early implementations with vendor preffixes such as <code>-o-opacity</code>, <code>-moz-opacity</code> or <code>-ms-opacity</code> are not supported.</li>
             <li>The component is an essential part in ALL KUTE.js distributions.</li>
@@ -140,8 +141,9 @@ let fadeInTween = KUTE.to('selector1',{opacity:1}).start()
 
     <!-- JavaScript =============================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="./src/polyfill.min.js"></script>
-    <script src="./src/kute-extra.min.js"></script>
+    <!-- <script src="./src/polyfill-legacy.min.js"></script> -->
+    <script src="./src/polyfill-legacy.min.js"></script>
+    <script src="./src/kute.min.js"></script>
     <script src="./assets/js/prism.js"></script>
 
     <script src="./assets/js/opacityProperty.js"></script>

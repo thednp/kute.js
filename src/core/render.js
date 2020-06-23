@@ -4,21 +4,10 @@ import globalObject from '../objects/globalObject.js'
 import Interpolate from  '../objects/interpolate.js'
 import onStart from  '../objects/onStart.js'
 
-const Time = {}
-  
-// In node.js, use process.hrtime.
-if (typeof (self) === 'undefined' && typeof (process) !== 'undefined' && process.hrtime) {
-	Time.now = function () {
-		var time = process.hrtime();
-		return time[0] * 1000 + time[1] / 1000000;
-	};
-// In a browser, use self.performance.now if it is available.
-} else if (typeof (self) !== 'undefined' &&
-         self.performance !== undefined &&
-		 self.performance.now !== undefined) {
-	Time.now = self.performance.now.bind(self.performance);
-}
+// const Time = window.performance
 
+const Time = {}
+Time.now = self.performance.now.bind(self.performance)
 // export {Time}
 
 let Tick = 0
