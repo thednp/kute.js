@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Base v2.0.8 (http://thednp.github.io/kute.js)
+* KUTE.js Base v2.0.9 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.8";
+  var version = "2.0.9";
 
   var KUTE = {};
 
@@ -361,7 +361,7 @@
     return result
   }
 
-  var matrixComponent = 'transformMatrix';
+  var matrixComponent = 'transformMatrixBase';
   var CSS3Matrix = typeof(DOMMatrix) !== 'undefined' ? DOMMatrix
                    : typeof(WebKitCSSMatrix) !== 'undefined' ? WebKitCSSMatrix
                    : typeof(CSSMatrix) !== 'undefined' ? CSSMatrix

@@ -5,7 +5,7 @@ import arrays from '../interpolation/arrays.js'
 // const transformMatrix = { property : 'transform', defaultValue: {}, interpolators: {} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
 
 // Component name
-const matrixComponent = 'transformMatrix'
+const matrixComponent = 'transformMatrixBase'
 
 // Component special
 const CSS3Matrix = typeof(DOMMatrix) !== 'undefined' ? DOMMatrix 
