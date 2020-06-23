@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Extra v2.0.8 (http://thednp.github.io/kute.js)
+* KUTE.js Extra v2.0.9 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.8";
+  var version = "2.0.9";
 
   var KUTE = {};
 
@@ -194,6 +194,8 @@
             propertiesObject[tweenProp] = prepareComponent[tweenProp].call(this,tweenProp,obj[tweenProp]);
           } else if ( !defaultValues[tweenCategory] && tweenCategory === 'transform' && supportComponent.includes(tweenProp) ) {
             transformObject[tweenProp] = obj[tweenProp];
+          } else if (!defaultValues[tweenProp] && tweenProp === 'transform') {
+            propertiesObject[tweenProp] = obj[tweenProp];
           } else if ( !defaultValues[tweenCategory] && supportComponent && supportComponent.includes(tweenProp) ) {
             propertiesObject[tweenProp] = prepareComponent[tweenCategory].call(this,tweenProp,obj[tweenProp]);
           }
