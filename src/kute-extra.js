@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Extra v2.0.7 (http://thednp.github.io/kute.js)
+* KUTE.js Extra v2.0.8 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.7";
+  var version = "2.0.8";
 
   var KUTE = {};
 
@@ -24,16 +24,7 @@
   var onStart = {};
 
   var Time = {};
-  if (typeof (self) === 'undefined' && typeof (process) !== 'undefined' && process.hrtime) {
-  	Time.now = function () {
-  		var time = process.hrtime();
-  		return time[0] * 1000 + time[1] / 1000000;
-  	};
-  } else if (typeof (self) !== 'undefined' &&
-           self.performance !== undefined &&
-  		 self.performance.now !== undefined) {
-  	Time.now = self.performance.now.bind(self.performance);
-  }
+  Time.now = self.performance.now.bind(self.performance);
   var Tick = 0;
   var Ticker = function (time) {
     var i = 0;
@@ -386,7 +377,7 @@
   TweenBase.prototype.start = function start (time) {
     add(this);
     this.playing = true;
-    this._startTime = time || KUTE.Time();
+    this._startTime = typeof time !== 'undefined' ? time : KUTE.Time();
     this._startTime += this._delay;
     if (!this._startFired) {
       if (this._onStart) {
@@ -1162,7 +1153,7 @@
 
   var supportedColors = ['color', 'backgroundColor','borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
   var defaultColors = {};
-  supportedColors.forEach(function (tweenProp) {
+  supportedColors.map(function (tweenProp) {
     defaultColors[tweenProp] = '#000';
   });
   var colorsOnStart = {};
