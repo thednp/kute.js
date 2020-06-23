@@ -31,6 +31,7 @@ KUTE.js includes 18 components, but not all of them are bundled with the default
 * [textProperties](http://thednp.github.io/kute.js/textProperties.html) - enables the animation for numeric `HTMLTextElement` related CSS properties like `fontSize` or `letterSpacing`
 * [textWrite](http://thednp.github.io/kute.js/textWrite.html) - enables the animation for the content of various strings
 * [transformFunctions](http://thednp.github.io/kute.js/transformFunctions.html) - enables the animation for the `transform` CSS3 property, the default component bundled with the official build
+* transformLegacy - enables the animation for the `transform` CSS3 property on legacy browsers IE9+, not included with the official build, but can be used in your custom builds
 * [transformMatrix](http://thednp.github.io/kute.js/transformMatrix.html) - enables the animation for the `transform` CSS3 property; this component implements `DOMMatrix()` API and is super light
 
 All above mentioned components have a BASE version which doesn't include value processing, and their purpose is to provide a way to ship your super light version of your application.
