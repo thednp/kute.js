@@ -24,7 +24,7 @@ const banner =
 const miniBanner = `// KUTE.js ${NAME} v${pkg.version} | ${pkg.author} © ${year} | ${pkg.license}-License`
 
 INPUTFILE = INPUTFILE ? INPUTFILE : (DIST === 'standard' ? 'src/index.js' : 'src/index-'+DIST+'.js')
-OUTPUTFILE = OUTPUTFILE ? OUTPUTFILE : ('demo/src/kute'+(DIST!=='standard'?'-'+DIST:'')+(FORMAT==='esm'?'.esm':'')+(MIN?'.min':'')+'.js')
+OUTPUTFILE = OUTPUTFILE ? OUTPUTFILE : ('dist/kute'+(DIST!=='standard'?'-'+DIST:'')+(FORMAT==='esm'?'.esm':'')+(MIN?'.min':'')+'.js')
 
 const OUTPUT = {
   file: OUTPUTFILE,

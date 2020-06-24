@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Standard v2.0.6 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.0.10 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.6";
+  var version = "2.0.10";
 
   var KUTE = {};
 
@@ -19,38 +19,12 @@
                     : typeof(self) !== 'undefined' ? self
                     : typeof(window) !== 'undefined' ? window : {};
 
-  function numbers(a, b, v) {
-    a = +a; b -= a; return a + b * v;
-  }
-  function units(a, b, u, v) {
-    a = +a; b -= a; return ( a + b * v ) + u;
-  }
-  function arrays(a,b,v){
-    var result = [];
-    for ( var i=0, l=b.length; i<l; i++ ) {
-      result[i] = ((a[i] + (b[i] - a[i]) * v) * 1000 >> 0 ) / 1000;
-    }
-    return result
-  }
-  var Interpolate = {
-    numbers: numbers,
-    units: units,
-    arrays: arrays
-  };
+  var Interpolate = {};
 
   var onStart = {};
 
   var Time = {};
-  if (typeof (self) === 'undefined' && typeof (process) !== 'undefined' && process.hrtime) {
-  	Time.now = function () {
-  		var time = process.hrtime();
-  		return time[0] * 1000 + time[1] / 1000000;
-  	};
-  } else if (typeof (self) !== 'undefined' &&
-           self.performance !== undefined &&
-  		 self.performance.now !== undefined) {
-  	Time.now = self.performance.now.bind(self.performance);
-  }
+  Time.now = self.performance.now.bind(self.performance);
   var Tick = 0;
   var Ticker = function (time) {
     var i = 0;
@@ -220,6 +194,8 @@
             propertiesObject[tweenProp] = prepareComponent[tweenProp].call(this,tweenProp,obj[tweenProp]);
           } else if ( !defaultValues[tweenCategory] && tweenCategory === 'transform' && supportComponent.includes(tweenProp) ) {
             transformObject[tweenProp] = obj[tweenProp];
+          } else if (!defaultValues[tweenProp] && tweenProp === 'transform') {
+            propertiesObject[tweenProp] = obj[tweenProp];
           } else if ( !defaultValues[tweenCategory] && supportComponent && supportComponent.includes(tweenProp) ) {
             propertiesObject[tweenProp] = prepareComponent[tweenCategory].call(this,tweenProp,obj[tweenProp]);
           }
@@ -403,7 +379,7 @@
   TweenBase.prototype.start = function start (time) {
     add(this);
     this.playing = true;
-    this._startTime = time || KUTE.Time();
+    this._startTime = typeof time !== 'undefined' ? time : KUTE.Time();
     this._startTime += this._delay;
     if (!this._startFired) {
       if (this._onStart) {
@@ -798,10 +774,14 @@
     return { v: intValue, u: theUnit };
   }
 
+  function coords(a, b, v) {
+    a = +a; b -= a; return a + b * v;
+  }
+
   function boxModelOnStart(tweenProp){
     if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
-        elem.style[tweenProp] = (v > 0.99 || v < 0.01 ? ((numbers(a,b,v)*10)>>0)/10 : (numbers(a,b,v) ) >> 0) + "px";
+        elem.style[tweenProp] = (v > 0.99 || v < 0.01 ? ((coords(a,b,v)*10)>>0)/10 : (coords(a,b,v) ) >> 0) + "px";
       };
     }
   }
@@ -827,7 +807,7 @@
     category: 'boxModel',
     properties: essentialBoxProps,
     defaultValues: essentialBoxPropsValues,
-    Interpolate: {numbers: numbers},
+    Interpolate: {numbers: coords},
     functions: essentialBoxModelFunctions,
     Util:{trueDimension: trueDimension}
   };
@@ -871,9 +851,10 @@
         cm =',',
         rgb = 'rgb(',
         rgba = 'rgba(';
-    for (c in b) { _c[c] = c !== 'a' ? (numbers(a[c],b[c],v)>>0 || 0) : (a[c] && b[c]) ? (numbers(a[c],b[c],v) * 100 >> 0 )/100 : null; }
+    for (c in b) { _c[c] = c !== 'a' ? (coords(a[c],b[c],v)>>0 || 0) : (a[c] && b[c]) ? (coords(a[c],b[c],v) * 100 >> 0 )/100 : null; }
     return !_c.a ? rgb + _c.r + cm + _c.g + cm + _c.b + ep : rgba + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
   }
+
   function onStartColors(tweenProp){
     if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
@@ -884,7 +865,7 @@
 
   var supportedColors = ['color', 'backgroundColor','borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
   var defaultColors = {};
-  supportedColors.forEach(function (tweenProp) {
+  supportedColors.map(function (tweenProp) {
     defaultColors[tweenProp] = '#000';
   });
   var colorsOnStart = {};
@@ -905,7 +886,7 @@
     category: 'colors',
     properties: supportedColors,
     defaultValues: defaultColors,
-    Interpolate: {numbers: numbers,colors: colors},
+    Interpolate: {numbers: coords,colors: colors},
     functions: colorFunctions,
     Util: {trueColor: trueColor}
   };
@@ -955,7 +936,7 @@
             if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
               attributes[tp] = function (elem, p, a, b, v) {
                 var _p = p.replace(suffix,'');
-                elem.setAttribute(_p, ( (numbers(a.v,b.v,v)*1000>>0)/1000) + b.u );
+                elem.setAttribute(_p, ( (coords(a.v,b.v,v)*1000>>0)/1000) + b.u );
               };
             }
           };
@@ -964,7 +945,7 @@
           onStart[ComponentName][prop] = function(tp) {
             if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
               attributes[tp] = function (elem, oneAttr, a, b, v) {
-                elem.setAttribute(oneAttr, (numbers(a,b,v) * 1000 >> 0) / 1000 );
+                elem.setAttribute(oneAttr, (coords(a,b,v) * 1000 >> 0) / 1000 );
               };
             }
           };
@@ -993,7 +974,7 @@
     property: 'attr',
     subProperties: ['fill','stroke','stop-color','fill-opacity','stroke-opacity'],
     defaultValue: {fill : 'rgb(0,0,0)', stroke: 'rgb(0,0,0)', 'stop-color': 'rgb(0,0,0)', opacity: 1, 'stroke-opacity': 1,'fill-opacity': 1},
-    Interpolate: { numbers: numbers,colors: colors },
+    Interpolate: { numbers: coords,colors: colors },
     functions: attrFunctions,
     Util: { replaceUppercase: replaceUppercase, trueColor: trueColor, trueDimension: trueDimension }
   };
@@ -1002,7 +983,7 @@
   function onStartOpacity(tweenProp){
     if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
-        elem.style[tweenProp] = ((numbers(a,b,v) * 1000)>>0)/1000;
+        elem.style[tweenProp] = ((coords(a,b,v) * 1000)>>0)/1000;
       };
     }
   }
@@ -1022,7 +1003,7 @@
     component: 'opacityProperty',
     property: 'opacity',
     defaultValue: 1,
-    Interpolate: {numbers: numbers},
+    Interpolate: {numbers: coords},
     functions: opacityFunctions
   };
   Components.OpacityProperty = opacityProperty;
@@ -1071,7 +1052,7 @@
     number: function(tweenProp) {
       if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
         KUTE[tweenProp] = function (elem, a, b, v) {
-          elem.innerHTML = numbers(a, b, v)>>0;
+          elem.innerHTML = coords(a, b, v)>>0;
         };
       }
     }
@@ -1189,7 +1170,7 @@
     properties: ['text','number'],
     defaultValues: {text: ' ',numbers:'0'},
     defaultOptions: { textChars: 'alpha' },
-    Interpolate: {numbers: numbers},
+    Interpolate: {numbers: coords},
     functions: textWriteFunctions,
     Util: { charSet: charSet, createTextTweens: createTextTweens }
   };
@@ -1198,6 +1179,7 @@
   function perspective(a, b, u, v) {
     return ("perspective(" + (((a + (b - a) * v) * 1000 >> 0 ) / 1000) + u + ")")
   }
+
   function translate3d(a, b, u, v) {
     var translateArray = [];
     for (var ax=0; ax<3; ax++){
@@ -1205,6 +1187,7 @@
     }
     return ("translate3d(" + (translateArray.join(',')) + ")");
   }
+
   function rotate3d(a, b, u, v) {
     var rotateStr = '';
     rotateStr += a[0]||b[0] ? ("rotateX(" + (((a[0] + (b[0] - a[0]) * v) * 1000 >> 0 ) / 1000) + u + ")") : '';
@@ -1212,33 +1195,36 @@
     rotateStr += a[2]||b[2] ? ("rotateZ(" + (((a[2] + (b[2] - a[2]) * v) * 1000 >> 0 ) / 1000) + u + ")") : '';
     return rotateStr
   }
+
   function translate(a, b, u, v) {
     var translateArray = [];
     translateArray[0] = ( a[0]===b[0] ? b[0] : ( (a[0] + ( b[0] - a[0] ) * v ) * 1000 >> 0 ) / 1000 ) + u;
     translateArray[1] = a[1]||b[1] ? (( a[1]===b[1] ? b[1] : ( (a[1] + ( b[1] - a[1] ) * v ) * 1000 >> 0 ) / 1000 ) + u) : '0';
     return ("translate(" + (translateArray.join(',')) + ")");
   }
+
   function rotate(a, b, u, v) {
     return ("rotate(" + (((a + (b - a) * v) * 1000 >> 0 ) / 1000) + u + ")")
   }
+
+  function scale(a, b, v) {
+    return ("scale(" + (((a + (b - a) * v) * 1000 >> 0 ) / 1000) + ")");
+  }
+
   function skew(a, b, u, v) {
     var skewArray = [];
     skewArray[0] = ( a[0]===b[0] ? b[0] : ( (a[0] + ( b[0] - a[0] ) * v ) * 1000 >> 0 ) / 1000 ) + u;
     skewArray[1] = a[1]||b[1] ? (( a[1]===b[1] ? b[1] : ( (a[1] + ( b[1] - a[1] ) * v ) * 1000 >> 0 ) / 1000 ) + u) : '0';
     return ("skew(" + (skewArray.join(',')) + ")");
   }
-  function scale (a, b, v) {
-    return ("scale(" + (((a + (b - a) * v) * 1000 >> 0 ) / 1000) + ")");
-  }
+
   function onStartTransform(tweenProp){
     if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
         elem.style[tweenProp] =
             (a.perspective||b.perspective ? perspective(a.perspective,b.perspective,'px',v) : '')
           + (a.translate3d ? translate3d(a.translate3d,b.translate3d,'px',v):'')
-          + (a.translate ? translate(a.translate,b.translate,'px',v):'')
           + (a.rotate3d ? rotate3d(a.rotate3d,b.rotate3d,'deg',v):'')
-          + (a.rotate||b.rotate ? rotate(a.rotate,b.rotate,'deg',v):'')
           + (a.skew ? skew(a.skew,b.skew,'deg',v):'')
           + (a.scale||b.scale ? scale(a.scale,b.scale,v):'');
       };
@@ -1251,27 +1237,32 @@
   }
   function prepareTransform(prop,obj){
     var prepAxis = ['X', 'Y', 'Z'],
-        translateArray = [], rotateArray = [], skewArray = [],
         transformObject = {},
+        translateArray = [], rotateArray = [], skewArray = [],
         arrayFunctions = ['translate3d','translate','rotate3d','skew'];
     for (var x in obj) {
+      var pv = typeof obj[x] === 'object' && obj[x].length ? obj[x].map(function (v){ return parseInt(v); }) : parseInt(obj[x]);
       if (arrayFunctions.includes(x)) {
-      var pv = typeof(obj[x]) === 'object' ? obj[x].map(function (v){ return parseInt(v); }) : [parseInt(obj[x]),0];
-      transformObject[x] = x === 'skew' || x === 'translate' ? [pv[0]||0, pv[1]||0]
-                         : [pv[0]||0, pv[1]||0,pv[2]||0];
+        var propId = x === 'translate' || x === 'rotate' ? (x + "3d") : x;
+        transformObject[propId] = x === 'skew' ? (pv.length ? [pv[0]||0, pv[1]||0] : [pv||0,0] )
+                                : x === 'translate' ? (pv.length ? [pv[0]||0, pv[1]||0, pv[2]||0] : [pv||0,0,0] )
+                                : [pv[0]||0, pv[1]||0,pv[2]||0];
       } else if ( /[XYZ]/.test(x) ) {
-        var fn = x.replace(/[XYZ]/,'');
-        var fnId = fn === 'skew' ? fn : (fn + "3d");
-        var fnArray = fn === 'translate' ? translateArray
-                      : fn === 'rotate' ? rotateArray
-                      : fn === 'skew' ? skewArray : {};
-        for (var fnIndex = 0; fnIndex < 3; fnIndex++) {
+        var fn = x.replace(/[XYZ]/,''),
+            fnId = fn === 'skew' ? fn : (fn + "3d"),
+            fnLen = fn === 'skew' ? 2 : 3,
+            fnArray = fn === 'translate' ? translateArray
+                    : fn === 'rotate' ? rotateArray
+                    : fn === 'skew' ? skewArray : {};
+        for (var fnIndex = 0; fnIndex < fnLen; fnIndex++) {
           var fnAxis = prepAxis[fnIndex];
           fnArray[fnIndex] = (("" + fn + fnAxis) in obj) ? parseInt(obj[("" + fn + fnAxis)]) : 0;
         }
         transformObject[fnId] = fnArray;
+      } else if (x==='rotate') {
+        transformObject['rotate3d'] = [0,0,pv];
       } else {
-        transformObject[x] = x === 'scale' ? parseFloat(obj[x]) : parseInt(obj[x]);
+        transformObject[x] = x === 'scale' ? parseFloat(obj[x]) : pv;
       }
     }
     return transformObject;
@@ -1324,8 +1315,8 @@
     if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem,a,b,v) {
         var pathLength = (a.l*100>>0)/100,
-          start = (numbers(a.s,b.s,v)*100>>0)/100,
-          end = (numbers(a.e,b.e,v)*100>>0)/100,
+          start = (coords(a.s,b.s,v)*100>>0)/100,
+          end = (coords(a.e,b.e,v)*100>>0)/100,
           offset = 0 - start,
           dashOne = end+offset;
         elem.style.strokeDashoffset = offset + "px";
@@ -1431,7 +1422,7 @@
     component: 'svgDraw',
     property: 'draw',
     defaultValue: '0% 0%',
-    Interpolate: {numbers: numbers},
+    Interpolate: {numbers: coords},
     functions: svgDrawFunctions,
     Util: {
       getRectLength: getRectLength,
@@ -1447,7 +1438,7 @@
   };
   Components.SVGDraw = svgDraw;
 
-  function coords (a, b, l, v) {
+  function coords$1(a, b, l, v) {
     var points = [];
     for(var i=0;i<l;i++) {
       points[i] = [];
@@ -1457,11 +1448,12 @@
     }
     return points;
   }
+
   function onStartSVGMorph(tweenProp){
     if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
         var path1 = a.pathArray, path2 = b.pathArray, len = path2.length, pathString;
-        pathString = v === 1 ? b.original : ("M" + (coords( path1, path2, len, v ).join('L')) + "Z");
+        pathString = v === 1 ? b.original : ("M" + (coords$1( path1, path2, len, v ).join('L')) + "Z");
         elem.setAttribute("d", pathString );
       };
     }
