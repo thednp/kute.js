@@ -160,3 +160,13 @@ height:600px
     margin:0 0 1.5rem
   }
 }
+
+.background-top-left {  background-position: top left !important}
+.background-top-center {  background-position: top center !important}
+.background-top-right {  background-position: top center !important}
+.background-center-left {  background-position: center left !important}
+.background-center-center {  background-position: center center !important}
+.background-center-right {  background-position: center right !important}
+.background-bottom-left {  background-position: bottom left !important}
+.background-bottom-center {  background-position: bottom center !important}
+.background-bottom-right {  background-position: bottom right !important}
