@@ -16,8 +16,12 @@
   <!-- RESET CSS -->
   <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
 
+  <!-- Spicr CSS -->
+  <link type="text/css" href="https://cdn.jsdelivr.net/npm/spicr/dist/css/spicr.min.css" rel="stylesheet">
+
   <!-- DEMO KUTE CSS -->
   <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
+  <link type="text/css" href="./assets/css/spicr-theme.css" rel="stylesheet">
 
 </head>
 
@@ -28,7 +32,7 @@
       <div class="content-wrap">
         <nav class="navbar">
           <a href="index.html"><h1 class="active">KUTE.<span>js</span></h1></a>
-          <div class="nav-wrapper d-flex align-items-center justify-content-space">
+          <div class="nav-wrapper d-flex align-items-center justify-content-between">
             <ul class="nav">
               <li class="btn-group"><a href="#" data-function="toggle">Components <span class="caret"></span></a>
                 <ul class="subnav">
@@ -71,78 +75,136 @@
       </div>
     </div>
 
-    <div class="content-wrap">
-      <div class="columns welcome">
-        <div class="col2">
-          <div class="frontpage">
-            <h2 class="nomargin" data-text="Welcome to KUTE.js" style="opacity: 0;">Welcome to KUTE.js!</h2>
-            <p class="lead" data-text="The modern, completely reworked and fully featured animation engine for the modern web."></p>
-            <p class="btns">
-              <a class="btn btn-orange" style="opacity: 0;" href="https://github.com/thednp/kute.js/archive/master.zip">Download</a>
-              <a class="btn btn-red" style="opacity: 0;" href="https://github.com/thednp/kute.js">Github</a>
-              <a class="btn btn-pink" style="opacity: 0;" href="http://www.jsdelivr.com/#!kute.js">CDN 1</a>
-              <a class="btn btn-olive" style="opacity: 0;" href="https://cdnjs.com/libraries/kute.js">CDN 2</a>
-              <a class="btn btn-indigo" style="opacity: 0;" href="https://npmjs.com/kute.js">NPM</a>
-
-            </p>
+    <div id="SpicrDemo" class="spicr spicr-slider" data-interval="false" >
+      <div class="spicr-inner">
+        <div class="item">
+          <div class="item-bg spicr-layer bg-blue" data-translate="x:-100%" data-duration="700" data-easing="easingCubicInOut" data-src="https://picsum.photos/id/992/1680/720.jpg">
+            <div class="overlay"></div>
+          </div>
+          <div class="content-wrap h-100"> <!-- IE9 fix -->
+            <div class="d-flex align-items-center h-100">
+              <div class="flex-column w-md-50 text-center" style="margin: 0 auto">
+                <div class="spicr-layer" data-translate="x:-250" data-duration="600" data-easing="easingCubicInOut">
+                  <h1>Welcome to KUTE.js!</h1>
+                </div>
+                <div class="spicr-layer" data-translate="x:-250" data-delay="350" data-duration="700" data-easing="easingCubicInOut">
+                  <p class="lead condensed">The JavaScript animation engine of the future</p> 
+                </div>
+                <div class="spicr-layer" data-translate="x:-250" data-delay="450" data-duration="800" data-easing="easingCubicInOut">
+                  <p>The magic behind <a class="text-light font-weight-bold" href="https://thednp.github.io/spicr/">Spicr</a>, the result of hard work,
+                    the bridge between old and new, the dream and inspiration.</p>
+                </div>
+                <div>
+                  <p class="btns">
+                    <a class="btn btn-red spicr-layer" href="https://github.com/thednp/kute.js/archive/master.zip" data-translate="x:-250" data-delay="750" data-duration="900" data-easing="easingCircularInOut">Download</a>
+                    <a class="btn btn-olive spicr-layer" href="https://thednp.github.io/kute.js" data-translate="x:-250" data-delay="650" data-duration="800" data-easing="easingCircularInOut">Github</a>
+                    <a class="btn btn-indigo spicr-layer" href="https://www.npmjs.com/package/kute.js" data-translate="x:-250" data-delay="550" data-duration="700" data-easing="easingCircularInOut">NPM</a>
+                    <a class="btn btn-blue spicr-layer" href="https://www.jsdelivr.com/package/npm/kute.js" data-translate="x:-250" data-delay="450" data-duration="600" data-easing="easingCircularInOut">CDN</a>
+                  </p>
+                </div> 
+              </div> 
+            </div>
           </div>
         </div>
-        <div class="col2">
-            <svg class="kute-logo" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%">
-              <path id="rectangle" style="transform: translateX(-250px); opacity: 0;" fill="#e91b1f" d="M559,597.4H302.1H43.6c-21,0-38-17-38-38V408.8V223.6V44c0-21,17-38,38-38h105.6H300h160.3H559
-                c21,0,38,17,38,38v184v331.4C597,580.4,580,597.4,559,597.4z"/>
-              <path id="star" visibility="hidden" fill="#FF5722" d="M302.1,17.9c16,29,81.4,147.7,98.2,178.2c31.1,6,62.3,11.9,93.4,17.9c35.5,6.8,71,13.6,106.5,20.4
-                c-46.4,49.5-92.7,99-139.1,148.5c1.1,8.5,6.7,53.4,12.4,99.1c5.7,45.3,11.4,91.4,12.9,102.9c-36-16.9-158.8-74.5-184.2-86.4
-                c-28.5,13.4-151.3,71-184.2,86.4c0.4-3.2,13.3-106.6,13.3-106.6s10.1-81,11.9-95.3C96.8,333.5,50.4,284,4,234.5
-                c34.4-6.6,68.8-13.2,103.3-19.8c32.2-6.2,64.4-12.3,96.5-18.5C221,165.1,286.5,46.2,302.1,17.9z"/>
-              <path id="circle" visibility="hidden" fill="#9C27B0" d="M157,367a210,210 0 1,0 420,0a210,210 0 1,0 -420,0z"/>
-              <path id="cat" visibility="hidden" fill="#ffd626" d="M519.8,118.6C518.4,90.8,483.3,78,460,82.5c-51.1,9.7-59.4,67.2-48.3,109.4c5.4,20.5,15.1,42.7,13.6,64.3
-              c-1.3,19.5-7.8,39.2-20.7,54.1c1-0.1,2.2-0.3,3.2-0.4c-1,0.1-2.2,0.3-3.2,0.4c-12.9,2-25.3,7.4-29.6,9.6
-              c-0.9-13.3-1.8-24.5-2.3-31.9c-0.4-10.3-0.8-18.6-1.1-23.9c-1-12.6-15.9-25.3-28.2-33.7c-8.8-6-16.5-9.8-16.5-9.8
-              c13.8-10.2,19.8-17.6,21.6-23.9c2.3-8,4.3-35.1,4.3-35.1s1.1-6,1.1-15.2c0-11.6-2-22.6-5.7-32.9h0.1c0,0,25.4-45.8,14.7-60.1
-              c-8.9-11.7-46.3,16.7-46.3,16.7c-16.3-12.6-36.9-20.2-59.1-20.2c-6,0-11.9,0.5-17.7,1.7c0,0-7.4-41.3-27.3-39.7
-              c-19.8,1.7-29.3,72.8-29.3,72.8l0.1,0.1c-8.3,9.9-14.7,21.6-18.4,34.3c0,0-11.2,26.4-10.3,42.7c0.9,16.2,15.9,31.2,25.6,42.3
-              l18.9,19.1c0,0,2.8,3.1,6.9,6.9c-0.4,0.3-3.1,1.5-7,3.8c-11.1,6.4-31.5,20.5-36,41.5c-0.4,1.9-0.8,4-1,6.1
-              c-1.7,12.8-1.4,30.1-0.4,46.6c-5.9-4.1-25.5-15.8-40.3-4.3c-0.6,0.5-1.1,0.9-1.8,1.4c-16.5,13.9-25.4,34.4-25.4,53.8
-              c0,9.7,3.7,29.1,12,50.4c1,2.8,2.3,5.6,3.6,8.4c4.6,10.3,10.2,20.8,17.2,30.6c6.8,9.7,14.8,18.6,24.1,26c0,0-24.2,13.8-33,32.7
-              s-6.6,28.1,3.3,29.7c10.1,1.7,57.1-21.8,57.1-21.8c-0.6,2.9-1.5,6.1-2.6,9.6c-5.7,9.7-12.8,22.2-7.3,31.4c1.8,2.9,4.8,5.6,9.8,7.7
-              c20.8,8.8,41.2,2.3,50.8-8.4c2.9-3.2,4.8-6.6,5.6-10.3c1.1-6.1,1-19.3,0.5-34.3c0,0,39.5,9.9,74.9-4c2.9,21.4,5.5,38.8,6.1,43.2
-              c0.1,0.9,0.4,1.7,0.6,2.4c2,4.5,9.9,17.5,34.8,14.5c12.6-1.5,19.4-7.8,22.8-12.8c1.1-1.7,1.9-3.4,2.2-5.4c0.1-1.1,0.1-2.4-0.1-3.6
-              c-0.8-1.8-1.5-4.1-2.3-6.8c-3.1-8.5-7.7-21.6-10.7-33h0.1c0,0,1.3,0.3,3.4,0.8c11.7,2.8,50.3,11.5,53.1,9.3
-              c3.3-2.4,5.7-10.6,2.6-24.2c-3.8-16.5-38.5-24.7-38.5-24.7s3.7-4.8,9.2-12.5c14.2-19.8,40.4-58.3,46.4-80.4
-              c7.7-27.9,9.3-58.7-4.2-74.9c20.3-37.8,27.5-78.3,15.1-120c-5.4-18-21.7-63.1,0.9-75.9c8.9-5,25.9-8.4,30.1,4.7
-              c0,0-7.8,8.7-9.2,14.4c-1.3,5.9-1.9,16.2,14,18.1C502.4,162.3,521.4,150.6,519.8,118.6z"/>
-              <path id="hexagon" visibility="hidden" fill="#4CAF50" d="M447,45.4H153L6.1,300L153,554.6h294L593.9,300L447,45.4z"/>
-              <path id="head" visibility="hidden" fill="#2196F3" d="M505.1,520.1c-15.5-13-26-49.1-50.6-67.2c-61.6-45-107.4-15-77.4,20.1
-                c14.3,16.8,27.2,13.2,40.5,25.2c20.1,18.6,3.1,40.7-15.5,39.2c-10.4-0.8-16.5-10.4-38.2-17.6c-34.9-11.7-84.2-11.2-164.7-24.4
-                c-109.4-17.8-230.6-111-182-241C62.5,133.5,115.5,62.5,244.8,62.5c170.5,0,213.5,140.7,248.4,210c16.3,32.3,22.7,26.2,36.1,44.8
-                c12.2,17.1,1.5,46.1-22.9,37.9c-53.7-17.8-77.1,27.2-23.2,62.9c14.5,9.7,59.3,15,73.8,24.7C610.8,478.6,553,560.1,505.1,520.1
-                L505.1,520.1z"/>
-              <path id="winky-face" fill="rgba(0,0,0,0.5)" style="opacity:0" d="M347.1,289.3l-13-16.5c-20.1,25.7-15.8,25.2-35.6,0l-13,16.5c-5.1,6.6-14.8-1.3-9.7-7.6
-                c25.2-32.3,19.9-32.8,40.5-6.4c20.4-26,14.8-26.7,40.5,6.4c2,2.8,1.3,6.6-1.5,8.7C352.7,292.1,349.1,291.6,347.1,289.3L347.1,289.3z
-                  M118,289.3l-13-16.5c-20.1,25.7-15.8,25.2-35.6,0l-13,16.5c-5.1,6.6-14.8-1.3-9.7-7.6c25.2-32.3,19.9-32.8,40.5-6.4
-                c20.4-26,14.8-26.7,40.5,6.4c2,2.8,1.3,6.6-1.5,8.7C123.6,292.1,120.1,291.6,118,289.3L118,289.3z"/>
-              <path id="drop" visibility="hidden" d="M558.6,365.4c-13,20.4,23.4,44,36.7,23.7C608.2,368.9,571.8,345.3,558.6,365.4z"/>
-              <path id="drop-initial" style="opacity:0" fill="#2196F3" d="M505.2,327.1"/>
-              <path id="mouth-happy" visibility="hidden" d="M251.9,259c-2,26.5-24.2,46.8-50.4,46.8c-26.5,0-48.4-20.4-50.4-46.6c0-2,1.3-3.8,3.3-3.8
-                h93.9C250.4,255.2,251.9,256.9,251.9,259L251.9,259z"/>
-              <path id="mouth" style="opacity:0" fill="#000" d="M173.6,270.5c18,0.4,37.1,0.2,55.9,0c17.3-0.2,17.2,27.3-0.6,27.4c-24.5,0.2-29.4,0.4-54.6,0
-                C158.9,297.8,156.9,270.2,173.6,270.5z"/>
-              <path id="eye-left-closed" visibility="hidden" d="M123.1,221.8c-11.5-9.7-35.1-9.7-46.6,0c-10.9,9.4-25.5-7.1-14.5-16.8c19.9-16.8,55.7-16.8,75.6,0
-                C148.6,214.4,133.8,231.5,123.1,221.8z"/>
-              <path id="eye-right-closed" visibility="hidden" d="M339.7,221.8c-11.5-9.7-35.1-9.7-46.6,0c-10.9,9.4-25.7-7.1-14.5-16.8c19.9-16.8,55.7-16.8,75.6,0
-                C365.4,214.4,350.7,231.2,339.7,221.8z"/>
-              <path id="eye-right" style="opacity:0" fill="#000" d="M316.2,236.1c-31.6,0-48.7-21.4-37.5-31.1c19.9-16.8,55.7-16.8,75.6,0
-                C365.4,214.4,350.9,236.1,316.2,236.1z"/>
-              <path id="eye-left" style="opacity:0" fill="#000" d="M99.4,236.1c-31.6,0-48.7-21.4-37.5-31.1c19.9-16.8,55.7-16.8,75.6,0
-                C148.7,214.4,134.1,236.1,99.4,236.1z"/>
-            </svg>
-
+        <div class="item perspective-1500">
+          <div class="item-bg spicr-layer bg-olive" data-rotate="x:90" data-transform-origin="z:50%v" data-duration="700" data-easing="easingCubicInOut" data-src="https://picsum.photos/id/931/1680/720.jpg">
+            <div class="overlay"></div>
+          </div>
+          <div class="content-wrap h-100"><!-- IE9 fix -->
+            <div class="columns h-100 align-content-center">
+              <div class="col2 h-md-100"><!-- IE9 fix -->
+                <div class="d-flex perspective align-items-end align-items-md-center h-md-100">
+                  <div class="spicr-layer" data-translate="y:10%" data-rotate="x:90" data-transform-origin="z:50%" data-duration="800" data-easing="easingCubicInOut">
+                    <h1>Forward Looking</h1>
+                    <p>The modern JavaScript powering the core functionality, the modular architecture, the solid and complete components are all geared towards the future of web development.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col2 h-md-100">
+                <div class="d-flex perspective align-items-start align-items-md-center h-md-100">
+                  <div class="spicr-layer" data-translate="y:10%" data-rotate="x:90" data-transform-origin="z:50%" data-duration="900" data-delay="350" data-easing="easingCubicInOut">
+                    <h1>Knowing the Past</h1>
+                    <p>While KUTE.js was re-developed to support mainly modern browsers, it also leaves the door open to old browsers with its legacy components, tools and polyfills.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-bg spicr-layer bg-pink" data-translate="y:-100%" data-duration="700" data-easing="easingCubicInOut" data-src="https://picsum.photos/id/668/1680/720.jpg">
+            <div class="overlay"></div>
+          </div>
+          <div class="content-wrap h-100">
+            <div class="columns align-content-center h-100">
+              <div class="col2 h-md-100">
+                <div class="d-flex align-items-start align-items-md-center h-md-100">
+                  <div class="w-100 flex-column"> <!-- IE9 fix -->
+                    <div class="spicr-layer" data-translate="y:-150" data-duration="800" data-delay="550" data-easing="easingCircularOut">
+                      <h1>ECMA Script 2015</h1>
+                    </div>
+                    <div class="spicr-layer" data-translate="y:-150" data-duration="900" data-delay="650" data-easing="easingCircularOut">
+                      <p>Inside the sources you will find fast &amp; modern JavaScript code with solid build tools. Everything and anything can be done with SVGElement, 
+                        HTML attributes, CSS transform, etc.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>              
+              <div class="col2 h-md-100"> <!-- IE9 fix -->
+                <div class="d-flex align-items-end align-items-md-center h-md-100">
+                  <div class="w-100 flex-column"> <!-- IE9 fix -->
+                    <div class="spicr-layer" data-translate="y:-150" data-duration="700" data-delay="350" data-easing="easingCircularOut">
+                      <h1>Cubic Bezier Easing</h1>
+                    </div>
+                    <div class="spicr-layer" data-translate="y:-150" data-duration="800" data-delay="450" data-easing="easingCircularOut">
+                      <p>While the library includes Robert Penner's <a href="http://robertpenner.com/easing/">easing functions</a>, KUTE.js also includes its own 
+                        <a href="https://github.com/thednp/CubicBezier">CubicBezier Easing</a> class to provide fast and accurate easing for your animation.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>        
+        <div class="item perspective-1500">
+          <div class="item-bg spicr-layer bg-indigo" data-rotate="y:90" data-transform-origin="z:-50%" data-duration="1000" data-easing="easingCubicInOut" data-src="https://picsum.photos/id/581/1680/720.jpg">
+            <div class="overlay"></div>
+          </div>
+          <div class="content-wrap h-100">
+            <div class="d-flex w-md-75 align-items-center text-md-center justify-content-md-center h-100" style="margin: 0 auto">
+              <div class="spicr-layer" data-rotate="y:90" data-transform-origin="z:-50%" data-duration="1200" data-easing="easingCubicInOut">
+                <h1><span>What's not to love about it?</span></h1>
+                <p>Yeah, the open source, modular and fully featured animation engine for the modern web, fully documented and MIT Licensed.</p>
+                <p>Any question? Find answers <a href="https://stackoverflow.com/search?q=kute.js">here</a>, or post them <a href="https://github.com/thednp/kute.js/issues">here</a>!</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+      <!-- pages -->
+      <ol class="spicr-pages d-flex flex-row justify-content-center">
+        <li data-slide-to="0" class=""></li>
+        <li data-slide-to="1"></li>
+        <li data-slide-to="2"></li>
+        <li data-slide-to="3"></li>
+      </ol>
+      <a class="left spicr-control long-shadows" data-slide="prev">
+        <span class="arrow-prev">
+          <svg class="spicr-icon" viewBox="0 0 1024 1024">
+            <path d="M658 686l-60 60-256-256 256-256 60 60-196 196z"></path>
+          </svg>
+        </span>
+      </a>
+      <a class="right spicr-control long-shadows" data-slide="next">
+        <span class="arrow-next">
+          <svg class="spicr-icon" viewBox="0 0 1024 1024">
+            <path d="M366 698l196-196-196-196 60-60 256 256-256 256z"></path>
+          </svg>
+        </span>
+      </a>
     </div>
 
-    <div class="featurettes dark">
+    <div class="featurettes dark mt-0">
       <div class="content-wrap">
         <div class="columns">
           <div class="col3">
@@ -221,6 +283,8 @@
 
   <script src="./src/polyfill.min.js"></script>
   <script src="./src/kute.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/spicr/dist/js/spicr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dll.js@1.5.5/dist/dll.min.js"></script>
   <script src="./assets/js/scripts.js"></script>
   <script src="./assets/js/home.js"></script>
 

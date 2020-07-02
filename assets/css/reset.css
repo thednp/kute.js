@@ -1,210 +1,305 @@
-/*! normalize.css v3.0.1 | MIT License | git.io/normalize */
-html {
-  font-family: sans-serif;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
+*,*::before,*::after{
+  box-sizing:border-box
 }
-body {
-  margin: 0;
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  font-size:1rem;
+  font-weight:400;
+  line-height:1.5;
+  color:#212529;
+  background-color:#fff;
+  -webkit-text-size-adjust:100%;
+  -webkit-tap-highlight-color:rgba(0,0,0,0)
 }
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-main,
-nav,
-section,
-summary {
-  display: block;
+[tabindex="-1"]:focus:not(:focus-visible){
+  outline:0 !important
 }
-audio,
-canvas,
-progress,
-video {
-  display: inline-block;
-  vertical-align: baseline;
+hr{
+  margin:1rem 0;
+  color:inherit;
+  background-color:currentColor;
+  border:0;
+  opacity:.25
 }
-audio:not([controls]) {
-  display: none;
-  height: 0;
+hr:not([size]){
+  height:1px
 }
-[hidden],
-template {
-  display: none;
+h1,h2,h3,h4,h5,h6{
+  margin-top:0;
+  font-weight:500;
+  line-height:1.2
 }
-a {
-  background: transparent;
+h1{
+  font-size:calc(1.375rem + 1.5vw)
 }
-a:active,
-a:hover {
-  outline: 0;
+@media(min-width: 1200px){
+  h1{
+      font-size:2.5rem
+  }
 }
-abbr[title] {
-  border-bottom: 1px dotted;
+h2{
+  font-size:calc(1.325rem + 0.9vw)
 }
-b,
-strong {
-  font-weight: bold;
+@media(min-width: 1200px){
+  h2{
+      font-size:2rem
+  }
 }
-dfn {
-  font-style: italic;
+h3{
+  font-size:calc(1.3rem + 0.6vw)
 }
-h1 {
-  font-size: 2em;
-  margin: 0.67em 0;
+@media(min-width: 1200px){
+  h3{
+      font-size:1.75rem
+  }
 }
-mark {
-  background: #ff0;
-  color: #000;
+h4{
+  font-size:calc(1.275rem + 0.3vw)
 }
-small {
-  font-size: 80%;
+@media(min-width: 1200px){
+  h4{
+      font-size:1.5rem
+  }
 }
-sub,
-sup {
-  font-size: 75%;
-  line-height: 0;
-  position: relative;
-  vertical-align: baseline;
+h5{
+  font-size:1.25rem
 }
-sup {
-  top: -0.5em;
+h6{
+  font-size:1rem
 }
-sub {
-  bottom: -0.25em;
+p{
+  margin-top:0;
+  margin-bottom:1rem
 }
-img {
-  border: 0;
+abbr[title],abbr[data-original-title]{
+  text-decoration:underline;
+  -webkit-text-decoration:underline dotted;
+  text-decoration:underline dotted;
+  cursor:help;
+  -webkit-text-decoration-skip-ink:none;
+  text-decoration-skip-ink:none
 }
-svg:not(:root) {
-  /*overflow: hidden;*/
-  overflow: visible;
+address{
+  margin-bottom:1rem;
+  font-style:normal;
+  line-height:inherit
 }
-figure {
-  margin: 1em 40px;
+ol,ul{
+  padding-left:2rem
 }
-hr {
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-  height: 0;
+ol,ul,dl{
+  margin-top:0;
+  margin-bottom:1rem
 }
-pre {
-  overflow: auto;
+ol ol,ul ul,ol ul,ul ol{
+  margin-bottom:0
 }
-code,
-kbd,
-pre,
-samp {
-  font-family: monospace, monospace;
-  font-size: 1em;
+dt{
+  font-weight:700
 }
-button,
-input,
-optgroup,
-select,
-textarea {
-  color: inherit;
-  font: inherit;
-  margin: 0;
+dd{
+  margin-bottom:.5rem;
+  margin-left:0
 }
-button {
-  overflow: visible;
+blockquote{
+  margin:0 0 1rem
 }
-button,
-select {
-  text-transform: none;
+b,strong{
+  font-weight:bolder
 }
-button,
-html input[type="button"],
-input[type="reset"],
-input[type="submit"] {
-  -webkit-appearance: button;
-  cursor: pointer;
+small{
+  font-size:.875em
 }
-button[disabled],
-html input[disabled] {
-  cursor: default;
+mark{
+  padding:.2em;
+  background-color:#fcf8e3
 }
-button::-moz-focus-inner,
-input::-moz-focus-inner {
-  border: 0;
-  padding: 0;
+sub,sup{
+  position:relative;
+  font-size:.75em;
+  line-height:0;
+  vertical-align:baseline
 }
-input {
-  line-height: normal;
+sub{
+  bottom:-0.25em
 }
-input[type="checkbox"],
-input[type="radio"] {
-  box-sizing: border-box;
-  padding: 0;
+sup{
+  top:-0.5em
 }
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  height: auto;
+a{
+  color:#0d6efd;
+  text-decoration:underline
 }
-input[type="search"] {
-  -webkit-appearance: textfield;
-  -moz-box-sizing: content-box;
-  -webkit-box-sizing: content-box;
-  box-sizing: content-box;
+a:hover{
+  color:#024dbc
 }
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-decoration {
-  -webkit-appearance: none;
+a:not([href]):not([class]),a:not([href]):not([class]):hover{
+  color:inherit;
+  text-decoration:none
 }
-fieldset {
-  border: 1px solid #c0c0c0;
-  margin: 0 2px;
-  padding: 0.35em 0.625em 0.75em;
+pre,code,kbd,samp{
+  font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-size:1em
 }
-legend {
-  border: 0;
-  padding: 0;
+pre{
+  display:block;
+  margin-top:0;
+  margin-bottom:1rem;
+  overflow:auto;
+  font-size:.875em;
+  -ms-overflow-style:scrollbar
 }
-textarea {
-  overflow: auto;
+pre code{
+  font-size:inherit;
+  color:inherit;
+  word-break:normal
 }
-optgroup {
-  font-weight: bold;
+code{
+  font-size:.875em;
+  color:#d63384;
+  word-wrap:break-word
 }
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
+a>code{
+  color:inherit
 }
-td,
-th {
-  padding: 0;
+kbd{
+  padding:.2rem .4rem;
+  font-size:.875em;
+  color:#fff;
+  background-color:#212529;
+  border-radius:.2rem
 }
-* {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+kbd kbd{
+  padding:0;
+  font-size:1em;
+  font-weight:700
 }
-*:before,
-*:after {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+figure{
+  margin:0 0 1rem
 }
-html {
-  font-size: 10px;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+img,svg{
+  vertical-align:middle
 }
-input,
-button,
-select,
-textarea {
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
+table{
+  caption-side:bottom;
+  border-collapse:collapse
 }
-figure {
-  margin: 0;
+caption{
+  padding-top:.5rem;
+  padding-bottom:.5rem;
+  color:#6c757d;
+  text-align:left
 }
-img {
-  /*vertical-align: middle;*/
+th{
+  text-align:inherit;
+  text-align:-webkit-match-parent
+}
+thead,tbody,tfoot,tr,td,th{
+  border-color:inherit;
+  border-style:solid;
+  border-width:0
+}
+label{
+  display:inline-block
+}
+button{
+  border-radius:0
+}
+button:focus{
+  outline:1px dotted;
+  outline:5px auto -webkit-focus-ring-color
+}
+input,button,select,optgroup,textarea{
+  margin:0;
+  font-family:inherit;
+  font-size:inherit;
+  line-height:inherit
+}
+button,input{
+  overflow:visible
+}
+button,select{
+  text-transform:none
+}
+[role=button]{
+  cursor:pointer
+}
+select{
+  word-wrap:normal
+}
+[list]::-webkit-calendar-picker-indicator{
+  display:none
+}
+button,[type=button],[type=reset],[type=submit]{
+  -webkit-appearance:button
+}
+button:not(:disabled),[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled){
+  cursor:pointer
+}
+::-moz-focus-inner{
+  padding:0;
+  border-style:none
+}
+textarea{
+  resize:vertical
+}
+fieldset{
+  min-width:0;
+  padding:0;
+  margin:0;
+  border:0
+}
+legend{
+  float:left;
+  width:100%;
+  padding:0;
+  margin-bottom:.5rem;
+  font-size:calc(1.275rem + 0.3vw);
+  line-height:inherit;
+  white-space:normal
+}
+@media(min-width: 1200px){
+  legend{
+      font-size:1.5rem
+  }
+}
+legend+*{
+  clear:left
+}
+::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-text,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-year-field{
+  padding:0
+}
+::-webkit-inner-spin-button{
+  height:auto
+}
+[type=search]{
+  outline-offset:-2px;
+  -webkit-appearance:textfield
+}
+::-webkit-search-decoration{
+  -webkit-appearance:none
+}
+::-webkit-color-swatch-wrapper{
+  padding:0
+}
+::-webkit-file-upload-button{
+  font:inherit;
+  -webkit-appearance:button
+}
+output{
+  display:inline-block
+}
+iframe{
+  border:0
+}
+summary{
+  display:list-item;
+  cursor:pointer
+}
+progress{
+  vertical-align:baseline
+}
+[hidden]{
+  display:none !important
 }

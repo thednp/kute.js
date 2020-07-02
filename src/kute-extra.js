@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Extra v2.0.10 (http://thednp.github.io/kute.js)
+* KUTE.js Extra v2.0.11 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.10";
+  var version = "2.0.11";
 
   var KUTE = {};
 
