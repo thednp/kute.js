@@ -1,9 +1,9 @@
 /*!
-* KUTE.js Standard v2.0.10 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.0.11 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
-var version = "2.0.10";
+var version = "2.0.11";
 
 var KUTE = {};
 
