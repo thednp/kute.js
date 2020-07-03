@@ -1,5 +1,5 @@
 import KUTE from '../objects/kute.js'
-import coords from '../Interpolation/coords.js'
+import coords from '../interpolation/coords.js'
 
 // const SVGMorph = { property : 'path', defaultValue: [], interpolators: {numbers,coords} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
 

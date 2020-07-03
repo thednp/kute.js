@@ -774,14 +774,14 @@
     return { v: intValue, u: theUnit };
   }
 
-  function coords(a, b, v) {
+  function numbers(a, b, v) {
     a = +a; b -= a; return a + b * v;
   }
 
   function boxModelOnStart(tweenProp){
     if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
-        elem.style[tweenProp] = (v > 0.99 || v < 0.01 ? ((coords(a,b,v)*10)>>0)/10 : (coords(a,b,v) ) >> 0) + "px";
+        elem.style[tweenProp] = (v > 0.99 || v < 0.01 ? ((numbers(a,b,v)*10)>>0)/10 : (numbers(a,b,v) ) >> 0) + "px";
       };
     }
   }
@@ -807,7 +807,7 @@
     category: 'boxModel',
     properties: essentialBoxProps,
     defaultValues: essentialBoxPropsValues,
-    Interpolate: {numbers: coords},
+    Interpolate: {numbers: numbers},
     functions: essentialBoxModelFunctions,
     Util:{trueDimension: trueDimension}
   };
@@ -851,7 +851,7 @@
         cm =',',
         rgb = 'rgb(',
         rgba = 'rgba(';
-    for (c in b) { _c[c] = c !== 'a' ? (coords(a[c],b[c],v)>>0 || 0) : (a[c] && b[c]) ? (coords(a[c],b[c],v) * 100 >> 0 )/100 : null; }
+    for (c in b) { _c[c] = c !== 'a' ? (numbers(a[c],b[c],v)>>0 || 0) : (a[c] && b[c]) ? (numbers(a[c],b[c],v) * 100 >> 0 )/100 : null; }
     return !_c.a ? rgb + _c.r + cm + _c.g + cm + _c.b + ep : rgba + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
   }
 
@@ -886,7 +886,7 @@
     category: 'colors',
     properties: supportedColors,
     defaultValues: defaultColors,
-    Interpolate: {numbers: coords,colors: colors},
+    Interpolate: {numbers: numbers,colors: colors},
     functions: colorFunctions,
     Util: {trueColor: trueColor}
   };
@@ -936,7 +936,7 @@
             if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
               attributes[tp] = function (elem, p, a, b, v) {
                 var _p = p.replace(suffix,'');
-                elem.setAttribute(_p, ( (coords(a.v,b.v,v)*1000>>0)/1000) + b.u );
+                elem.setAttribute(_p, ( (numbers(a.v,b.v,v)*1000>>0)/1000) + b.u );
               };
             }
           };
@@ -945,7 +945,7 @@
           onStart[ComponentName][prop] = function(tp) {
             if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
               attributes[tp] = function (elem, oneAttr, a, b, v) {
-                elem.setAttribute(oneAttr, (coords(a,b,v) * 1000 >> 0) / 1000 );
+                elem.setAttribute(oneAttr, (numbers(a,b,v) * 1000 >> 0) / 1000 );
               };
             }
           };
@@ -974,7 +974,7 @@
     property: 'attr',
     subProperties: ['fill','stroke','stop-color','fill-opacity','stroke-opacity'],
     defaultValue: {fill : 'rgb(0,0,0)', stroke: 'rgb(0,0,0)', 'stop-color': 'rgb(0,0,0)', opacity: 1, 'stroke-opacity': 1,'fill-opacity': 1},
-    Interpolate: { numbers: coords,colors: colors },
+    Interpolate: { numbers: numbers,colors: colors },
     functions: attrFunctions,
     Util: { replaceUppercase: replaceUppercase, trueColor: trueColor, trueDimension: trueDimension }
   };
@@ -983,7 +983,7 @@
   function onStartOpacity(tweenProp){
     if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
-        elem.style[tweenProp] = ((coords(a,b,v) * 1000)>>0)/1000;
+        elem.style[tweenProp] = ((numbers(a,b,v) * 1000)>>0)/1000;
       };
     }
   }
@@ -1003,7 +1003,7 @@
     component: 'opacityProperty',
     property: 'opacity',
     defaultValue: 1,
-    Interpolate: {numbers: coords},
+    Interpolate: {numbers: numbers},
     functions: opacityFunctions
   };
   Components.OpacityProperty = opacityProperty;
@@ -1052,7 +1052,7 @@
     number: function(tweenProp) {
       if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
         KUTE[tweenProp] = function (elem, a, b, v) {
-          elem.innerHTML = coords(a, b, v)>>0;
+          elem.innerHTML = numbers(a, b, v)>>0;
         };
       }
     }
@@ -1170,7 +1170,7 @@
     properties: ['text','number'],
     defaultValues: {text: ' ',numbers:'0'},
     defaultOptions: { textChars: 'alpha' },
-    Interpolate: {numbers: coords},
+    Interpolate: {numbers: numbers},
     functions: textWriteFunctions,
     Util: { charSet: charSet, createTextTweens: createTextTweens }
   };
@@ -1315,8 +1315,8 @@
     if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem,a,b,v) {
         var pathLength = (a.l*100>>0)/100,
-          start = (coords(a.s,b.s,v)*100>>0)/100,
-          end = (coords(a.e,b.e,v)*100>>0)/100,
+          start = (numbers(a.s,b.s,v)*100>>0)/100,
+          end = (numbers(a.e,b.e,v)*100>>0)/100,
           offset = 0 - start,
           dashOne = end+offset;
         elem.style.strokeDashoffset = offset + "px";
@@ -1422,7 +1422,7 @@
     component: 'svgDraw',
     property: 'draw',
     defaultValue: '0% 0%',
-    Interpolate: {numbers: coords},
+    Interpolate: {numbers: numbers},
     functions: svgDrawFunctions,
     Util: {
       getRectLength: getRectLength,
@@ -1438,7 +1438,7 @@
   };
   Components.SVGDraw = svgDraw;
 
-  function coords$1(a, b, l, v) {
+  function coords(a, b, l, v) {
     var points = [];
     for(var i=0;i<l;i++) {
       points[i] = [];
@@ -1453,7 +1453,7 @@
     if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
         var path1 = a.pathArray, path2 = b.pathArray, len = path2.length, pathString;
-        pathString = v === 1 ? b.original : ("M" + (coords$1( path1, path2, len, v ).join('L')) + "Z");
+        pathString = v === 1 ? b.original : ("M" + (coords( path1, path2, len, v ).join('L')) + "Z");
         elem.setAttribute("d", pathString );
       };
     }
