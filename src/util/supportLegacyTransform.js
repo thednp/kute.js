@@ -1,2 +1,2 @@
 import transformProperty from './transformProperty.js'
-export default transformProperty in document.body.style
+export default transformProperty in document.head.style

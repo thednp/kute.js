@@ -1,9 +1,9 @@
 /*!
-* KUTE.js Standard v2.0.11 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.0.12 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
-var version = "2.0.11";
+var version = "2.0.12";
 
 var KUTE = {};
 
@@ -820,8 +820,8 @@ function hexToRGB (hex) {
 
 function trueColor (colorString) {
   if (/rgb|rgba/.test(colorString)) {
-    var vrgb = colorString.replace(/\s|\)/,'').split('(')[1].split(',');
-    var colorAlpha = vrgb[3] ? vrgb[3] : null;
+    var vrgb = colorString.replace(/\s|\)/,'').split('(')[1].split(','),
+        colorAlpha = vrgb[3] ? vrgb[3] : null;
     if (!colorAlpha) {
       return { r: parseInt(vrgb[0]), g: parseInt(vrgb[1]), b: parseInt(vrgb[2]) };
     } else {
