@@ -1,6 +1,6 @@
 {
   "name": "kute.js",
-  "version": "2.0.12",
+  "version": "2.0.13",
   "description": "JavaScript animation engine of the future is called KUTE.js.",
   "main": "dist/kute.min.js",
   "module": "dist/kute.esm.js",

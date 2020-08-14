@@ -75,11 +75,11 @@ export default class TweenBase {
       }
 
       // fire onStart actions
-      for (const obj in onStart) {
+      for (let obj in onStart) {
         if (typeof (onStart[obj]) === 'function') {
           onStart[obj].call(this,obj) // easing functions
         } else {
-          for (const prop in onStart[obj]) {
+          for (let prop in onStart[obj]) {
             onStart[obj][prop].call(this,prop);
           }
         }

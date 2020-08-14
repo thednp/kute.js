@@ -96,7 +96,6 @@ function parsePathString(pathString) {
   if( pathString instanceof Array ) {
     return pathString;
   } else {
-    
     // tracer minifier cannot compute this string for some reason
     // let spaces = "\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029";
     let spaces = `\\${("x09|x0a|x0b|x0c|x0d|x20|xa0|u1680|u180e|u2000|u2001|u2002|u2003|u2004|u2005|u2006|u2007|u2008|u2009|u200a|u202f|u205f|u3000|u2028|u2029").split('|').join('\\')}`,
@@ -245,6 +244,7 @@ function pathToAbsolute(pathArray) {
   }
   return res
 }
+
 function l2c(x1, y1, x2, y2) {
   return [x1, y1, x2, y2, x2, y2];
 }
@@ -434,11 +434,11 @@ function fixArc (p, p2, pcoms1, pcoms2, i) {
 }
 
 function path2curve(path, path2) {
-  const p = pathToAbsolute(path), // holder for previous path command of original path
-        p2 = path2 && pathToAbsolute(path2),
-        // p2 = path2 ? pathToAbsolute(path2) : pathToAbsolute('M0,0L0,0'),
-        attrs = {x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null},
-        attrs2 = {x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null};
+  let p = pathToAbsolute(path), // holder for previous path command of original path
+      p2 = path2 && pathToAbsolute(path2),
+      // p2 = path2 ? pathToAbsolute(path2) : pathToAbsolute('M0,0L0,0'),
+      attrs = {x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null},
+      attrs2 = {x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null};
 
   // path commands of original path p
   // path commands of original path p2
@@ -483,10 +483,10 @@ function path2curve(path, path2) {
     p2 && fixM(p2, p, attrs2, attrs, i);
     ii = Math.max(p.length, p2 && p2.length || 0);
 
-    const seg = p[i],
-          seg2 = p2 && p2[i],
-          seglen = seg.length,
-          seg2len = p2 && seg2.length;
+    let seg = p[i],
+        seg2 = p2 && p2[i],
+        seglen = seg.length,
+        seg2len = p2 && seg2.length;
     attrs.x = seg[seglen - 2];
     attrs.y = seg[seglen - 1];
     attrs.bx = parseFloat(seg[seglen - 4]) || attrs.x;
@@ -508,15 +508,23 @@ function createPath (path) { // create a <path> when glyph
 }
 
 function getSegments(curveArray) {
-  let result = []
-  curveArray.map((seg, i) => {
-    result[i] = {
+  // let result = []
+  // curveArray.map((seg, i) => {
+  //   result[i] = {
+  //     x: seg[seg[0] === 'M' ? 1 : 5],
+  //     y: seg[seg[0] === 'M' ? 2 : 6],
+  //     seg: seg
+  //   }
+  // })
+  // return result
+
+  return curveArray.map(seg => {
+    return {
       x: seg[seg[0] === 'M' ? 1 : 5],
       y: seg[seg[0] === 'M' ? 2 : 6],
       seg: seg
     }
   })
-  return result
 }
 function reverseCurve(path){
   let newSegments = [],

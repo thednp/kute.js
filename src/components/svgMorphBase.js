@@ -7,9 +7,8 @@ import coords from '../interpolation/coords.js'
 export function onStartSVGMorph(tweenProp){
   if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
     KUTE[tweenProp] = (elem, a, b, v) => {
-      let path1 = a.pathArray, path2 = b.pathArray, len = path2.length, pathString;
-      pathString = v === 1 ? b.original : `M${coords( path1, path2, len, v ).join('L')}Z`;
-      elem.setAttribute("d", pathString );
+      let path1 = a.pathArray, path2 = b.pathArray, len = path2.length;
+      elem.setAttribute("d", (v === 1 ? b.original : `M${coords( path1, path2, len, v ).join('L')}Z`) );
     }
   }
 }

@@ -134,6 +134,18 @@ export default class Tween extends TweenBase {
       if (this._onResume !== undefined) {
         this._onResume.call(this);
       }
+      // re-queue execution context
+      for (let obj in onStart) {
+        if (typeof (onStart[obj]) === 'function') {
+          onStart[obj].call(this,obj);
+        } else {
+          for (let prop in onStart[obj]) {
+            onStart[obj][prop].call(this,prop);
+          }
+        }
+      }
+      linkInterpolation.call(this);
+      // update time and let it roll
       this._startTime += KUTE.Time() - this._pauseTime;
       add(this);
       !Tick && Ticker();  // restart ticking if stopped

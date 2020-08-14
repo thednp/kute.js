@@ -1,9 +1,9 @@
 /*!
-* KUTE.js Standard v2.0.12 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.0.13 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
-var version = "2.0.12";
+var version = "2.0.13";
 
 var KUTE = {};
 
@@ -15,7 +15,7 @@ var globalObject = typeof (global) !== 'undefined' ? global
 
 var Interpolate = {};
 
-var onStart = {};
+var onStart$1 = {};
 
 var Time = {};
 Time.now = self.performance.now.bind(self.performance);
@@ -36,11 +36,11 @@ function stop() {
     if (!Tweens.length && Tick) {
       cancelAnimationFrame(Tick);
       Tick = null;
-      for (var obj in onStart) {
-        if (typeof (onStart[obj]) === 'function') {
+      for (var obj in onStart$1) {
+        if (typeof (onStart$1[obj]) === 'function') {
           KUTE[obj] && (delete KUTE[obj]);
         } else {
-          for (var prop in onStart[obj]) {
+          for (var prop in onStart$1[obj]) {
             KUTE[prop] && (delete KUTE[prop]);
           }
         }
@@ -86,7 +86,7 @@ var Objects = {
   prepareProperty: prepareProperty,
   prepareStart: prepareStart,
   crossCheck: crossCheck,
-  onStart: onStart,
+  onStart: onStart$1,
   onComplete: onComplete,
   linkProperty: linkProperty
 };
@@ -106,7 +106,7 @@ function getAll () { return Tweens; }
 
 function removeAll () { Tweens.length = 0; }
 
-function linkInterpolation() {
+function linkInterpolation$1() {
   var this$1 = this;
   var loop = function ( component ) {
     var componentLink = linkProperty[component];
@@ -143,7 +143,7 @@ var Internals = {
   getAll: getAll,
   removeAll: removeAll,
   stop: stop,
-  linkInterpolation: linkInterpolation
+  linkInterpolation: linkInterpolation$1
 };
 
 function getInlineStyle(el) {
@@ -363,8 +363,8 @@ var TweenBase = function TweenBase(targetElement, startObject, endObject, option
     if( !(internalOption in this ) ) { this[internalOption] = options[op]; }
   }
   var easingFnName = this._easing.name;
-  if (!onStart[easingFnName]) {
-    onStart[easingFnName] = function(prop){
+  if (!onStart$1[easingFnName]) {
+    onStart$1[easingFnName] = function(prop){
       !KUTE[prop] && prop === this._easing.name && (KUTE[prop] = this._easing);
     };
   }
@@ -379,16 +379,16 @@ TweenBase.prototype.start = function start (time) {
     if (this._onStart) {
       this._onStart.call(this);
     }
-    for (var obj in onStart) {
-      if (typeof (onStart[obj]) === 'function') {
-        onStart[obj].call(this,obj);
+    for (var obj in onStart$1) {
+      if (typeof (onStart$1[obj]) === 'function') {
+        onStart$1[obj].call(this,obj);
       } else {
-        for (var prop in onStart[obj]) {
-          onStart[obj][prop].call(this,prop);
+        for (var prop in onStart$1[obj]) {
+          onStart$1[obj][prop].call(this,prop);
         }
       }
     }
-    linkInterpolation.call(this);
+    linkInterpolation$1.call(this);
     this._startFired = true;
   }
   !Tick && Ticker();
@@ -534,6 +534,16 @@ var Tween = (function (TweenBase) {
       if (this._onResume !== undefined) {
         this._onResume.call(this);
       }
+      for (var obj in onStart) {
+        if (typeof (onStart[obj]) === 'function') {
+          onStart[obj].call(this,obj);
+        } else {
+          for (var prop in onStart[obj]) {
+            onStart[obj][prop].call(this,prop);
+          }
+        }
+      }
+      linkInterpolation.call(this);
       this._startTime += KUTE.Time() - this._pauseTime;
       add(this);
       !Tick && Ticker();
@@ -698,7 +708,7 @@ var Animation = function Animation(Component){
 Animation.prototype.setComponent = function setComponent (Component){
   var propertyInfo = this;
   var ComponentName = Component.component;
-  var Functions = { prepareProperty: prepareProperty, prepareStart: prepareStart, onStart: onStart, onComplete: onComplete, crossCheck: crossCheck };
+  var Functions = { prepareProperty: prepareProperty, prepareStart: prepareStart, onStart: onStart$1, onComplete: onComplete, crossCheck: crossCheck };
   var Category = Component.category;
   var Property = Component.property;
   var Length = Component.properties && Component.properties.length || Component.subProperties && Component.subProperties.length;
@@ -926,7 +936,7 @@ function prepareAttr(tweenProp,attrObj){
       if ( currentValue !== null && regex.test(currentValue) ) {
         var unit = trueDimension(currentValue).u || trueDimension(attrObj[p]).u;
         var suffix = /%/.test(unit) ? '_percent' : ("_" + unit);
-        onStart[ComponentName][prop+suffix] = function(tp) {
+        onStart$1[ComponentName][prop+suffix] = function(tp) {
           if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
             attributes[tp] = function (elem, p, a, b, v) {
               var _p = p.replace(suffix,'');
@@ -936,7 +946,7 @@ function prepareAttr(tweenProp,attrObj){
         };
         attributesObject[prop+suffix] = trueDimension(attrObj[p]);
       } else if ( !regex.test(attrObj[p]) || currentValue === null || currentValue !== null && !regex.test(currentValue) ) {
-        onStart[ComponentName][prop] = function(tp) {
+        onStart$1[ComponentName][prop] = function(tp) {
           if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
             attributes[tp] = function (elem, oneAttr, a, b, v) {
               elem.setAttribute(oneAttr, (numbers(a,b,v) * 1000 >> 0) / 1000 );
@@ -946,7 +956,7 @@ function prepareAttr(tweenProp,attrObj){
         attributesObject[prop] = parseFloat(attrObj[p]);
       }
     } else {
-      onStart[ComponentName][prop] = function(tp) {
+      onStart$1[ComponentName][prop] = function(tp) {
         if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
           attributes[tp] = function (elem, oneAttr, a, b, v) {
             elem.setAttribute(oneAttr, colors(a,b,v));
@@ -1446,9 +1456,8 @@ function coords(a, b, l, v) {
 function onStartSVGMorph(tweenProp){
   if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
     KUTE[tweenProp] = function (elem, a, b, v) {
-      var path1 = a.pathArray, path2 = b.pathArray, len = path2.length, pathString;
-      pathString = v === 1 ? b.original : ("M" + (coords( path1, path2, len, v ).join('L')) + "Z");
-      elem.setAttribute("d", pathString );
+      var path1 = a.pathArray, path2 = b.pathArray, len = path2.length;
+      elem.setAttribute("d", (v === 1 ? b.original : ("M" + (coords( path1, path2, len, v ).join('L')) + "Z")) );
     };
   }
 }
