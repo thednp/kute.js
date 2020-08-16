@@ -15,7 +15,7 @@ var globalObject = typeof (global) !== 'undefined' ? global
 
 var Interpolate = {};
 
-var onStart$1 = {};
+var onStart = {};
 
 var Time = {};
 Time.now = self.performance.now.bind(self.performance);
@@ -36,11 +36,11 @@ function stop() {
     if (!Tweens.length && Tick) {
       cancelAnimationFrame(Tick);
       Tick = null;
-      for (var obj in onStart$1) {
-        if (typeof (onStart$1[obj]) === 'function') {
+      for (var obj in onStart) {
+        if (typeof (onStart[obj]) === 'function') {
           KUTE[obj] && (delete KUTE[obj]);
         } else {
-          for (var prop in onStart$1[obj]) {
+          for (var prop in onStart[obj]) {
             KUTE[prop] && (delete KUTE[prop]);
           }
         }
@@ -86,7 +86,7 @@ var Objects = {
   prepareProperty: prepareProperty,
   prepareStart: prepareStart,
   crossCheck: crossCheck,
-  onStart: onStart$1,
+  onStart: onStart,
   onComplete: onComplete,
   linkProperty: linkProperty
 };
@@ -106,7 +106,7 @@ function getAll () { return Tweens; }
 
 function removeAll () { Tweens.length = 0; }
 
-function linkInterpolation$1() {
+function linkInterpolation() {
   var this$1 = this;
   var loop = function ( component ) {
     var componentLink = linkProperty[component];
@@ -143,7 +143,7 @@ var Internals = {
   getAll: getAll,
   removeAll: removeAll,
   stop: stop,
-  linkInterpolation: linkInterpolation$1
+  linkInterpolation: linkInterpolation
 };
 
 function getInlineStyle(el) {
@@ -346,6 +346,19 @@ function selector(el, multi) {
   }
 }
 
+function queueStart(){
+  for (var obj in onStart) {
+    if (typeof (onStart[obj]) === 'function') {
+      onStart[obj].call(this,obj);
+    } else {
+      for (var prop in onStart[obj]) {
+        onStart[obj][prop].call(this,prop);
+      }
+    }
+  }
+  linkInterpolation.call(this);
+}
+
 var TweenBase = function TweenBase(targetElement, startObject, endObject, options){
   this.element = targetElement;
   this.playing = false;
@@ -363,8 +376,8 @@ var TweenBase = function TweenBase(targetElement, startObject, endObject, option
     if( !(internalOption in this ) ) { this[internalOption] = options[op]; }
   }
   var easingFnName = this._easing.name;
-  if (!onStart$1[easingFnName]) {
-    onStart$1[easingFnName] = function(prop){
+  if (!onStart[easingFnName]) {
+    onStart[easingFnName] = function(prop){
       !KUTE[prop] && prop === this._easing.name && (KUTE[prop] = this._easing);
     };
   }
@@ -379,16 +392,7 @@ TweenBase.prototype.start = function start (time) {
     if (this._onStart) {
       this._onStart.call(this);
     }
-    for (var obj in onStart$1) {
-      if (typeof (onStart$1[obj]) === 'function') {
-        onStart$1[obj].call(this,obj);
-      } else {
-        for (var prop in onStart$1[obj]) {
-          onStart$1[obj][prop].call(this,prop);
-        }
-      }
-    }
-    linkInterpolation$1.call(this);
+    queueStart.call(this);
     this._startFired = true;
   }
   !Tick && Ticker();
@@ -534,16 +538,7 @@ var Tween = (function (TweenBase) {
       if (this._onResume !== undefined) {
         this._onResume.call(this);
       }
-      for (var obj in onStart) {
-        if (typeof (onStart[obj]) === 'function') {
-          onStart[obj].call(this,obj);
-        } else {
-          for (var prop in onStart[obj]) {
-            onStart[obj][prop].call(this,prop);
-          }
-        }
-      }
-      linkInterpolation.call(this);
+      queueStart.call(this);
       this._startTime += KUTE.Time() - this._pauseTime;
       add(this);
       !Tick && Ticker();
@@ -708,7 +703,7 @@ var Animation = function Animation(Component){
 Animation.prototype.setComponent = function setComponent (Component){
   var propertyInfo = this;
   var ComponentName = Component.component;
-  var Functions = { prepareProperty: prepareProperty, prepareStart: prepareStart, onStart: onStart$1, onComplete: onComplete, crossCheck: crossCheck };
+  var Functions = { prepareProperty: prepareProperty, prepareStart: prepareStart, onStart: onStart, onComplete: onComplete, crossCheck: crossCheck };
   var Category = Component.category;
   var Property = Component.property;
   var Length = Component.properties && Component.properties.length || Component.subProperties && Component.subProperties.length;
@@ -936,7 +931,7 @@ function prepareAttr(tweenProp,attrObj){
       if ( currentValue !== null && regex.test(currentValue) ) {
         var unit = trueDimension(currentValue).u || trueDimension(attrObj[p]).u;
         var suffix = /%/.test(unit) ? '_percent' : ("_" + unit);
-        onStart$1[ComponentName][prop+suffix] = function(tp) {
+        onStart[ComponentName][prop+suffix] = function(tp) {
           if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
             attributes[tp] = function (elem, p, a, b, v) {
               var _p = p.replace(suffix,'');
@@ -946,7 +941,7 @@ function prepareAttr(tweenProp,attrObj){
         };
         attributesObject[prop+suffix] = trueDimension(attrObj[p]);
       } else if ( !regex.test(attrObj[p]) || currentValue === null || currentValue !== null && !regex.test(currentValue) ) {
-        onStart$1[ComponentName][prop] = function(tp) {
+        onStart[ComponentName][prop] = function(tp) {
           if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
             attributes[tp] = function (elem, oneAttr, a, b, v) {
               elem.setAttribute(oneAttr, (numbers(a,b,v) * 1000 >> 0) / 1000 );
@@ -956,7 +951,7 @@ function prepareAttr(tweenProp,attrObj){
         attributesObject[prop] = parseFloat(attrObj[p]);
       }
     } else {
-      onStart$1[ComponentName][prop] = function(tp) {
+      onStart[ComponentName][prop] = function(tp) {
         if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
           attributes[tp] = function (elem, oneAttr, a, b, v) {
             elem.setAttribute(oneAttr, colors(a,b,v));
@@ -1462,30 +1457,45 @@ function onStartSVGMorph(tweenProp){
   }
 }
 
-var INVALID_INPUT = 'Invalid path value';
-function isFiniteNumber(number) {
-  return typeof number === "number" && isFinite(number);
+function clonePath(pathArray){
+  return pathArray.map(function (x) { return Array.isArray(x) ? clonePath(x) : !isNaN(+x) ? +x : x; } )
 }
-function distance(a, b) {
-  return Math.sqrt(
-    (a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1])
-  );
+
+var SVGPCOps = {
+  decimals:3,
+  round:1
+};
+
+function roundPath(pathArray) {
+  return  pathArray.map( function (seg) { return seg.map(function (c,i) {
+            var nr = +c, dc = Math.pow(10,SVGPCOps.decimals);
+            return i ? (nr % 1 === 0 ? nr : (nr*dc>>0)/dc) : c
+          }
+        ); }) 
 }
-function pointAlong(a, b, pct) {
-  return [a[0] + (b[0] - a[0]) * pct, a[1] + (b[1] - a[1]) * pct];
+
+function SVGPathArray(pathString){
+  this.segments = [];
+  this.isClosed = 0;
+  this.isAbsolute = 0;
+  this.pathValue = pathString;
+  this.max = pathString.length;
+  this.index  = 0;
+  this.param = 0.0;
+  this.segmentStart = 0;
+  this.data = [];
+  this.err = '';
+  return this
 }
-function samePoint(a, b) {
-  return distance(a, b) < 1e-9;
-}
+
 var paramCounts = { a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0 };
-var SPECIAL_SPACES = [
-  0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
-  0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF
-];
 function isSpace(ch) {
+  var specialSpaces = [
+    0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
+    0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF ];
   return (ch === 0x0A) || (ch === 0x0D) || (ch === 0x2028) || (ch === 0x2029) ||
     (ch === 0x20) || (ch === 0x09) || (ch === 0x0B) || (ch === 0x0C) || (ch === 0xA0) ||
-    (ch >= 0x1680 && SPECIAL_SPACES.indexOf(ch) >= 0);
+    (ch >= 0x1680 && specialSpaces.indexOf(ch) >= 0);
 }
 function isCommand(code) {
   switch (code | 0x20) {
@@ -1516,23 +1526,13 @@ function isDigitStart(code) {
           code === 0x2D ||
           code === 0x2E;
 }
-function State(path) {
-  this.index  = 0;
-  this.path   = path;
-  this.max    = path.length;
-  this.result = [];
-  this.param  = 0.0;
-  this.err    = '';
-  this.segmentStart = 0;
-  this.data   = [];
-}
 function skipSpaces(state) {
-  while (state.index < state.max && isSpace(state.path.charCodeAt(state.index))) {
+  while (state.index < state.max && isSpace(state.pathValue.charCodeAt(state.index))) {
     state.index++;
   }
 }
 function scanFlag(state) {
-  var ch = state.path.charCodeAt(state.index);
+  var ch = state.pathValue.charCodeAt(state.index);
   if (ch === 0x30) {
     state.param = 0;
     state.index++;
@@ -1543,7 +1543,7 @@ function scanFlag(state) {
     state.index++;
     return;
   }
-  state.err = "KUTE.js - " + INVALID_INPUT;
+  state.err = 'SvgPath: arc flag can be 0 or 1 only (at pos ' + state.index + ')';
 }
 function scanParam(state) {
   var start = state.index,
@@ -1555,81 +1555,78 @@ function scanParam(state) {
       hasDot = false,
       ch;
   if (index >= max) {
-    state.err = "KUTE.js - " + INVALID_INPUT;
+    state.err = 'SvgPath: missed param (at pos ' + index + ')';
     return;
   }
-  ch = state.path.charCodeAt(index);
+  ch = state.pathValue.charCodeAt(index);
   if (ch === 0x2B || ch === 0x2D) {
     index++;
-    ch = (index < max) ? state.path.charCodeAt(index) : 0;
+    ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
   }
   if (!isDigit(ch) && ch !== 0x2E) {
-    state.err = "KUTE.js - " + INVALID_INPUT;
+    state.err = 'SvgPath: param should start with 0..9 or `.` (at pos ' + index + ')';
     return;
   }
   if (ch !== 0x2E) {
     zeroFirst = (ch === 0x30);
     index++;
-    ch = (index < max) ? state.path.charCodeAt(index) : 0;
+    ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
     if (zeroFirst && index < max) {
       if (ch && isDigit(ch)) {
-        state.err = "KUTE.js - " + INVALID_INPUT;
+        state.err = 'SvgPath: numbers started with `0` such as `09` are illegal (at pos ' + start + ')';
         return;
       }
     }
-    while (index < max && isDigit(state.path.charCodeAt(index))) {
+    while (index < max && isDigit(state.pathValue.charCodeAt(index))) {
       index++;
       hasCeiling = true;
     }
-    ch = (index < max) ? state.path.charCodeAt(index) : 0;
+    ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
   }
   if (ch === 0x2E) {
     hasDot = true;
     index++;
-    while (isDigit(state.path.charCodeAt(index))) {
+    while (isDigit(state.pathValue.charCodeAt(index))) {
       index++;
       hasDecimal = true;
     }
-    ch = (index < max) ? state.path.charCodeAt(index) : 0;
+    ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
   }
   if (ch === 0x65 || ch === 0x45) {
     if (hasDot && !hasCeiling && !hasDecimal) {
-      state.err = "KUTE.js - " + INVALID_INPUT;
+      state.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
       return;
     }
     index++;
-    ch = (index < max) ? state.path.charCodeAt(index) : 0;
+    ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
     if (ch === 0x2B || ch === 0x2D) {
       index++;
     }
-    if (index < max && isDigit(state.path.charCodeAt(index))) {
-      while (index < max && isDigit(state.path.charCodeAt(index))) {
+    if (index < max && isDigit(state.pathValue.charCodeAt(index))) {
+      while (index < max && isDigit(state.pathValue.charCodeAt(index))) {
         index++;
       }
     } else {
-      state.err = "KUTE.js - " + INVALID_INPUT;
+      state.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
       return;
     }
   }
   state.index = index;
-  state.param = parseFloat(state.path.slice(start, index)) + 0.0;
+  state.param = parseFloat(state.pathValue.slice(start, index)) + 0.0;
 }
 function finalizeSegment(state) {
-  var cmd, cmdLC;
-  cmd   = state.path[state.segmentStart];
-  cmdLC = cmd.toLowerCase();
-  var params = state.data;
+  var cmd = state.pathValue[state.segmentStart], cmdLC = cmd.toLowerCase(), params = state.data;
   if (cmdLC === 'm' && params.length > 2) {
-    state.result.push([ cmd, params[0], params[1] ]);
+    state.segments.push([ cmd, params[0], params[1] ]);
     params = params.slice(2);
     cmdLC = 'l';
     cmd = (cmd === 'm') ? 'l' : 'L';
   }
   if (cmdLC === 'r') {
-    state.result.push([ cmd ].concat(params));
+    state.segments.push([ cmd ].concat(params));
   } else {
     while (params.length >= paramCounts[cmdLC]) {
-      state.result.push([ cmd ].concat(params.splice(0, paramCounts[cmdLC])));
+      state.segments.push([ cmd ].concat(params.splice(0, paramCounts[cmdLC])));
       if (!paramCounts[cmdLC]) {
         break;
       }
@@ -1639,17 +1636,18 @@ function finalizeSegment(state) {
 function scanSegment(state) {
   var max = state.max, cmdCode, is_arc, comma_found, need_params, i;
   state.segmentStart = state.index;
-  cmdCode = state.path.charCodeAt(state.index);
+  cmdCode = state.pathValue.charCodeAt(state.index);
   is_arc = isArc(cmdCode);
   if (!isCommand(cmdCode)) {
-    state.err = "KUTE.js - " + INVALID_INPUT;
+    state.err = 'SvgPath: bad command ' + state.pathValue[state.index] + ' (at pos ' + state.index + ')';
     return;
   }
-  need_params = paramCounts[state.path[state.index].toLowerCase()];
+  need_params = paramCounts[state.pathValue[state.index].toLowerCase()];
   state.index++;
   skipSpaces(state);
   state.data = [];
   if (!need_params) {
+    state.isClosed = 1;
     finalizeSegment(state);
     return;
   }
@@ -1664,7 +1662,7 @@ function scanSegment(state) {
       state.data.push(state.param);
       skipSpaces(state);
       comma_found = false;
-      if (state.index < max && state.path.charCodeAt(state.index) === 0x2C) {
+      if (state.index < max && state.pathValue.charCodeAt(state.index) === 0x2C) {
         state.index++;
         skipSpaces(state);
         comma_found = true;
@@ -1676,148 +1674,250 @@ function scanSegment(state) {
     if (state.index >= state.max) {
       break;
     }
-    if (!isDigitStart(state.path.charCodeAt(state.index))) {
+    if (!isDigitStart(state.pathValue.charCodeAt(state.index))) {
       break;
     }
   }
   finalizeSegment(state);
 }
-function pathParse(svgPath) {
-  var state = new State(svgPath), max = state.max;
+function parsePathString(pathString) {
+  if ( Array.isArray(pathString) ) {
+    return clonePath(pathString)
+  }
+  var state = new SVGPathArray(pathString), max = state.max;
   skipSpaces(state);
   while (state.index < max && !state.err.length) {
     scanSegment(state);
   }
   if (state.err.length) {
-    state.result = [];
-  } else if (state.result.length) {
-    if ('mM'.indexOf(state.result[0][0]) < 0) {
-      state.err = "KUTE.js - " + INVALID_INPUT;
-      state.result = [];
+    state.segments = [];
+  } else if (state.segments.length) {
+    if ('mM'.indexOf(state.segments[0][0]) < 0) {
+      state.err = 'SvgPath: string should start with `M` or `m`';
+      state.segments = [];
     } else {
-      state.result[0][0] = 'M';
+      state.segments[0][0] = 'M';
     }
   }
-  return {
-    err: state.err,
-    segments: state.result
-  };
+  return roundPath(state.segments)
 }
-var SvgPath = function SvgPath(path){
-  if (!(this instanceof SvgPath)) { return new SvgPath(path); }
-  var pstate = pathParse(path);
-  this.segments = pstate.segments;
-  this.err    = pstate.err;
-};
-SvgPath.prototype.iterate = function iterate (iterator) {
-  var segments = this.segments,
-      replacements = {},
-      needReplace = false,
-      lastX = 0,
-      lastY = 0,
-      countourStartX = 0,
-      countourStartY = 0,
-      newSegments;
-  segments.map( function (s,index) {
-    var res = iterator(s, index, lastX, lastY);
-    if (Array.isArray(res)) {
-      replacements[index] = res;
-      needReplace = true;
-    }
-    var isRelative = (s[0] === s[0].toLowerCase());
-    switch (s[0]) {
-      case 'm':
-      case 'M':
-        lastX = s[1] + (isRelative ? lastX : 0);
-        lastY = s[2] + (isRelative ? lastY : 0);
-        countourStartX = lastX;
-        countourStartY = lastY;
-        return;
-      case 'h':
-      case 'H':
-        lastX = s[1] + (isRelative ? lastX : 0);
-        return;
-      case 'v':
-      case 'V':
-        lastY = s[1] + (isRelative ? lastY : 0);
-        return;
-      case 'z':
-      case 'Z':
-        lastX = countourStartX;
-        lastY = countourStartY;
-        return;
-      default:
-        lastX = s[s.length - 2] + (isRelative ? lastX : 0);
-        lastY = s[s.length - 1] + (isRelative ? lastY : 0);
-    }
-  });
-  if (!needReplace) { return this; }
-  newSegments = [];
-  segments.map(function (s,i){
-    if (typeof replacements[i] !== 'undefined') {
-      replacements[i].map(function (r){
-        newSegments.push(r);
-      });
+
+function catmullRom2bezier(crp, z) {
+  var d = [];
+  for (var i = 0, iLen = crp.length; iLen - 2 * !z > i; i += 2) {
+    var p = [
+              {x: +crp[i - 2], y: +crp[i - 1]},
+              {x: +crp[i],     y: +crp[i + 1]},
+              {x: +crp[i + 2], y: +crp[i + 3]},
+              {x: +crp[i + 4], y: +crp[i + 5]}
+            ];
+    if (z) {
+      if (!i) {
+        p[0] = {x: +crp[iLen - 2], y: +crp[iLen - 1]};
+      } else if (iLen - 4 == i) {
+        p[3] = {x: +crp[0], y: +crp[1]};
+      } else if (iLen - 2 == i) {
+        p[2] = {x: +crp[0], y: +crp[1]};
+        p[3] = {x: +crp[2], y: +crp[3]};
+      }
     } else {
-      newSegments.push(s);
+      if (iLen - 4 == i) {
+        p[3] = p[2];
+      } else if (!i) {
+        p[0] = {x: +crp[i], y: +crp[i + 1]};
+      }
     }
-  });
-  this.segments = newSegments;
-  return this;
-};
-SvgPath.prototype.abs = function abs () {
-  this.iterate(function (s, index, x, y) {
-    var name = s[0],
-        nameUC = name.toUpperCase(),
-        i;
-    if (name === nameUC) { return; }
-    s[0] = nameUC;
-    switch (name) {
-      case 'v':
-        s[1] += y;
-        return;
-      case 'a':
-        s[6] += x;
-        s[7] += y;
-        return;
-      default:
-        for (i = 1; i < s.length; i++) {
-          s[i] += i % 2 ? x : y;
-        }
+    d.push([
+      "C",
+      (-p[0].x + 6 * p[1].x + p[2].x) / 6,
+      (-p[0].y + 6 * p[1].y + p[2].y) / 6,
+      (p[1].x + 6 * p[2].x - p[3].x) / 6,
+      (p[1].y + 6*p[2].y - p[3].y) / 6,
+      p[2].x,
+      p[2].y
+    ]);
+  }
+  return d
+}
+
+function ellipsePath(x, y, rx, ry, a) {
+  if (a == null && ry == null) {
+    ry = rx;
+  }
+  x = +x;
+  y = +y;
+  rx = +rx;
+  ry = +ry;
+  var res;
+  if (a != null) {
+    var rad = Math.PI / 180,
+        x1 = x + rx * Math.cos(-ry * rad),
+        x2 = x + rx * Math.cos(-a * rad),
+        y1 = y + rx * Math.sin(-ry * rad),
+        y2 = y + rx * Math.sin(-a * rad);
+    res = [["M", x1, y1], ["A", rx, rx, 0, +(a - ry > 180), 0, x2, y2]];
+  } else {
+    res = [
+        ["M", x, y],
+        ["m", 0, -ry],
+        ["a", rx, ry, 0, 1, 1, 0, 2 * ry],
+        ["a", rx, ry, 0, 1, 1, 0, -2 * ry],
+        ["z"]
+    ];
+  }
+  return res;
+}
+
+function pathToAbsolute(pathArray) {
+  pathArray = parsePathString(pathArray);
+  if (!pathArray || !pathArray.length) {
+    return [["M", 0, 0]];
+  }
+  var res = [], x = 0, y = 0, mx = 0, my = 0, start = 0,
+      ii = pathArray.length,
+      crz = pathArray.length === 3 &&
+            pathArray[0][0] === "M" &&
+            pathArray[1][0].toUpperCase() === "R" &&
+            pathArray[2][0].toUpperCase() === "Z";
+  if (pathArray[0][0] === "M") {
+    x = +pathArray[0][1];
+    y = +pathArray[0][2];
+    mx = x;
+    my = y;
+    start++;
+    res[0] = ["M", x, y];
+  }
+  var loop = function ( i ) {
+    var r = (void 0), pa = pathArray[i], pa0 = pa[0];
+    res.push(r = []);
+    if (pa0 !== pa0.toUpperCase()) {
+      r[0] = pa0.toUpperCase();
+      switch (r[0]) {
+        case "A":
+          r[1] = pa[1];
+          r[2] = pa[2];
+          r[3] = pa[3];
+          r[4] = pa[4];
+          r[5] = pa[5];
+          r[6] = +pa[6] + x;
+          r[7] = +pa[7] + y;
+          break;
+        case "V":
+          r[1] = +pa[1] + y;
+          break;
+        case "H":
+          r[1] = +pa[1] + x;
+          break;
+        case "R":
+          var dots$1 = [x, y].concat(pa.slice(1));
+          for (var j = 2, jj = dots$1.length; j < jj; j++) {
+            dots$1[j] = +dots$1[j] + x;
+            dots$1[++j] = +dots$1[j] + y;
+          }
+          res.pop();
+          res = res.concat(catmullRom2bezier(dots$1, crz));
+          break;
+        case "O":
+          res.pop();
+          dots$1 = ellipsePath(x, y, +pa[1], +pa[2]);
+          dots$1.push(dots$1[0]);
+          res = res.concat(dots$1);
+          break;
+        case "U":
+          res.pop();
+          res = res.concat(ellipsePath(x, y, pa[1], pa[2], pa[3]));
+          r = ["U"].concat(res[res.length - 1].slice(-2));
+          break;
+        case "M":
+          mx = +pa[1] + x;
+          my = +pa[2] + y;
+        default:
+          for (var j$1 = 1, jj$1 = pa.length; j$1 < jj$1; j$1++) {
+            r[j$1] = +pa[j$1] + ((j$1 % 2) ? x : y);
+          }
+      }
+    } else if (pa0 === "R") {
+      dots = [x, y].concat(pa.slice(1));
+      res.pop();
+      res = res.concat(catmullRom2bezier(dots, crz));
+      r = ["R"].concat(pa.slice(-2));
+    } else if (pa0 === "O") {
+      res.pop();
+      dots = ellipsePath(x, y, +pa[1], +pa[2]);
+      dots.push(dots[0]);
+      res = res.concat(dots);
+    } else if (pa0 === "U") {
+      res.pop();
+      res = res.concat(ellipsePath(x, y, +pa[1], +pa[2], +pa[3]));
+      r = ["U"].concat(res[res.length - 1].slice(-2));
+    } else {
+      pa.map(function (k){ return r.push(k); });
     }
-  }, true);
-  return this;
-};
-SvgPath.prototype.toString = function toString () {
-    var this$1 = this;
-  var elements = [], skipCmd, cmd;
-  this.segments.map( function (s,i) {
-    cmd = s[0];
-    skipCmd = i > 0 && cmd !== 'm' && cmd !== 'M' && cmd === this$1.segments[i - 1][0];
-    elements = elements.concat(skipCmd ? s.slice(1) : s);
-  });
-  return elements.join(' ')
-    .replace(/ ?([achlmqrstvz]) ?/gi, '$1')
-    .replace(/ \-/g, '-')
-    .replace(/zm/g, 'z m');
-};
-function split(parsed) {
-  return parsed
-    .toString()
-    .split("M")
-    .map(function (d, i) {
-      d = d.trim();
-      return i && d ? "M" + d : d;
-    })
-    .filter(function (d) { return d; });
+    pa0 = pa0.toUpperCase();
+    if (pa0 !== "O") {
+      switch (r[0]) {
+        case "Z":
+          x = mx;
+          y = my;
+          break;
+        case "H":
+          x = +r[1];
+          break;
+        case "V":
+          y = +r[1];
+          break;
+        case "M":
+          mx = +r[r.length - 2];
+          my = +r[r.length - 1];
+        default:
+          x = +r[r.length - 2];
+          y = +r[r.length - 1];
+      }
+    }
+  };
+  for (var i = start; i < ii; i++) loop( i );
+  return roundPath(res)
+}
+
+function pathToString(pathArray) {
+  return pathArray.map( function (c) {
+    if (typeof c === 'string') {
+      return c
+    } else {
+      return c.shift() + c.join(',')
+    }
+  }).join(' ')
+}
+
+function splitPath(pathString) {
+  return pathString
+    .replace( /(m|M)/g, "|$1")
+    .split('|')
+    .map(function (s){ return s.trim(); })
+    .filter(function (s){ return s; })
+}
+
+var INVALID_INPUT = 'Invalid path value';
+function isFiniteNumber(number) {
+  return typeof number === "number" && isFinite(number);
+}
+function distance(a, b) {
+  return Math.sqrt(
+    (a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1])
+  );
+}
+function pointAlong(a, b, pct) {
+  return [a[0] + (b[0] - a[0]) * pct, a[1] + (b[1] - a[1]) * pct];
+}
+function samePoint(a, b) {
+  return distance(a, b) < 1e-9;
 }
 function pathStringToRing(str, maxSegmentLength) {
-  var parsed = new SvgPath(str).abs();
+  var parsed = pathToAbsolute(str);
   return exactRing(parsed) || approximateRing(parsed, maxSegmentLength);
 }
-function exactRing(parsed) {
-  var segments = parsed.segments || [],
-    ring = [];
+function exactRing(segments) {
+  var ring = [];
   if (!segments.length || segments[0][0] !== "M") {
     return false;
   }
@@ -1841,7 +1941,8 @@ function exactRing(parsed) {
   return ring.length ? { ring: ring } : false;
 }
 function approximateRing(parsed, maxSegmentLength) {
-  var ringPath = split(parsed)[0], ring = [], len, testPath, numPoints = 3;
+  var ringPath = splitPath(pathToString(parsed))[0],
+      ring = [], len, testPath, numPoints = 3;
   if (!ringPath) {
     throw new TypeError(INVALID_INPUT);
   }
@@ -2032,9 +2133,11 @@ var svgMorph = {
   defaultOptions: {morphPrecision : 10, morphIndex:0},
   functions: svgMorphFunctions,
   Util: {
-    INVALID_INPUT: INVALID_INPUT,isFiniteNumber: isFiniteNumber,distance: distance,pointAlong: pointAlong,samePoint: samePoint,paramCounts: paramCounts,SPECIAL_SPACES: SPECIAL_SPACES,isSpace: isSpace,isCommand: isCommand,isArc: isArc,isDigit: isDigit,
-    isDigitStart: isDigitStart,State: State,skipSpaces: skipSpaces,scanFlag: scanFlag,scanParam: scanParam,finalizeSegment: finalizeSegment,scanSegment: scanSegment,pathParse: pathParse,SvgPath: SvgPath,split: split,pathStringToRing: pathStringToRing,
-    exactRing: exactRing,approximateRing: approximateRing,measure: measure,rotateRing: rotateRing,polygonLength: polygonLength,polygonArea: polygonArea,addPoints: addPoints,bisect: bisect,normalizeRing: normalizeRing,validRing: validRing,getInterpolationPoints: getInterpolationPoints}
+    INVALID_INPUT: INVALID_INPUT,isFiniteNumber: isFiniteNumber,distance: distance,pointAlong: pointAlong,samePoint: samePoint,
+    pathToAbsolute: pathToAbsolute,pathToString: pathToString,pathStringToRing: pathStringToRing,
+    exactRing: exactRing,approximateRing: approximateRing,measure: measure,rotateRing: rotateRing,polygonLength: polygonLength,polygonArea: polygonArea,
+    addPoints: addPoints,bisect: bisect,normalizeRing: normalizeRing,validRing: validRing,getInterpolationPoints: getInterpolationPoints
+  }
 };
 Components.SVGMorph = svgMorph;
 

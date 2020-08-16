@@ -240,6 +240,19 @@
     return {name:ComponentName}
   };
 
+  function queueStart(){
+    for (var obj in onStart) {
+      if (typeof (onStart[obj]) === 'function') {
+        onStart[obj].call(this,obj);
+      } else {
+        for (var prop in onStart[obj]) {
+          onStart[obj][prop].call(this,prop);
+        }
+      }
+    }
+    linkInterpolation.call(this);
+  }
+
   var TweenBase = function TweenBase(targetElement, startObject, endObject, options){
     this.element = targetElement;
     this.playing = false;
@@ -273,16 +286,7 @@
       if (this._onStart) {
         this._onStart.call(this);
       }
-      for (var obj in onStart) {
-        if (typeof (onStart[obj]) === 'function') {
-          onStart[obj].call(this,obj);
-        } else {
-          for (var prop in onStart[obj]) {
-            onStart[obj][prop].call(this,prop);
-          }
-        }
-      }
-      linkInterpolation.call(this);
+      queueStart.call(this);
       this._startFired = true;
     }
     !Tick && Ticker();

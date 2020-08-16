@@ -54,6 +54,7 @@
   },
   "homepage": "http://thednp.github.io/kute.js",
   "dependencies": {
+    "svg-path-commander": "^0.0.1-c",
     "cubic-bezier-easing": "^1.0.2",
     "minifill": "^0.0.13",
     "shorter-js": "^0.1.4"

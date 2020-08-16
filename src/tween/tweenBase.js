@@ -8,7 +8,7 @@ import {Tick,Ticker,stop} from '../core/render.js'
 
 import add from '../core/add.js'
 import remove from '../core/remove.js'
-import linkInterpolation from '../core/linkInterpolation.js'
+import queueStart from '../core/queueStart.js'
 
 // single Tween object construct
 // TweenBase is meant to be use for pre-processed values
@@ -74,18 +74,7 @@ export default class TweenBase {
         this._onStart.call(this); 
       }
 
-      // fire onStart actions
-      for (let obj in onStart) {
-        if (typeof (onStart[obj]) === 'function') {
-          onStart[obj].call(this,obj) // easing functions
-        } else {
-          for (let prop in onStart[obj]) {
-            onStart[obj][prop].call(this,prop);
-          }
-        }
-      }
-      // add interpolations
-      linkInterpolation.call(this)
+      queueStart.call(this)
 
       this._startFired = true;
     }

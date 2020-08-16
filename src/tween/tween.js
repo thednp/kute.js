@@ -9,6 +9,7 @@ import crossCheck from '../objects/crossCheck.js'
 import prepareObject from '../process/prepareObject.js'
 import getStartValues from '../process/getStartValues.js'
 import {Tick,Ticker} from '../core/render.js'
+import queueStart from '../core/queueStart.js'
 
 defaultOptions.repeat = 0
 defaultOptions.repeatDelay = 0
@@ -83,8 +84,8 @@ export default class Tween extends TweenBase {
       getStartValues.call(this);
 
       // this is where we do the valuesStart and valuesEnd check for fromTo() method
-      for ( const component in crossCheck ) {
-        for ( const prop in crossCheck[component] ) {
+      for ( let component in crossCheck ) {
+        for ( let prop in crossCheck[component] ) {
           crossCheck[component][prop].call(this,prop); 
         }
       }
@@ -94,13 +95,12 @@ export default class Tween extends TweenBase {
 
     // set yoyo values
     if (this._yoyo) {
-      for ( const endProp in this.valuesEnd ) {
+      for ( let endProp in this.valuesEnd ) {
         this.valuesRepeat[endProp] = this.valuesStart[endProp]
       }
     }
 
     super.start(time);
-
 
     return this
   }
@@ -135,16 +135,7 @@ export default class Tween extends TweenBase {
         this._onResume.call(this);
       }
       // re-queue execution context
-      for (let obj in onStart) {
-        if (typeof (onStart[obj]) === 'function') {
-          onStart[obj].call(this,obj);
-        } else {
-          for (let prop in onStart[obj]) {
-            onStart[obj][prop].call(this,prop);
-          }
-        }
-      }
-      linkInterpolation.call(this);
+      queueStart.call(this)
       // update time and let it roll
       this._startTime += KUTE.Time() - this._pauseTime;
       add(this);

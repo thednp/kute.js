@@ -21,7 +21,7 @@
 
   var Interpolate = {};
 
-  var onStart$1 = {};
+  var onStart = {};
 
   var Time = {};
   Time.now = self.performance.now.bind(self.performance);
@@ -42,11 +42,11 @@
       if (!Tweens.length && Tick) {
         cancelAnimationFrame(Tick);
         Tick = null;
-        for (var obj in onStart$1) {
-          if (typeof (onStart$1[obj]) === 'function') {
+        for (var obj in onStart) {
+          if (typeof (onStart[obj]) === 'function') {
             KUTE[obj] && (delete KUTE[obj]);
           } else {
-            for (var prop in onStart$1[obj]) {
+            for (var prop in onStart[obj]) {
               KUTE[prop] && (delete KUTE[prop]);
             }
           }
@@ -92,7 +92,7 @@
     prepareProperty: prepareProperty,
     prepareStart: prepareStart,
     crossCheck: crossCheck,
-    onStart: onStart$1,
+    onStart: onStart,
     onComplete: onComplete,
     linkProperty: linkProperty
   };
@@ -112,7 +112,7 @@
 
   function removeAll () { Tweens.length = 0; }
 
-  function linkInterpolation$1() {
+  function linkInterpolation() {
     var this$1 = this;
     var loop = function ( component ) {
       var componentLink = linkProperty[component];
@@ -149,7 +149,7 @@
     getAll: getAll,
     removeAll: removeAll,
     stop: stop,
-    linkInterpolation: linkInterpolation$1
+    linkInterpolation: linkInterpolation
   };
 
   function getInlineStyle(el) {
@@ -352,6 +352,19 @@
     }
   }
 
+  function queueStart(){
+    for (var obj in onStart) {
+      if (typeof (onStart[obj]) === 'function') {
+        onStart[obj].call(this,obj);
+      } else {
+        for (var prop in onStart[obj]) {
+          onStart[obj][prop].call(this,prop);
+        }
+      }
+    }
+    linkInterpolation.call(this);
+  }
+
   var TweenBase = function TweenBase(targetElement, startObject, endObject, options){
     this.element = targetElement;
     this.playing = false;
@@ -369,8 +382,8 @@
       if( !(internalOption in this ) ) { this[internalOption] = options[op]; }
     }
     var easingFnName = this._easing.name;
-    if (!onStart$1[easingFnName]) {
-      onStart$1[easingFnName] = function(prop){
+    if (!onStart[easingFnName]) {
+      onStart[easingFnName] = function(prop){
         !KUTE[prop] && prop === this._easing.name && (KUTE[prop] = this._easing);
       };
     }
@@ -385,16 +398,7 @@
       if (this._onStart) {
         this._onStart.call(this);
       }
-      for (var obj in onStart$1) {
-        if (typeof (onStart$1[obj]) === 'function') {
-          onStart$1[obj].call(this,obj);
-        } else {
-          for (var prop in onStart$1[obj]) {
-            onStart$1[obj][prop].call(this,prop);
-          }
-        }
-      }
-      linkInterpolation$1.call(this);
+      queueStart.call(this);
       this._startFired = true;
     }
     !Tick && Ticker();
@@ -540,16 +544,7 @@
         if (this._onResume !== undefined) {
           this._onResume.call(this);
         }
-        for (var obj in onStart) {
-          if (typeof (onStart[obj]) === 'function') {
-            onStart[obj].call(this,obj);
-          } else {
-            for (var prop in onStart[obj]) {
-              onStart[obj][prop].call(this,prop);
-            }
-          }
-        }
-        linkInterpolation.call(this);
+        queueStart.call(this);
         this._startTime += KUTE.Time() - this._pauseTime;
         add(this);
         !Tick && Ticker();
@@ -799,7 +794,7 @@
   Animation.prototype.setComponent = function setComponent (Component){
     var propertyInfo = this;
     var ComponentName = Component.component;
-    var Functions = { prepareProperty: prepareProperty, prepareStart: prepareStart, onStart: onStart$1, onComplete: onComplete, crossCheck: crossCheck };
+    var Functions = { prepareProperty: prepareProperty, prepareStart: prepareStart, onStart: onStart, onComplete: onComplete, crossCheck: crossCheck };
     var Category = Component.category;
     var Property = Component.property;
     var Length = Component.properties && Component.properties.length || Component.subProperties && Component.subProperties.length;
@@ -868,7 +863,7 @@
     AnimationDevelopment.prototype.setComponent = function setComponent (Component){
       Animation.prototype.setComponent.call(this, Component);
       var propertyInfo = this;
-      var Functions = { prepareProperty: prepareProperty,prepareStart: prepareStart,onStart: onStart$1,onComplete: onComplete,crossCheck: crossCheck };
+      var Functions = { prepareProperty: prepareProperty,prepareStart: prepareStart,onStart: onStart,onComplete: onComplete,crossCheck: crossCheck };
       var Category = Component.category;
       var Property = Component.property;
       var Length = Component.properties && Component.properties.length || Component.subProperties && Component.subProperties.length;
@@ -1232,7 +1227,7 @@
         if ( currentValue !== null && regex.test(currentValue) ) {
           var unit = trueDimension(currentValue).u || trueDimension(attrObj[p]).u;
           var suffix = /%/.test(unit) ? '_percent' : ("_" + unit);
-          onStart$1[ComponentName][prop+suffix] = function(tp) {
+          onStart[ComponentName][prop+suffix] = function(tp) {
             if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
               attributes[tp] = function (elem, p, a, b, v) {
                 var _p = p.replace(suffix,'');
@@ -1242,7 +1237,7 @@
           };
           attributesObject[prop+suffix] = trueDimension(attrObj[p]);
         } else if ( !regex.test(attrObj[p]) || currentValue === null || currentValue !== null && !regex.test(currentValue) ) {
-          onStart$1[ComponentName][prop] = function(tp) {
+          onStart[ComponentName][prop] = function(tp) {
             if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
               attributes[tp] = function (elem, oneAttr, a, b, v) {
                 elem.setAttribute(oneAttr, (numbers(a,b,v) * 1000 >> 0) / 1000 );
@@ -1252,7 +1247,7 @@
           attributesObject[prop] = parseFloat(attrObj[p]);
         }
       } else {
-        onStart$1[ComponentName][prop] = function(tp) {
+        onStart[ComponentName][prop] = function(tp) {
           if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
             attributes[tp] = function (elem, oneAttr, a, b, v) {
               elem.setAttribute(oneAttr, colors(a,b,v));
@@ -1560,17 +1555,16 @@
   };
   Components.SVGDraw = svgDraw;
 
-  function toPathString(pathArray) {
-    var newPath = pathArray.map( function (c) {
-      if (typeof(c) === 'string') {
+  function pathToString(pathArray) {
+    return pathArray.map( function (c) {
+      if (typeof c === 'string') {
         return c
       } else {
-        var c0 = c.shift();
-        return c0 + c.join(',')
+        return c.shift() + c.join(',')
       }
-    });
-    return newPath.join('');
+    }).join(' ')
   }
+
   function onStartCubicMorph(tweenProp){
     if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
       KUTE[tweenProp] = function(elem,a,b,v){
@@ -1581,12 +1575,256 @@
             curve[i].push( (numbers(path1[i][j], path2[i][j], v) * 1000 >>0)/1000 );
           }
         }
-        elem.setAttribute("d", v === 1 ? b.original : toPathString(curve) );
+        elem.setAttribute("d", v === 1 ? b.original : pathToString(curve) );
       };
     }
   }
 
-  var INVALID_INPUT = 'Invalid path value';
+  function clonePath(pathArray){
+    return pathArray.map(function (x) { return Array.isArray(x) ? clonePath(x) : !isNaN(+x) ? +x : x; } )
+  }
+
+  var SVGPCOps = {
+    decimals:3,
+    round:1
+  };
+
+  function roundPath(pathArray) {
+    return  pathArray.map( function (seg) { return seg.map(function (c,i) {
+              var nr = +c, dc = Math.pow(10,SVGPCOps.decimals);
+              return i ? (nr % 1 === 0 ? nr : (nr*dc>>0)/dc) : c
+            }
+          ); }) 
+  }
+
+  function SVGPathArray(pathString){
+    this.segments = [];
+    this.isClosed = 0;
+    this.isAbsolute = 0;
+    this.pathValue = pathString;
+    this.max = pathString.length;
+    this.index  = 0;
+    this.param = 0.0;
+    this.segmentStart = 0;
+    this.data = [];
+    this.err = '';
+    return this
+  }
+
+  var paramCounts = { a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0 };
+  function isSpace(ch) {
+    var specialSpaces = [
+      0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
+      0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF ];
+    return (ch === 0x0A) || (ch === 0x0D) || (ch === 0x2028) || (ch === 0x2029) ||
+      (ch === 0x20) || (ch === 0x09) || (ch === 0x0B) || (ch === 0x0C) || (ch === 0xA0) ||
+      (ch >= 0x1680 && specialSpaces.indexOf(ch) >= 0);
+  }
+  function isCommand(code) {
+    switch (code | 0x20) {
+      case 0x6D:
+      case 0x7A:
+      case 0x6C:
+      case 0x68:
+      case 0x76:
+      case 0x63:
+      case 0x73:
+      case 0x71:
+      case 0x74:
+      case 0x61:
+      case 0x72:
+        return true;
+    }
+    return false;
+  }
+  function isArc(code) {
+    return (code | 0x20) === 0x61;
+  }
+  function isDigit(code) {
+    return (code >= 48 && code <= 57);
+  }
+  function isDigitStart(code) {
+    return (code >= 48 && code <= 57) ||
+            code === 0x2B ||
+            code === 0x2D ||
+            code === 0x2E;
+  }
+  function skipSpaces(state) {
+    while (state.index < state.max && isSpace(state.pathValue.charCodeAt(state.index))) {
+      state.index++;
+    }
+  }
+  function scanFlag(state) {
+    var ch = state.pathValue.charCodeAt(state.index);
+    if (ch === 0x30) {
+      state.param = 0;
+      state.index++;
+      return;
+    }
+    if (ch === 0x31) {
+      state.param = 1;
+      state.index++;
+      return;
+    }
+    state.err = 'SvgPath: arc flag can be 0 or 1 only (at pos ' + state.index + ')';
+  }
+  function scanParam(state) {
+    var start = state.index,
+        index = start,
+        max = state.max,
+        zeroFirst = false,
+        hasCeiling = false,
+        hasDecimal = false,
+        hasDot = false,
+        ch;
+    if (index >= max) {
+      state.err = 'SvgPath: missed param (at pos ' + index + ')';
+      return;
+    }
+    ch = state.pathValue.charCodeAt(index);
+    if (ch === 0x2B || ch === 0x2D) {
+      index++;
+      ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
+    }
+    if (!isDigit(ch) && ch !== 0x2E) {
+      state.err = 'SvgPath: param should start with 0..9 or `.` (at pos ' + index + ')';
+      return;
+    }
+    if (ch !== 0x2E) {
+      zeroFirst = (ch === 0x30);
+      index++;
+      ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
+      if (zeroFirst && index < max) {
+        if (ch && isDigit(ch)) {
+          state.err = 'SvgPath: numbers started with `0` such as `09` are illegal (at pos ' + start + ')';
+          return;
+        }
+      }
+      while (index < max && isDigit(state.pathValue.charCodeAt(index))) {
+        index++;
+        hasCeiling = true;
+      }
+      ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
+    }
+    if (ch === 0x2E) {
+      hasDot = true;
+      index++;
+      while (isDigit(state.pathValue.charCodeAt(index))) {
+        index++;
+        hasDecimal = true;
+      }
+      ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
+    }
+    if (ch === 0x65 || ch === 0x45) {
+      if (hasDot && !hasCeiling && !hasDecimal) {
+        state.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
+        return;
+      }
+      index++;
+      ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
+      if (ch === 0x2B || ch === 0x2D) {
+        index++;
+      }
+      if (index < max && isDigit(state.pathValue.charCodeAt(index))) {
+        while (index < max && isDigit(state.pathValue.charCodeAt(index))) {
+          index++;
+        }
+      } else {
+        state.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
+        return;
+      }
+    }
+    state.index = index;
+    state.param = parseFloat(state.pathValue.slice(start, index)) + 0.0;
+  }
+  function finalizeSegment(state) {
+    var cmd = state.pathValue[state.segmentStart], cmdLC = cmd.toLowerCase(), params = state.data;
+    if (cmdLC === 'm' && params.length > 2) {
+      state.segments.push([ cmd, params[0], params[1] ]);
+      params = params.slice(2);
+      cmdLC = 'l';
+      cmd = (cmd === 'm') ? 'l' : 'L';
+    }
+    if (cmdLC === 'r') {
+      state.segments.push([ cmd ].concat(params));
+    } else {
+      while (params.length >= paramCounts[cmdLC]) {
+        state.segments.push([ cmd ].concat(params.splice(0, paramCounts[cmdLC])));
+        if (!paramCounts[cmdLC]) {
+          break;
+        }
+      }
+    }
+  }
+  function scanSegment(state) {
+    var max = state.max, cmdCode, is_arc, comma_found, need_params, i;
+    state.segmentStart = state.index;
+    cmdCode = state.pathValue.charCodeAt(state.index);
+    is_arc = isArc(cmdCode);
+    if (!isCommand(cmdCode)) {
+      state.err = 'SvgPath: bad command ' + state.pathValue[state.index] + ' (at pos ' + state.index + ')';
+      return;
+    }
+    need_params = paramCounts[state.pathValue[state.index].toLowerCase()];
+    state.index++;
+    skipSpaces(state);
+    state.data = [];
+    if (!need_params) {
+      state.isClosed = 1;
+      finalizeSegment(state);
+      return;
+    }
+    comma_found = false;
+    for (;;) {
+      for (i = need_params; i > 0; i--) {
+        if (is_arc && (i === 3 || i === 4)) { scanFlag(state); }
+        else { scanParam(state); }
+        if (state.err.length) {
+          return;
+        }
+        state.data.push(state.param);
+        skipSpaces(state);
+        comma_found = false;
+        if (state.index < max && state.pathValue.charCodeAt(state.index) === 0x2C) {
+          state.index++;
+          skipSpaces(state);
+          comma_found = true;
+        }
+      }
+      if (comma_found) {
+        continue;
+      }
+      if (state.index >= state.max) {
+        break;
+      }
+      if (!isDigitStart(state.pathValue.charCodeAt(state.index))) {
+        break;
+      }
+    }
+    finalizeSegment(state);
+  }
+  function parsePathString(pathString) {
+    if ( Array.isArray(pathString) ) {
+      return clonePath(pathString)
+    }
+    var state = new SVGPathArray(pathString), max = state.max;
+    skipSpaces(state);
+    while (state.index < max && !state.err.length) {
+      scanSegment(state);
+    }
+    if (state.err.length) {
+      state.segments = [];
+    } else if (state.segments.length) {
+      if ('mM'.indexOf(state.segments[0][0]) < 0) {
+        state.err = 'SvgPath: string should start with `M` or `m`';
+        state.segments = [];
+      } else {
+        state.segments[0][0] = 'M';
+      }
+    }
+    return roundPath(state.segments)
+  }
+
   function catmullRom2bezier(crp, z) {
     var d = [];
     for (var i = 0, iLen = crp.length; iLen - 2 * !z > i; i += 2) {
@@ -1612,17 +1850,19 @@
           p[0] = {x: +crp[i], y: +crp[i + 1]};
         }
       }
-      d.push(["C",
-            (-p[0].x + 6 * p[1].x + p[2].x) / 6,
-            (-p[0].y + 6 * p[1].y + p[2].y) / 6,
-            (p[1].x + 6 * p[2].x - p[3].x) / 6,
-            (p[1].y + 6*p[2].y - p[3].y) / 6,
-            p[2].x,
-            p[2].y
+      d.push([
+        "C",
+        (-p[0].x + 6 * p[1].x + p[2].x) / 6,
+        (-p[0].y + 6 * p[1].y + p[2].y) / 6,
+        (p[1].x + 6 * p[2].x - p[3].x) / 6,
+        (p[1].y + 6*p[2].y - p[3].y) / 6,
+        p[2].x,
+        p[2].y
       ]);
     }
     return d
   }
+
   function ellipsePath(x, y, rx, ry, a) {
     if (a == null && ry == null) {
       ry = rx;
@@ -1634,10 +1874,10 @@
     var res;
     if (a != null) {
       var rad = Math.PI / 180,
-            x1 = x + rx * Math.cos(-ry * rad),
-            x2 = x + rx * Math.cos(-a * rad),
-            y1 = y + rx * Math.sin(-ry * rad),
-            y2 = y + rx * Math.sin(-a * rad);
+          x1 = x + rx * Math.cos(-ry * rad),
+          x2 = x + rx * Math.cos(-a * rad),
+          y1 = y + rx * Math.sin(-ry * rad),
+          y2 = y + rx * Math.sin(-a * rad);
       res = [["M", x1, y1], ["A", rx, rx, 0, +(a - ry > 180), 0, x2, y2]];
     } else {
       res = [
@@ -1650,49 +1890,18 @@
     }
     return res;
   }
-  function parsePathString(pathString) {
-    if (!pathString) {
-      return null;
-    }
-    if( pathString instanceof Array ) {
-      return pathString;
-    } else {
-      var spaces = "\\" + (("x09|x0a|x0b|x0c|x0d|x20|xa0|u1680|u180e|u2000|u2001|u2002|u2003|u2004|u2005|u2006|u2007|u2008|u2009|u200a|u202f|u205f|u3000|u2028|u2029").split('|').join('\\')),
-          pathCommand = new RegExp(("([a-z])[" + spaces + ",]*((-?\\d*\\.?\\d*(?:e[\\-+]?\\d+)?[" + spaces + "]*,?[" + spaces + "]*)+)"), "ig"),
-          pathValues = new RegExp(("(-?\\d*\\.?\\d*(?:e[\\-+]?\\d+)?)[" + spaces + "]*,?[" + spaces + "]*"), "ig"),
-          paramCounts = {a: 7, c: 6, o: 2, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, u: 3, z: 0},
-          data = [];
-      pathString.replace(pathCommand, function (a, b, c) {
-        var params = [], name = b.toLowerCase();
-        c.replace(pathValues, function (a, b) {
-          b && params.push(+b);
-        });
-        if (name == "m" && params.length > 2) {
-          data.push([b].concat(params.splice(0, 2)));
-          name = "l";
-          b = b == "m" ? "l" : "L";
-        }
-        if (name == "o" && params.length == 1) {
-          data.push([b, params[0]]);
-        }
-        if (name == "r") {
-          data.push([b].concat(params));
-        } else { while (params.length >= paramCounts[name]) {
-          data.push([b].concat(params.splice(0, paramCounts[name])));
-          if (!paramCounts[name]) {
-            break;
-          }
-        } }
-      });
-      return data;
-    }
-  }
+
   function pathToAbsolute(pathArray) {
     pathArray = parsePathString(pathArray);
     if (!pathArray || !pathArray.length) {
       return [["M", 0, 0]];
     }
-    var res = [], x = 0, y = 0, mx = 0, my = 0, start = 0, pa0;
+    var res = [], x = 0, y = 0, mx = 0, my = 0, start = 0,
+        ii = pathArray.length,
+        crz = pathArray.length === 3 &&
+              pathArray[0][0] === "M" &&
+              pathArray[1][0].toUpperCase() === "R" &&
+              pathArray[2][0].toUpperCase() === "Z";
     if (pathArray[0][0] === "M") {
       x = +pathArray[0][1];
       y = +pathArray[0][2];
@@ -1701,14 +1910,9 @@
       start++;
       res[0] = ["M", x, y];
     }
-    var crz = pathArray.length === 3 &&
-        pathArray[0][0] === "M" &&
-        pathArray[1][0].toUpperCase() === "R" &&
-        pathArray[2][0].toUpperCase() === "Z";
-    for (var r = (void 0), pa = (void 0), i = start, ii = pathArray.length; i < ii; i++) {
+    var loop = function ( i ) {
+      var r = (void 0), pa = pathArray[i], pa0 = pa[0];
       res.push(r = []);
-      pa = pathArray[i];
-      pa0 = pa[0];
       if (pa0 !== pa0.toUpperCase()) {
         r[0] = pa0.toUpperCase();
         switch (r[0]) {
@@ -1728,19 +1932,19 @@
             r[1] = +pa[1] + x;
             break;
           case "R":
-            var dots = [x, y].concat(pa.slice(1));
-            for (var j = 2, jj = dots.length; j < jj; j++) {
-              dots[j] = +dots[j] + x;
-              dots[++j] = +dots[j] + y;
+            var dots$1 = [x, y].concat(pa.slice(1));
+            for (var j = 2, jj = dots$1.length; j < jj; j++) {
+              dots$1[j] = +dots$1[j] + x;
+              dots$1[++j] = +dots$1[j] + y;
             }
             res.pop();
-            res = res.concat(catmullRom2bezier(dots, crz));
+            res = res.concat(catmullRom2bezier(dots$1, crz));
             break;
           case "O":
             res.pop();
-            dots = ellipsePath(x, y, pa[1], pa[2]);
-            dots.push(dots[0]);
-            res = res.concat(dots);
+            dots$1 = ellipsePath(x, y, +pa[1], +pa[2]);
+            dots$1.push(dots$1[0]);
+            res = res.concat(dots$1);
             break;
           case "U":
             res.pop();
@@ -1751,84 +1955,71 @@
             mx = +pa[1] + x;
             my = +pa[2] + y;
           default:
-            for (j = 1, jj = pa.length; j < jj; j++) {
-              r[j] = +pa[j] + ((j % 2) ? x : y);
+            for (var j$1 = 1, jj$1 = pa.length; j$1 < jj$1; j$1++) {
+              r[j$1] = +pa[j$1] + ((j$1 % 2) ? x : y);
             }
         }
-      } else if (pa0 == "R") {
+      } else if (pa0 === "R") {
         dots = [x, y].concat(pa.slice(1));
         res.pop();
         res = res.concat(catmullRom2bezier(dots, crz));
         r = ["R"].concat(pa.slice(-2));
-      } else if (pa0 == "O") {
+      } else if (pa0 === "O") {
         res.pop();
-        dots = ellipsePath(x, y, pa[1], pa[2]);
+        dots = ellipsePath(x, y, +pa[1], +pa[2]);
         dots.push(dots[0]);
         res = res.concat(dots);
-      } else if (pa0 == "U") {
+      } else if (pa0 === "U") {
         res.pop();
-        res = res.concat(ellipsePath(x, y, pa[1], pa[2], pa[3]));
+        res = res.concat(ellipsePath(x, y, +pa[1], +pa[2], +pa[3]));
         r = ["U"].concat(res[res.length - 1].slice(-2));
       } else {
-        for (var k = 0, kk = pa.length; k < kk; k++) {
-          r[k] = pa[k];
-        }
+        pa.map(function (k){ return r.push(k); });
       }
       pa0 = pa0.toUpperCase();
-      if (pa0 != "O") {
+      if (pa0 !== "O") {
         switch (r[0]) {
           case "Z":
-            x = +mx;
-            y = +my;
+            x = mx;
+            y = my;
             break;
           case "H":
-            x = r[1];
+            x = +r[1];
             break;
           case "V":
-            y = r[1];
+            y = +r[1];
             break;
           case "M":
-            mx = r[r.length - 2];
-            my = r[r.length - 1];
+            mx = +r[r.length - 2];
+            my = +r[r.length - 1];
           default:
-            x = r[r.length - 2];
-            y = r[r.length - 1];
+            x = +r[r.length - 2];
+            y = +r[r.length - 1];
         }
       }
-    }
-    return res
+    };
+    for (var i = start; i < ii; i++) loop( i );
+    return roundPath(res)
   }
-  function l2c(x1, y1, x2, y2) {
-    return [x1, y1, x2, y2, x2, y2];
+
+  function rotateVector(x, y, rad) {
+    var X = x * Math.cos(rad) - y * Math.sin(rad),
+          Y = x * Math.sin(rad) + y * Math.cos(rad);
+    return {x: X, y: Y}
   }
-  function q2c(x1, y1, ax, ay, x2, y2) {
-    var _13 = 1 / 3;
-    var _23 = 2 / 3;
-    return [
-            _13 * x1 + _23 * ax,
-            _13 * y1 + _23 * ay,
-            _13 * x2 + _23 * ax,
-            _13 * y2 + _23 * ay,
-            x2,
-            y2
-          ]
-  }
+
   function a2c(x1, y1, rx, ry, angle, large_arc_flag, sweep_flag, x2, y2, recursive) {
-    var _120 = Math.PI * 120 / 180, rad = Math.PI / 180 * (+angle || 0);
-    var res = [], xy, f1, f2, cx, cy;
-    function rotateVector(x, y, rad) {
-      var X = x * Math.cos(rad) - y * Math.sin(rad),
-            Y = x * Math.sin(rad) + y * Math.cos(rad);
-      return {x: X, y: Y};
-    }
+    var _120 = Math.PI * 120 / 180,
+        rad = Math.PI / 180 * (angle || 0),
+        res = [], xy, f1, f2, cx, cy;
     if (!recursive) {
       xy = rotateVector(x1, y1, -rad);
-      x1 = xy.x;
-      y1 = xy.y;
+      x1 = xy.x; y1 = xy.y;
       xy = rotateVector(x2, y2, -rad);
-      x2 = xy.x;
-      y2 = xy.y;
-      var x = (x1 - x2) / 2, y = (y1 - y2) / 2, h = (x * x) / (rx * rx) + (y * y) / (ry * ry);
+      x2 = xy.x; y2 = xy.y;
+      var x = (x1 - x2) / 2,
+          y = (y1 - y2) / 2,
+          h = (x * x) / (rx * rx) + (y * y) / (ry * ry);
       if (h > 1) {
         h = Math.sqrt(h);
         rx = h * rx;
@@ -1841,8 +2032,8 @@
             / (rx2 * y * y + ry2 * x * x)));
       cx = k * rx * y / ry + (x1 + x2) / 2,
       cy = k * -ry * x / rx + (y1 + y2) / 2;
-      f1 = Math.asin(((y1 - cy) / ry).toFixed(9)),
-      f2 = Math.asin(((y2 - cy) / ry).toFixed(9));
+      f1 = Math.asin(((y1 - cy) / ry)),
+      f2 = Math.asin(((y2 - cy) / ry));
       f1 = x1 < cx ? Math.PI - f1 : f1;
       f2 = x2 < cx ? Math.PI - f2 : f2;
       f1 < 0 && (f1 = Math.PI * 2 + f1);
@@ -1869,30 +2060,43 @@
     }
     df = f2 - f1;
     var c1 = Math.cos(f1),
-          s1 = Math.sin(f1),
-          c2 = Math.cos(f2),
-          s2 = Math.sin(f2),
-          t = Math.tan(df / 4),
-          hx = 4 / 3 * rx * t,
-          hy = 4 / 3 * ry * t,
-          m1 = [x1, y1],
-          m2 = [x1 + hx * s1, y1 - hy * c1],
-          m3 = [x2 + hx * s2, y2 - hy * c2],
-          m4 = [x2, y2];
+        s1 = Math.sin(f1),
+        c2 = Math.cos(f2),
+        s2 = Math.sin(f2),
+        t = Math.tan(df / 4),
+        hx = 4 / 3 * rx * t,
+        hy = 4 / 3 * ry * t,
+        m1 = [x1, y1],
+        m2 = [x1 + hx * s1, y1 - hy * c1],
+        m3 = [x2 + hx * s2, y2 - hy * c2],
+        m4 = [x2, y2];
     m2[0] = 2 * m1[0] - m2[0];
     m2[1] = 2 * m1[1] - m2[1];
     if (recursive) {
       return [m2, m3, m4].concat(res);
     } else {
       res = [m2, m3, m4].concat(res).join().split(",");
-      var newres = [];
-      for (var i = 0, ii = res.length; i < ii; i++) {
-        newres[i] = i % 2 ? rotateVector(res[i - 1], res[i], rad).y : rotateVector(res[i], res[i + 1], rad).x;
-      }
-      return newres;
+      return res.map(function (rz,i){ return i % 2 ? rotateVector(res[i - 1], rz, rad).y : rotateVector(rz, res[i + 1], rad).x; });
     }
   }
-  function processPath (path, d, pcom) {
+
+  function q2c (x1, y1, ax, ay, x2, y2) {
+    var _13 = 1 / 3, _23 = 2 / 3;
+    return [
+            _13 * x1 + _23 * ax,
+            _13 * y1 + _23 * ay,
+            _13 * x2 + _23 * ax,
+            _13 * y2 + _23 * ay,
+            x2,
+            y2
+          ]
+  }
+
+  function l2c(x1, y1, x2, y2) {
+    return [x1, y1, x2, y2, x2, y2];
+  }
+
+  function processPath(path, d, pcom) {
     var nx, ny;
     if (!path) {
       return ["C", d.x, d.y, d.x, d.y, d.x, d.y];
@@ -1946,10 +2150,10 @@
         path = ["C"].concat(l2c(d.x, d.y, d.X, d.Y));
         break;
     }
-    path.map(function (x,i){ return i?x.toFixed(3):x; });
     return path;
   }
-  function fixM (path1, path2, a1, a2, i) {
+
+  function fixM(path1, path2, a1, a2, i) {
     if (path1 && path2 && path1[i][0] === "M" && path2[i][0] !== "M") {
       path2.splice(i, 0, ["M", a2.x, a2.y]);
       a1.bx = 0;
@@ -1958,25 +2162,29 @@
       a1.y = path1[i][2];
     }
   }
-  function fixArc (p, p2, pcoms1, pcoms2, i) {
+
+  function fixArc(p, p2, pc1, pc2, i) {
     if (p[i].length > 7) {
       p[i].shift();
       var pi = p[i];
       while (pi.length) {
-        pcoms1[i] = "A";
-        p2 && (pcoms2[i] = "A");
+        pc1[i] = "A";
+        p2 && (pc2[i] = "A");
         p.splice(i++, 0, ["C"].concat(pi.splice(0, 6)));
       }
       p.splice(i, 1);
     }
   }
-  function path2curve(path, path2) {
+
+  function pathToCurve(path, path2) {
     var p = pathToAbsolute(path),
         p2 = path2 && pathToAbsolute(path2),
         attrs = {x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null},
         attrs2 = {x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null};
-    var pcoms1 = [], pcoms2 = [], pfirst = "", pcom = "";
-    for (var i = 0, ii = Math.max(p.length, p2 && p2.length || 0); i < ii; i++) {
+    var pcoms1 = [], pcoms2 = [],
+        pfirst = "", pcom = "",
+        ii = Math.max(p.length, p2 && p2.length || 0);
+    for (var i = 0; i < ii; i++) {
       p[i] && (pfirst = p[i][0]);
       if (pfirst !== "C") {
         pcoms1[i] = pfirst;
@@ -2015,73 +2223,68 @@
       attrs2.x = p2 && seg2[seg2len - 2];
       attrs2.y = p2 && seg2[seg2len - 1];
     }
-    return p2 ? [p, p2] : p;
+    return p2 ? [roundPath(p), roundPath(p2)] : roundPath(p);
   }
+
+  function reverseCurve(pathCurveArray){
+    var curveSegments = clonePath(pathCurveArray),
+        curveCount = curveSegments.length - 2,
+        ci = 0, ni = 0,
+        currentSeg = [],
+        nextSeg = [],
+        x1, y1, x2, y2, x, y,
+        curveOnly = curveSegments.slice(1),
+        rotatedCurve = curveOnly.map(function (p,i){
+          ci = curveCount - i;
+          ni = ci - 1 < 0 ? curveCount : ci - 1;
+          currentSeg = curveOnly[ci];
+          nextSeg = curveOnly[ni];
+          x = nextSeg[nextSeg.length - 2];
+          y = nextSeg[nextSeg.length - 1];
+          x1 = currentSeg[3]; y1 = currentSeg[4];
+          x2 = currentSeg[1]; y2 = currentSeg[2];
+          return [p[0],x1,y1,x2,y2,x,y]
+        });
+    return [['M',rotatedCurve[curveCount][5],rotatedCurve[curveCount][6]]].concat(rotatedCurve)
+  }
+
   function createPath (path) {
     var np = document.createElementNS('http://www.w3.org/2000/svg','path'),
           d = path instanceof SVGElement ? path.getAttribute('d') : path;
     np.setAttribute('d',d);
     return np
   }
-  function getSegments(curveArray) {
-    return curveArray.map(function (seg) {
-      return {
-        x: seg[seg[0] === 'M' ? 1 : 5],
-        y: seg[seg[0] === 'M' ? 2 : 6],
-        seg: seg
+  function getRotationSegments(s,idx) {
+    var segsCount = s.length, pointCount = segsCount - 1;
+    return s.map(function (p,i){
+      var oldSegIdx = idx + i, seg;
+      if (i===0 || s[oldSegIdx] && s[oldSegIdx][0] === 'M') {
+        seg = s[oldSegIdx];
+        return ['M',seg[seg.length-2],seg[seg.length-1]]
+      } else {
+        if (oldSegIdx >= segsCount) { oldSegIdx -= pointCount; }
+        return s[oldSegIdx]
       }
     })
   }
-  function reverseCurve(path){
-    var newSegments = [],
-        oldSegments = getSegments(path),
-        segsCount = oldSegments.length,
-        pointCount = segsCount - 1,
-        oldSegIdx = pointCount,
-        oldSegs = [];
-    oldSegments.map(function (p,i){
-      if (i === 0||oldSegments[oldSegIdx].seg[0] === 'M') {
-        newSegments[i] = ['M',oldSegments[oldSegIdx].x,oldSegments[oldSegIdx].y];
-      } else {
-        oldSegIdx = pointCount - i > 0 ? pointCount - i : pointCount;
-        oldSegs = oldSegments[oldSegIdx].seg;
-        newSegments[i] = [oldSegs[0], oldSegs[5],oldSegs[6],oldSegs[3],oldSegs[4], oldSegs[1], oldSegs[2]];
-      }
-    });
-    return newSegments
-  }
-  function getRotationSegments(s,idx) {
-    var newSegments = [], segsCount = s.length, pointCount = segsCount - 1;
-    s.map(function (p,i){
-      var oldSegIdx = idx + i;
-      if (i===0 || s[oldSegIdx] && s[oldSegIdx].seg[0] === 'M') {
-        newSegments[i] = ['M',s[oldSegIdx].x,s[oldSegIdx].y];
-      } else {
-        if (oldSegIdx >= segsCount) { oldSegIdx -= pointCount; }
-        newSegments[i] = s[oldSegIdx].seg;
-      }
-    });
-    return newSegments
-  }
   function getRotations(a) {
-    var startSegments = getSegments(a), rotations = [];
-    startSegments.map(function (s,i){rotations[i] = getRotationSegments(startSegments,i);});
-    return rotations
+    return a.map(function (s,i) { return getRotationSegments(a,i); })
   }
   function getRotatedCurve(a,b) {
-    var startSegments = getSegments(a),
-        endSegments = getSegments(b),
-        segsCount = startSegments.length,
-        pointCount = segsCount - 1,
+    var segCount = a.length - 1,
         linePaths = [],
         lineLengths = [],
         rotations = getRotations(a);
     rotations.map(function (r,i){
-      var sumLensSqrd = 0, linePath = createPath('M0,0L0,0');
-      for (var j = 0; j < pointCount; j++) {
-        var linePt1 = startSegments[(i + j) % pointCount];
-        var linePt2 = endSegments[ j  % pointCount];
-        var linePathStr = "M" + (linePt1.x) + "," + (linePt1.y) + "L" + (linePt2.x) + "," + (linePt2.y);
+      var sumLensSqrd = 0,
+          linePath = createPath('M0,0L0,0'),
+          linePt1, ll1,
+          linePt2, ll2,
+          linePathStr;
+      for (var j = 0; j < segCount; j++) {
+        linePt1 = a[(i + j) % segCount]; ll1 = linePt1.length;
+        linePt2 = b[ j  % segCount]; ll2 = linePt2.length;
+        linePathStr = "M" + (linePt1[ll1-2]) + "," + (linePt1[ll1-1]) + "L" + (linePt2[ll2-2]) + "," + (linePt2[ll2-1]);
         linePath.setAttribute('d',linePathStr);
         sumLensSqrd += Math.pow(linePath.getTotalLength(),2);
         linePaths[j] = linePath;
@@ -2089,9 +2292,8 @@
       lineLengths[i] = sumLensSqrd;
       sumLensSqrd = 0;
     });
-    var computedIndex = lineLengths.indexOf(Math.min.apply(null,lineLengths)),
-        newPath = rotations[computedIndex];
-    return newPath
+    var computedIndex = lineLengths.indexOf(Math.min.apply(null,lineLengths));
+    return rotations[computedIndex]
   }
   function getCubicMorph(tweenProp){
     return this.element.getAttribute('d');
@@ -2121,9 +2323,9 @@
       if ( !pathCurve1 || !pathCurve2 || ( pathCurve1 && pathCurve2 && pathCurve1[0][0] === 'M' && pathCurve1.length !== pathCurve2.length) ) {
         var path1 = this.valuesStart[tweenProp].original,
             path2 = this.valuesEnd[tweenProp].original,
-            curves = path2curve(path1,path2);
-        var curve0 = this._reverseFirstPath ? reverseCurve.call(this,curves[0]) : curves[0],
-            curve1 = this._reverseSecondPath ? reverseCurve.call(this,curves[1]) : curves[1];
+            curves = pathToCurve(path1,path2);
+        var curve0 = this._reverseFirstPath ? reverseCurve(curves[0]) : curves[0],
+            curve1 = this._reverseSecondPath ? reverseCurve(curves[1]) : curves[1];
         curve0 = getRotatedCurve.call(this,curve0,curve1);
         this.valuesStart[tweenProp].curve = curve0;
         this.valuesEnd[tweenProp].curve = curve1;
@@ -2140,13 +2342,12 @@
     component: 'svgCubicMorph',
     property: 'path',
     defaultValue: [],
-    Interpolate: {numbers: numbers,toPathString: toPathString},
+    Interpolate: {numbers: numbers,pathToString: pathToString},
     functions: svgCubicMorphFunctions,
     Util: {
-      l2c: l2c, q2c: q2c, a2c: a2c, catmullRom2bezier: catmullRom2bezier, ellipsePath: ellipsePath,
-      path2curve: path2curve, pathToAbsolute: pathToAbsolute, toPathString: toPathString, parsePathString: parsePathString,
+      pathToCurve: pathToCurve, pathToAbsolute: pathToAbsolute, pathToString: pathToString, parsePathString: parsePathString,
       getRotatedCurve: getRotatedCurve, getRotations: getRotations,
-      getRotationSegments: getRotationSegments, reverseCurve: reverseCurve, getSegments: getSegments, createPath: createPath
+      getRotationSegments: getRotationSegments, reverseCurve: reverseCurve, createPath: createPath
     }
   };
   Components.SVGCubicMorph = svgCubicMorph;
