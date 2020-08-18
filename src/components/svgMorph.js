@@ -7,6 +7,7 @@ import {onStartSVGMorph} from './svgMorphBase.js'
 import pathToAbsolute from 'svg-path-commander/src/convert/pathToAbsolute.js'
 import pathToString from 'svg-path-commander/src/convert/pathToString.js'
 import splitPath from 'svg-path-commander/src/util/splitPath.js'
+import invalidPathValue from 'svg-path-commander/src/util/invalidPathValue.js'
  
 // const SVGMorph = { property : 'path', defaultValue: [], interpolators: {numbers,coords} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
 
@@ -14,8 +15,6 @@ import splitPath from 'svg-path-commander/src/util/splitPath.js'
 // function function(array1, array2, length, progress)
 
 // Component Util
-const INVALID_INPUT = 'Invalid path value'
-
 function isFiniteNumber(number) {
   return typeof number === "number" && isFinite(number);
 }
@@ -70,7 +69,7 @@ function approximateRing(parsed, maxSegmentLength) {
       ring = [], len, testPath, numPoints = 3;
 
   if (!ringPath) {
-    throw new TypeError(INVALID_INPUT);
+    throw (invalidPathValue);
   }
 
   testPath = measure(ringPath);
@@ -192,13 +191,13 @@ function normalizeRing(ring, maxSegmentLength) {
     ring = converted.ring;
     skipBisect = converted.skipBisect;
   } else if (!Array.isArray(ring)) {
-    throw new TypeError(INVALID_INPUT);
+    throw (invalidPathValue);
   }
 
   points = ring.slice(0);
 
   if (!validRing(points)) {
-    throw new TypeError(INVALID_INPUT);
+    throw (invalidPathValue);
   }
 
   // TODO skip this test to avoid scale issues?
@@ -306,7 +305,7 @@ const svgMorph = {
   functions: svgMorphFunctions,
   // Export utils to global for faster execution
   Util: {
-    INVALID_INPUT,isFiniteNumber,distance,pointAlong,samePoint,
+    isFiniteNumber,distance,pointAlong,samePoint,
     pathToAbsolute,pathToString,pathStringToRing,
     exactRing,approximateRing,measure,rotateRing,polygonLength,polygonArea,
     addPoints,bisect,normalizeRing,validRing,getInterpolationPoints

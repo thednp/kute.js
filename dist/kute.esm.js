@@ -1907,7 +1907,6 @@ function splitPath(pathString) {
     .filter(function (s){ return s; })
 }
 
-var INVALID_INPUT = 'Invalid path value';
 function isFiniteNumber(number) {
   return typeof number === "number" && isFinite(number);
 }
@@ -1954,7 +1953,7 @@ function approximateRing(parsed, maxSegmentLength) {
   var ringPath = splitPath(pathToString(parsed))[0],
       ring = [], len, testPath, numPoints = 3;
   if (!ringPath) {
-    throw new TypeError(INVALID_INPUT);
+    throw (invalidPathValue);
   }
   testPath = measure(ringPath);
   len = testPath.getTotalLength();
@@ -2057,11 +2056,11 @@ function normalizeRing(ring, maxSegmentLength) {
     ring = converted.ring;
     skipBisect = converted.skipBisect;
   } else if (!Array.isArray(ring)) {
-    throw new TypeError(INVALID_INPUT);
+    throw (invalidPathValue);
   }
   points = ring.slice(0);
   if (!validRing(points)) {
-    throw new TypeError(INVALID_INPUT);
+    throw (invalidPathValue);
   }
   if (points.length > 1 && samePoint(points[0], points[points.length - 1])) {
     points.pop();
@@ -2143,7 +2142,7 @@ var svgMorph = {
   defaultOptions: {morphPrecision : 10, morphIndex:0},
   functions: svgMorphFunctions,
   Util: {
-    INVALID_INPUT: INVALID_INPUT,isFiniteNumber: isFiniteNumber,distance: distance,pointAlong: pointAlong,samePoint: samePoint,
+    isFiniteNumber: isFiniteNumber,distance: distance,pointAlong: pointAlong,samePoint: samePoint,
     pathToAbsolute: pathToAbsolute,pathToString: pathToString,pathStringToRing: pathStringToRing,
     exactRing: exactRing,approximateRing: approximateRing,measure: measure,rotateRing: rotateRing,polygonLength: polygonLength,polygonArea: polygonArea,
     addPoints: addPoints,bisect: bisect,normalizeRing: normalizeRing,validRing: validRing,getInterpolationPoints: getInterpolationPoints

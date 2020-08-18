@@ -9,6 +9,7 @@ import pathToAbsolute from 'svg-path-commander/src/convert/pathToAbsolute.js'
 import pathToCurve from 'svg-path-commander/src/convert/pathToCurve.js'
 import pathToString from 'svg-path-commander/src/convert/pathToString.js'
 import reverseCurve from 'svg-path-commander/src/process/reverseCurve.js'
+import invalidPathValue from 'svg-path-commander/src/util/invalidPathValue.js'
 
 // const SVGMorph = { property : 'path', defaultValue: [], interpolators: {numbers} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
 
@@ -92,7 +93,7 @@ function prepareCubicMorph(tweenProp,value){
     return pathObject;
   }
   catch(e){
-    throw TypeError(`KUTE.js - ${INVALID_INPUT} ${e}`)
+    throw TypeError(`KUTE.js - ${invalidPathValue} ${e}`)
   }
 }
 function crossCheckCubicMorph(tweenProp){
