@@ -5,13 +5,10 @@ import pathToString from 'svg-path-commander/src/convert/pathToString.js'
 
 // const SVGMorph = { property : 'path', defaultValue: [], interpolators: {numbers} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
 
-
 // Component Functions
 export function onStartCubicMorph(tweenProp){
   if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
     KUTE[tweenProp] = function(elem,a,b,v){
-      // v === 1 && console.log(a.curve,b.curve)
-
       let curve = [], path1 = a.curve, path2 = b.curve;
       for(let i=0, l=path2.length; i<l; i++) { // each path command
         curve.push([path1[i][0]]);

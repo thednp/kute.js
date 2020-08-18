@@ -49,15 +49,15 @@ export default class AnimationDevelopment extends Animation {
       propertyInfo.interface = []
       propertyInfo.render = []
       propertyInfo.warning = []
-      for (const fn in Functions) {
-        if (fn in Component.functions) {
-          fn === 'prepareProperty' ? propertyInfo.interface.push(`fromTo()`) : 0
-          fn === 'prepareStart' ? propertyInfo.interface.push(`to()`) : 0
-          fn === 'onStart' ? propertyInfo.render = `can render update` : 0
+      for (const fnf in Functions) {
+        if (fnf in Component.functions) {
+          fnf === 'prepareProperty' ? propertyInfo.interface.push(`fromTo()`) : 0
+          fnf === 'prepareStart' ? propertyInfo.interface.push(`to()`) : 0
+          fnf === 'onStart' ? propertyInfo.render = `can render update` : 0
         } else {
-          fn === 'prepareProperty' ? propertyInfo.warning.push(`fromTo()`) : 0
-          fn === 'prepareStart' ? propertyInfo.warning.push(`to()`) : 0
-          fn === 'onStart' ? propertyInfo.render = `no function to render update` : 0
+          fnf === 'prepareProperty' ? propertyInfo.warning.push(`fromTo()`) : 0
+          fnf === 'prepareStart' ? propertyInfo.warning.push(`to()`) : 0
+          fnf === 'onStart' ? propertyInfo.render = `no function to render update` : 0
         }
       }
       propertyInfo.interface.length ? propertyInfo.interface = `${Category||Property} can use [${propertyInfo.interface.join(', ')}] method(s)` : delete propertyInfo.uses
@@ -69,17 +69,17 @@ export default class AnimationDevelopment extends Animation {
       propertyInfo.uses = []
       propertyInfo.adds = []
 
-      for (const fn in Component.Interpolate) {
-        const compIntObj = Component.Interpolate[fn]
+      for (let fni in Component.Interpolate) {
+        let compIntObj = Component.Interpolate[fni]
         // register new Interpolation functions
         if ( typeof(compIntObj) === 'function' ) {
-          if ( !Interpolate[fn] ) {
-            propertyInfo.adds.push(`${fn}`)
+          if ( !Interpolate[fni] ) {
+            propertyInfo.adds.push(`${fni}`)
           }
-          propertyInfo.uses.push(`${fn}`)
+          propertyInfo.uses.push(`${fni}`)
         } else {
-          for ( const sfn in compIntObj ) {
-            if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fn] ) {
+          for ( let sfn in compIntObj ) {
+            if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fni] ) {
               propertyInfo.adds.push(`${sfn}`)
             }
             propertyInfo.uses.push(`${sfn}`)

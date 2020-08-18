@@ -6,7 +6,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.KUTE = factory());
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
   var version = "2.0.13";
@@ -218,14 +218,14 @@
       }
     }
     if (Component.Interpolate) {
-      for (var fn$1 in Component.Interpolate) {
-        var compIntObj = Component.Interpolate[fn$1];
-        if ( typeof(compIntObj) === 'function' && !Interpolate[fn$1] ) {
-          Interpolate[fn$1] = compIntObj;
+      for (var fni in Component.Interpolate) {
+        var compIntObj = Component.Interpolate[fni];
+        if ( typeof(compIntObj) === 'function' && !Interpolate[fni] ) {
+          Interpolate[fni] = compIntObj;
         } else {
           for ( var sfn in compIntObj ) {
-            if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fn$1] ) {
-              Interpolate[fn$1] = compIntObj[sfn];
+            if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fni] ) {
+              Interpolate[fni] = compIntObj[sfn];
             }
           }
         }
@@ -233,8 +233,8 @@
       linkProperty[ComponentName] = Component.Interpolate;
     }
     if (Component.Util) {
-      for (var fn$2 in Component.Util){
-        !Util[fn$2] && (Util[fn$2] = Component.Util[fn$2]);
+      for (var fnu in Component.Util){
+        !Util[fnu] && (Util[fnu] = Component.Util[fnu]);
       }
     }
     return {name:ComponentName}

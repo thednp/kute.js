@@ -32,16 +32,16 @@ const OUTPUT = {
 }
 
 const PLUGINS = [
-  node({mainFields: ['jsnext', 'module']}),
+  node({mainFields: ['jsnext','module'], dedupe: ['svg-path-commander']}) ,
   json(),
   buble(),
+  cleanup()
 ]
 
 if (MIN){
   PLUGINS.push(terser({output: {preamble: miniBanner}}));
 } else {
   OUTPUT.banner = banner;
-  PLUGINS.push(cleanup());
 }
 
 if (FORMAT!=='esm') {

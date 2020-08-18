@@ -89,14 +89,14 @@ export default class Animation {
 
     // set component interpolate
     if (Component.Interpolate) {
-      for (const fn in Component.Interpolate) {
-        const compIntObj = Component.Interpolate[fn]
-        if ( typeof(compIntObj) === 'function' && !Interpolate[fn] ) {
-          Interpolate[fn] = compIntObj;
+      for (const fni in Component.Interpolate) {
+        const compIntObj = Component.Interpolate[fni]
+        if ( typeof(compIntObj) === 'function' && !Interpolate[fni] ) {
+          Interpolate[fni] = compIntObj;
         } else {
           for ( const sfn in compIntObj ) {
-            if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fn] ) {
-              Interpolate[fn] = compIntObj[sfn];
+            if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fni] ) {
+              Interpolate[fni] = compIntObj[sfn];
             }
           }
         }
@@ -106,8 +106,8 @@ export default class Animation {
 
     // set component util
     if (Component.Util) {
-      for (const fn in Component.Util){
-        !Util[fn] && (Util[fn] = Component.Util[fn])
+      for (const fnu in Component.Util){
+        !Util[fnu] && (Util[fnu] = Component.Util[fnu])
       }
     }
 

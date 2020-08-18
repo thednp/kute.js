@@ -36,8 +36,8 @@ export default class TweenExtra extends Tween {
     }
   }
   // set options accepting [repeat,yoyo,delay,repeatDelay,easing]
-  option(option,value) {
-    this[`_${option}`] = value
+  option(o,v) {
+    this[`_${o}`] = v
   }  
 }
 

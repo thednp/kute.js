@@ -27,7 +27,8 @@ function getTransform(tweenProp, value){
 }
 function prepareTransform(tweenProp,value){
   if ( typeof(value) === 'object' && !value.length) {
-    let transformObject = {},
+    let pv,
+        transformObject = {},
         translate3dObj = {},
         rotate3dObj = {},
         scale3dObj = {},
@@ -36,7 +37,7 @@ function prepareTransform(tweenProp,value){
 
     for (const prop in value) {
       if ( /3d/.test(prop) && typeof(value[prop]) === 'object' && value[prop].length ){
-        let pv = value[prop].map( (v) => prop === 'scale3d' ? parseFloat(v) : parseInt(v) )
+        pv = value[prop].map( (v) => prop === 'scale3d' ? parseFloat(v) : parseInt(v) )
         transformObject[prop] = prop === 'scale3d' ? [pv[0]||1, pv[1]||1, pv[2]||1] : [pv[0]||0, pv[1]||0, pv[2]||0]
       } else if ( /[XYZ]/.test(prop) ) {
         let obj = /translate/.test(prop) ? translate3dObj 
@@ -46,7 +47,7 @@ function prepareTransform(tweenProp,value){
         let idx = prop.replace(/translate|rotate|scale|skew/,'').toLowerCase()
         obj[idx] = /scale/.test(prop) ? parseFloat(value[prop]) : parseInt(value[prop])
       } else if ('skew' === prop ) {
-        let pv = value[prop].map(v => parseInt(v)||0)
+        pv = value[prop].map(v => parseInt(v)||0)
         transformObject[prop] = [pv[0]||0, pv[1]||0]
       } else { // perspective
         transformObject[prop] = parseInt(value[prop]);
@@ -54,8 +55,7 @@ function prepareTransform(tweenProp,value){
     }
 
     axis.map((o) => {
-      const tp = Object.keys(o)[0]
-      const tv = o[tp]
+      let tp = Object.keys(o)[0], tv = o[tp]
       if ( Object.keys(tv).length && !transformObject[tp]) {
         transformObject[tp] = tp === 'scale3d' ? [tv.x || 1, tv.y || 1, tv.z || 1] 
                             : tp === 'skew' ? [tv.x || 0, tv.y || 0]

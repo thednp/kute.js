@@ -30,8 +30,8 @@ function prepareLegacyTransform(prop,obj){
       transformObject = {},
       arrayFunctions = ['translate3d','translate','rotate3d','skew']
 
-  for (const x in obj) {
-    const pv = typeof(obj[x]) === 'object' && obj[x].length ? obj[x].map(v=>parseInt(v)) : parseInt(obj[x])
+  for (let x in obj) {
+    let pv = typeof(obj[x]) === 'object' && obj[x].length ? obj[x].map(v=>parseInt(v)) : parseInt(obj[x])
 
     if (arrayFunctions.includes(x)) {
 

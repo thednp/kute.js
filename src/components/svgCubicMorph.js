@@ -13,9 +13,9 @@ import reverseCurve from 'svg-path-commander/src/process/reverseCurve.js'
 // const SVGMorph = { property : 'path', defaultValue: [], interpolators: {numbers} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
 
 // Component Util
-function createPath (path) { // create a <path> when glyph
-  const np = document.createElementNS('http://www.w3.org/2000/svg','path'), 
-        d = path instanceof SVGElement ? path.getAttribute('d') : path
+function createPath(path) { // create a <path> when glyph
+  let np = document.createElementNS('http://www.w3.org/2000/svg','path'), 
+      d = path instanceof SVGElement ? path.getAttribute('d') : path
   np.setAttribute('d',d);
   return np
 }
@@ -103,9 +103,9 @@ function crossCheckCubicMorph(tweenProp){
     if ( !pathCurve1 || !pathCurve2 || ( pathCurve1 && pathCurve2 && pathCurve1[0][0] === 'M' && pathCurve1.length !== pathCurve2.length) ) {
       let path1 = this.valuesStart[tweenProp].original,
           path2 = this.valuesEnd[tweenProp].original,
-          curves = pathToCurve(path1,path2)
-
-      let curve0 = this._reverseFirstPath ? reverseCurve(curves[0]) : curves[0],
+          curves = pathToCurve(path1,path2),
+          
+          curve0 = this._reverseFirstPath ? reverseCurve(curves[0]) : curves[0],
           curve1 = this._reverseSecondPath ? reverseCurve(curves[1]) : curves[1]
     
       curve0 = getRotatedCurve.call(this,curve0,curve1)

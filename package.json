@@ -15,7 +15,7 @@
     "help": "rollup --help",
     "build": "npm-run-all --parallel copy-build build-*",
     "custom": "rollup -c --environment",
-    "copy-build": "rollup -c --environment OUTPUTFILE:demo/src/kute.min.js,DIST:standard,MIN:true,FORMAT:umd -c",
+    "copy-build": "rollup --environment OUTPUTFILE:demo/src/kute.min.js,DIST:standard,MIN:true,FORMAT:umd -c",
     "build-standard": "rollup --environment DIST:standard,MIN:false,FORMAT:umd -c",
     "build-standard-min": "rollup --environment DIST:standard,MIN:true,FORMAT:umd -c",
     "build-standard-esm": "rollup --environment DIST:standard,MIN:false,FORMAT:esm -c",
@@ -54,7 +54,7 @@
   },
   "homepage": "http://thednp.github.io/kute.js",
   "dependencies": {
-    "svg-path-commander": "^0.0.1-c",
+    "svg-path-commander": "^0.0.2",
     "cubic-bezier-easing": "^1.0.2",
     "minifill": "^0.0.13",
     "shorter-js": "^0.1.4"
@@ -62,10 +62,10 @@
   "devDependencies": {
     "@rollup/plugin-buble": "^0.21.3",
     "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^7.1.3",
+    "@rollup/plugin-node-resolve": "^9.0.0",
     "npm-run-all": "^4.1.5",
-    "rollup": "^1.32.1",
+    "rollup": "^2.26.3",
     "rollup-plugin-cleanup": "^3.1.1",
-    "rollup-plugin-terser": "^5.3.0"
+    "rollup-plugin-terser": "^7.0.0"
   }
 }

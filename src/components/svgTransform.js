@@ -12,23 +12,23 @@ function parseStringOrigin (origin, {x, width}) {
 } 
 // helper function that turns transform value from string to object
 function parseTransformString (a) {
-  const d = a && /\)/.test(a) ? a.substring(0, a.length-1).split(/\)\s|\)/) : 'none', c = {};
+  let d = a && /\)/.test(a) ? a.substring(0, a.length-1).split(/\)\s|\)/) : 'none', c = {};
 
   if (d instanceof Array) {
     for (let j=0, jl = d.length; j<jl; j++){
-      const p = d[j].trim().split('('); 
+      let p = d[j].trim().split('('); 
       c[p[0]] = p[1];
     }
   }
   return c;
 }
 function parseTransformSVG (p,v){
-  const svgTransformObject = {};
+  let svgTransformObject = {};
 
   // by default the transformOrigin is "50% 50%" of the shape box
-  const bb = this.element.getBBox();
-  const cx = bb.x + bb.width/2;
-  const cy = bb.y + bb.height/2;
+  let bb = this.element.getBBox();
+  let cx = bb.x + bb.width/2;
+  let cy = bb.y + bb.height/2;
 
   let origin = this._transformOrigin;
   let translation;
@@ -40,7 +40,7 @@ function parseTransformSVG (p,v){
 
   svgTransformObject.origin = origin;
 
-  for ( const i in v ) { // populate the valuesStart and / or valuesEnd
+  for ( let i in v ) { // populate the valuesStart and / or valuesEnd
     if (i === 'rotate'){
       svgTransformObject[i] = typeof v[i] === 'number' ? v[i] : v[i] instanceof Array ? v[i][0] : v[i].split(/\s/)[0]*1;
     } else if (i === 'translate'){
@@ -63,9 +63,9 @@ function prepareSvgTransform(p,v){
 function getStartSvgTransform (tweenProp,value) { 
   const transformObject = {};
   const currentTransform = parseTransformString(this.element.getAttribute('transform'));
-  for (const i in value) { 
+  for (let j in value) { 
     // find a value in current attribute value or add a default value
-    transformObject[i] = i in currentTransform ? currentTransform[i] : (i==='scale'?1:0); 
+    transformObject[j] = j in currentTransform ? currentTransform[j] : (j==='scale'?1:0); 
   }
   return transformObject;
 }
@@ -76,11 +76,11 @@ function svgTransformCrossCheck(prop) {
   if ( this.valuesEnd[prop] ) {
     let valuesStart = this.valuesStart[prop];
     let valuesEnd = this.valuesEnd[prop];
-    const currentTransform = parseTransformSVG.call(this, prop, parseTransformString(this.element.getAttribute('transform')) );
+    let currentTransform = parseTransformSVG.call(this, prop, parseTransformString(this.element.getAttribute('transform')) );
 
     // populate the valuesStart first
-    for ( const i in currentTransform ) { 
-      valuesStart[i] = currentTransform[i]; 
+    for ( let tp in currentTransform ) { 
+      valuesStart[tp] = currentTransform[tp]; 
     }
 
     // now try to determine the REAL translation
@@ -94,9 +94,9 @@ function svgTransformCrossCheck(prop) {
     );
     valuesStart.translate = [startMatrix.matrix.e,startMatrix.matrix.f]; // finally the translate we're looking for
     // copy existing and unused properties to the valuesEnd
-    for ( const i in valuesStart) {
-      if ( !(i in valuesEnd) || i==='origin') { 
-        valuesEnd[i] = valuesStart[i]; 
+    for ( let s in valuesStart) {
+      if ( !(s in valuesEnd) || s==='origin') { 
+        valuesEnd[s] = valuesStart[s]; 
       }
     }
   }

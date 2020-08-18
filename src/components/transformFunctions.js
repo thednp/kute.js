@@ -15,7 +15,7 @@ import {onStartTransform} from './transformFunctionsBase.js'
 
 // Component Functions
 function getTransform(tweenProperty,value){
-  const currentStyle = getInlineStyle(this.element);
+  let currentStyle = getInlineStyle(this.element);
   return currentStyle[tweenProperty] ? currentStyle[tweenProperty] : defaultValues[tweenProperty];
 }
 function prepareTransform(prop,obj){
@@ -24,7 +24,7 @@ function prepareTransform(prop,obj){
       translateArray = [], rotateArray = [], skewArray = [], 
       arrayFunctions = ['translate3d','translate','rotate3d','skew']
 
-  for (const x in obj) {
+  for (let x in obj) {
     let pv = typeof obj[x] === 'object' && obj[x].length ? obj[x].map(v=>parseInt(v)) : parseInt(obj[x]);
 
     if (arrayFunctions.includes(x)) {
@@ -42,7 +42,7 @@ function prepareTransform(prop,obj){
                   : fn === 'rotate' ? rotateArray
                   : fn === 'skew' ? skewArray : {}
       for (let fnIndex = 0; fnIndex < fnLen; fnIndex++) {
-        const fnAxis = prepAxis[fnIndex];
+        let fnAxis = prepAxis[fnIndex];
         fnArray[fnIndex] = (`${fn}${fnAxis}` in obj) ? parseInt(obj[`${fn}${fnAxis}`]) : 0; 
       }
       transformObject[fnId] = fnArray;

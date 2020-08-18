@@ -738,14 +738,14 @@ Animation.prototype.setComponent = function setComponent (Component){
     }
   }
   if (Component.Interpolate) {
-    for (var fn$1 in Component.Interpolate) {
-      var compIntObj = Component.Interpolate[fn$1];
-      if ( typeof(compIntObj) === 'function' && !Interpolate[fn$1] ) {
-        Interpolate[fn$1] = compIntObj;
+    for (var fni in Component.Interpolate) {
+      var compIntObj = Component.Interpolate[fni];
+      if ( typeof(compIntObj) === 'function' && !Interpolate[fni] ) {
+        Interpolate[fni] = compIntObj;
       } else {
         for ( var sfn in compIntObj ) {
-          if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fn$1] ) {
-            Interpolate[fn$1] = compIntObj[sfn];
+          if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fni] ) {
+            Interpolate[fni] = compIntObj[sfn];
           }
         }
       }
@@ -753,8 +753,8 @@ Animation.prototype.setComponent = function setComponent (Component){
     linkProperty[ComponentName] = Component.Interpolate;
   }
   if (Component.Util) {
-    for (var fn$2 in Component.Util){
-      !Util[fn$2] && (Util[fn$2] = Component.Util[fn$2]);
+    for (var fnu in Component.Util){
+      !Util[fnu] && (Util[fnu] = Component.Util[fnu]);
     }
   }
   return propertyInfo
@@ -1461,23 +1461,21 @@ function clonePath(pathArray){
   return pathArray.map(function (x) { return Array.isArray(x) ? clonePath(x) : !isNaN(+x) ? +x : x; } )
 }
 
-var SVGPCOps = {
+var SVGPathCommanderOptions = {
   decimals:3,
   round:1
 };
 
 function roundPath(pathArray) {
-  return  pathArray.map( function (seg) { return seg.map(function (c,i) {
-            var nr = +c, dc = Math.pow(10,SVGPCOps.decimals);
-            return i ? (nr % 1 === 0 ? nr : (nr*dc>>0)/dc) : c
-          }
-        ); }) 
+  return     pathArray.map( function (seg) { return seg.map(function (c,i) {
+        var nr = +c, dc = Math.pow(10,SVGPathCommanderOptions.decimals);
+        return i ? (nr % 1 === 0 ? nr : (nr*dc>>0)/dc) : c
+      }
+    ); }) 
 }
 
 function SVGPathArray(pathString){
   this.segments = [];
-  this.isClosed = 0;
-  this.isAbsolute = 0;
   this.pathValue = pathString;
   this.max = pathString.length;
   this.index  = 0;
@@ -1489,48 +1487,29 @@ function SVGPathArray(pathString){
 }
 
 var paramCounts = { a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0 };
-function isSpace(ch) {
-  var specialSpaces = [
-    0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
-    0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF ];
-  return (ch === 0x0A) || (ch === 0x0D) || (ch === 0x2028) || (ch === 0x2029) ||
-    (ch === 0x20) || (ch === 0x09) || (ch === 0x0B) || (ch === 0x0C) || (ch === 0xA0) ||
-    (ch >= 0x1680 && specialSpaces.indexOf(ch) >= 0);
-}
-function isCommand(code) {
-  switch (code | 0x20) {
-    case 0x6D:
-    case 0x7A:
-    case 0x6C:
-    case 0x68:
-    case 0x76:
-    case 0x63:
-    case 0x73:
-    case 0x71:
-    case 0x74:
-    case 0x61:
-    case 0x72:
-      return true;
+
+function finalizeSegment(state) {
+  var cmd = state.pathValue[state.segmentStart], cmdLC = cmd.toLowerCase(), params = state.data;
+  if (cmdLC === 'm' && params.length > 2) {
+    state.segments.push([ cmd, params[0], params[1] ]);
+    params = params.slice(2);
+    cmdLC = 'l';
+    cmd = (cmd === 'm') ? 'l' : 'L';
   }
-  return false;
-}
-function isArc(code) {
-  return (code | 0x20) === 0x61;
-}
-function isDigit(code) {
-  return (code >= 48 && code <= 57);
-}
-function isDigitStart(code) {
-  return (code >= 48 && code <= 57) ||
-          code === 0x2B ||
-          code === 0x2D ||
-          code === 0x2E;
-}
-function skipSpaces(state) {
-  while (state.index < state.max && isSpace(state.pathValue.charCodeAt(state.index))) {
-    state.index++;
+  if (cmdLC === 'r') {
+    state.segments.push([ cmd ].concat(params));
+  } else {
+    while (params.length >= paramCounts[cmdLC]) {
+      state.segments.push([ cmd ].concat(params.splice(0, paramCounts[cmdLC])));
+      if (!paramCounts[cmdLC]) {
+        break;
+      }
+    }
   }
 }
+
+var invalidPathValue = 'Invalid path value';
+
 function scanFlag(state) {
   var ch = state.pathValue.charCodeAt(state.index);
   if (ch === 0x30) {
@@ -1543,8 +1522,13 @@ function scanFlag(state) {
     state.index++;
     return;
   }
-  state.err = 'SvgPath: arc flag can be 0 or 1 only (at pos ' + state.index + ')';
+  state.err = invalidPathValue;
 }
+
+function isDigit(code) {
+  return (code >= 48 && code <= 57);
+}
+
 function scanParam(state) {
   var start = state.index,
       index = start,
@@ -1555,7 +1539,7 @@ function scanParam(state) {
       hasDot = false,
       ch;
   if (index >= max) {
-    state.err = 'SvgPath: missed param (at pos ' + index + ')';
+    state.err = invalidPathValue;
     return;
   }
   ch = state.pathValue.charCodeAt(index);
@@ -1564,7 +1548,7 @@ function scanParam(state) {
     ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
   }
   if (!isDigit(ch) && ch !== 0x2E) {
-    state.err = 'SvgPath: param should start with 0..9 or `.` (at pos ' + index + ')';
+    state.err = invalidPathValue;
     return;
   }
   if (ch !== 0x2E) {
@@ -1573,7 +1557,7 @@ function scanParam(state) {
     ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
     if (zeroFirst && index < max) {
       if (ch && isDigit(ch)) {
-        state.err = 'SvgPath: numbers started with `0` such as `09` are illegal (at pos ' + start + ')';
+        state.err = invalidPathValue;
         return;
       }
     }
@@ -1594,7 +1578,7 @@ function scanParam(state) {
   }
   if (ch === 0x65 || ch === 0x45) {
     if (hasDot && !hasCeiling && !hasDecimal) {
-      state.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
+      state.err = invalidPathValue;
       return;
     }
     index++;
@@ -1607,39 +1591,64 @@ function scanParam(state) {
         index++;
       }
     } else {
-      state.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
+      state.err = invalidPathValue;
       return;
     }
   }
   state.index = index;
-  state.param = parseFloat(state.pathValue.slice(start, index)) + 0.0;
+  state.param = +state.pathValue.slice(start, index);
 }
-function finalizeSegment(state) {
-  var cmd = state.pathValue[state.segmentStart], cmdLC = cmd.toLowerCase(), params = state.data;
-  if (cmdLC === 'm' && params.length > 2) {
-    state.segments.push([ cmd, params[0], params[1] ]);
-    params = params.slice(2);
-    cmdLC = 'l';
-    cmd = (cmd === 'm') ? 'l' : 'L';
+
+function isCommand(code) {
+  switch (code | 0x20) {
+    case 0x6D:
+    case 0x7A:
+    case 0x6C:
+    case 0x68:
+    case 0x76:
+    case 0x63:
+    case 0x73:
+    case 0x71:
+    case 0x74:
+    case 0x61:
+    case 0x72:
+      return true;
   }
-  if (cmdLC === 'r') {
-    state.segments.push([ cmd ].concat(params));
-  } else {
-    while (params.length >= paramCounts[cmdLC]) {
-      state.segments.push([ cmd ].concat(params.splice(0, paramCounts[cmdLC])));
-      if (!paramCounts[cmdLC]) {
-        break;
-      }
-    }
+  return false;
+}
+
+function isDigitStart(code) {
+  return (code >= 48 && code <= 57) ||
+          code === 0x2B ||
+          code === 0x2D ||
+          code === 0x2E;
+}
+
+function isArc(code) {
+  return (code | 0x20) === 0x61;
+}
+
+function isSpace(ch) {
+  var specialSpaces = [
+    0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
+    0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF ];
+  return (ch === 0x0A) || (ch === 0x0D) || (ch === 0x2028) || (ch === 0x2029) ||
+    (ch === 0x20) || (ch === 0x09) || (ch === 0x0B) || (ch === 0x0C) || (ch === 0xA0) ||
+    (ch >= 0x1680 && specialSpaces.indexOf(ch) >= 0);
+}
+
+function skipSpaces(state) {
+  while (state.index < state.max && isSpace(state.pathValue.charCodeAt(state.index))) {
+    state.index++;
   }
 }
+
 function scanSegment(state) {
-  var max = state.max, cmdCode, is_arc, comma_found, need_params, i;
+  var max = state.max, cmdCode, comma_found, need_params, i;
   state.segmentStart = state.index;
   cmdCode = state.pathValue.charCodeAt(state.index);
-  is_arc = isArc(cmdCode);
   if (!isCommand(cmdCode)) {
-    state.err = 'SvgPath: bad command ' + state.pathValue[state.index] + ' (at pos ' + state.index + ')';
+    state.err = invalidPathValue;
     return;
   }
   need_params = paramCounts[state.pathValue[state.index].toLowerCase()];
@@ -1647,14 +1656,13 @@ function scanSegment(state) {
   skipSpaces(state);
   state.data = [];
   if (!need_params) {
-    state.isClosed = 1;
     finalizeSegment(state);
     return;
   }
   comma_found = false;
   for (;;) {
     for (i = need_params; i > 0; i--) {
-      if (is_arc && (i === 3 || i === 4)) { scanFlag(state); }
+      if (isArc(cmdCode) && (i === 3 || i === 4)) { scanFlag(state); }
       else { scanParam(state); }
       if (state.err.length) {
         return;
@@ -1680,8 +1688,9 @@ function scanSegment(state) {
   }
   finalizeSegment(state);
 }
+
 function parsePathString(pathString) {
-  if ( Array.isArray(pathString) ) {
+  if ( Array.isArray(pathString) && Array.isArray(pathString[0])) {
     return clonePath(pathString)
   }
   var state = new SVGPathArray(pathString), max = state.max;
@@ -1693,7 +1702,7 @@ function parsePathString(pathString) {
     state.segments = [];
   } else if (state.segments.length) {
     if ('mM'.indexOf(state.segments[0][0]) < 0) {
-      state.err = 'SvgPath: string should start with `M` or `m`';
+      state.err = invalidPathValue;
       state.segments = [];
     } else {
       state.segments[0][0] = 'M';
@@ -1773,8 +1782,9 @@ function pathToAbsolute(pathArray) {
   if (!pathArray || !pathArray.length) {
     return [["M", 0, 0]];
   }
-  var res = [], x = 0, y = 0, mx = 0, my = 0, start = 0,
-      ii = pathArray.length,
+  var resultArray = [],
+      x = 0, y = 0, mx = 0, my = 0,
+      start = 0, ii = pathArray.length,
       crz = pathArray.length === 3 &&
             pathArray[0][0] === "M" &&
             pathArray[1][0].toUpperCase() === "R" &&
@@ -1785,11 +1795,11 @@ function pathToAbsolute(pathArray) {
     mx = x;
     my = y;
     start++;
-    res[0] = ["M", x, y];
+    resultArray[0] = ["M", x, y];
   }
   var loop = function ( i ) {
-    var r = (void 0), pa = pathArray[i], pa0 = pa[0];
-    res.push(r = []);
+    var r = [], pa = pathArray[i], pa0 = pa[0], dots = [];
+    resultArray.push(r = []);
     if (pa0 !== pa0.toUpperCase()) {
       r[0] = pa0.toUpperCase();
       switch (r[0]) {
@@ -1809,47 +1819,47 @@ function pathToAbsolute(pathArray) {
           r[1] = +pa[1] + x;
           break;
         case "R":
-          var dots$1 = [x, y].concat(pa.slice(1));
-          for (var j = 2, jj = dots$1.length; j < jj; j++) {
-            dots$1[j] = +dots$1[j] + x;
-            dots$1[++j] = +dots$1[j] + y;
+          dots = [x, y].concat(pa.slice(1));
+          for (var j = 2, jj = dots.length; j < jj; j++) {
+            dots[j] = +dots[j] + x;
+            dots[++j] = +dots[j] + y;
           }
-          res.pop();
-          res = res.concat(catmullRom2bezier(dots$1, crz));
+          resultArray.pop();
+          resultArray = resultArray.concat(catmullRom2bezier(dots, crz));
           break;
         case "O":
-          res.pop();
-          dots$1 = ellipsePath(x, y, +pa[1], +pa[2]);
-          dots$1.push(dots$1[0]);
-          res = res.concat(dots$1);
+          resultArray.pop();
+          dots = ellipsePath(x, y, +pa[1], +pa[2]);
+          dots.push(dots[0]);
+          resultArray = resultArray.concat(dots);
           break;
         case "U":
-          res.pop();
-          res = res.concat(ellipsePath(x, y, pa[1], pa[2], pa[3]));
-          r = ["U"].concat(res[res.length - 1].slice(-2));
+          resultArray.pop();
+          resultArray = resultArray.concat(ellipsePath(x, y, pa[1], pa[2], pa[3]));
+          r = ["U"].concat(resultArray[resultArray.length - 1].slice(-2));
           break;
         case "M":
           mx = +pa[1] + x;
           my = +pa[2] + y;
         default:
-          for (var j$1 = 1, jj$1 = pa.length; j$1 < jj$1; j$1++) {
-            r[j$1] = +pa[j$1] + ((j$1 % 2) ? x : y);
+          for (var k = 1, kk = pa.length; k < kk; k++) {
+            r[k] = +pa[k] + ((k % 2) ? x : y);
           }
       }
     } else if (pa0 === "R") {
       dots = [x, y].concat(pa.slice(1));
-      res.pop();
-      res = res.concat(catmullRom2bezier(dots, crz));
+      resultArray.pop();
+      resultArray = resultArray.concat(catmullRom2bezier(dots, crz));
       r = ["R"].concat(pa.slice(-2));
     } else if (pa0 === "O") {
-      res.pop();
+      resultArray.pop();
       dots = ellipsePath(x, y, +pa[1], +pa[2]);
       dots.push(dots[0]);
-      res = res.concat(dots);
+      resultArray = resultArray.concat(dots);
     } else if (pa0 === "U") {
-      res.pop();
-      res = res.concat(ellipsePath(x, y, +pa[1], +pa[2], +pa[3]));
-      r = ["U"].concat(res[res.length - 1].slice(-2));
+      resultArray.pop();
+      resultArray = resultArray.concat(ellipsePath(x, y, +pa[1], +pa[2], +pa[3]));
+      r = ["U"].concat(resultArray[resultArray.length - 1].slice(-2));
     } else {
       pa.map(function (k){ return r.push(k); });
     }
@@ -1876,7 +1886,7 @@ function pathToAbsolute(pathArray) {
     }
   };
   for (var i = start; i < ii; i++) loop( i );
-  return roundPath(res)
+  return roundPath(resultArray)
 }
 
 function pathToString(pathArray) {
@@ -1884,9 +1894,9 @@ function pathToString(pathArray) {
     if (typeof c === 'string') {
       return c
     } else {
-      return c.shift() + c.join(',')
+      return c.shift() + c.join(' ')
     }
-  }).join(' ')
+  }).join('')
 }
 
 function splitPath(pathString) {
