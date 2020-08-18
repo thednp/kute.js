@@ -6,7 +6,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.KUTE = factory());
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
   var version = "2.0.13";
@@ -631,8 +631,8 @@
         this[("_on" + (name.charAt(0).toUpperCase() + name.slice(1)))] = fn;
       }
     };
-    TweenExtra.prototype.option = function option (option$1,value) {
-      this[("_" + option$1)] = value;
+    TweenExtra.prototype.option = function option (o,v) {
+      this[("_" + o)] = v;
     };
     return TweenExtra;
   }(Tween));
@@ -829,14 +829,14 @@
       }
     }
     if (Component.Interpolate) {
-      for (var fn$1 in Component.Interpolate) {
-        var compIntObj = Component.Interpolate[fn$1];
-        if ( typeof(compIntObj) === 'function' && !Interpolate[fn$1] ) {
-          Interpolate[fn$1] = compIntObj;
+      for (var fni in Component.Interpolate) {
+        var compIntObj = Component.Interpolate[fni];
+        if ( typeof(compIntObj) === 'function' && !Interpolate[fni] ) {
+          Interpolate[fni] = compIntObj;
         } else {
           for ( var sfn in compIntObj ) {
-            if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fn$1] ) {
-              Interpolate[fn$1] = compIntObj[sfn];
+            if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fni] ) {
+              Interpolate[fni] = compIntObj[sfn];
             }
           }
         }
@@ -844,8 +844,8 @@
       linkProperty[ComponentName] = Component.Interpolate;
     }
     if (Component.Util) {
-      for (var fn$2 in Component.Util){
-        !Util[fn$2] && (Util[fn$2] = Component.Util[fn$2]);
+      for (var fnu in Component.Util){
+        !Util[fnu] && (Util[fnu] = Component.Util[fnu]);
       }
     }
     return propertyInfo
@@ -885,15 +885,15 @@
         propertyInfo.interface = [];
         propertyInfo.render = [];
         propertyInfo.warning = [];
-        for (var fn in Functions) {
-          if (fn in Component.functions) {
-            fn === 'prepareProperty' ? propertyInfo.interface.push("fromTo()") : 0;
-            fn === 'prepareStart' ? propertyInfo.interface.push("to()") : 0;
-            fn === 'onStart' ? propertyInfo.render = "can render update" : 0;
+        for (var fnf in Functions) {
+          if (fnf in Component.functions) {
+            fnf === 'prepareProperty' ? propertyInfo.interface.push("fromTo()") : 0;
+            fnf === 'prepareStart' ? propertyInfo.interface.push("to()") : 0;
+            fnf === 'onStart' ? propertyInfo.render = "can render update" : 0;
           } else {
-            fn === 'prepareProperty' ? propertyInfo.warning.push("fromTo()") : 0;
-            fn === 'prepareStart' ? propertyInfo.warning.push("to()") : 0;
-            fn === 'onStart' ? propertyInfo.render = "no function to render update" : 0;
+            fnf === 'prepareProperty' ? propertyInfo.warning.push("fromTo()") : 0;
+            fnf === 'prepareStart' ? propertyInfo.warning.push("to()") : 0;
+            fnf === 'onStart' ? propertyInfo.render = "no function to render update" : 0;
           }
         }
         propertyInfo.interface.length ? propertyInfo.interface = (Category||Property) + " can use [" + (propertyInfo.interface.join(', ')) + "] method(s)" : delete propertyInfo.uses;
@@ -902,16 +902,16 @@
       if (Component.Interpolate) {
         propertyInfo.uses = [];
         propertyInfo.adds = [];
-        for (var fn$1 in Component.Interpolate) {
-          var compIntObj = Component.Interpolate[fn$1];
+        for (var fni in Component.Interpolate) {
+          var compIntObj = Component.Interpolate[fni];
           if ( typeof(compIntObj) === 'function' ) {
-            if ( !Interpolate[fn$1] ) {
-              propertyInfo.adds.push(("" + fn$1));
+            if ( !Interpolate[fni] ) {
+              propertyInfo.adds.push(("" + fni));
             }
-            propertyInfo.uses.push(("" + fn$1));
+            propertyInfo.uses.push(("" + fni));
           } else {
             for ( var sfn in compIntObj ) {
-              if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fn$1] ) {
+              if ( typeof(compIntObj[sfn]) === 'function' && !Interpolate[fni] ) {
                 propertyInfo.adds.push(("" + sfn));
               }
               propertyInfo.uses.push(("" + sfn));
@@ -1560,9 +1560,9 @@
       if (typeof c === 'string') {
         return c
       } else {
-        return c.shift() + c.join(',')
+        return c.shift() + c.join(' ')
       }
-    }).join(' ')
+    }).join('')
   }
 
   function onStartCubicMorph(tweenProp){
@@ -1584,23 +1584,21 @@
     return pathArray.map(function (x) { return Array.isArray(x) ? clonePath(x) : !isNaN(+x) ? +x : x; } )
   }
 
-  var SVGPCOps = {
+  var SVGPathCommanderOptions = {
     decimals:3,
     round:1
   };
 
   function roundPath(pathArray) {
-    return  pathArray.map( function (seg) { return seg.map(function (c,i) {
-              var nr = +c, dc = Math.pow(10,SVGPCOps.decimals);
-              return i ? (nr % 1 === 0 ? nr : (nr*dc>>0)/dc) : c
-            }
-          ); }) 
+    return     pathArray.map( function (seg) { return seg.map(function (c,i) {
+          var nr = +c, dc = Math.pow(10,SVGPathCommanderOptions.decimals);
+          return i ? (nr % 1 === 0 ? nr : (nr*dc>>0)/dc) : c
+        }
+      ); }) 
   }
 
   function SVGPathArray(pathString){
     this.segments = [];
-    this.isClosed = 0;
-    this.isAbsolute = 0;
     this.pathValue = pathString;
     this.max = pathString.length;
     this.index  = 0;
@@ -1612,48 +1610,29 @@
   }
 
   var paramCounts = { a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0 };
-  function isSpace(ch) {
-    var specialSpaces = [
-      0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
-      0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF ];
-    return (ch === 0x0A) || (ch === 0x0D) || (ch === 0x2028) || (ch === 0x2029) ||
-      (ch === 0x20) || (ch === 0x09) || (ch === 0x0B) || (ch === 0x0C) || (ch === 0xA0) ||
-      (ch >= 0x1680 && specialSpaces.indexOf(ch) >= 0);
-  }
-  function isCommand(code) {
-    switch (code | 0x20) {
-      case 0x6D:
-      case 0x7A:
-      case 0x6C:
-      case 0x68:
-      case 0x76:
-      case 0x63:
-      case 0x73:
-      case 0x71:
-      case 0x74:
-      case 0x61:
-      case 0x72:
-        return true;
+
+  function finalizeSegment(state) {
+    var cmd = state.pathValue[state.segmentStart], cmdLC = cmd.toLowerCase(), params = state.data;
+    if (cmdLC === 'm' && params.length > 2) {
+      state.segments.push([ cmd, params[0], params[1] ]);
+      params = params.slice(2);
+      cmdLC = 'l';
+      cmd = (cmd === 'm') ? 'l' : 'L';
     }
-    return false;
-  }
-  function isArc(code) {
-    return (code | 0x20) === 0x61;
-  }
-  function isDigit(code) {
-    return (code >= 48 && code <= 57);
-  }
-  function isDigitStart(code) {
-    return (code >= 48 && code <= 57) ||
-            code === 0x2B ||
-            code === 0x2D ||
-            code === 0x2E;
-  }
-  function skipSpaces(state) {
-    while (state.index < state.max && isSpace(state.pathValue.charCodeAt(state.index))) {
-      state.index++;
+    if (cmdLC === 'r') {
+      state.segments.push([ cmd ].concat(params));
+    } else {
+      while (params.length >= paramCounts[cmdLC]) {
+        state.segments.push([ cmd ].concat(params.splice(0, paramCounts[cmdLC])));
+        if (!paramCounts[cmdLC]) {
+          break;
+        }
+      }
     }
   }
+
+  var invalidPathValue = 'Invalid path value';
+
   function scanFlag(state) {
     var ch = state.pathValue.charCodeAt(state.index);
     if (ch === 0x30) {
@@ -1666,8 +1645,13 @@
       state.index++;
       return;
     }
-    state.err = 'SvgPath: arc flag can be 0 or 1 only (at pos ' + state.index + ')';
+    state.err = invalidPathValue;
   }
+
+  function isDigit(code) {
+    return (code >= 48 && code <= 57);
+  }
+
   function scanParam(state) {
     var start = state.index,
         index = start,
@@ -1678,7 +1662,7 @@
         hasDot = false,
         ch;
     if (index >= max) {
-      state.err = 'SvgPath: missed param (at pos ' + index + ')';
+      state.err = invalidPathValue;
       return;
     }
     ch = state.pathValue.charCodeAt(index);
@@ -1687,7 +1671,7 @@
       ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
     }
     if (!isDigit(ch) && ch !== 0x2E) {
-      state.err = 'SvgPath: param should start with 0..9 or `.` (at pos ' + index + ')';
+      state.err = invalidPathValue;
       return;
     }
     if (ch !== 0x2E) {
@@ -1696,7 +1680,7 @@
       ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
       if (zeroFirst && index < max) {
         if (ch && isDigit(ch)) {
-          state.err = 'SvgPath: numbers started with `0` such as `09` are illegal (at pos ' + start + ')';
+          state.err = invalidPathValue;
           return;
         }
       }
@@ -1717,7 +1701,7 @@
     }
     if (ch === 0x65 || ch === 0x45) {
       if (hasDot && !hasCeiling && !hasDecimal) {
-        state.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
+        state.err = invalidPathValue;
         return;
       }
       index++;
@@ -1730,39 +1714,64 @@
           index++;
         }
       } else {
-        state.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
+        state.err = invalidPathValue;
         return;
       }
     }
     state.index = index;
-    state.param = parseFloat(state.pathValue.slice(start, index)) + 0.0;
+    state.param = +state.pathValue.slice(start, index);
   }
-  function finalizeSegment(state) {
-    var cmd = state.pathValue[state.segmentStart], cmdLC = cmd.toLowerCase(), params = state.data;
-    if (cmdLC === 'm' && params.length > 2) {
-      state.segments.push([ cmd, params[0], params[1] ]);
-      params = params.slice(2);
-      cmdLC = 'l';
-      cmd = (cmd === 'm') ? 'l' : 'L';
+
+  function isCommand(code) {
+    switch (code | 0x20) {
+      case 0x6D:
+      case 0x7A:
+      case 0x6C:
+      case 0x68:
+      case 0x76:
+      case 0x63:
+      case 0x73:
+      case 0x71:
+      case 0x74:
+      case 0x61:
+      case 0x72:
+        return true;
     }
-    if (cmdLC === 'r') {
-      state.segments.push([ cmd ].concat(params));
-    } else {
-      while (params.length >= paramCounts[cmdLC]) {
-        state.segments.push([ cmd ].concat(params.splice(0, paramCounts[cmdLC])));
-        if (!paramCounts[cmdLC]) {
-          break;
-        }
-      }
+    return false;
+  }
+
+  function isDigitStart(code) {
+    return (code >= 48 && code <= 57) ||
+            code === 0x2B ||
+            code === 0x2D ||
+            code === 0x2E;
+  }
+
+  function isArc(code) {
+    return (code | 0x20) === 0x61;
+  }
+
+  function isSpace(ch) {
+    var specialSpaces = [
+      0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
+      0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF ];
+    return (ch === 0x0A) || (ch === 0x0D) || (ch === 0x2028) || (ch === 0x2029) ||
+      (ch === 0x20) || (ch === 0x09) || (ch === 0x0B) || (ch === 0x0C) || (ch === 0xA0) ||
+      (ch >= 0x1680 && specialSpaces.indexOf(ch) >= 0);
+  }
+
+  function skipSpaces(state) {
+    while (state.index < state.max && isSpace(state.pathValue.charCodeAt(state.index))) {
+      state.index++;
     }
   }
+
   function scanSegment(state) {
-    var max = state.max, cmdCode, is_arc, comma_found, need_params, i;
+    var max = state.max, cmdCode, comma_found, need_params, i;
     state.segmentStart = state.index;
     cmdCode = state.pathValue.charCodeAt(state.index);
-    is_arc = isArc(cmdCode);
     if (!isCommand(cmdCode)) {
-      state.err = 'SvgPath: bad command ' + state.pathValue[state.index] + ' (at pos ' + state.index + ')';
+      state.err = invalidPathValue;
       return;
     }
     need_params = paramCounts[state.pathValue[state.index].toLowerCase()];
@@ -1770,14 +1779,13 @@
     skipSpaces(state);
     state.data = [];
     if (!need_params) {
-      state.isClosed = 1;
       finalizeSegment(state);
       return;
     }
     comma_found = false;
     for (;;) {
       for (i = need_params; i > 0; i--) {
-        if (is_arc && (i === 3 || i === 4)) { scanFlag(state); }
+        if (isArc(cmdCode) && (i === 3 || i === 4)) { scanFlag(state); }
         else { scanParam(state); }
         if (state.err.length) {
           return;
@@ -1803,8 +1811,9 @@
     }
     finalizeSegment(state);
   }
+
   function parsePathString(pathString) {
-    if ( Array.isArray(pathString) ) {
+    if ( Array.isArray(pathString) && Array.isArray(pathString[0])) {
       return clonePath(pathString)
     }
     var state = new SVGPathArray(pathString), max = state.max;
@@ -1816,7 +1825,7 @@
       state.segments = [];
     } else if (state.segments.length) {
       if ('mM'.indexOf(state.segments[0][0]) < 0) {
-        state.err = 'SvgPath: string should start with `M` or `m`';
+        state.err = invalidPathValue;
         state.segments = [];
       } else {
         state.segments[0][0] = 'M';
@@ -1896,8 +1905,9 @@
     if (!pathArray || !pathArray.length) {
       return [["M", 0, 0]];
     }
-    var res = [], x = 0, y = 0, mx = 0, my = 0, start = 0,
-        ii = pathArray.length,
+    var resultArray = [],
+        x = 0, y = 0, mx = 0, my = 0,
+        start = 0, ii = pathArray.length,
         crz = pathArray.length === 3 &&
               pathArray[0][0] === "M" &&
               pathArray[1][0].toUpperCase() === "R" &&
@@ -1908,11 +1918,11 @@
       mx = x;
       my = y;
       start++;
-      res[0] = ["M", x, y];
+      resultArray[0] = ["M", x, y];
     }
     var loop = function ( i ) {
-      var r = (void 0), pa = pathArray[i], pa0 = pa[0];
-      res.push(r = []);
+      var r = [], pa = pathArray[i], pa0 = pa[0], dots = [];
+      resultArray.push(r = []);
       if (pa0 !== pa0.toUpperCase()) {
         r[0] = pa0.toUpperCase();
         switch (r[0]) {
@@ -1932,47 +1942,47 @@
             r[1] = +pa[1] + x;
             break;
           case "R":
-            var dots$1 = [x, y].concat(pa.slice(1));
-            for (var j = 2, jj = dots$1.length; j < jj; j++) {
-              dots$1[j] = +dots$1[j] + x;
-              dots$1[++j] = +dots$1[j] + y;
+            dots = [x, y].concat(pa.slice(1));
+            for (var j = 2, jj = dots.length; j < jj; j++) {
+              dots[j] = +dots[j] + x;
+              dots[++j] = +dots[j] + y;
             }
-            res.pop();
-            res = res.concat(catmullRom2bezier(dots$1, crz));
+            resultArray.pop();
+            resultArray = resultArray.concat(catmullRom2bezier(dots, crz));
             break;
           case "O":
-            res.pop();
-            dots$1 = ellipsePath(x, y, +pa[1], +pa[2]);
-            dots$1.push(dots$1[0]);
-            res = res.concat(dots$1);
+            resultArray.pop();
+            dots = ellipsePath(x, y, +pa[1], +pa[2]);
+            dots.push(dots[0]);
+            resultArray = resultArray.concat(dots);
             break;
           case "U":
-            res.pop();
-            res = res.concat(ellipsePath(x, y, pa[1], pa[2], pa[3]));
-            r = ["U"].concat(res[res.length - 1].slice(-2));
+            resultArray.pop();
+            resultArray = resultArray.concat(ellipsePath(x, y, pa[1], pa[2], pa[3]));
+            r = ["U"].concat(resultArray[resultArray.length - 1].slice(-2));
             break;
           case "M":
             mx = +pa[1] + x;
             my = +pa[2] + y;
           default:
-            for (var j$1 = 1, jj$1 = pa.length; j$1 < jj$1; j$1++) {
-              r[j$1] = +pa[j$1] + ((j$1 % 2) ? x : y);
+            for (var k = 1, kk = pa.length; k < kk; k++) {
+              r[k] = +pa[k] + ((k % 2) ? x : y);
             }
         }
       } else if (pa0 === "R") {
         dots = [x, y].concat(pa.slice(1));
-        res.pop();
-        res = res.concat(catmullRom2bezier(dots, crz));
+        resultArray.pop();
+        resultArray = resultArray.concat(catmullRom2bezier(dots, crz));
         r = ["R"].concat(pa.slice(-2));
       } else if (pa0 === "O") {
-        res.pop();
+        resultArray.pop();
         dots = ellipsePath(x, y, +pa[1], +pa[2]);
         dots.push(dots[0]);
-        res = res.concat(dots);
+        resultArray = resultArray.concat(dots);
       } else if (pa0 === "U") {
-        res.pop();
-        res = res.concat(ellipsePath(x, y, +pa[1], +pa[2], +pa[3]));
-        r = ["U"].concat(res[res.length - 1].slice(-2));
+        resultArray.pop();
+        resultArray = resultArray.concat(ellipsePath(x, y, +pa[1], +pa[2], +pa[3]));
+        r = ["U"].concat(resultArray[resultArray.length - 1].slice(-2));
       } else {
         pa.map(function (k){ return r.push(k); });
       }
@@ -1999,12 +2009,12 @@
       }
     };
     for (var i = start; i < ii; i++) loop( i );
-    return roundPath(res)
+    return roundPath(resultArray)
   }
 
   function rotateVector(x, y, rad) {
     var X = x * Math.cos(rad) - y * Math.sin(rad),
-          Y = x * Math.sin(rad) + y * Math.cos(rad);
+        Y = x * Math.sin(rad) + y * Math.cos(rad);
     return {x: X, y: Y}
   }
 
@@ -2030,10 +2040,10 @@
           k = (large_arc_flag == sweep_flag ? -1 : 1)
             * Math.sqrt(Math.abs((rx2 * ry2 - rx2 * y * y - ry2 * x * x)
             / (rx2 * y * y + ry2 * x * x)));
-      cx = k * rx * y / ry + (x1 + x2) / 2,
+      cx = k * rx * y / ry + (x1 + x2) / 2;
       cy = k * -ry * x / rx + (y1 + y2) / 2;
-      f1 = Math.asin(((y1 - cy) / ry)),
-      f2 = Math.asin(((y2 - cy) / ry));
+      f1 = Math.asin( ((y1 - cy) / ry).toFixed(9) );
+      f2 = Math.asin( ((y2 - cy) / ry).toFixed(9) );
       f1 = x1 < cx ? Math.PI - f1 : f1;
       f2 = x2 < cx ? Math.PI - f2 : f2;
       f1 < 0 && (f1 = Math.PI * 2 + f1);
@@ -2087,83 +2097,82 @@
             _13 * y1 + _23 * ay,
             _13 * x2 + _23 * ax,
             _13 * y2 + _23 * ay,
-            x2,
-            y2
-          ]
+            x2, y2 ]
   }
 
   function l2c(x1, y1, x2, y2) {
-    return [x1, y1, x2, y2, x2, y2];
+    return [x1, y1, x2, y2, x2, y2]
   }
 
-  function processPath(path, d, pcom) {
+  function processSegment(segment, params, pathCommand) {
     var nx, ny;
-    if (!path) {
-      return ["C", d.x, d.y, d.x, d.y, d.x, d.y];
+    if (!segment) {
+      return ["C", params.x, params.y, params.x, params.y, params.x, params.y];
     }
-    !(path[0] in {T: 1, Q: 1}) && (d.qx = d.qy = null);
-    switch (path[0]) {
+    !(segment[0] in {T: 1, Q: 1}) && (params.qx = params.qy = null);
+    switch (segment[0]) {
       case "M":
-        d.X = path[1];
-        d.Y = path[2];
+        params.X = segment[1];
+        params.Y = segment[2];
         break;
       case "A":
-        path = ["C"].concat(a2c.apply(0, [d.x, d.y].concat(path.slice(1))));
+        segment = ["C"].concat(a2c.apply(0, [params.x, params.y].concat(segment.slice(1))));
         break;
       case "S":
-        if (pcom == "C" || pcom == "S") {
-          nx = d.x * 2 - d.bx;
-          ny = d.y * 2 - d.by;
+        if (pathCommand === "C" || pathCommand === "S") {
+          nx = params.x * 2 - params.bx;
+          ny = params.y * 2 - params.by;
         }
         else {
-          nx = d.x;
-          ny = d.y;
+          nx = params.x;
+          ny = params.y;
         }
-        path = ["C", nx, ny].concat(path.slice(1));
+        segment = ["C", nx, ny].concat(segment.slice(1));
         break;
       case "T":
-        if (pcom == "Q" || pcom == "T") {
-          d.qx = d.x * 2 - d.qx;
-          d.qy = d.y * 2 - d.qy;
+        if (pathCommand === "Q" || pathCommand === "T") {
+          params.qx = params.x * 2 - params.qx;
+          params.qy = params.y * 2 - params.qy;
         }
         else {
-          d.qx = d.x;
-          d.qy = d.y;
+          params.qx = params.x;
+          params.qy = params.y;
         }
-        path = ["C"].concat(q2c(d.x, d.y, d.qx, d.qy, path[1], path[2]));
+        segment = ["C"].concat(q2c(params.x, params.y, params.qx, params.qy, segment[1], segment[2]));
         break;
       case "Q":
-        d.qx = path[1];
-        d.qy = path[2];
-        path = ["C"].concat(q2c(d.x, d.y, path[1], path[2], path[3], path[4]));
+        params.qx = segment[1];
+        params.qy = segment[2];
+        segment = ["C"].concat(q2c(params.x, params.y, segment[1], segment[2], segment[3], segment[4]));
         break;
       case "L":
-        path = ["C"].concat(l2c(d.x, d.y, path[1], path[2]));
+        segment = ["C"].concat(l2c(params.x, params.y, segment[1], segment[2]));
         break;
       case "H":
-        path = ["C"].concat(l2c(d.x, d.y, path[1], d.y));
+        segment = ["C"].concat(l2c(params.x, params.y, segment[1], params.y));
         break;
       case "V":
-        path = ["C"].concat(l2c(d.x, d.y, d.x, path[1]));
+        segment = ["C"].concat(l2c(params.x, params.y, params.x, segment[1]));
         break;
       case "Z":
-        path = ["C"].concat(l2c(d.x, d.y, d.X, d.Y));
+        segment = ["C"].concat(l2c(params.x, params.y, params.X, params.Y));
         break;
     }
-    return path;
+    return segment;
   }
 
-  function fixM(path1, path2, a1, a2, i) {
+  function fixM(path1, path2, a1, a2, i, count) {
     if (path1 && path2 && path1[i][0] === "M" && path2[i][0] !== "M") {
       path2.splice(i, 0, ["M", a2.x, a2.y]);
       a1.bx = 0;
       a1.by = 0;
       a1.x = path1[i][1];
       a1.y = path1[i][2];
+      count = Math.max(p.length, p2 && p2.length || 0);
     }
   }
 
-  function fixArc(p, p2, pc1, pc2, i) {
+  function fixArc(p, p2, pc1, pc2, i, count) {
     if (p[i].length > 7) {
       p[i].shift();
       var pi = p[i];
@@ -2173,6 +2182,7 @@
         p.splice(i++, 0, ["C"].concat(pi.splice(0, 6)));
       }
       p.splice(i, 1);
+      count = Math.max(p.length, p2 && p2.length || 0);
     }
   }
 
@@ -2182,48 +2192,45 @@
         attrs = {x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null},
         attrs2 = {x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null};
     var pcoms1 = [], pcoms2 = [],
-        pfirst = "", pcom = "",
+        pathCommand = "", pcom = "",
         ii = Math.max(p.length, p2 && p2.length || 0);
-    for (var i = 0; i < ii; i++) {
-      p[i] && (pfirst = p[i][0]);
-      if (pfirst !== "C") {
-        pcoms1[i] = pfirst;
+    for (var i = 0; i < (ii = Math.max(p.length, p2 && p2.length || 0)); i++) {
+      p[i] && (pathCommand = p[i][0]);
+      if (pathCommand !== "C") {
+        pcoms1[i] = pathCommand;
         i && ( pcom = pcoms1[i - 1]);
       }
-      p[i] = processPath(p[i], attrs, pcom);
-      if (pcoms1[i] !== "A" && pfirst === "C") { pcoms1[i] = "C"; }
-      fixArc(p, p2, pcoms1, pcoms2, i);
-      ii = Math.max(p.length, p2 && p2.length || 0);
+      p[i] = processSegment(p[i], attrs, pcom);
+      if (pcoms1[i] !== "A" && pathCommand === "C") { pcoms1[i] = "C"; }
+      fixArc(p,p2,pcoms1,pcoms2,i,ii);
       if (p2) {
-        p2[i] && (pfirst = p2[i][0]);
-        if (pfirst !== "C") {
-          pcoms2[i] = pfirst;
+        p2[i] && (pathCommand = p2[i][0]);
+        if (pathCommand !== "C") {
+          pcoms2[i] = pathCommand;
           i && (pcom = pcoms2[i - 1]);
         }
-        p2[i] = processPath(p2[i], attrs2, pcom);
-        if (pcoms2[i] !== "A" && pfirst === "C") {
+        p2[i] = processSegment(p2[i], attrs2, pcom);
+        if (pcoms2[i] !== "A" && pathCommand === "C") {
           pcoms2[i] = "C";
         }
-        fixArc(p2, p, pcoms2, pcoms1, i);
-        ii = Math.max(p.length, p2 && p2.length || 0);
+        fixArc(p2,p,pcoms2,pcoms1,i,ii);
       }
-      fixM(p, p2, attrs, attrs2, i);
-      p2 && fixM(p2, p, attrs2, attrs, i);
-      ii = Math.max(p.length, p2 && p2.length || 0);
+      fixM(p, p2, attrs, attrs2, i, ii);
+      fixM(p2, p, attrs2, attrs, i, ii);
       var seg = p[i],
           seg2 = p2 && p2[i],
           seglen = seg.length,
           seg2len = p2 && seg2.length;
-      attrs.x = seg[seglen - 2];
-      attrs.y = seg[seglen - 1];
-      attrs.bx = parseFloat(seg[seglen - 4]) || attrs.x;
-      attrs.by = parseFloat(seg[seglen - 3]) || attrs.y;
-      attrs2.bx = p2 && (parseFloat(seg2[seg2len - 4]) || attrs2.x);
-      attrs2.by = p2 && (parseFloat(seg2[seg2len - 3]) || attrs2.y);
+      attrs.x = +seg[seglen - 2];
+      attrs.y = +seg[seglen - 1];
+      attrs.bx = +(seg[seglen - 4]) || attrs.x;
+      attrs.by = +(seg[seglen - 3]) || attrs.y;
+      attrs2.bx = p2 && (+(seg2[seg2len - 4]) || attrs2.x);
+      attrs2.by = p2 && (+(seg2[seg2len - 3]) || attrs2.y);
       attrs2.x = p2 && seg2[seg2len - 2];
       attrs2.y = p2 && seg2[seg2len - 1];
     }
-    return p2 ? [roundPath(p), roundPath(p2)] : roundPath(p);
+    return p2 ? [roundPath(p), roundPath(p2)] : roundPath(p)
   }
 
   function reverseCurve(pathCurveArray){
@@ -2243,14 +2250,14 @@
           y = nextSeg[nextSeg.length - 1];
           x1 = currentSeg[3]; y1 = currentSeg[4];
           x2 = currentSeg[1]; y2 = currentSeg[2];
-          return [p[0],x1,y1,x2,y2,x,y]
+          return ['C',x1,y1,x2,y2,x,y]
         });
-    return [['M',rotatedCurve[curveCount][5],rotatedCurve[curveCount][6]]].concat(rotatedCurve)
+    return [['M',x,y]].concat(rotatedCurve)
   }
 
-  function createPath (path) {
+  function createPath(path) {
     var np = document.createElementNS('http://www.w3.org/2000/svg','path'),
-          d = path instanceof SVGElement ? path.getAttribute('d') : path;
+        d = path instanceof SVGElement ? path.getAttribute('d') : path;
     np.setAttribute('d',d);
     return np
   }
@@ -2323,8 +2330,8 @@
       if ( !pathCurve1 || !pathCurve2 || ( pathCurve1 && pathCurve2 && pathCurve1[0][0] === 'M' && pathCurve1.length !== pathCurve2.length) ) {
         var path1 = this.valuesStart[tweenProp].original,
             path2 = this.valuesEnd[tweenProp].original,
-            curves = pathToCurve(path1,path2);
-        var curve0 = this._reverseFirstPath ? reverseCurve(curves[0]) : curves[0],
+            curves = pathToCurve(path1,path2),
+            curve0 = this._reverseFirstPath ? reverseCurve(curves[0]) : curves[0],
             curve1 = this._reverseSecondPath ? reverseCurve(curves[1]) : curves[1];
         curve0 = getRotatedCurve.call(this,curve0,curve1);
         this.valuesStart[tweenProp].curve = curve0;
@@ -2431,8 +2438,8 @@
   function getStartSvgTransform (tweenProp,value) {
     var transformObject = {};
     var currentTransform = parseTransformString(this.element.getAttribute('transform'));
-    for (var i in value) {
-      transformObject[i] = i in currentTransform ? currentTransform[i] : (i==='scale'?1:0);
+    for (var j in value) {
+      transformObject[j] = j in currentTransform ? currentTransform[j] : (j==='scale'?1:0);
     }
     return transformObject;
   }
@@ -2442,8 +2449,8 @@
       var valuesStart = this.valuesStart[prop];
       var valuesEnd = this.valuesEnd[prop];
       var currentTransform = parseTransformSVG.call(this, prop, parseTransformString(this.element.getAttribute('transform')) );
-      for ( var i in currentTransform ) {
-        valuesStart[i] = currentTransform[i];
+      for ( var tp in currentTransform ) {
+        valuesStart[tp] = currentTransform[tp];
       }
       var parentSVG = this.element.ownerSVGElement;
       var startMatrix = parentSVG.createSVGTransformFromMatrix(
@@ -2454,9 +2461,9 @@
         .translate(+valuesStart.origin[0],+valuesStart.origin[1])
       );
       valuesStart.translate = [startMatrix.matrix.e,startMatrix.matrix.f];
-      for ( var i$1 in valuesStart) {
-        if ( !(i$1 in valuesEnd) || i$1==='origin') {
-          valuesEnd[i$1] = valuesStart[i$1];
+      for ( var s in valuesStart) {
+        if ( !(s in valuesEnd) || s==='origin') {
+          valuesEnd[s] = valuesStart[s];
         }
       }
     }
@@ -2892,7 +2899,8 @@
   }
   function prepareTransform(tweenProp,value){
     if ( typeof(value) === 'object' && !value.length) {
-      var transformObject = {},
+      var pv,
+          transformObject = {},
           translate3dObj = {},
           rotate3dObj = {},
           scale3dObj = {},
@@ -2900,7 +2908,7 @@
           axis = [{translate3d:translate3dObj},{rotate3d:rotate3dObj},{skew:skewObj},{scale3d:scale3dObj}];
       var loop = function ( prop ) {
         if ( /3d/.test(prop) && typeof(value[prop]) === 'object' && value[prop].length ){
-          var pv = value[prop].map( function (v) { return prop === 'scale3d' ? parseFloat(v) : parseInt(v); } );
+          pv = value[prop].map( function (v) { return prop === 'scale3d' ? parseFloat(v) : parseInt(v); } );
           transformObject[prop] = prop === 'scale3d' ? [pv[0]||1, pv[1]||1, pv[2]||1] : [pv[0]||0, pv[1]||0, pv[2]||0];
         } else if ( /[XYZ]/.test(prop) ) {
           var obj = /translate/.test(prop) ? translate3dObj
@@ -2910,16 +2918,15 @@
           var idx = prop.replace(/translate|rotate|scale|skew/,'').toLowerCase();
           obj[idx] = /scale/.test(prop) ? parseFloat(value[prop]) : parseInt(value[prop]);
         } else if ('skew' === prop ) {
-          var pv$1 = value[prop].map(function (v) { return parseInt(v)||0; });
-          transformObject[prop] = [pv$1[0]||0, pv$1[1]||0];
+          pv = value[prop].map(function (v) { return parseInt(v)||0; });
+          transformObject[prop] = [pv[0]||0, pv[1]||0];
         } else {
           transformObject[prop] = parseInt(value[prop]);
         }
       };
       for (var prop in value) loop( prop );
       axis.map(function (o) {
-        var tp = Object.keys(o)[0];
-        var tv = o[tp];
+        var tp = Object.keys(o)[0], tv = o[tp];
         if ( Object.keys(tv).length && !transformObject[tp]) {
           transformObject[tp] = tp === 'scale3d' ? [tv.x || 1, tv.y || 1, tv.z || 1]
                               : tp === 'skew' ? [tv.x || 0, tv.y || 0]
