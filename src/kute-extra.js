@@ -2320,7 +2320,7 @@
       return pathObject;
     }
     catch(e){
-      throw TypeError(("KUTE.js - " + INVALID_INPUT + " " + e))
+      throw TypeError(("KUTE.js - " + invalidPathValue + " " + e))
     }
   }
   function crossCheckCubicMorph(tweenProp){
