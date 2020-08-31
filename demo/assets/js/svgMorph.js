@@ -8,6 +8,15 @@ morphBtn.addEventListener('click', function(){
   !morphTween.playing && morphTween.start();
 }, false);
 
+// line to circle
+var lineMorph = KUTE.to('#line',{path:'#circle'},{ yoyo:true, repeat:1, duration:2000, easing: 'easingCubicOut'}),
+    lineMorph1 = KUTE.to('#line1',{path:'#circle1'},{ yoyo:true, repeat:1, duration:2000, easing: 'easingCubicOut'}),
+    morphBtnClosed = document.getElementById('morphBtnClosed');
+morphBtnClosed.addEventListener('click', function(){
+  !lineMorph.playing && lineMorph.start()
+  !lineMorph1.playing && lineMorph1.start()
+}, false);
+
 
 // polygon morph
 var morphTween21 = KUTE.fromTo('#triangle', {attr: { fill: '#673AB7'}, path: '#triangle' }, { attr: { fill: '#2196F3' }, path: '#square' }, {

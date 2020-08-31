@@ -6,8 +6,12 @@ import {onStartSVGMorph} from './svgMorphBase.js'
 
 import pathToAbsolute from 'svg-path-commander/src/convert/pathToAbsolute.js'
 import pathToString from 'svg-path-commander/src/convert/pathToString.js'
-import splitPath from 'svg-path-commander/src/util/splitPath.js'
+import splitPath from 'svg-path-commander/src/process/splitPath.js'
 import invalidPathValue from 'svg-path-commander/src/util/invalidPathValue.js'
+import createPath from 'svg-path-commander/src/util/createPath.js'
+
+import polygonArea from 'd3-polygon/src/area.js'
+import polygonLength from 'd3-polygon/src/length.js'
  
 // const SVGMorph = { property : 'path', defaultValue: [], interpolators: {numbers,coords} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
 
@@ -15,30 +19,27 @@ import invalidPathValue from 'svg-path-commander/src/util/invalidPathValue.js'
 // function function(array1, array2, length, progress)
 
 // Component Util
+// original script flubber
+// https://github.com/veltman/flubber
+
 function isFiniteNumber(number) {
   return typeof number === "number" && isFinite(number);
 }
-function distance(a, b) {
+function distanceSquareRoot(a, b) {
   return Math.sqrt(
     (a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1])
   );
 }
-
 function pointAlong(a, b, pct) {
   return [a[0] + (b[0] - a[0]) * pct, a[1] + (b[1] - a[1]) * pct];
 }
-
 function samePoint(a, b) {
-  return distance(a, b) < 1e-9;
+  return distanceSquareRoot(a, b) < 1e-9;
 }
-
-// flubber
-// https://github.com/veltman/flubber
 function pathStringToRing(str, maxSegmentLength) {
   let parsed = pathToAbsolute(str);
   return exactRing(parsed) || approximateRing(parsed, maxSegmentLength);
 }
-
 function exactRing(segments) {
   let ring = [];
 
@@ -63,7 +64,6 @@ function exactRing(segments) {
 
   return ring.length ? { ring } : false;
 }
-
 function approximateRing(parsed, maxSegmentLength) {
   let ringPath = splitPath(pathToString(parsed))[0], 
       ring = [], len, testPath, numPoints = 3;
@@ -72,7 +72,7 @@ function approximateRing(parsed, maxSegmentLength) {
     throw (invalidPathValue);
   }
 
-  testPath = measure(ringPath);
+  testPath = createPath(ringPath);
   len = testPath.getTotalLength();
 
   if (
@@ -93,15 +93,6 @@ function approximateRing(parsed, maxSegmentLength) {
     skipBisect: true
   };
 }
-function measure(d) {
-  try {
-    let path = document.createElementNS('http://www.w3.org/2000/svg',"path");
-    path.setAttributeNS(null, "d", d);
-    return path;
-  } catch (e) {}
-  // not a browser
-  return false;
-}
 function rotateRing(ring, vs) {
   let len = ring.length, min = Infinity, bestOffset, sumOfSquares, spliced;
 
@@ -109,7 +100,7 @@ function rotateRing(ring, vs) {
     sumOfSquares = 0;
 
     vs.forEach(function(p, i) {
-      let d = distance(ring[(offset + i) % len], p);
+      let d = distanceSquareRoot(ring[(offset + i) % len], p);
       sumOfSquares += d * d;
     });
 
@@ -124,34 +115,6 @@ function rotateRing(ring, vs) {
     ring.splice(ring.length, 0, ...spliced);
   }
 }
-function polygonLength(polygon) {
-  let i = -1, n = polygon.length, b = polygon[n - 1], 
-      xa, ya, xb = b[0], yb = b[1], perimeter = 0;
-
-  while (++i < n) {
-    xa = xb;
-    ya = yb;
-    b = polygon[i];
-    xb = b[0];
-    yb = b[1];
-    xa -= xb;
-    ya -= yb;
-    perimeter += Math.sqrt(xa * xa + ya * ya);
-  }
-
-  return perimeter;
-}
-function polygonArea(polygon) {
-  let i = -1, n = polygon.length, a, b = polygon[n - 1], area = 0;
-
-  while (++i < n) {
-    a = b;
-    b = polygon[i];
-    area += a[1] * b[0] - a[0] * b[1];
-  }
-
-  return area / 2;
-}
 function addPoints(ring, numPoints) {
   const desiredLength = ring.length + numPoints,
         step = polygonLength(ring) / numPoints;
@@ -159,7 +122,7 @@ function addPoints(ring, numPoints) {
   let i = 0, cursor = 0, insertAt = step / 2;
 
   while (ring.length < desiredLength) {
-    let a = ring[i], b = ring[(i + 1) % ring.length], segment = distance(a, b);
+    let a = ring[i], b = ring[(i + 1) % ring.length], segment = distanceSquareRoot(a, b);
 
     if (insertAt <= cursor + segment) {
       ring.splice( i + 1, 0, segment ? pointAlong(a, b, (insertAt - cursor) / segment) : a.slice(0) );
@@ -176,7 +139,7 @@ function bisect(ring, maxSegmentLength = Infinity) {
     let a = ring[i], b = i === ring.length - 1 ? ring[0] : ring[i + 1];
 
     // Could splice the whole set for a segment instead, but a bit messy
-    while (distance(a, b) > maxSegmentLength) {
+    while (distanceSquareRoot(a, b) > maxSegmentLength) {
       b = pointAlong(a, b, 0.5);
       ring.splice(i + 1, 0, b);
     }
@@ -235,10 +198,10 @@ function validRing(ring) {
   });
 }
 
-function getInterpolationPoints(fromShape, toShape, morphPrecision) {
+function getInterpolationPoints(pathArray1, pathArray2, morphPrecision) {
   morphPrecision = morphPrecision || defaultOptions.morphPrecision
-  let fromRing = normalizeRing(fromShape, morphPrecision),
-      toRing = normalizeRing(toShape, morphPrecision),
+  let fromRing = normalizeRing(pathArray1, morphPrecision),
+      toRing = normalizeRing(pathArray2, morphPrecision),
       diff = fromRing.length - toRing.length;
 
   addPoints(fromRing, diff < 0 ? diff * -1 : 0);
@@ -254,15 +217,15 @@ function getSVGMorph(tweenProp){
   return this.element.getAttribute('d');
 }
 function prepareSVGMorph(tweenProp,value){
-  const pathObject = {}, elem = value instanceof Element ? value : /^\.|^\#/.test(value) ? selector(value) : null,
-        pathReg = new RegExp('\\n','ig'); // remove newlines, they brake JSON strings sometimes
+  let pathObject = {}, elem = value instanceof SVGElement ? value : /^\.|^\#/.test(value) ? selector(value) : null,
+      pathReg = new RegExp('\\n','ig'); // remove newlines, they brake JSON strings sometimes
 
   // first make sure we return pre-processed values
   if ( typeof(value) === 'object' && value.pathArray ) {
     return value;
   } else if ( elem && /path|glyph/.test(elem.tagName) ) {
     pathObject.original = elem.getAttribute('d').replace(pathReg,'');
-  } else if ( !elem && /[a-z][^a-z]*/ig.test(value) ) { // maybe it's a string path already
+  } else if ( !elem && typeof(value) === 'string' ) { // maybe it's a string path already
     pathObject.original = value.replace(pathReg,'');
   }
   return pathObject;
@@ -305,10 +268,12 @@ const svgMorph = {
   functions: svgMorphFunctions,
   // Export utils to global for faster execution
   Util: {
-    isFiniteNumber,distance,pointAlong,samePoint,
-    pathToAbsolute,pathToString,pathStringToRing,
-    exactRing,approximateRing,measure,rotateRing,polygonLength,polygonArea,
-    addPoints,bisect,normalizeRing,validRing,getInterpolationPoints
+    addPoints,bisect,normalizeRing,validRing, // component
+    getInterpolationPoints,pathStringToRing,
+    isFiniteNumber,distanceSquareRoot,pointAlong,samePoint, 
+    exactRing,approximateRing,createPath,rotateRing,
+    pathToAbsolute,pathToString, // svg-path-commander
+    polygonLength,polygonArea // d3-polygon
   }
 }
 

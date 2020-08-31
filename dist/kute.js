@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Standard v2.0.13 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.0.14 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.13";
+  var version = "2.0.14";
 
   var KUTE = {};
 
@@ -1492,7 +1492,7 @@
     return this
   }
 
-  var paramCounts = { a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0 };
+  var paramsCount = { a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0 };
 
   function finalizeSegment(state) {
     var cmd = state.pathValue[state.segmentStart], cmdLC = cmd.toLowerCase(), params = state.data;
@@ -1505,9 +1505,9 @@
     if (cmdLC === 'r') {
       state.segments.push([ cmd ].concat(params));
     } else {
-      while (params.length >= paramCounts[cmdLC]) {
-        state.segments.push([ cmd ].concat(params.splice(0, paramCounts[cmdLC])));
-        if (!paramCounts[cmdLC]) {
+      while (params.length >= paramsCount[cmdLC]) {
+        state.segments.push([ cmd ].concat(params.splice(0, paramsCount[cmdLC])));
+        if (!paramsCount[cmdLC]) {
           break;
         }
       }
@@ -1630,7 +1630,7 @@
             code === 0x2E;
   }
 
-  function isArc(code) {
+  function isArcCommand(code) {
     return (code | 0x20) === 0x61;
   }
 
@@ -1657,7 +1657,7 @@
       state.err = invalidPathValue;
       return;
     }
-    need_params = paramCounts[state.pathValue[state.index].toLowerCase()];
+    need_params = paramsCount[state.pathValue[state.index].toLowerCase()];
     state.index++;
     skipSpaces(state);
     state.data = [];
@@ -1668,7 +1668,7 @@
     comma_found = false;
     for (;;) {
       for (i = need_params; i > 0; i--) {
-        if (isArc(cmdCode) && (i === 3 || i === 4)) { scanFlag(state); }
+        if (isArcCommand(cmdCode) && (i === 3 || i === 4)) { scanFlag(state); }
         else { scanParam(state); }
         if (state.err.length) {
           return;
@@ -1695,8 +1695,15 @@
     finalizeSegment(state);
   }
 
+  function isPathArray(pathArray){
+    return Array.isArray(pathArray) && pathArray.every(function (x){
+      var pathCommand = x[0].toLowerCase();
+      return paramsCount[pathCommand] === x.length - 1 && /[achlmrqstvz]/g.test(pathCommand)
+    })
+  }
+
   function parsePathString(pathString) {
-    if ( Array.isArray(pathString) && Array.isArray(pathString[0])) {
+    if ( isPathArray(pathString) ) {
       return clonePath(pathString)
     }
     var state = new SVGPathArray(pathString), max = state.max;
@@ -1783,11 +1790,15 @@
     return res;
   }
 
+  function isAbsoluteArray(pathInput){
+    return isPathArray(pathInput) && pathInput.every(function (x){ return x[0] === x[0].toUpperCase(); })
+  }
+
   function pathToAbsolute(pathArray) {
-    pathArray = parsePathString(pathArray);
-    if (!pathArray || !pathArray.length) {
-      return [["M", 0, 0]];
+    if (isAbsoluteArray(pathArray)) {
+      return clonePath(pathArray)
     }
+    pathArray = parsePathString(pathArray);
     var resultArray = [],
         x = 0, y = 0, mx = 0, my = 0,
         start = 0, ii = pathArray.length,
@@ -1896,13 +1907,7 @@
   }
 
   function pathToString(pathArray) {
-    return pathArray.map( function (c) {
-      if (typeof c === 'string') {
-        return c
-      } else {
-        return c.shift() + c.join(' ')
-      }
-    }).join('')
+    return pathArray.map(function (x){ return x[0].concat(x.slice(1).join(' ')); }).join(' ')
   }
 
   function splitPath(pathString) {
@@ -1913,10 +1918,53 @@
       .filter(function (s){ return s; })
   }
 
+  function createPath(path) {
+    var np = document.createElementNS('http://www.w3.org/2000/svg','path'),
+        d = path instanceof SVGElement && ['path','glyph'].indexOf(path.tagName) > -1 ? path.getAttribute('d') : path;
+    np.setAttribute('d',d);
+    return np
+  }
+
+  function polygonArea(polygon) {
+    var i = -1,
+        n = polygon.length,
+        a,
+        b = polygon[n - 1],
+        area = 0;
+    while (++i < n) {
+      a = b;
+      b = polygon[i];
+      area += a[1] * b[0] - a[0] * b[1];
+    }
+    return area / 2;
+  }
+
+  function polygonLength(polygon) {
+    var i = -1,
+        n = polygon.length,
+        b = polygon[n - 1],
+        xa,
+        ya,
+        xb = b[0],
+        yb = b[1],
+        perimeter = 0;
+    while (++i < n) {
+      xa = xb;
+      ya = yb;
+      b = polygon[i];
+      xb = b[0];
+      yb = b[1];
+      xa -= xb;
+      ya -= yb;
+      perimeter += Math.hypot(xa, ya);
+    }
+    return perimeter;
+  }
+
   function isFiniteNumber(number) {
     return typeof number === "number" && isFinite(number);
   }
-  function distance(a, b) {
+  function distanceSquareRoot(a, b) {
     return Math.sqrt(
       (a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1])
     );
@@ -1925,7 +1973,7 @@
     return [a[0] + (b[0] - a[0]) * pct, a[1] + (b[1] - a[1]) * pct];
   }
   function samePoint(a, b) {
-    return distance(a, b) < 1e-9;
+    return distanceSquareRoot(a, b) < 1e-9;
   }
   function pathStringToRing(str, maxSegmentLength) {
     var parsed = pathToAbsolute(str);
@@ -1961,7 +2009,7 @@
     if (!ringPath) {
       throw (invalidPathValue);
     }
-    testPath = measure(ringPath);
+    testPath = createPath(ringPath);
     len = testPath.getTotalLength();
     if (
       maxSegmentLength &&
@@ -1979,20 +2027,12 @@
       skipBisect: true
     };
   }
-  function measure(d) {
-    try {
-      var path = document.createElementNS('http://www.w3.org/2000/svg',"path");
-      path.setAttributeNS(null, "d", d);
-      return path;
-    } catch (e) {}
-    return false;
-  }
   function rotateRing(ring, vs) {
     var len = ring.length, min = Infinity, bestOffset, sumOfSquares, spliced;
     var loop = function ( offset ) {
       sumOfSquares = 0;
       vs.forEach(function(p, i) {
-        var d = distance(ring[(offset + i) % len], p);
+        var d = distanceSquareRoot(ring[(offset + i) % len], p);
         sumOfSquares += d * d;
       });
       if (sumOfSquares < min) {
@@ -2006,36 +2046,12 @@
       ring.splice.apply(ring, [ ring.length, 0 ].concat( spliced ));
     }
   }
-  function polygonLength(polygon) {
-    var i = -1, n = polygon.length, b = polygon[n - 1],
-        xa, ya, xb = b[0], yb = b[1], perimeter = 0;
-    while (++i < n) {
-      xa = xb;
-      ya = yb;
-      b = polygon[i];
-      xb = b[0];
-      yb = b[1];
-      xa -= xb;
-      ya -= yb;
-      perimeter += Math.sqrt(xa * xa + ya * ya);
-    }
-    return perimeter;
-  }
-  function polygonArea(polygon) {
-    var i = -1, n = polygon.length, a, b = polygon[n - 1], area = 0;
-    while (++i < n) {
-      a = b;
-      b = polygon[i];
-      area += a[1] * b[0] - a[0] * b[1];
-    }
-    return area / 2;
-  }
   function addPoints(ring, numPoints) {
     var desiredLength = ring.length + numPoints,
           step = polygonLength(ring) / numPoints;
     var i = 0, cursor = 0, insertAt = step / 2;
     while (ring.length < desiredLength) {
-      var a = ring[i], b = ring[(i + 1) % ring.length], segment = distance(a, b);
+      var a = ring[i], b = ring[(i + 1) % ring.length], segment = distanceSquareRoot(a, b);
       if (insertAt <= cursor + segment) {
         ring.splice( i + 1, 0, segment ? pointAlong(a, b, (insertAt - cursor) / segment) : a.slice(0) );
         insertAt += step;
@@ -2049,7 +2065,7 @@
     if ( maxSegmentLength === void 0 ) maxSegmentLength = Infinity;
     for (var i = 0; i < ring.length; i++) {
       var a = ring[i], b = i === ring.length - 1 ? ring[0] : ring[i + 1];
-      while (distance(a, b) > maxSegmentLength) {
+      while (distanceSquareRoot(a, b) > maxSegmentLength) {
         b = pointAlong(a, b, 0.5);
         ring.splice(i + 1, 0, b);
       }
@@ -2095,10 +2111,10 @@
       );
     });
   }
-  function getInterpolationPoints(fromShape, toShape, morphPrecision) {
+  function getInterpolationPoints(pathArray1, pathArray2, morphPrecision) {
     morphPrecision = morphPrecision || defaultOptions.morphPrecision;
-    var fromRing = normalizeRing(fromShape, morphPrecision),
-        toRing = normalizeRing(toShape, morphPrecision),
+    var fromRing = normalizeRing(pathArray1, morphPrecision),
+        toRing = normalizeRing(pathArray2, morphPrecision),
         diff = fromRing.length - toRing.length;
     addPoints(fromRing, diff < 0 ? diff * -1 : 0);
     addPoints(toRing, diff > 0 ? diff : 0);
@@ -2109,13 +2125,13 @@
     return this.element.getAttribute('d');
   }
   function prepareSVGMorph(tweenProp,value){
-    var pathObject = {}, elem = value instanceof Element ? value : /^\.|^\#/.test(value) ? selector(value) : null,
-          pathReg = new RegExp('\\n','ig');
+    var pathObject = {}, elem = value instanceof SVGElement ? value : /^\.|^\#/.test(value) ? selector(value) : null,
+        pathReg = new RegExp('\\n','ig');
     if ( typeof(value) === 'object' && value.pathArray ) {
       return value;
     } else if ( elem && /path|glyph/.test(elem.tagName) ) {
       pathObject.original = elem.getAttribute('d').replace(pathReg,'');
-    } else if ( !elem && /[a-z][^a-z]*/ig.test(value) ) {
+    } else if ( !elem && typeof(value) === 'string' ) {
       pathObject.original = value.replace(pathReg,'');
     }
     return pathObject;
@@ -2148,10 +2164,12 @@
     defaultOptions: {morphPrecision : 10, morphIndex:0},
     functions: svgMorphFunctions,
     Util: {
-      isFiniteNumber: isFiniteNumber,distance: distance,pointAlong: pointAlong,samePoint: samePoint,
-      pathToAbsolute: pathToAbsolute,pathToString: pathToString,pathStringToRing: pathStringToRing,
-      exactRing: exactRing,approximateRing: approximateRing,measure: measure,rotateRing: rotateRing,polygonLength: polygonLength,polygonArea: polygonArea,
-      addPoints: addPoints,bisect: bisect,normalizeRing: normalizeRing,validRing: validRing,getInterpolationPoints: getInterpolationPoints
+      addPoints: addPoints,bisect: bisect,normalizeRing: normalizeRing,validRing: validRing,
+      getInterpolationPoints: getInterpolationPoints,pathStringToRing: pathStringToRing,
+      isFiniteNumber: isFiniteNumber,distanceSquareRoot: distanceSquareRoot,pointAlong: pointAlong,samePoint: samePoint,
+      exactRing: exactRing,approximateRing: approximateRing,createPath: createPath,rotateRing: rotateRing,
+      pathToAbsolute: pathToAbsolute,pathToString: pathToString,
+      polygonLength: polygonLength,polygonArea: polygonArea
     }
   };
   Components.SVGMorph = svgMorph;

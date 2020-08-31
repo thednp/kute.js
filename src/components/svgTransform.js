@@ -6,7 +6,7 @@ import {svgTransformOnStart} from './svgTransformBase.js'
 
 // Component Util
 function parseStringOrigin (origin, {x, width}) {
-  return /[a-zA-Z]/.test(origin) && !/px/.test(origin) 
+  return /[a-z]/i.test(origin) && !/px/.test(origin) 
     ? origin.replace(/top|left/,0).replace(/right|bottom/,100).replace(/center|middle/,50)
     : /%/.test(origin) ? (x + parseFloat(origin) * width / 100) : parseFloat(origin);
 } 

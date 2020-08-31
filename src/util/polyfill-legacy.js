@@ -12,6 +12,7 @@ import 'minifill/src/Array.prototype.map.js'
 import 'minifill/src/Array.prototype.some.js'
 import 'minifill/src/Array.prototype.every.js'
 import 'minifill/src/Array.prototype.includes.js'
+import 'minifill/src/Array.prototype.flat.js'
 import 'minifill/src/String.prototype.includes.js'
 
 // IE9+

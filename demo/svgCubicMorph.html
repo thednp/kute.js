@@ -83,7 +83,7 @@
 
         <div class="featurettes dark">
           <div class="content-wrap">
-            <div class="columns margin-bottom">
+            <div class="columns">
               <div class="col3">
                 <h3 class="border text-right">Overview</h3>
                 <p class="condensed text-right">Animate SVG paths with <b>cubic-bezier</b> path commands and improved performance.</p>
@@ -91,25 +91,13 @@
               <div class="col9 border">
                 <p class="lead condensed">The KUTE.js <b>SVG Cubic Morph</b> component enables animation for the <b>d</b> (description) presentation attribute and is the latest in all the SVG 
                   components.</p>
-                <p>The main difference with the other <a href="svgMorph.html">SVG Morph</a> component is the fact that this time we're using some path processing scripts borrowed from 
-                  <a href="http://www.raphaeljs.com/">Raphael.js</a> and other libraries to convert all path commands into <i>cubic-bezier</i> path commands.</p>
-                <p>This component will process paths and out of the box will provide the closest possible interpolation by default. It comes with two tween options to help you manage the morphing
-                  animation in certain conditions:</p>
-              </div>
-          </div>
-
-          <div class="columns">
-              <div class="col3">
-                <h3 class="border text-right">Options</h3>
-                <p class="condensed text-right">A series of familiar options to optimize the animation for every situation.</p>
-              </div>
-              <div class="col9 border">
-                <p class="condensed lead">To enhance processing and improve the morphing animation, in certain cases you will need to control the outcome via two options
-                  to reverse paths.</p>
-                <ul>
-                  <li><kbd>reverseFirstPath: <b class='text-olive'>FALSE</b></kbd> when is <b>TRUE</b> you will reverse the FIRST shape. By default this option is <b>false</b>.</li>
-                  <li><kbd>reverseSecondPath: <b class='text-olive'>FALSE</b></kbd> when is <b>TRUE</b> you will reverse the SECOND shape. By default this option is also <b>false</b>.</li>
-                </ul>
+                <p>The main difference with the other <a href="svgMorph.html">SVG Morph</a> component is the fact that this components is using some path processing scripts borrowed from 
+                  <a href="http://www.raphaeljs.com/">Raphael.js</a> and other libraries to convert all path commands to <i>cubicBezierTo</i> path commands.</p>
+                <p>The component will process paths and out of the box will provide the closest possible interpolation by default. It also implements a series of solutions from 
+                  <a href="https://github.com/paperjs/paper.js/">Paper.js</a> to determine paths draw direction and automatically reverse one of them for most accurate presentation and as a result
+                  the previously featured options <kbd>reverseFirstPath</kbd> and <kbd>reverseSecondPath</kbd> have been deprecated.</p>
+                <p>All path processing is powered by our <a href="https://github.com/thednp/svg-path-commander">SVGPathCommander</a> starting KUTE.js version 2.0.14, which aims to modernize and 
+                  improve the path processing and enable transition from closed to and from un-closed shapes.</p>
               </div>
             </div>
           </div>
@@ -117,7 +105,6 @@
 
 
         <div class="content-wrap">
-
             <h3>Basic Example</h3>
             <p>The first morphing animation example is a transition from a rectangle into a star, just like for the other component.</p>
 
@@ -157,14 +144,53 @@ var tween = KUTE.to('#rectangle', { path: 'M301.113,12.011l99.25,179.996l201.864
               <div class="example-buttons">
                   <a id="morphBtn" class="btn btn-green" href="javascript:void(0)">Start</a>
               </div>
-          </div>
+            </div>
 
-          <p>The second blue shape and its corresponding end shape have been edited by adding additional curve points using a vector graphics editor to match the amount of points in both shapes as well as to optimize their travel
+            <p>The second blue shape and its corresponding end shape have been edited by adding additional curve points using a vector graphics editor to match the amount of points in both shapes as well as to optimize their travel
               distance during the animation. You can use the same technique on your shapes to control the animation to your style.</p>
-          <p>Chris Coyier wrote an <a href="https://css-tricks.com/svg-shape-morphing-works/">excelent article</a> to explain how SVG morphing animation works, it should give you a pretty good idea on the concept, terminology.</p>
 
-          <h3>Subpath Example</h3>
-          <p>In other cases, you may want to morph paths that have subpaths. Let's have a look at the following SVG:</p>
+            <p>Chris Coyier wrote <a href="https://css-tricks.com/svg-shape-morphing-works/">an excelent article</a> in which he explains how SVG morphing animation works, from concept, terminology and workflow.</p>
+
+
+            <h3>Morphing Unclosed Shapes To Closed Shapes</h3>
+            <p>The next morphing animation example is a transition from a line into a circle and this example is to showcase the component's behavior when one of the paths is not closed (it doesn't have the <i>Z</i> path command), 
+              while the other path is closed.</p>
+
+<pre><code class="language-markup">&lt;svg id="morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  &lt;path id="line" fill="transparent" stroke="orange" stroke-linejoin="round" stroke-width="10" d="M10 300L590 300"/>
+  &lt;path id="star" style="visibility:hidden" d="M10,300a290,290 0 1,0 580,0a290,290 0 1,0 -580,0z"/>
+&lt;/svg>
+</code></pre>
+
+            <p>Now we can apply both <code>.to()</code> and <code>fromTo()</code> methods:</p>
+
+<pre><code class="language-javascript">// the fromTo() method
+var tween = KUTE.fromTo('#line', {path: '#line' }, { path: '#circle' }).start();
+// OR
+// the to() method will take the path's d attribute value and use it as start value
+var tween = KUTE.to('#line', { path: '#circle' }).start();
+</code></pre>
+
+            <div class="featurettes">
+              <svg class="example-box-model example-box" id="morph-example-closed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+                <path id="line" fill="transparent" stroke="#FF5722" stroke-linejoin="round" stroke-width="10" d="M10 300L590 300z"/>
+                <path id="circle" style="visibility:hidden" d="M10,300a290,290 0 1,0 580,0a290,290 0 1,0 -580,0z"/>
+              </svg>
+              <svg class="example-box-model example-box" id="morph-example-closed1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+                <path id="line1" fill="transparent" stroke="#4CAF50" stroke-linejoin="round" stroke-width="10" d="M10 300L590 300"/>
+                <path id="circle1" style="visibility:hidden" d="M10,300a290,290 0 1,0 580,0a290,290 0 1,0 -580,0z"/>
+              </svg>
+              <div class="example-buttons">
+                <a id="morphBtnClosed" class="btn btn-green" href="javascript:void(0)">Start</a>
+              </div>
+            </div>
+
+            <p>The functionality of this component is different from the <a href="svgMorph.html">svgMorph</a> component in the sense that it will animate shapes as authored. In the above example, the orange line is closed
+              while the green line is not, and the animation is different.</p>
+
+
+            <h3>Subpath Example</h3>
+            <p>In other cases, you may want to morph paths that have subpaths. Let's have a look at the following SVG:</p>
 
 <pre><code class="language-markup">&lt;svg id="multi-morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   &lt;path id="w1" d="M412.23 511.914c-47.708-24.518-94.086-36.958-137.88-36.958-5.956 0-11.952 0.18-17.948 0.708-55.88 4.624-106.922 19.368-139.75 30.828-8.708 3.198-17.634 6.576-26.83 10.306l-89.822 311.394c61.702-22.832 116.292-33.938 166.27-33.938 80.846 0 139.528 30.208 187.992 61.304 22.962-77.918 78.044-266.09 94.482-322.324-11.95-7.284-24.076-14.57-36.514-21.32z 
@@ -181,9 +207,8 @@ var tween = KUTE.to('#rectangle', { path: 'M301.113,12.011l99.25,179.996l201.864
           <p>Similar to the <a href="svgMorph.html">svgMorph</a> component, this component doesn't provide multipath processing so we should split the sub-paths into multiple <b>&lt;path&gt;</b> shapes, analyze and associate them
               in a way that corresponding shapes are close and their points travel the least possible distance.</p>
 
-          <p>Now since we've worked with these paths before, the first example below showcases how the <b>svgCubicMorph</b> component handles it by default, using the <code>reverseSecondPath:true</code> option for all tweens because 
-              each shape have a slightly different position from its corresponding shape. The following example was made possible by editing the shapes with a vector graphics editor. The last example showcases a creative use of
-              association between starting and end shapes. Let's have a look:</p>
+          <p>Now since we've worked with these paths before, the first example below showcases how the <b>svgCubicMorph</b> component handles it by default. The following example was made possible by editing the shapes with a vector 
+            graphics editor. The last example showcases a creative use of association between starting and end shapes. Let's have a look:</p>
 
           <div class="featurettes">
               <svg class="example-box-model example-box" id="multi-morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 550 550">
@@ -313,12 +338,14 @@ var tween = KUTE.to('#rectangle', { path: 'M301.113,12.011l99.25,179.996l201.864
 
           <h3>Notes</h3>
           <ul>
+            <li>Starting with KUTE.js version 2.0.14 the component implements <a href="https://github.com/thednp/svg-path-commander">SVGPathCommander</a> for path processing, solving previous issues with over-optimized 
+              path strings among other issues. You can try the <a href="https://thednp.github.io/svg-path-commander/">SVGPathCommander demo page</a> to prepare your path strings.</li>
             <li>Since animation works only with <code>path</code> <b>SVGElement</b>s, you might need a <a href="https://github.com/Waest/SVGPathConverter" target="_blank">convertToPath</a> utility.</li>
+            <li>Both SVG morph components will always animate first sub-path from both starting and ending shapes, and for any case hopefully this demo will guide you in mastering the technique.</li>
             <li>In some cases your start and end shapes don't have a very close size, you can use your vector graphics editor of choice or something like <a href="https://github.com/fontello/svgpath">SVGPath</a> tools to
                apply a scale transformation to your shapes' path commands.</li>
-            <li>The <b>SVG Cubic Morph</b> component WILL animate paths with sub-paths, but the animation isn't very appealing unless you've prepared your paths for this specific case, in other cases hopefuly
-                this guide will help you break the ice.</li>
-            <li>Compared to <a href="svgMorph.html">svgMorph</a>, this component requires more work, but can be more memory efficient, as we're dealing with significantly less interpolation points which translates directly 
+            <li>The <b>SVG Cubic Morph</b> component WILL NOT animate paths with sub-paths as of KUTE.js version 2.0.14, hopefuly this guide will help you break the ice.</li>
+            <li>Compared to <a href="svgMorph.html">svgMorph</a>, this component can be more memory efficient, as we're dealing with significantly less interpolation points which translates directly 
                 into better performance and the shapes never show any sign of "polygon artifacts".</li>
             <li>Some shapes can be broken even if the browser won't throw any error so make sure you double check with your SVG editor of choice.</li>
             <li>In some cases the duplicated curve bezier points don't produce the best morphing animation, but you can edit the shapes and add your own additional path commands between the existing ones

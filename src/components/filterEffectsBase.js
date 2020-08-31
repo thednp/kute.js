@@ -17,7 +17,6 @@ export function dropShadow(a,b,v){
 export function onStartFilter(tweenProp) {
   if ( this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
     KUTE[tweenProp] = (elem, a, b, v) => {
-      a.dropShadow||b.dropShadow && console.log(dropShadow(a.dropShadow,b.dropShadow,v))
       elem.style[tweenProp] = (b.url                      ? `url(${b.url})` : '')
                             + (a.opacity||b.opacity       ? `opacity(${((numbers(a.opacity,b.opacity,v) * 100)>>0)/100}%)` : '')
                             + (a.blur||b.blur             ? `blur(${((numbers(a.blur,b.blur,v) * 100)>>0)/100}em)` : '')
