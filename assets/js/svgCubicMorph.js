@@ -11,22 +11,31 @@ morphBtn.addEventListener('click', function(){
   !morphTween.playing && morphTween.start() && morphTween1.start()
 }, false);
 
+// line to circle
+var lineMorph = KUTE.to('#line',{path:'#circle'},{ yoyo:true, repeat:1, duration:2000, easing: 'easingCubicOut'}),
+    lineMorph1 = KUTE.to('#line1',{path:'#circle1'},{ yoyo:true, repeat:1, duration:2000, easing: 'easingCubicOut'}),
+    morphBtnClosed = document.getElementById('morphBtnClosed');
+morphBtnClosed.addEventListener('click', function(){
+  !lineMorph.playing && lineMorph.start()
+  !lineMorph1.playing && lineMorph1.start()
+}, false);
+
 // multishape morph 
 var multiMorphBtn = document.getElementById('multiMorphBtn');
-var multiMorph1 = KUTE.fromTo('#w11', { path: '#w11', attr:{ fill: "rgb(233,27,31)" }  }, { path: '#w21', attr:{ fill: "#56C5FF" } }, { reverseSecondPath: true, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var multiMorph2 = KUTE.fromTo('#w12', { path: '#w12', attr:{ fill: "rgb(255,87,34)" }  }, { path: '#w22', attr:{ fill: "#56C5FF" } }, { reverseSecondPath: true, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var multiMorph3 = KUTE.fromTo('#w13', { path: '#w13', attr:{ fill: "rgb(76,175,80)" }  }, { path: '#w23', attr:{ fill: "#56C5FF" } }, { reverseSecondPath: true, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var multiMorph4 = KUTE.fromTo('#w14', { path: '#w14', attr:{ fill: "rgb(33,150,243)" } }, { path: '#w24', attr:{ fill: "#56C5FF" } }, { reverseSecondPath: true, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var multiMorph1 = KUTE.fromTo('#w11', { path: '#w11', attr:{ fill: "rgb(233,27,31)" }  }, { path: '#w21', attr:{ fill: "#56C5FF" } }, { duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var multiMorph2 = KUTE.fromTo('#w12', { path: '#w12', attr:{ fill: "rgb(255,87,34)" }  }, { path: '#w22', attr:{ fill: "#56C5FF" } }, { duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var multiMorph3 = KUTE.fromTo('#w13', { path: '#w13', attr:{ fill: "rgb(76,175,80)" }  }, { path: '#w23', attr:{ fill: "#56C5FF" } }, { duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var multiMorph4 = KUTE.fromTo('#w14', { path: '#w14', attr:{ fill: "rgb(33,150,243)" } }, { path: '#w24', attr:{ fill: "#56C5FF" } }, { duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
 
-var multiMorph11 = KUTE.fromTo('#w111', { path: '#w111', attr:{ fill: "rgb(233,27,31)" }  }, { path: '#w211', attr:{ fill: "#56C5FF" } }, { reverseSecondPath: true, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var multiMorph21 = KUTE.fromTo('#w121', { path: '#w121', attr:{ fill: "rgb(255,87,34)" }  }, { path: '#w221', attr:{ fill: "#56C5FF" } }, { reverseSecondPath: true, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var multiMorph31 = KUTE.fromTo('#w131', { path: '#w131', attr:{ fill: "rgb(76,175,80)" }  }, { path: '#w231', attr:{ fill: "#56C5FF" } }, { reverseSecondPath: true, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var multiMorph41 = KUTE.fromTo('#w141', { path: '#w141', attr:{ fill: "rgb(33,150,243)" } }, { path: '#w241', attr:{ fill: "#56C5FF" } }, { reverseSecondPath: true, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var multiMorph11 = KUTE.fromTo('#w111', { path: '#w111', attr:{ fill: "rgb(233,27,31)" }  }, { path: '#w211', attr:{ fill: "#56C5FF" } }, { duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var multiMorph21 = KUTE.fromTo('#w121', { path: '#w121', attr:{ fill: "rgb(255,87,34)" }  }, { path: '#w221', attr:{ fill: "#56C5FF" } }, { duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var multiMorph31 = KUTE.fromTo('#w131', { path: '#w131', attr:{ fill: "rgb(76,175,80)" }  }, { path: '#w231', attr:{ fill: "#56C5FF" } }, { duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var multiMorph41 = KUTE.fromTo('#w141', { path: '#w141', attr:{ fill: "rgb(33,150,243)" } }, { path: '#w241', attr:{ fill: "#56C5FF" } }, { duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
 
-var multiMorph1s = KUTE.fromTo('#s11', { path: '#s11', attr:{ fill: "rgb(233,27,31)" }  }, { path: '#s23', attr:{ fill: "#56C5FF" } }, { reverseSecondPath: true, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var multiMorph2s = KUTE.fromTo('#s12', { path: '#s12', attr:{ fill: "rgb(255,87,34)" }  }, { path: '#s21', attr:{ fill: "#56C5FF" } }, { reverseSecondPath: true, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var multiMorph3s = KUTE.fromTo('#s13', { path: '#s13', attr:{ fill: "rgb(76,175,80)" }  }, { path: '#s24', attr:{ fill: "#56C5FF" } }, { reverseSecondPath: true, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
-var multiMorph4s = KUTE.fromTo('#s14', { path: '#s14', attr:{ fill: "rgb(33,150,243)" } }, { path: '#s22', attr:{ fill: "#56C5FF" } }, { reverseSecondPath: true, duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var multiMorph1s = KUTE.fromTo('#s11', { path: '#s11', attr:{ fill: "rgb(233,27,31)" }  }, { path: '#s23', attr:{ fill: "#56C5FF" } }, { duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var multiMorph2s = KUTE.fromTo('#s12', { path: '#s12', attr:{ fill: "rgb(255,87,34)" }  }, { path: '#s21', attr:{ fill: "#56C5FF" } }, { duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var multiMorph3s = KUTE.fromTo('#s13', { path: '#s13', attr:{ fill: "rgb(76,175,80)" }  }, { path: '#s24', attr:{ fill: "#56C5FF" } }, { duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
+var multiMorph4s = KUTE.fromTo('#s14', { path: '#s14', attr:{ fill: "rgb(33,150,243)" } }, { path: '#s22', attr:{ fill: "#56C5FF" } }, { duration: 2000, repeat: 1, yoyo: true, easing: 'easingCubicOut'});
 
 multiMorphBtn.addEventListener('click', function(){
   !multiMorph1.playing && multiMorph1.start() && multiMorph11.start() && multiMorph1s.start();

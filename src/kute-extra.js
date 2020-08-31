@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Extra v2.0.13 (http://thednp.github.io/kute.js)
+* KUTE.js Extra v2.0.14 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.13";
+  var version = "2.0.14";
 
   var KUTE = {};
 
@@ -1285,7 +1285,6 @@
   function onStartFilter(tweenProp) {
     if ( this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
-        a.dropShadow||b.dropShadow && console.log(dropShadow(a.dropShadow,b.dropShadow,v));
         elem.style[tweenProp] = (b.url                      ? ("url(" + (b.url) + ")") : '')
                               + (a.opacity||b.opacity       ? ("opacity(" + (((numbers(a.opacity,b.opacity,v) * 100)>>0)/100) + "%)") : '')
                               + (a.blur||b.blur             ? ("blur(" + (((numbers(a.blur,b.blur,v) * 100)>>0)/100) + "em)") : '')
@@ -1556,13 +1555,7 @@
   Components.SVGDraw = svgDraw;
 
   function pathToString(pathArray) {
-    return pathArray.map( function (c) {
-      if (typeof c === 'string') {
-        return c
-      } else {
-        return c.shift() + c.join(' ')
-      }
-    }).join('')
+    return pathArray.map(function (x){ return x[0].concat(x.slice(1).join(' ')); }).join(' ')
   }
 
   function onStartCubicMorph(tweenProp){
@@ -1609,7 +1602,7 @@
     return this
   }
 
-  var paramCounts = { a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0 };
+  var paramsCount = { a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0 };
 
   function finalizeSegment(state) {
     var cmd = state.pathValue[state.segmentStart], cmdLC = cmd.toLowerCase(), params = state.data;
@@ -1622,9 +1615,9 @@
     if (cmdLC === 'r') {
       state.segments.push([ cmd ].concat(params));
     } else {
-      while (params.length >= paramCounts[cmdLC]) {
-        state.segments.push([ cmd ].concat(params.splice(0, paramCounts[cmdLC])));
-        if (!paramCounts[cmdLC]) {
+      while (params.length >= paramsCount[cmdLC]) {
+        state.segments.push([ cmd ].concat(params.splice(0, paramsCount[cmdLC])));
+        if (!paramsCount[cmdLC]) {
           break;
         }
       }
@@ -1747,7 +1740,7 @@
             code === 0x2E;
   }
 
-  function isArc(code) {
+  function isArcCommand(code) {
     return (code | 0x20) === 0x61;
   }
 
@@ -1774,7 +1767,7 @@
       state.err = invalidPathValue;
       return;
     }
-    need_params = paramCounts[state.pathValue[state.index].toLowerCase()];
+    need_params = paramsCount[state.pathValue[state.index].toLowerCase()];
     state.index++;
     skipSpaces(state);
     state.data = [];
@@ -1785,7 +1778,7 @@
     comma_found = false;
     for (;;) {
       for (i = need_params; i > 0; i--) {
-        if (isArc(cmdCode) && (i === 3 || i === 4)) { scanFlag(state); }
+        if (isArcCommand(cmdCode) && (i === 3 || i === 4)) { scanFlag(state); }
         else { scanParam(state); }
         if (state.err.length) {
           return;
@@ -1812,8 +1805,15 @@
     finalizeSegment(state);
   }
 
+  function isPathArray(pathArray){
+    return Array.isArray(pathArray) && pathArray.every(function (x){
+      var pathCommand = x[0].toLowerCase();
+      return paramsCount[pathCommand] === x.length - 1 && /[achlmrqstvz]/g.test(pathCommand)
+    })
+  }
+
   function parsePathString(pathString) {
-    if ( Array.isArray(pathString) && Array.isArray(pathString[0])) {
+    if ( isPathArray(pathString) ) {
       return clonePath(pathString)
     }
     var state = new SVGPathArray(pathString), max = state.max;
@@ -1900,11 +1900,15 @@
     return res;
   }
 
+  function isAbsoluteArray(pathInput){
+    return isPathArray(pathInput) && pathInput.every(function (x){ return x[0] === x[0].toUpperCase(); })
+  }
+
   function pathToAbsolute(pathArray) {
-    pathArray = parsePathString(pathArray);
-    if (!pathArray || !pathArray.length) {
-      return [["M", 0, 0]];
+    if (isAbsoluteArray(pathArray)) {
+      return clonePath(pathArray)
     }
+    pathArray = parsePathString(pathArray);
     var resultArray = [],
         x = 0, y = 0, mx = 0, my = 0,
         start = 0, ii = pathArray.length,
@@ -2104,11 +2108,8 @@
     return [x1, y1, x2, y2, x2, y2]
   }
 
-  function processSegment(segment, params, pathCommand) {
+  function segmentToCubic(segment, params, pathCommand) {
     var nx, ny;
-    if (!segment) {
-      return ["C", params.x, params.y, params.x, params.y, params.x, params.y];
-    }
     !(segment[0] in {T: 1, Q: 1}) && (params.qx = params.qy = null);
     switch (segment[0]) {
       case "M":
@@ -2161,121 +2162,168 @@
     return segment;
   }
 
-  function fixM(path1, path2, a1, a2, i, count) {
-    if (path1 && path2 && path1[i][0] === "M" && path2[i][0] !== "M") {
-      path2.splice(i, 0, ["M", a2.x, a2.y]);
-      a1.bx = 0;
-      a1.by = 0;
-      a1.x = path1[i][1];
-      a1.y = path1[i][2];
-      count = Math.max(p.length, p2 && p2.length || 0);
-    }
-  }
-
-  function fixArc(p, p2, pc1, pc2, i, count) {
+  function fixArc(p, pc1, i, count) {
     if (p[i].length > 7) {
       p[i].shift();
       var pi = p[i];
       while (pi.length) {
         pc1[i] = "A";
-        p2 && (pc2[i] = "A");
         p.splice(i++, 0, ["C"].concat(pi.splice(0, 6)));
       }
       p.splice(i, 1);
-      count = Math.max(p.length, p2 && p2.length || 0);
+      count = p.length;
     }
   }
 
-  function pathToCurve(path, path2) {
-    var p = pathToAbsolute(path),
-        p2 = path2 && pathToAbsolute(path2),
-        attrs = {x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null},
-        attrs2 = {x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null};
-    var pcoms1 = [], pcoms2 = [],
-        pathCommand = "", pcom = "",
-        ii = Math.max(p.length, p2 && p2.length || 0);
-    for (var i = 0; i < (ii = Math.max(p.length, p2 && p2.length || 0)); i++) {
-      p[i] && (pathCommand = p[i][0]);
+  function isCurveArray(pathArray){
+    return isPathArray(pathArray) && pathArray.slice(1).every(function (x){ return x[0] === 'C'; })
+  }
+
+  function pathToCurve(pathArray) {
+    if (isCurveArray(pathArray)){
+      return clonePath(pathArray)
+    }
+    pathArray = pathToAbsolute(pathArray);
+    var attrs = {x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null},
+        segment = [], pathCommand = "", pcom = "", ii = pathArray.length;
+    for (var i = 0; i < ii; i++) {
+      pathArray[i] && (pathCommand = pathArray[i][0]);
       if (pathCommand !== "C") {
-        pcoms1[i] = pathCommand;
-        i && ( pcom = pcoms1[i - 1]);
+        segment[i] = pathCommand;
+        i && ( pcom = segment[i - 1]);
       }
-      p[i] = processSegment(p[i], attrs, pcom);
-      if (pcoms1[i] !== "A" && pathCommand === "C") { pcoms1[i] = "C"; }
-      fixArc(p,p2,pcoms1,pcoms2,i,ii);
-      if (p2) {
-        p2[i] && (pathCommand = p2[i][0]);
-        if (pathCommand !== "C") {
-          pcoms2[i] = pathCommand;
-          i && (pcom = pcoms2[i - 1]);
-        }
-        p2[i] = processSegment(p2[i], attrs2, pcom);
-        if (pcoms2[i] !== "A" && pathCommand === "C") {
-          pcoms2[i] = "C";
-        }
-        fixArc(p2,p,pcoms2,pcoms1,i,ii);
-      }
-      fixM(p, p2, attrs, attrs2, i, ii);
-      fixM(p2, p, attrs2, attrs, i, ii);
-      var seg = p[i],
-          seg2 = p2 && p2[i],
-          seglen = seg.length,
-          seg2len = p2 && seg2.length;
+      pathArray[i] = segmentToCubic(pathArray[i], attrs, pcom);
+      if (segment[i] !== "A" && pathCommand === "C") { segment[i] = "C"; }
+      fixArc(pathArray,segment,i,ii);
+      var seg = pathArray[i], seglen = seg.length;
       attrs.x = +seg[seglen - 2];
       attrs.y = +seg[seglen - 1];
       attrs.bx = +(seg[seglen - 4]) || attrs.x;
       attrs.by = +(seg[seglen - 3]) || attrs.y;
-      attrs2.bx = p2 && (+(seg2[seg2len - 4]) || attrs2.x);
-      attrs2.by = p2 && (+(seg2[seg2len - 3]) || attrs2.y);
-      attrs2.x = p2 && seg2[seg2len - 2];
-      attrs2.y = p2 && seg2[seg2len - 1];
     }
-    return p2 ? [roundPath(p), roundPath(p2)] : roundPath(p)
+    return isCurveArray(pathArray) ? roundPath(pathArray) : pathToCurve(pathArray)
   }
 
   function reverseCurve(pathCurveArray){
-    var curveSegments = clonePath(pathCurveArray),
-        curveCount = curveSegments.length - 2,
-        ci = 0, ni = 0,
-        currentSeg = [],
-        nextSeg = [],
-        x1, y1, x2, y2, x, y,
-        curveOnly = curveSegments.slice(1),
-        rotatedCurve = curveOnly.map(function (p,i){
-          ci = curveCount - i;
-          ni = ci - 1 < 0 ? curveCount : ci - 1;
-          currentSeg = curveOnly[ci];
-          nextSeg = curveOnly[ni];
-          x = nextSeg[nextSeg.length - 2];
-          y = nextSeg[nextSeg.length - 1];
-          x1 = currentSeg[3]; y1 = currentSeg[4];
-          x2 = currentSeg[1]; y2 = currentSeg[2];
-          return ['C',x1,y1,x2,y2,x,y]
-        });
-    return [['M',x,y]].concat(rotatedCurve)
+     var rotatedCurve = pathCurveArray.slice(1)
+                        .map(function (x,i,curveOnly) { return !i ? pathCurveArray[0].slice(1).concat(x.slice(1)) : curveOnly[i-1].slice(-2).concat(x.slice(1)); })
+                        .map(function (x) { return x.map(function (y,i) { return x[x.length - i - 2 * (1 - i % 2)]; } ); })
+                        .reverse();
+    return [ ['M'].concat( rotatedCurve[0].slice(0,2)) ]
+            .concat(rotatedCurve.map(function (x){ return ['C'].concat(x.slice(2) ); } ))
   }
 
   function createPath(path) {
     var np = document.createElementNS('http://www.w3.org/2000/svg','path'),
-        d = path instanceof SVGElement ? path.getAttribute('d') : path;
+        d = path instanceof SVGElement && ['path','glyph'].indexOf(path.tagName) > -1 ? path.getAttribute('d') : path;
     np.setAttribute('d',d);
     return np
   }
-  function getRotationSegments(s,idx) {
-    var segsCount = s.length, pointCount = segsCount - 1;
-    return s.map(function (p,i){
-      var oldSegIdx = idx + i, seg;
-      if (i===0 || s[oldSegIdx] && s[oldSegIdx][0] === 'M') {
-        seg = s[oldSegIdx];
-        return ['M',seg[seg.length-2],seg[seg.length-1]]
-      } else {
-        if (oldSegIdx >= segsCount) { oldSegIdx -= pointCount; }
-        return s[oldSegIdx]
+
+  function getArea(v) {
+    var x0 = v[0], y0 = v[1],
+        x1 = v[2], y1 = v[3],
+        x2 = v[4], y2 = v[5],
+        x3 = v[6], y3 = v[7];
+    return 3 * ((y3 - y0) * (x1 + x2) - (x3 - x0) * (y1 + y2)
+            + y1 * (x0 - x2) - x1 * (y0 - y2)
+            + y3 * (x2 + x0 / 3) - x3 * (y2 + y0 / 3)) / 20;
+  }
+  function getShapeArea(curveArray) {
+    return curveArray.slice(1).map(function (seg,i,cv){
+      var previous = cv[i === 0 ? cv.length-1 : i-1];
+      return getArea(previous.slice(previous.length-2).concat(seg.slice(1)))
+    }).reduce(function (a, b) { return a + b; }, 0)
+  }
+
+  function getDrawDirection(curveArray) {
+    if (!isCurveArray(curveArray)) {
+      throw("getDrawDirection expects a curveArray")
+    }
+    return getShapeArea(curveArray) >= 0
+  }
+
+  function cubicLerp(a, b, t) {
+    return [a[0]*(1 - t) + b[0]*t, a[1]*(1 - t) + b[1]*t]
+  }
+  function splitCubic(pts,t) {
+    t = t || 0.5;
+    var p0 = pts.slice(0,2),
+        p1 = pts.slice(2,4),
+        p2 = pts.slice(4,6),
+        p3 = pts.slice(6,8),
+        p4 = cubicLerp(p0, p1, t),
+        p5 = cubicLerp(p1, p2, t),
+        p6 = cubicLerp(p2, p3, t),
+        p7 = cubicLerp(p4, p5, t),
+        p8 = cubicLerp(p5, p6, t),
+        p9 = cubicLerp(p7, p8, t),
+        firsthalf  = ['C'].concat( p4, p7, p9),
+        secondhalf = ['C'].concat( p8, p6, p3);
+    return [firsthalf, secondhalf]
+  }
+
+  function splitPath(pathString) {
+    return pathString
+      .replace( /(m|M)/g, "|$1")
+      .split('|')
+      .map(function (s){ return s.trim(); })
+      .filter(function (s){ return s; })
+  }
+
+  function getCurveArray(pathString){
+    return pathToCurve(splitPath(pathToString(pathToAbsolute(pathString)))[0]).map(function (x,i,pathArray){
+      var curveToPath = i ? [['M'].concat(pathArray[i-1].slice(-2))].concat([x]) : [],
+          curveLength = i ? createPath(pathToString(clonePath(curveToPath))).getTotalLength() : 0,
+          subsegs = i ? (curveLength ? splitCubic( pathArray[i-1].slice(-2).concat(x.slice(1)) ) : [x,x]) : [x];
+      return {
+        seg: x,
+        subsegs: subsegs,
+        length: curveLength
       }
     })
   }
+  function equalizeSegments(path1,path2,TL){
+    var c1 = getCurveArray(path1),
+        c2 = getCurveArray(path2),
+        L1 = c1.length,
+        L2 = c2.length,
+        l1 = c1.filter(function (x){ return x.length; }).length,
+        l2 = c2.filter(function (x){ return x.length; }).length,
+        m1 = c1.filter(function (x){ return x.length; }).reduce(function (a,ref){
+          var length = ref.length;
+          return a+length;
+    },0) / l1 || 0,
+        m2 = c2.filter(function (x){ return x.length; }).reduce(function (a,ref){
+          var length = ref.length;
+          return a+length;
+    },0) / l2 || 0,
+        tl = TL || Math.max(L1,L2),
+        mm = [m1,m2],
+        dif = [tl-L1,tl-L2],
+        result = [c1,c2].map(function (x,i) { return x.length === tl ? x.map(function (y){ return y.seg; })
+               : x.map(function (y,j) {
+                  var canSplit = j && dif[i] && y.length >= mm[i],
+                      segResult = canSplit ? y.subsegs : [y.seg];
+                  dif[i] -= canSplit ? 1 : 0;
+                  return segResult
+                }).flat(); });
+    return result[0].length === result[1].length ? result : equalizeSegments(result[0],result[1],tl)
+  }
   function getRotations(a) {
-    return a.map(function (s,i) { return getRotationSegments(a,i); })
+    var segCount = a.length, pointCount = segCount - 1;
+    return a.map(function (f,idx) {
+      return a.map(function (p,i){
+        var oldSegIdx = idx + i, seg;
+        if (i===0 || a[oldSegIdx] && a[oldSegIdx][0] === 'M') {
+          seg = a[oldSegIdx];
+          return ['M'].concat(seg.slice(-2))
+        } else {
+          if (oldSegIdx >= segCount) { oldSegIdx -= pointCount; }
+          return a[oldSegIdx]
+        }
+      })
+    })
   }
   function getRotatedCurve(a,b) {
     var segCount = a.length - 1,
@@ -2309,19 +2357,14 @@
     var pathObject = {},
         el = value instanceof SVGElement ? value : /^\.|^\#/.test(value) ? selector(value) : null,
         pathReg = new RegExp('\\n','ig');
-    try {
-      if ( typeof(value) === 'object' && value.curve ) {
-        return value;
-      } else if ( el && /path|glyph/.test(el.tagName) ) {
-        pathObject.original = el.getAttribute('d').replace(pathReg,'');
-      } else if (!el && typeof(value) === 'string') {
-        pathObject.original = value.replace(pathReg,'');
-      }
-      return pathObject;
+    if ( typeof(value) === 'object' && value.curve ) {
+      return value;
+    } else if ( el && /path|glyph/.test(el.tagName) ) {
+      pathObject.original = el.getAttribute('d').replace(pathReg,'');
+    } else if (!el && typeof(value) === 'string') {
+      pathObject.original = value.replace(pathReg,'');
     }
-    catch(e){
-      throw TypeError(("KUTE.js - " + invalidPathValue + " " + e))
-    }
+    return pathObject;
   }
   function crossCheckCubicMorph(tweenProp){
     if (this.valuesEnd[tweenProp]) {
@@ -2330,12 +2373,10 @@
       if ( !pathCurve1 || !pathCurve2 || ( pathCurve1 && pathCurve2 && pathCurve1[0][0] === 'M' && pathCurve1.length !== pathCurve2.length) ) {
         var path1 = this.valuesStart[tweenProp].original,
             path2 = this.valuesEnd[tweenProp].original,
-            curves = pathToCurve(path1,path2),
-            curve0 = this._reverseFirstPath ? reverseCurve(curves[0]) : curves[0],
-            curve1 = this._reverseSecondPath ? reverseCurve(curves[1]) : curves[1];
-        curve0 = getRotatedCurve.call(this,curve0,curve1);
+            curves = equalizeSegments(path1,path2),
+            curve0 = getDrawDirection(curves[0]) !== getDrawDirection(curves[1]) ? reverseCurve(curves[0]) : clonePath(curves[0]);
         this.valuesStart[tweenProp].curve = curve0;
-        this.valuesEnd[tweenProp].curve = curve1;
+        this.valuesEnd[tweenProp].curve = getRotatedCurve(curves[1],curve0);
       }
     }
   }
@@ -2353,8 +2394,9 @@
     functions: svgCubicMorphFunctions,
     Util: {
       pathToCurve: pathToCurve, pathToAbsolute: pathToAbsolute, pathToString: pathToString, parsePathString: parsePathString,
-      getRotatedCurve: getRotatedCurve, getRotations: getRotations,
-      getRotationSegments: getRotationSegments, reverseCurve: reverseCurve, createPath: createPath
+      getRotatedCurve: getRotatedCurve, getRotations: getRotations, equalizeSegments: equalizeSegments,
+      reverseCurve: reverseCurve, createPath: createPath, clonePath: clonePath, getDrawDirection: getDrawDirection,
+      splitCubic: splitCubic, getCurveArray: getCurveArray
     }
   };
   Components.SVGCubicMorph = svgCubicMorph;
@@ -2393,7 +2435,7 @@
   function parseStringOrigin (origin, ref) {
     var x = ref.x;
     var width = ref.width;
-    return /[a-zA-Z]/.test(origin) && !/px/.test(origin)
+    return /[a-z]/i.test(origin) && !/px/.test(origin)
       ? origin.replace(/top|left/,0).replace(/right|bottom/,100).replace(/center|middle/,50)
       : /%/.test(origin) ? (x + parseFloat(origin) * width / 100) : parseFloat(origin);
   }
