@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Standard v2.0.14 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.0.15 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.14";
+  var version = "2.0.15";
 
   var KUTE = {};
 
@@ -1605,7 +1605,7 @@
     state.param = +state.pathValue.slice(start, index);
   }
 
-  function isCommand(code) {
+  function isPathCommand(code) {
     switch (code | 0x20) {
       case 0x6D:
       case 0x7A:
@@ -1653,7 +1653,7 @@
     var max = state.max, cmdCode, comma_found, need_params, i;
     state.segmentStart = state.index;
     cmdCode = state.pathValue.charCodeAt(state.index);
-    if (!isCommand(cmdCode)) {
+    if (!isPathCommand(cmdCode)) {
       state.err = invalidPathValue;
       return;
     }
@@ -1762,7 +1762,7 @@
     return d
   }
 
-  function ellipsePath(x, y, rx, ry, a) {
+  function ellipseToArc(x, y, rx, ry, a) {
     if (a == null && ry == null) {
       ry = rx;
     }
@@ -1846,13 +1846,13 @@
             break;
           case "O":
             resultArray.pop();
-            dots = ellipsePath(x, y, +pa[1], +pa[2]);
+            dots = ellipseToArc(x, y, +pa[1], +pa[2]);
             dots.push(dots[0]);
             resultArray = resultArray.concat(dots);
             break;
           case "U":
             resultArray.pop();
-            resultArray = resultArray.concat(ellipsePath(x, y, pa[1], pa[2], pa[3]));
+            resultArray = resultArray.concat(ellipseToArc(x, y, pa[1], pa[2], pa[3]));
             r = ["U"].concat(resultArray[resultArray.length - 1].slice(-2));
             break;
           case "M":
@@ -1870,12 +1870,12 @@
         r = ["R"].concat(pa.slice(-2));
       } else if (pa0 === "O") {
         resultArray.pop();
-        dots = ellipsePath(x, y, +pa[1], +pa[2]);
+        dots = ellipseToArc(x, y, +pa[1], +pa[2]);
         dots.push(dots[0]);
         resultArray = resultArray.concat(dots);
       } else if (pa0 === "U") {
         resultArray.pop();
-        resultArray = resultArray.concat(ellipsePath(x, y, +pa[1], +pa[2], +pa[3]));
+        resultArray = resultArray.concat(ellipseToArc(x, y, +pa[1], +pa[2], +pa[3]));
         r = ["U"].concat(resultArray[resultArray.length - 1].slice(-2));
       } else {
         pa.map(function (k){ return r.push(k); });
@@ -1907,7 +1907,7 @@
   }
 
   function pathToString(pathArray) {
-    return pathArray.map(function (x){ return x[0].concat(x.slice(1).join(' ')); }).join(' ')
+    return pathArray.map(function (x){ return x[0].concat(x.slice(1).join(' ')); }).join('')
   }
 
   function splitPath(pathString) {
