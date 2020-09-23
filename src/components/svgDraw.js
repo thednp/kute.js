@@ -66,15 +66,15 @@ function getEllipseLength(el) { // returns the length of an ellipse
 }
 
 function getTotalLength(el) { // returns the result of any of the below functions
-  if (/rect/.test(el.tagName)) {
+  if ('rect'===el.tagName) {
     return getRectLength(el);
-  } else if (/circle/.test(el.tagName)) {
+  } else if ('circle'===el.tagName) {
     return getCircleLength(el);
-  } else if (/ellipse/.test(el.tagName)) {
+  } else if ('ellipse'===el.tagName) {
     return getEllipseLength(el);
-  } else if (/polygon|polyline/.test(el.tagName)) {
+  } else if (['polygon,polyline'].indexOf(el.tagName)>-1) {
     return getPolyLength(el);
-  } else if (/line/.test(el.tagName)) {
+  } else if ('line'===el.tagName) {
     return getLineLength(el);
   }
 }

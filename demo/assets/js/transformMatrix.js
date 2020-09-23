@@ -35,10 +35,10 @@ var tween13 = KUTE.fromTo(el1, { transform: {perspective:400,translate3d:[150,20
 
 // chain tweens
 try {
-    tween11.chain(tween12);
-    tween12.chain(tween13);
+  tween11.chain(tween12);
+  tween12.chain(tween13);
 } catch(e) {
-    console.warn(e+". TweenBase doesn\'t support chain method")
+  console.warn(e+". TweenBase doesn\'t support chain method")
 }
 
 // built the tween objects for element2
@@ -48,10 +48,10 @@ var tween23 = KUTE.fromTo(el2, { transform: {perspective:400,translate3d:[150,20
 
 // chain tweens
 try{
-    tween21.chain(tween22);
-    tween22.chain(tween23);
+  tween21.chain(tween22);
+  tween22.chain(tween23);
 }catch(e){
-    console.warn(e+". TweenBase doesn\'t support chain method")
+  console.warn(e+". TweenBase doesn\'t support chain method")
 }
 
 // built the tween objects for element3

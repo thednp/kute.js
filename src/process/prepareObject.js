@@ -4,15 +4,15 @@ import defaultValues from '../objects/defaultValues.js'
 
 // prepareObject - returns all processed valuesStart / valuesEnd
 export default function (obj, fn) { // this, props object, type: start/end
-  const propertiesObject = fn === 'start' ? this.valuesStart : this.valuesEnd
+  let propertiesObject = fn === 'start' ? this.valuesStart : this.valuesEnd
         
-  for ( const component in prepareProperty ) {
+  for ( let component in prepareProperty ) {
     let prepareComponent = prepareProperty[component],
         supportComponent = supportedProperties[component]
 
-    for ( const tweenCategory in prepareComponent ) {
+    for ( let tweenCategory in prepareComponent ) {
       let transformObject = {}
-      for (const tweenProp in obj) {
+      for (let tweenProp in obj) {
 
         if ( defaultValues[tweenProp] && prepareComponent[tweenProp] ) { // scroll, opacity, other components
           propertiesObject[tweenProp] = prepareComponent[tweenProp].call(this,tweenProp,obj[tweenProp]); 

@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Extra v2.0.15 (http://thednp.github.io/kute.js)
+* KUTE.js Extra v2.0.16 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.15";
+  var version = "2.0.16";
 
   var KUTE = {};
 
@@ -1187,94 +1187,6 @@
   };
   Components.ColorProperties = colorProperties;
 
-  var attributes = {};
-  var onStartAttr = {
-    attr : function(tweenProp){
-      if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-        KUTE[tweenProp] = function (elem, vS, vE, v) {
-          for ( var oneAttr in vE ){
-            KUTE.attributes[oneAttr](elem,oneAttr,vS[oneAttr],vE[oneAttr],v);
-          }
-        };
-      }
-    },
-    attributes : function(tweenProp){
-      if (!KUTE[tweenProp] && this.valuesEnd.attr) {
-        KUTE[tweenProp] = attributes;
-      }
-    }
-  };
-
-  var ComponentName = 'htmlAttributes';
-  var svgColors = ['fill','stroke','stop-color'];
-  function replaceUppercase (a) { return a.replace(/[A-Z]/g, "-$&").toLowerCase(); }
-  function getAttr(tweenProp,value){
-    var attrStartValues = {};
-    for (var attr in value){
-      var attribute = replaceUppercase(attr).replace(/_+[a-z]+/,'');
-      var currentValue = this.element.getAttribute(attribute);
-      attrStartValues[attribute] = svgColors.includes(attribute) ? (currentValue || 'rgba(0,0,0,0)') : (currentValue || (/opacity/i.test(attr) ? 1 : 0));
-    }
-    return attrStartValues;
-  }
-  function prepareAttr(tweenProp,attrObj){
-    var attributesObject = {};
-    for ( var p in attrObj ) {
-      var prop = replaceUppercase(p);
-      var regex = /(%|[a-z]+)$/;
-      var currentValue = this.element.getAttribute(prop.replace(/_+[a-z]+/,''));
-      if ( !svgColors.includes(prop)) {
-        if ( currentValue !== null && regex.test(currentValue) ) {
-          var unit = trueDimension(currentValue).u || trueDimension(attrObj[p]).u;
-          var suffix = /%/.test(unit) ? '_percent' : ("_" + unit);
-          onStart[ComponentName][prop+suffix] = function(tp) {
-            if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
-              attributes[tp] = function (elem, p, a, b, v) {
-                var _p = p.replace(suffix,'');
-                elem.setAttribute(_p, ( (numbers(a.v,b.v,v)*1000>>0)/1000) + b.u );
-              };
-            }
-          };
-          attributesObject[prop+suffix] = trueDimension(attrObj[p]);
-        } else if ( !regex.test(attrObj[p]) || currentValue === null || currentValue !== null && !regex.test(currentValue) ) {
-          onStart[ComponentName][prop] = function(tp) {
-            if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
-              attributes[tp] = function (elem, oneAttr, a, b, v) {
-                elem.setAttribute(oneAttr, (numbers(a,b,v) * 1000 >> 0) / 1000 );
-              };
-            }
-          };
-          attributesObject[prop] = parseFloat(attrObj[p]);
-        }
-      } else {
-        onStart[ComponentName][prop] = function(tp) {
-          if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
-            attributes[tp] = function (elem, oneAttr, a, b, v) {
-              elem.setAttribute(oneAttr, colors(a,b,v));
-            };
-          }
-        };
-        attributesObject[prop] = trueColor(attrObj[p]) || defaultValues.htmlAttributes[p];
-      }
-    }
-    return attributesObject;
-  }
-  var attrFunctions = {
-    prepareStart: getAttr,
-    prepareProperty: prepareAttr,
-    onStart: onStartAttr
-  };
-  var htmlAttributes = {
-    component: ComponentName,
-    property: 'attr',
-    subProperties: ['fill','stroke','stop-color','fill-opacity','stroke-opacity'],
-    defaultValue: {fill : 'rgb(0,0,0)', stroke: 'rgb(0,0,0)', 'stop-color': 'rgb(0,0,0)', opacity: 1, 'stroke-opacity': 1,'fill-opacity': 1},
-    Interpolate: { numbers: numbers,colors: colors },
-    functions: attrFunctions,
-    Util: { replaceUppercase: replaceUppercase, trueColor: trueColor, trueDimension: trueDimension }
-  };
-  Components.HTMLAttributes = htmlAttributes;
-
   function dropShadow(a,b,v){
     var params = [], unit = 'px';
     for (var i=0; i<3; i++){
@@ -1399,6 +1311,94 @@
   };
   Components.FilterEffects = filterEffects;
 
+  var attributes = {};
+  var onStartAttr = {
+    attr : function(tweenProp){
+      if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
+        KUTE[tweenProp] = function (elem, vS, vE, v) {
+          for ( var oneAttr in vE ){
+            KUTE.attributes[oneAttr](elem,oneAttr,vS[oneAttr],vE[oneAttr],v);
+          }
+        };
+      }
+    },
+    attributes : function(tweenProp){
+      if (!KUTE[tweenProp] && this.valuesEnd.attr) {
+        KUTE[tweenProp] = attributes;
+      }
+    }
+  };
+
+  var ComponentName = 'htmlAttributes';
+  var svgColors = ['fill','stroke','stop-color'];
+  function replaceUppercase (a) { return a.replace(/[A-Z]/g, "-$&").toLowerCase(); }
+  function getAttr(tweenProp,value){
+    var attrStartValues = {};
+    for (var attr in value){
+      var attribute = replaceUppercase(attr).replace(/_+[a-z]+/,''),
+          currentValue = this.element.getAttribute(attribute);
+      attrStartValues[attribute] = svgColors.includes(attribute) ? (currentValue || 'rgba(0,0,0,0)') : (currentValue || (/opacity/i.test(attr) ? 1 : 0));
+    }
+    return attrStartValues;
+  }
+  function prepareAttr(tweenProp,attrObj){
+    var attributesObject = {};
+    for ( var p in attrObj ) {
+      var prop = replaceUppercase(p),
+          regex = /(%|[a-z]+)$/,
+          currentValue = this.element.getAttribute(prop.replace(/_+[a-z]+/,''));
+      if ( !svgColors.includes(prop)) {
+        if ( currentValue !== null && regex.test(currentValue) ) {
+          var unit = trueDimension(currentValue).u || trueDimension(attrObj[p]).u,
+              suffix = /%/.test(unit) ? '_percent' : ("_" + unit);
+          onStart[ComponentName][prop+suffix] = function(tp) {
+            if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
+              attributes[tp] = function (elem, p, a, b, v) {
+                var _p = p.replace(suffix,'');
+                elem.setAttribute(_p, ( (numbers(a.v,b.v,v)*1000>>0)/1000) + b.u );
+              };
+            }
+          };
+          attributesObject[prop+suffix] = trueDimension(attrObj[p]);
+        } else if ( !regex.test(attrObj[p]) || currentValue === null || currentValue !== null && !regex.test(currentValue) ) {
+          onStart[ComponentName][prop] = function(tp) {
+            if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
+              attributes[tp] = function (elem, oneAttr, a, b, v) {
+                elem.setAttribute(oneAttr, (numbers(a,b,v) * 1000 >> 0) / 1000 );
+              };
+            }
+          };
+          attributesObject[prop] = parseFloat(attrObj[p]);
+        }
+      } else {
+        onStart[ComponentName][prop] = function(tp) {
+          if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
+            attributes[tp] = function (elem, oneAttr, a, b, v) {
+              elem.setAttribute(oneAttr, colors(a,b,v));
+            };
+          }
+        };
+        attributesObject[prop] = trueColor(attrObj[p]) || defaultValues.htmlAttributes[p];
+      }
+    }
+    return attributesObject;
+  }
+  var attrFunctions = {
+    prepareStart: getAttr,
+    prepareProperty: prepareAttr,
+    onStart: onStartAttr
+  };
+  var htmlAttributes = {
+    component: ComponentName,
+    property: 'attr',
+    subProperties: ['fill','stroke','stop-color','fill-opacity','stroke-opacity'],
+    defaultValue: {fill : 'rgb(0,0,0)', stroke: 'rgb(0,0,0)', 'stop-color': 'rgb(0,0,0)', opacity: 1, 'stroke-opacity': 1,'fill-opacity': 1},
+    Interpolate: { numbers: numbers,colors: colors },
+    functions: attrFunctions,
+    Util: { replaceUppercase: replaceUppercase, trueColor: trueColor, trueDimension: trueDimension }
+  };
+  Components.HTMLAttributes = htmlAttributes;
+
   function onStartOpacity(tweenProp){
     if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
@@ -1490,15 +1490,15 @@
     return ((Math.sqrt(.5 * ((len * len) + (wid * wid)))) * (Math.PI * 2)) / 2;
   }
   function getTotalLength(el) {
-    if (/rect/.test(el.tagName)) {
+    if ('rect'===el.tagName) {
       return getRectLength(el);
-    } else if (/circle/.test(el.tagName)) {
+    } else if ('circle'===el.tagName) {
       return getCircleLength(el);
-    } else if (/ellipse/.test(el.tagName)) {
+    } else if ('ellipse'===el.tagName) {
       return getEllipseLength(el);
-    } else if (/polygon|polyline/.test(el.tagName)) {
+    } else if (['polygon,polyline'].indexOf(el.tagName)>-1) {
       return getPolyLength(el);
-    } else if (/line/.test(el.tagName)) {
+    } else if ('line'===el.tagName) {
       return getLineLength(el);
     }
   }
@@ -1574,50 +1574,45 @@
   }
 
   function clonePath(pathArray){
-    return pathArray.map(function (x) { return Array.isArray(x) ? clonePath(x) : !isNaN(+x) ? +x : x; } )
+    return pathArray.map(function (x) { return Array.isArray(x)
+      ? clonePath(x)
+      : !isNaN(+x) ? +x : x; } )
   }
 
-  var SVGPathCommanderOptions = {
+  var options = {
+    origin:null,
     decimals:3,
     round:1
   };
 
-  function roundPath(pathArray) {
-    return     pathArray.map( function (seg) { return seg.map(function (c,i) {
-          var nr = +c, dc = Math.pow(10,SVGPathCommanderOptions.decimals);
-          return i ? (nr % 1 === 0 ? nr : (nr*dc>>0)/dc) : c
-        }
-      ); }) 
-  }
-
-  function SVGPathArray(pathString){
-    this.segments = [];
-    this.pathValue = pathString;
-    this.max = pathString.length;
-    this.index  = 0;
-    this.param = 0.0;
-    this.segmentStart = 0;
-    this.data = [];
-    this.err = '';
-    return this
+  function roundPath(pathArray,round) {
+    var decimalsOption = !isNaN(+round) ? +round :  options.decimals;
+    return decimalsOption ?
+      pathArray.map( function (seg) { return seg.map(function (c,i) {
+        var nr = +c, dc = Math.pow(10,decimalsOption);
+        return nr ? (nr % 1 === 0 ? nr : Math.round(nr*dc)/dc) : c
+      }
+    ); }) : clonePath(pathArray)
   }
 
   var paramsCount = { a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0 };
 
   function finalizeSegment(state) {
-    var cmd = state.pathValue[state.segmentStart], cmdLC = cmd.toLowerCase(), params = state.data;
-    if (cmdLC === 'm' && params.length > 2) {
-      state.segments.push([ cmd, params[0], params[1] ]);
+    var pathCommand = state.pathValue[state.segmentStart],
+        pathComLK = pathCommand.toLowerCase(),
+        params = state.data;
+    if (pathComLK === 'm' && params.length > 2) {
+      state.segments.push([ pathCommand, params[0], params[1] ]);
       params = params.slice(2);
-      cmdLC = 'l';
-      cmd = (cmd === 'm') ? 'l' : 'L';
+      pathComLK = 'l';
+      pathCommand = (pathCommand === 'm') ? 'l' : 'L';
     }
-    if (cmdLC === 'r') {
-      state.segments.push([ cmd ].concat(params));
+    if (pathComLK === 'r') {
+      state.segments.push([ pathCommand ].concat(params));
     } else {
-      while (params.length >= paramsCount[cmdLC]) {
-        state.segments.push([ cmd ].concat(params.splice(0, paramsCount[cmdLC])));
-        if (!paramsCount[cmdLC]) {
+      while (params.length >= paramsCount[pathComLK]) {
+        state.segments.push([ pathCommand ].concat(params.splice(0, paramsCount[pathComLK])));
+        if (!paramsCount[pathComLK]) {
           break;
         }
       }
@@ -1638,7 +1633,7 @@
       state.index++;
       return;
     }
-    state.err = invalidPathValue;
+    state.err = invalidPathValue + ": invalid Arc flag " + ch;
   }
 
   function isDigit(code) {
@@ -1655,7 +1650,7 @@
         hasDot = false,
         ch;
     if (index >= max) {
-      state.err = invalidPathValue;
+      state.err = invalidPathValue + ": missing param " + (state.pathValue[index]);
       return;
     }
     ch = state.pathValue.charCodeAt(index);
@@ -1664,7 +1659,7 @@
       ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
     }
     if (!isDigit(ch) && ch !== 0x2E) {
-      state.err = invalidPathValue;
+      state.err = invalidPathValue + ": " + (state.pathValue[index]) + " not number";
       return;
     }
     if (ch !== 0x2E) {
@@ -1673,7 +1668,7 @@
       ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
       if (zeroFirst && index < max) {
         if (ch && isDigit(ch)) {
-          state.err = invalidPathValue;
+          state.err = invalidPathValue + ": " + (state.pathValue[start]) + " illegal number";
           return;
         }
       }
@@ -1694,7 +1689,7 @@
     }
     if (ch === 0x65 || ch === 0x45) {
       if (hasDot && !hasCeiling && !hasDecimal) {
-        state.err = invalidPathValue;
+        state.err = invalidPathValue + ": " + (state.pathValue[index]) + " invalid float exponent";
         return;
       }
       index++;
@@ -1707,12 +1702,27 @@
           index++;
         }
       } else {
-        state.err = invalidPathValue;
+        state.err = invalidPathValue + ": " + (state.pathValue[index]) + " invalid float exponent";
         return;
       }
     }
     state.index = index;
     state.param = +state.pathValue.slice(start, index);
+  }
+
+  function isSpace(ch) {
+    var specialSpaces = [
+      0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
+      0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF ];
+    return (ch === 0x0A) || (ch === 0x0D) || (ch === 0x2028) || (ch === 0x2029) ||
+      (ch === 0x20) || (ch === 0x09) || (ch === 0x0B) || (ch === 0x0C) || (ch === 0xA0) ||
+      (ch >= 0x1680 && specialSpaces.indexOf(ch) >= 0);
+  }
+
+  function skipSpaces(state) {
+    while (state.index < state.max && isSpace(state.pathValue.charCodeAt(state.index))) {
+      state.index++;
+    }
   }
 
   function isPathCommand(code) {
@@ -1744,27 +1754,12 @@
     return (code | 0x20) === 0x61;
   }
 
-  function isSpace(ch) {
-    var specialSpaces = [
-      0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
-      0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF ];
-    return (ch === 0x0A) || (ch === 0x0D) || (ch === 0x2028) || (ch === 0x2029) ||
-      (ch === 0x20) || (ch === 0x09) || (ch === 0x0B) || (ch === 0x0C) || (ch === 0xA0) ||
-      (ch >= 0x1680 && specialSpaces.indexOf(ch) >= 0);
-  }
-
-  function skipSpaces(state) {
-    while (state.index < state.max && isSpace(state.pathValue.charCodeAt(state.index))) {
-      state.index++;
-    }
-  }
-
   function scanSegment(state) {
     var max = state.max, cmdCode, comma_found, need_params, i;
     state.segmentStart = state.index;
     cmdCode = state.pathValue.charCodeAt(state.index);
     if (!isPathCommand(cmdCode)) {
-      state.err = invalidPathValue;
+      state.err = invalidPathValue + ": " + (state.pathValue[state.index]) + " not a path command";
       return;
     }
     need_params = paramsCount[state.pathValue[state.index].toLowerCase()];
@@ -1805,106 +1800,52 @@
     finalizeSegment(state);
   }
 
+  function SVGPathArray(pathString){
+    this.segments = [];
+    this.pathValue = pathString;
+    this.max = pathString.length;
+    this.index  = 0;
+    this.param = 0.0;
+    this.segmentStart = 0;
+    this.data = [];
+    this.err = '';
+    return this
+  }
+
   function isPathArray(pathArray){
-    return Array.isArray(pathArray) && pathArray.every(function (x){
-      var pathCommand = x[0].toLowerCase();
-      return paramsCount[pathCommand] === x.length - 1 && /[achlmrqstvz]/g.test(pathCommand)
+    return Array.isArray(pathArray) && pathArray.every(function (seg){
+      var pathCommand = seg[0].toLowerCase();
+      return paramsCount[pathCommand] === seg.length - 1 && /[achlmrqstvz]/g.test(pathCommand)
     })
   }
 
-  function parsePathString(pathString) {
+  function parsePathString(pathString,round) {
     if ( isPathArray(pathString) ) {
       return clonePath(pathString)
     }
-    var state = new SVGPathArray(pathString), max = state.max;
+    var state = new SVGPathArray(pathString);
     skipSpaces(state);
-    while (state.index < max && !state.err.length) {
+    while (state.index < state.max && !state.err.length) {
       scanSegment(state);
     }
     if (state.err.length) {
       state.segments = [];
     } else if (state.segments.length) {
       if ('mM'.indexOf(state.segments[0][0]) < 0) {
-        state.err = invalidPathValue;
+        state.err = invalidPathValue + ": missing M/m";
         state.segments = [];
       } else {
         state.segments[0][0] = 'M';
       }
     }
-    return roundPath(state.segments)
-  }
-
-  function catmullRom2bezier(crp, z) {
-    var d = [];
-    for (var i = 0, iLen = crp.length; iLen - 2 * !z > i; i += 2) {
-      var p = [
-                {x: +crp[i - 2], y: +crp[i - 1]},
-                {x: +crp[i],     y: +crp[i + 1]},
-                {x: +crp[i + 2], y: +crp[i + 3]},
-                {x: +crp[i + 4], y: +crp[i + 5]}
-              ];
-      if (z) {
-        if (!i) {
-          p[0] = {x: +crp[iLen - 2], y: +crp[iLen - 1]};
-        } else if (iLen - 4 == i) {
-          p[3] = {x: +crp[0], y: +crp[1]};
-        } else if (iLen - 2 == i) {
-          p[2] = {x: +crp[0], y: +crp[1]};
-          p[3] = {x: +crp[2], y: +crp[3]};
-        }
-      } else {
-        if (iLen - 4 == i) {
-          p[3] = p[2];
-        } else if (!i) {
-          p[0] = {x: +crp[i], y: +crp[i + 1]};
-        }
-      }
-      d.push([
-        "C",
-        (-p[0].x + 6 * p[1].x + p[2].x) / 6,
-        (-p[0].y + 6 * p[1].y + p[2].y) / 6,
-        (p[1].x + 6 * p[2].x - p[3].x) / 6,
-        (p[1].y + 6*p[2].y - p[3].y) / 6,
-        p[2].x,
-        p[2].y
-      ]);
-    }
-    return d
-  }
-
-  function ellipseToArc(x, y, rx, ry, a) {
-    if (a == null && ry == null) {
-      ry = rx;
-    }
-    x = +x;
-    y = +y;
-    rx = +rx;
-    ry = +ry;
-    var res;
-    if (a != null) {
-      var rad = Math.PI / 180,
-          x1 = x + rx * Math.cos(-ry * rad),
-          x2 = x + rx * Math.cos(-a * rad),
-          y1 = y + rx * Math.sin(-ry * rad),
-          y2 = y + rx * Math.sin(-a * rad);
-      res = [["M", x1, y1], ["A", rx, rx, 0, +(a - ry > 180), 0, x2, y2]];
-    } else {
-      res = [
-          ["M", x, y],
-          ["m", 0, -ry],
-          ["a", rx, ry, 0, 1, 1, 0, 2 * ry],
-          ["a", rx, ry, 0, 1, 1, 0, -2 * ry],
-          ["z"]
-      ];
-    }
-    return res;
+    return roundPath(state.segments,round)
   }
 
   function isAbsoluteArray(pathInput){
     return isPathArray(pathInput) && pathInput.every(function (x){ return x[0] === x[0].toUpperCase(); })
   }
 
-  function pathToAbsolute(pathArray) {
+  function pathToAbsolute(pathArray,round) {
     if (isAbsoluteArray(pathArray)) {
       return clonePath(pathArray)
     }
@@ -1912,10 +1853,8 @@
     var resultArray = [],
         x = 0, y = 0, mx = 0, my = 0,
         start = 0, ii = pathArray.length,
-        crz = pathArray.length === 3 &&
-              pathArray[0][0] === "M" &&
-              pathArray[1][0].toUpperCase() === "R" &&
-              pathArray[2][0].toUpperCase() === "Z";
+        pathCommand = '', segment = [], segLength = 0,
+        absoluteSegment = [];
     if (pathArray[0][0] === "M") {
       x = +pathArray[0][1];
       y = +pathArray[0][2];
@@ -1924,96 +1863,54 @@
       start++;
       resultArray[0] = ["M", x, y];
     }
-    var loop = function ( i ) {
-      var r = [], pa = pathArray[i], pa0 = pa[0], dots = [];
-      resultArray.push(r = []);
-      if (pa0 !== pa0.toUpperCase()) {
-        r[0] = pa0.toUpperCase();
-        switch (r[0]) {
+    for (var i = start; i < ii; i++) {
+      segment = pathArray[i];
+      pathCommand = segment[0];
+      resultArray.push(absoluteSegment = []);
+      if (pathCommand !== pathCommand.toUpperCase()) {
+        absoluteSegment[0] = pathCommand.toUpperCase();
+        switch (absoluteSegment[0]) {
           case "A":
-            r[1] = pa[1];
-            r[2] = pa[2];
-            r[3] = pa[3];
-            r[4] = pa[4];
-            r[5] = pa[5];
-            r[6] = +pa[6] + x;
-            r[7] = +pa[7] + y;
+            segment.slice(1,-2)
+                   .concat([+segment[6] + x, +segment[7] + y])
+                   .map(function (s){ return absoluteSegment.push(s); });
             break;
           case "V":
-            r[1] = +pa[1] + y;
+            absoluteSegment[1] = +segment[1] + y;
             break;
           case "H":
-            r[1] = +pa[1] + x;
-            break;
-          case "R":
-            dots = [x, y].concat(pa.slice(1));
-            for (var j = 2, jj = dots.length; j < jj; j++) {
-              dots[j] = +dots[j] + x;
-              dots[++j] = +dots[j] + y;
-            }
-            resultArray.pop();
-            resultArray = resultArray.concat(catmullRom2bezier(dots, crz));
-            break;
-          case "O":
-            resultArray.pop();
-            dots = ellipseToArc(x, y, +pa[1], +pa[2]);
-            dots.push(dots[0]);
-            resultArray = resultArray.concat(dots);
-            break;
-          case "U":
-            resultArray.pop();
-            resultArray = resultArray.concat(ellipseToArc(x, y, pa[1], pa[2], pa[3]));
-            r = ["U"].concat(resultArray[resultArray.length - 1].slice(-2));
+            absoluteSegment[1] = +segment[1] + x;
             break;
           case "M":
-            mx = +pa[1] + x;
-            my = +pa[2] + y;
+            mx = +segment[1] + x;
+            my = +segment[2] + y;
           default:
-            for (var k = 1, kk = pa.length; k < kk; k++) {
-              r[k] = +pa[k] + ((k % 2) ? x : y);
-            }
+            segment.map(function (s,j){ return j && absoluteSegment.push(+s + ((j % 2) ? x : y)); });
         }
-      } else if (pa0 === "R") {
-        dots = [x, y].concat(pa.slice(1));
-        resultArray.pop();
-        resultArray = resultArray.concat(catmullRom2bezier(dots, crz));
-        r = ["R"].concat(pa.slice(-2));
-      } else if (pa0 === "O") {
-        resultArray.pop();
-        dots = ellipseToArc(x, y, +pa[1], +pa[2]);
-        dots.push(dots[0]);
-        resultArray = resultArray.concat(dots);
-      } else if (pa0 === "U") {
-        resultArray.pop();
-        resultArray = resultArray.concat(ellipseToArc(x, y, +pa[1], +pa[2], +pa[3]));
-        r = ["U"].concat(resultArray[resultArray.length - 1].slice(-2));
       } else {
-        pa.map(function (k){ return r.push(k); });
+        segment.map(function (k){ return absoluteSegment.push(k); });
       }
-      pa0 = pa0.toUpperCase();
-      if (pa0 !== "O") {
-        switch (r[0]) {
-          case "Z":
-            x = mx;
-            y = my;
-            break;
-          case "H":
-            x = +r[1];
-            break;
-          case "V":
-            y = +r[1];
-            break;
-          case "M":
-            mx = +r[r.length - 2];
-            my = +r[r.length - 1];
-          default:
-            x = +r[r.length - 2];
-            y = +r[r.length - 1];
-        }
+      segLength = absoluteSegment.length;
+      switch (absoluteSegment[0]) {
+        case "Z":
+          x = mx;
+          y = my;
+          break;
+        case "H":
+          x = +absoluteSegment[1];
+          break;
+        case "V":
+          y = +absoluteSegment[1];
+          break;
+        case "M":
+          mx = +absoluteSegment[segLength - 2];
+          my = +absoluteSegment[segLength - 1];
+        default:
+          x = +absoluteSegment[segLength - 2];
+          y = +absoluteSegment[segLength - 1];
       }
-    };
-    for (var i = start; i < ii; i++) loop( i );
-    return roundPath(resultArray)
+    }
+    return roundPath(resultArray,round)
   }
 
   function fixArc(pathArray, allPathCommands, i) {
@@ -2029,55 +1926,61 @@
   }
 
   function isCurveArray(pathArray){
-    return isPathArray(pathArray) && pathArray.slice(1).every(function (x){ return x[0] === 'C'; })
+    return isPathArray(pathArray) && pathArray.slice(1).every(function (seg){ return seg[0] === 'C'; })
   }
 
-  function shorthandToQuadratic(x1,y1,qx,qy,prevCommand){
+  function shorthandToQuad(x1,y1,qx,qy,prevCommand){
     return 'QT'.indexOf(prevCommand)>-1 ? { qx: x1 * 2 - qx, qy: y1 * 2 - qy}
-                                        : { qx : x1, qy : y1 }
+                                        : { qx: x1, qy: y1 }
   }
 
   function shorthandToCubic(x1,y1,x2,y2,prevCommand){
     return 'CS'.indexOf(prevCommand)>-1 ? { x1: x1 * 2 - x2, y1: y1 * 2 - y2}
-                                        : { x1 : x1, y1 : y1 }
+                                        : { x1: x1, y1: y1 }
   }
 
   function normalizeSegment(segment, params, prevCommand) {
     var nqxy, nxy;
+    'TQ'.indexOf(segment[0])<0 && (params.qx = params.qy = null);
     switch (segment[0]) {
+      case "H":
+        return ["L", segment[1], params.y1]
+      case "V":
+        return ["L", params.x1, segment[1]]
       case "S":
         nxy = shorthandToCubic(params.x1,params.y1, params.x2,params.y2, prevCommand);
         params.x1 = nxy.x1;
         params.y1 = nxy.y1;
-        segment = ["C", nxy.x1, nxy.y1].concat(segment.slice(1));
-        break
+        return ["C", nxy.x1, nxy.y1].concat(segment.slice(1))
       case "T":
-        nqxy = shorthandToQuadratic(params.x1,params.y1, params.qx, params.qy, prevCommand);
+        nqxy = shorthandToQuad(params.x1,params.y1, params.qx, params.qy, prevCommand);
         params.qx = nqxy.qx;
         params.qy = nqxy.qy;
-        segment = ["Q", params.qx, params.qy].concat(segment.slice(1));
-        break
+        return ["Q", params.qx, params.qy].concat(segment.slice(1))
       case "Q":
         params.qx = segment[1];
         params.qy = segment[2];
-        break
-      case "H":
-        segment = ["L", segment[1], params.y1];
-        break
-      case "V":
-        segment = ["L", params.x1, segment[1]];
-        break
     }
     return segment
   }
 
-  function normalizePath(pathArray) {
+  function isNormalizedArray(pathArray){
+    return Array.isArray(pathArray) && pathArray.every(function (seg){
+      var pathCommand = seg[0].toLowerCase();
+      return paramsCount[pathCommand] === seg.length - 1 && /[ACLMQZ]/.test(seg[0])
+    })
+  }
+
+  function normalizePath(pathArray,round) {
+    if (isNormalizedArray(pathArray)) {
+      return clonePath(pathArray)
+    }
     pathArray = pathToAbsolute(pathArray);
     var params = {x1: 0, y1: 0, x2: 0, y2: 0, x: 0, y: 0, qx: null, qy: null},
-        allPathCommands = [], pathCommand = '', prevCommand = '', ii = pathArray.length,
-        segment, seglen;
+        allPathCommands = [], pathCommand = '', prevCommand = '',
+        ii = pathArray.length, segment, seglen;
     for (var i = 0; i < ii; i++) {
-      pathArray[i] && (pathCommand = pathArray[i][0]);
+      pathCommand = pathArray[i][0];
       allPathCommands[i] = pathCommand;
       i && ( prevCommand = allPathCommands[i - 1]);
       pathArray[i] = normalizeSegment(pathArray[i], params, prevCommand);
@@ -2088,7 +1991,7 @@
       params.x2 = +(segment[seglen - 4]) || params.x1;
       params.y2 = +(segment[seglen - 3]) || params.y1;
     }
-    return roundPath(pathArray)
+    return roundPath(pathArray,round)
   }
 
   function rotateVector(x, y, rad) {
@@ -2097,7 +2000,7 @@
     return {x: X, y: Y}
   }
 
-  function a2c(x1, y1, rx, ry, angle, large_arc_flag, sweep_flag, x2, y2, recursive) {
+  function arcToCubic(x1, y1, rx, ry, angle, large_arc_flag, sweep_flag, x2, y2, recursive) {
     var _120 = Math.PI * 120 / 180,
         rad = Math.PI / 180 * (angle || 0),
         res = [], xy, f1, f2, cx, cy;
@@ -2145,7 +2048,7 @@
       f2 = f1 + _120 * (sweep_flag && f2 > f1 ? 1 : -1);
       x2 = cx + rx * Math.cos(f2);
       y2 = cy + ry * Math.sin(f2);
-      res = a2c(x2, y2, rx, ry, angle, 0, sweep_flag, x2old, y2old, [f2, f2old, cx, cy]);
+      res = arcToCubic(x2, y2, rx, ry, angle, 0, sweep_flag, x2old, y2old, [f2, f2old, cx, cy]);
     }
     df = f2 - f1;
     var c1 = Math.cos(f1),
@@ -2169,60 +2072,76 @@
     }
   }
 
-  function quadraticToCubicBezier (x1, y1, ax, ay, x2, y2) {
+  function quadToCubic (x1, y1, qx, qy, x2, y2) {
     var _13 = 1 / 3, _23 = 2 / 3;
     return [
-            _13 * x1 + _23 * ax,
-            _13 * y1 + _23 * ay,
-            _13 * x2 + _23 * ax,
-            _13 * y2 + _23 * ay,
+            _13 * x1 + _23 * qx,
+            _13 * y1 + _23 * qy,
+            _13 * x2 + _23 * qx,
+            _13 * y2 + _23 * qy,
             x2, y2 ]
   }
 
-  function lineToCubicBezier(x1, y1, x2, y2) {
-    return [x1, y1, x2, y2, x2, y2]
+  function getPointAtSegLength (p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
+    var t1 = 1 - t;
+    return {
+        x: Math.pow(t1, 3) * p1x + Math.pow(t1, 2) * 3 * t * c1x + t1 * 3 * t * t * c2x + Math.pow(t, 3) * p2x,
+        y: Math.pow(t1, 3) * p1y + Math.pow(t1, 2) * 3 * t * c1y + t1 * 3 * t * t * c2y + Math.pow(t, 3) * p2y
+    };
   }
 
-  function segmentToCubicBezier(segment, params) {
+  function midPoint(a, b, t) {
+    var ax = a[0], ay = a[1], bx = b[0], by = b[1];
+    return [ ax + (bx - ax) * t, ay + (by - ay) * t];
+  }
+
+  function lineToCubic(x1, y1, x2, y2) {
+    var t = 0.5,
+        p0 = [x1,y1],
+        p1 = [x2,y2],
+        p2 = midPoint(p0, p1, t),
+        p3 = midPoint(p1, p2, t),
+        p4 = midPoint(p2, p3, t),
+        p5 = midPoint(p3, p4, t),
+        p6 = midPoint(p4, p5, t),
+        cp1 = getPointAtSegLength.apply(0, p0.concat( p2, p4, p6, t)),
+        cp2 = getPointAtSegLength.apply(0, p6.concat( p5, p3, p1, 0));
+    return [cp1.x, cp1.y, cp2.x, cp2.y, x2, y2]
+  }
+
+  function segmentToCubic(segment, params) {
     'TQ'.indexOf(segment[0])<0 && (params.qx = params.qy = null);
     switch (segment[0]) {
       case 'M':
         params.x = segment[1];
         params.y = segment[2];
-        break
+        return segment
       case 'A':
-        segment = ['C'].concat(a2c.apply(0, [params.x1, params.y1].concat(segment.slice(1))));
-        break
+        return ['C'].concat(arcToCubic.apply(0, [params.x1, params.y1].concat(segment.slice(1))))
       case 'Q':
         params.qx = segment[1];
         params.qy = segment[2];
-        segment = ['C'].concat(quadraticToCubicBezier(params.x1, params.y1, segment[1], segment[2], segment[3], segment[4]));
-        break
+        return ['C'].concat(quadToCubic.apply(0, [params.x1, params.y1].concat(segment.slice(1))))
       case 'L':
-        segment = ['C'].concat(lineToCubicBezier(params.x1, params.y1, segment[1], segment[2]));
-        break
+        return ['C'].concat(lineToCubic(params.x1, params.y1, segment[1], segment[2]))
       case 'Z':
-        segment = ['C'].concat(lineToCubicBezier(params.x1, params.y1, params.x, params.y));
-        break
+        return ['C'].concat(lineToCubic(params.x1, params.y1, params.x, params.y))
     }
     return segment
   }
 
-  function pathToCurve(pathArray) {
+  function pathToCurve(pathArray,round) {
     if (isCurveArray(pathArray)){
       return clonePath(pathArray)
     }
     pathArray = normalizePath(pathArray);
     var params = {x1: 0, y1: 0, x2: 0, y2: 0, x: 0, y: 0, qx: null, qy: null},
-        allPathCommands = [], pathCommand = '', ii = pathArray.length,
-        segment, seglen;
+        allPathCommands = [], pathCommand = '',
+        ii = pathArray.length, segment, seglen;
     for (var i = 0; i < ii; i++) {
       pathArray[i] && (pathCommand = pathArray[i][0]);
-      if (pathCommand !== 'C') {
-        allPathCommands[i] = pathCommand;
-      }
-      pathArray[i] = segmentToCubicBezier(pathArray[i], params);
-      allPathCommands[i] !== 'A' && pathCommand === 'C' && ( allPathCommands[i] = 'C' );
+      allPathCommands[i] = pathCommand;
+      pathArray[i] = segmentToCubic(pathArray[i], params);
       fixArc(pathArray,allPathCommands,i);
       ii = pathArray.length;
       segment = pathArray[i];
@@ -2232,7 +2151,7 @@
       params.x2 = +(segment[seglen - 4]) || params.x1;
       params.y2 = +(segment[seglen - 3]) || params.y1;
     }
-    return roundPath(pathArray)
+    return roundPath(pathArray,round)
   }
 
   function reverseCurve(pathArray){
@@ -2241,76 +2160,100 @@
                         .map(function (x) { return x.map(function (y,i) { return x[x.length - i - 2 * (1 - i % 2)]; } ); })
                         .reverse();
     return [ ['M'].concat( rotatedCurve[0].slice(0,2)) ]
-            .concat(rotatedCurve.map(function (x){ return ['C'].concat(x.slice(2) ); } ))
+                  .concat(rotatedCurve.map(function (x){ return ['C'].concat(x.slice(2) ); } ))
   }
 
-  function createPath(path) {
-    var np = document.createElementNS('http://www.w3.org/2000/svg','path'),
-        d = path instanceof SVGElement && ['path','glyph'].indexOf(path.tagName) > -1 ? path.getAttribute('d') : path;
-    np.setAttribute('d',d);
-    return np
-  }
-
-  function getArea(v) {
-    var x0 = v[0], y0 = v[1],
-        x1 = v[2], y1 = v[3],
-        x2 = v[4], y2 = v[5],
-        x3 = v[6], y3 = v[7];
+  function getCubicSegArea(x0,y0, x1,y1, x2,y2, x3,y3) {
     return 3 * ((y3 - y0) * (x1 + x2) - (x3 - x0) * (y1 + y2)
-            + y1 * (x0 - x2) - x1 * (y0 - y2)
-            + y3 * (x2 + x0 / 3) - x3 * (y2 + y0 / 3)) / 20;
+             + y1 * (x0 - x2) - x1 * (y0 - y2)
+             + y3 * (x2 + x0 / 3) - x3 * (y2 + y0 / 3)) / 20;
   }
-  function getShapeArea(curveArray) {
-    return curveArray.slice(1).map(function (seg,i,cv){
-      var previous = cv[i === 0 ? cv.length-1 : i-1];
-      return getArea(previous.slice(previous.length-2).concat(seg.slice(1)))
+  function getPathArea(pathArray) {
+    var x = 0, y = 0, mx = 0, my = 0, len = 0;
+    return pathToCurve(pathArray).map(function (seg) {
+      var assign;
+      switch (seg[0]){
+        case 'M':
+        case 'Z':
+          mx = seg[0] === 'M' ? seg[1] : mx;
+          my = seg[0] === 'M' ? seg[2] : my;
+          x = mx;
+          y = my;
+          return 0
+        default:
+          len = getCubicSegArea.apply(0, [x,y].concat(seg.slice(1) ));
+          (assign = seg.slice(-2), x = assign[0], y = assign[1]);
+          return len
+      }
     }).reduce(function (a, b) { return a + b; }, 0)
   }
 
-  function getDrawDirection(curveArray) {
-    if (!isCurveArray(curveArray)) {
-      throw("getDrawDirection expects a curveArray")
-    }
-    return getShapeArea(curveArray) >= 0
+  function getDrawDirection(pathArray) {
+    return getPathArea(pathToCurve(pathArray)) >= 0
   }
 
-  function cubicLerp(a, b, t) {
-    return [a[0]*(1 - t) + b[0]*t, a[1]*(1 - t) + b[1]*t]
-  }
   function splitCubic(pts,t) {
     t = t || 0.5;
     var p0 = pts.slice(0,2),
         p1 = pts.slice(2,4),
         p2 = pts.slice(4,6),
         p3 = pts.slice(6,8),
-        p4 = cubicLerp(p0, p1, t),
-        p5 = cubicLerp(p1, p2, t),
-        p6 = cubicLerp(p2, p3, t),
-        p7 = cubicLerp(p4, p5, t),
-        p8 = cubicLerp(p5, p6, t),
-        p9 = cubicLerp(p7, p8, t),
-        firsthalf  = ['C'].concat( p4, p7, p9),
-        secondhalf = ['C'].concat( p8, p6, p3);
-    return [firsthalf, secondhalf]
+        p4 = midPoint(p0, p1, t),
+        p5 = midPoint(p1, p2, t),
+        p6 = midPoint(p2, p3, t),
+        p7 = midPoint(p4, p5, t),
+        p8 = midPoint(p5, p6, t),
+        p9 = midPoint(p7, p8, t);
+    return [
+      ['C'].concat( p4, p7, p9),
+      ['C'].concat( p8, p6, p3)
+    ]
   }
 
-  function splitPath(pathString) {
-    return pathString
+  function splitPath(pathInput) {
+    return pathToString(pathToAbsolute(pathInput,0))
       .replace( /(m|M)/g, "|$1")
       .split('|')
       .map(function (s){ return s.trim(); })
       .filter(function (s){ return s; })
   }
 
+  function base3(p1, p2, p3, p4, t) {
+    var t1 = -3 * p1 + 9 * p2 - 9 * p3 + 3 * p4,
+        t2 = t * t1 + 6 * p1 - 12 * p2 + 6 * p3;
+    return t * t2 - 3 * p1 + 3 * p2;
+  }
+  function getSegCubicLength (x1, y1, x2, y2, x3, y3, x4, y4, z) {
+    (z === null || isNaN(+z)) && (z = 1);
+    z = z > 1 ? 1 : z < 0 ? 0 : z;
+    var z2 = z / 2, ct = 0, xbase = 0, ybase = 0, sum = 0,
+        Tvalues = [-0.1252,0.1252,-0.3678,0.3678,-0.5873,0.5873,-0.7699,0.7699,-0.9041,0.9041,-0.9816,0.9816],
+        Cvalues = [0.2491,0.2491,0.2335,0.2335,0.2032,0.2032,0.1601,0.1601,0.1069,0.1069,0.0472,0.0472];
+    Tvalues.map(function (T,i){
+      ct = z2 * T + z2;
+      xbase = base3( x1, x2, x3, x4, ct);
+      ybase = base3( y1, y2, y3, y4, ct);
+      sum += Cvalues[i] * Math.sqrt(xbase * xbase + ybase * ybase);
+    });
+    return z2 * sum
+  }
+
+  function distanceSquareRoot(a, b) {
+    return Math.sqrt(
+      (a[0] - b[0]) * (a[0] - b[0]) +
+      (a[1] - b[1]) * (a[1] - b[1])
+    )
+  }
+
   function getCurveArray(pathString){
-    return pathToCurve(splitPath(pathToString(pathToAbsolute(pathString)))[0]).map(function (x,i,pathArray){
-      var curveToPath = i ? [['M'].concat(pathArray[i-1].slice(-2))].concat([x]) : [],
-          curveLength = i ? createPath(pathToString(clonePath(curveToPath))).getTotalLength() : 0,
-          subsegs = i ? (curveLength ? splitCubic( pathArray[i-1].slice(-2).concat(x.slice(1)) ) : [x,x]) : [x];
+    return pathToCurve(splitPath(pathToString(pathToAbsolute(pathString)))[0]).map(function (segment,i,pathArray){
+      var segmentData = i && pathArray[i-1].slice(-2).concat(segment.slice(1)),
+          curveLength = i ? getSegCubicLength.apply(0, segmentData ) : 0,
+          subsegs = i ? (curveLength ? splitCubic( segmentData ) : [segment,segment]) : [segment];
       return {
-        seg: x,
-        subsegs: subsegs,
-        length: curveLength
+        s: segment,
+        ss: subsegs,
+        l: curveLength
       }
     })
   }
@@ -2319,25 +2262,25 @@
         c2 = getCurveArray(path2),
         L1 = c1.length,
         L2 = c2.length,
-        l1 = c1.filter(function (x){ return x.length; }).length,
-        l2 = c2.filter(function (x){ return x.length; }).length,
-        m1 = c1.filter(function (x){ return x.length; }).reduce(function (a,ref){
-          var length = ref.length;
-          return a+length;
+        l1 = c1.filter(function (x){ return x.l; }).length,
+        l2 = c2.filter(function (x){ return x.l; }).length,
+        m1 = c1.filter(function (x){ return x.l; }).reduce(function (a,ref){
+          var l = ref.l;
+          return a+l;
     },0) / l1 || 0,
-        m2 = c2.filter(function (x){ return x.length; }).reduce(function (a,ref){
-          var length = ref.length;
-          return a+length;
+        m2 = c2.filter(function (x){ return x.l; }).reduce(function (a,ref){
+          var l = ref.l;
+          return a+l;
     },0) / l2 || 0,
         tl = TL || Math.max(L1,L2),
         mm = [m1,m2],
         dif = [tl-L1,tl-L2],
-        result = [c1,c2].map(function (x,i) { return x.length === tl ? x.map(function (y){ return y.seg; })
+        canSplit = 0,
+        result = [c1,c2].map(function (x,i) { return x.l === tl ? x.map(function (y){ return y.s; })
                : x.map(function (y,j) {
-                  var canSplit = j && dif[i] && y.length >= mm[i],
-                      segResult = canSplit ? y.subsegs : [y.seg];
+                  canSplit = j && dif[i] && y.l >= mm[i];
                   dif[i] -= canSplit ? 1 : 0;
-                  return segResult
+                  return canSplit ? y.ss : [y.s]
                 }).flat(); });
     return result[0].length === result[1].length ? result : equalizeSegments(result[0],result[1],tl)
   }
@@ -2358,27 +2301,18 @@
   }
   function getRotatedCurve(a,b) {
     var segCount = a.length - 1,
-        linePaths = [],
         lineLengths = [],
+        computedIndex = 0,
+        sumLensSqrd = 0,
         rotations = getRotations(a);
     rotations.map(function (r,i){
-      var sumLensSqrd = 0,
-          linePath = createPath('M0,0L0,0'),
-          linePt1, ll1,
-          linePt2, ll2,
-          linePathStr;
-      for (var j = 0; j < segCount; j++) {
-        linePt1 = a[(i + j) % segCount]; ll1 = linePt1.length;
-        linePt2 = b[ j  % segCount]; ll2 = linePt2.length;
-        linePathStr = "M" + (linePt1[ll1-2]) + "," + (linePt1[ll1-1]) + "L" + (linePt2[ll2-2]) + "," + (linePt2[ll2-1]);
-        linePath.setAttribute('d',linePathStr);
-        sumLensSqrd += Math.pow(linePath.getTotalLength(),2);
-        linePaths[j] = linePath;
-      }
+      a.slice(1).map(function (s,j) {
+        sumLensSqrd += distanceSquareRoot(a[(i+j) % segCount].slice(-2),b[j % segCount].slice(-2));
+      });
       lineLengths[i] = sumLensSqrd;
       sumLensSqrd = 0;
     });
-    var computedIndex = lineLengths.indexOf(Math.min.apply(null,lineLengths));
+    computedIndex = lineLengths.indexOf(Math.min.apply(null,lineLengths));
     return rotations[computedIndex]
   }
   function getCubicMorph(tweenProp){
@@ -2426,7 +2360,7 @@
     Util: {
       pathToCurve: pathToCurve, pathToAbsolute: pathToAbsolute, pathToString: pathToString, parsePathString: parsePathString,
       getRotatedCurve: getRotatedCurve, getRotations: getRotations, equalizeSegments: equalizeSegments,
-      reverseCurve: reverseCurve, createPath: createPath, clonePath: clonePath, getDrawDirection: getDrawDirection,
+      reverseCurve: reverseCurve, clonePath: clonePath, getDrawDirection: getDrawDirection,
       splitCubic: splitCubic, getCurveArray: getCurveArray
     }
   };
@@ -3055,7 +2989,7 @@
   var indexExtra = {
     Animation: AnimationDevelopment,
     Components: Components,
-    TweenExtra: TweenExtra,
+    Tween: TweenExtra,
     fromTo: fromTo,
     to: to,
     TweenCollection: TweenCollection,

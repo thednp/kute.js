@@ -89,8 +89,8 @@
           <div class="col9 border">
             <p class="lead condensed">The KUTE.js <b>SVG Morph</b> component enables animation for the <b>d</b> (description) presentation attribute and is one of the most important in all the 
               SVG components.</p>
-            <p>It only applies to inline <b>SVGPathElement</b> shapes and doesn't care if these shapes are closed (their <b>d</b> attribute ends with <b>Z</b> path command). On initialization 
-              or animation start, depending on the chosen KUTE.js method, it will <a href="http://phrogz.net/SVG/convert_path_to_polygon.xhtml" target="_blank">sample a number of points</a> 
+            <p>It only works with inline <b>SVGPathElement</b> shapes and the presentation is always the same when shapes are closed or not (their <b>d</b> attribute ends with <b>Z</b> path command).
+              On initialization or animation start, depending on the chosen KUTE.js method, it will <a href="http://phrogz.net/SVG/convert_path_to_polygon.xhtml" target="_blank">sample a number of points</a> 
               along the two paths based on a default / given sample size and will create two arrays of coordinates we need for interpolation.</p>
             <p>This component was originally inspired by a <a href="http://bl.ocks.org/mbostock/3081153" target="_blank">D3.js path morphing example</a> and now implements a set of 
               <a href="https://github.com/d3/d3-polygon">D3 polygon</a> geometric operations and other functionalities from <a href="https://github.com/veltman/flubber">flubber</a> to 
@@ -98,7 +98,7 @@
             <p>While in some cases you might be able to create SVG morphing animations via CSS3 <i>transition</i>, this component was developed to provide various solutions for working 
               with complex shapes, bringing convenience, resources and clarity to one of the most complex types of animation.</p>
             <p>All path processing is powered by our <a href="https://github.com/thednp/svg-path-commander">SVGPathCommander</a> starting KUTE.js version 2.0.14, which aims to modernize and 
-              improve the path processing and enable transition from closed to and from un-closed shapes.</p>              
+              improve the path processing and enable you to prepare your path strings in Node.js.</p>              
           </div>
         </div>
 
@@ -166,7 +166,7 @@ var tween = KUTE.to('#rectangle', { path: 'M301.113,12.011l99.25,179.996l201.864
 
 <pre><code class="language-markup">&lt;svg id="morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
   &lt;path id="line" fill="transparent" stroke="orange" stroke-linejoin="round" stroke-width="10" d="M10 300L590 300"/>
-  &lt;path id="star" style="visibility:hidden" d="M10,300a290,290 0 1,0 580,0a290,290 0 1,0 -580,0z"/>
+  &lt;path id="circle" style="visibility:hidden" d="M10,300a290,290 0 1,0 580,0a290,290 0 1,0 -580,0z"/>
 &lt;/svg>
 </code></pre>
 
@@ -181,12 +181,12 @@ var tween = KUTE.to('#line', { path: '#circle' }).start();
 
       <div class="featurettes">
         <svg class="example-box-model example-box" id="morph-example-closed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
-          <path id="line" fill="transparent" stroke="#FF5722" stroke-linejoin="round" stroke-width="10" d="M10 300L590 300Z"/>
+          <path id="line" fill="transparent" stroke="#FF5722" stroke-linejoin="round" stroke-width="15" d="M10 300L590 300Z"/>
           <path id="circle" style="visibility:hidden" d="M10,300a290,290 0 1,0 580,0a290,290 0 1,0 -580,0z"/>
         </svg>
         <svg class="example-box-model example-box" id="morph-example-closed1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
-          <path id="line1" fill="transparent" stroke="#4CAF50" stroke-linejoin="round" stroke-width="10" d="M10 300L590 300"/>
-          <path id="circle1" style="visibility:hidden" d="M10,300a290,290 0 1,0 580,0a290,290 0 1,0 -580,0z"/>
+          <path id="line1" fill="transparent" stroke="#4CAF50" stroke-linejoin="round" stroke-width="15" d="M10 300L590 300"/>
+          <path id="circle1" style="visibility:hidden" d="M10,300a290,290 0 1,0 580,0a290,290 0 1,0 -580,0"/>
         </svg>
         <div class="example-buttons">
           <a id="morphBtnClosed" class="btn btn-green" href="javascript:void(0)">Start</a>
@@ -383,8 +383,8 @@ var tween2 = KUTE.to('#triangle', { path: '#square' }).start();
         <li>Since <b>SVG Morph</b> animation works only with <code>path</code> elements, you might need a <code>convertToPath</code> feature, so 
           <a href="https://github.com/Waest/SVGPathConverter" target="_blank">grab one here</a>.</li>
         <li>Both SVG morph components will always animate first sub-path from both starting and ending shapes, and for any case hopefully this demo will guide you in mastering the technique.</li>
-        <li>In some cases your start and end shapes don't have a very close size, you can use your vector graphics editor of choice or something like <a href="https://github.com/fontello/svgpath">SVGPath</a> tools to
-          apply a scale transformation to your shapes' path commands.</li>
+        <li>In some cases your start and end shapes don't have a very close size, you can use your vector graphics editor of choice or <a href="https://github.com/Waest/SVGPathConverter">SVGPathCommander</a> 
+          to apply a scale transformation to your shapes' path commands.</li>
         <li>The morphing animation is expensive so try to optimize the number of morph animations that run at the same time. When morphing sub-paths/multi-paths instead of cloning shapes to have same number 
           of shapes in both starting and ending shapes, you should also consider a fade and/or scale animation to improve the overal animation performance, mobile devices still don't do very much, regardless 
           of the advertising.</li>
@@ -419,7 +419,8 @@ var tween2 = KUTE.to('#triangle', { path: '#square' }).start();
   <!-- Placed at the end of the document so the pages load faster -->
 
   <script src="./src/polyfill.min.js"></script>
-  <script src="./src/kute.min.js"></script>
+  <!-- <script src="./src/kute.min.js"></script> -->
+  <script src="../dist/kute.js"></script>
   <script src="./assets/js/prism.js"></script>
   <script src="./assets/js/scripts.js"></script>
   <script src="./assets/js/svgMorph.js"></script>

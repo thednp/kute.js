@@ -10,7 +10,7 @@ import Selector from './util/selector.js'
 import Animation from './animation/animationBase.js'
 
 // TweenConstructor
-import TweenBase from './tween/tweenBase.js'
+import Tween from './tween/tweenBase.js'
 // Interface only fromTo
 import fromTo from './interface/fromTo.js'
 
@@ -36,7 +36,7 @@ export default {
     // Move
   },
 
-  TweenBase,
+  Tween,
   fromTo, 
 
   Objects,

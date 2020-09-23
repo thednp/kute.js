@@ -11,7 +11,7 @@ import Easing from './easing/easing-bezier.js'
 import Selector from './util/selector.js'
 
 // TweenConstructor
-import TweenExtra from './tween/tweenExtra.js'
+import Tween from './tween/tweenExtra.js'
 import TweenCollection from './tween/tweenCollection.js'
 import ProgressBar from './util/progressBar.js'
 // interface
@@ -28,8 +28,8 @@ import BorderRadius from './components/borderRadius.js'
 import BoxModel from './components/boxModel.js'
 import ClipProperty from './components/clipProperty.js'
 import ColorProperties from './components/colorProperties.js'
-import HTMLAttributes from './components/htmlAttributes.js'
 import FilterEffects from './components/filterEffects'
+import HTMLAttributes from './components/htmlAttributes.js'
 import OpacityProperty from './components/opacityProperty.js'
 import SVGDraw from './components/svgDraw.js'
 import SVGCubicMorph from './components/svgCubicMorph.js'
@@ -38,7 +38,7 @@ import ScrollProperty from './components/scrollProperty.js'
 import ShadowProperties from './components/shadowProperties.js'
 import TextProperties from './components/textProperties.js'
 import TextWriteProperties from './components/textWrite.js'
-import matrixTransform from './components/transformMatrix.js'
+import MatrixTransform from './components/transformMatrix.js'
 
 for (let component in Components) {
   let compOps = Components[component]
@@ -50,7 +50,7 @@ export default {
   Components,
 
   // Tween Interface
-  TweenExtra,
+  Tween,
   fromTo, 
   to, 
   // Tween Collection

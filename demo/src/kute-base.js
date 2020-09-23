@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Base v2.0.15 (http://thednp.github.io/kute.js)
+* KUTE.js Base v2.0.16 (http://thednp.github.io/kute.js)
 * Copyright 2015-2020 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.15";
+  var version = "2.0.16";
 
   var KUTE = {};
 
@@ -452,7 +452,7 @@
       BoxModel: BoxModel,
       Opacity: Opacity,
     },
-    TweenBase: TweenBase,
+    Tween: TweenBase,
     fromTo: fromTo,
     Objects: Objects,
     Easing: Easing,

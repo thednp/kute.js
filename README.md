@@ -1,5 +1,8 @@
 # KUTE.js
-A modern JavaScript animation engine built on ES6/ES7 standards with most essential features for web developers, designers and animators, delivering easy to use methods to set up high performance, cross-browser animations. The focus is code quality, flexibility, performance and size. 
+
+[![KUTE.js](demo/assets/img/apple-touch-icon.png)](https://thednp.github.io/kute.js/)
+
+A modern JavaScript animation engine built on ES6+ standards with most essential features for the web, delivering easy to use methods to set up high performance, cross-browser animations. The focus is code quality, flexibility, performance and size. 
 
 [![NPM Version](https://img.shields.io/npm/v/kute.js.svg?style=flat-square)](https://www.npmjs.com/package/kute.js)
 [![NPM Downloads](https://img.shields.io/npm/dm/kute.js.svg?style=flat-square)](http://npm-stat.com/charts.html?package=kute.js)

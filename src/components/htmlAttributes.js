@@ -18,28 +18,28 @@ function replaceUppercase (a) { return a.replace(/[A-Z]/g, "-$&").toLowerCase();
 
 // Component Functions
 export function getAttr(tweenProp,value){
-  const attrStartValues = {};
-  for (const attr in value){
-    const attribute = replaceUppercase(attr).replace(/_+[a-z]+/,''); // get the value for 'fill-opacity' not fillOpacity, also 'width' not the internal 'width_px'
-    const currentValue = this.element.getAttribute(attribute);
+  let attrStartValues = {};
+  for (let attr in value){
+    let attribute = replaceUppercase(attr).replace(/_+[a-z]+/,''), // get the value for 'fill-opacity' not fillOpacity, also 'width' not the internal 'width_px'
+        currentValue = this.element.getAttribute(attribute);
     attrStartValues[attribute] = svgColors.includes(attribute) ? (currentValue || 'rgba(0,0,0,0)') : (currentValue || (/opacity/i.test(attr) ? 1 : 0));
   }
   return attrStartValues;
 }
 export function prepareAttr(tweenProp,attrObj){ // attr (string),attrObj (object)
-  const attributesObject = {};
-  for ( const p in attrObj ) {
-    const prop = replaceUppercase(p);
-    const regex = /(%|[a-z]+)$/;
-    const currentValue = this.element.getAttribute(prop.replace(/_+[a-z]+/,''));
+  let attributesObject = {};
+  for ( let p in attrObj ) {
+    let prop = replaceUppercase(p),
+        regex = /(%|[a-z]+)$/,
+        currentValue = this.element.getAttribute(prop.replace(/_+[a-z]+/,''));
     if ( !svgColors.includes(prop)) {
       if ( currentValue !== null && regex.test(currentValue) ) { // attributes set with unit suffixes
-        const unit = trueDimension(currentValue).u || trueDimension(attrObj[p]).u;
-        const suffix = /%/.test(unit) ? '_percent' : `_${unit}`;
+        let unit = trueDimension(currentValue).u || trueDimension(attrObj[p]).u,
+            suffix = /%/.test(unit) ? '_percent' : `_${unit}`;
         onStart[ComponentName][prop+suffix] = function(tp) { // most "unknown" attributes cannot register into onStart, so we manually add them
           if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
             attributes[tp] = (elem, p, a, b, v) => {
-              const _p = p.replace(suffix,'');
+              let _p = p.replace(suffix,'');
               elem.setAttribute(_p, ( (numbers(a.v,b.v,v)*1000>>0)/1000) + b.u );
             }
           }
@@ -62,7 +62,7 @@ export function prepareAttr(tweenProp,attrObj){ // attr (string),attrObj (object
             elem.setAttribute(oneAttr, colors(a,b,v));
           }
         }
-      }  
+      }
       attributesObject[prop] = trueColor(attrObj[p]) || defaultValues.htmlAttributes[p];
     }
   }
