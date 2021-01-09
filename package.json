@@ -1,6 +1,6 @@
 {
   "name": "kute.js",
-  "version": "2.0.16",
+  "version": "2.1.0",
   "description": "JavaScript animation engine of the future is called KUTE.js.",
   "main": "dist/kute.min.js",
   "module": "dist/kute.esm.js",
@@ -56,16 +56,16 @@
   "dependencies": {
     "cubic-bezier-easing": "^1.0.2",
     "minifill": "^0.0.14",
-    "shorter-js": "^0.1.4",
-    "svg-path-commander": "0.0.9"
+    "shorter-js": "^0.1.7",
+    "svg-path-commander": "0.1.0"
   },
   "devDependencies": {
     "@rollup/plugin-buble": "^0.21.3",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "npm-run-all": "^4.1.5",
-    "rollup": "^2.28.1",
-    "rollup-plugin-cleanup": "^3.1.1",
+    "rollup": "^2.36.1",
+    "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-terser": "^7.0.2"
   }
 }

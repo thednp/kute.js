@@ -1,9 +1,9 @@
 /*!
-* KUTE.js Standard v2.0.16 (http://thednp.github.io/kute.js)
-* Copyright 2015-2020 © thednp
+* KUTE.js Standard v2.1.0 (http://thednp.github.io/kute.js)
+* Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
-var version = "2.0.16";
+var version = "2.1.0";
 
 var KUTE = {};
 
@@ -1379,7 +1379,7 @@ function getTotalLength(el) {
     return getCircleLength(el);
   } else if ('ellipse'===el.tagName) {
     return getEllipseLength(el);
-  } else if (['polygon,polyline'].indexOf(el.tagName)>-1) {
+  } else if (['polygon','polyline'].indexOf(el.tagName)>-1) {
     return getPolyLength(el);
   } else if ('line'===el.tagName) {
     return getLineLength(el);

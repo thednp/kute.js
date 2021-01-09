@@ -72,7 +72,7 @@ function getTotalLength(el) { // returns the result of any of the below function
     return getCircleLength(el);
   } else if ('ellipse'===el.tagName) {
     return getEllipseLength(el);
-  } else if (['polygon,polyline'].indexOf(el.tagName)>-1) {
+  } else if (['polygon','polyline'].indexOf(el.tagName)>-1) {
     return getPolyLength(el);
   } else if ('line'===el.tagName) {
     return getLineLength(el);

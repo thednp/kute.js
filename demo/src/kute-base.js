@@ -1,6 +1,6 @@
 /*!
-* KUTE.js Base v2.0.16 (http://thednp.github.io/kute.js)
-* Copyright 2015-2020 © thednp
+* KUTE.js Base v2.1.0 (http://thednp.github.io/kute.js)
+* Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
 (function (global, factory) {
@@ -9,7 +9,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.0.16";
+  var version = "2.1.0";
 
   var KUTE = {};
 
