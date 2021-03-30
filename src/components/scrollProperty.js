@@ -1,17 +1,29 @@
-import Components from '../objects/components.js'
-import numbers from '../interpolation/numbers.js' 
-import supportPassive from 'shorter-js/src/boolean/supportPassive.js'
+import supportPassive from 'shorter-js/src/boolean/supportPassive.js';
+import numbers from '../interpolation/numbers.js';
 
-
-import {scrollContainer,onStartScroll,onCompleteScroll,scrollIn,scrollOut,getScrollTargets,preventScroll,toggleScrollEvents} from './scrollPropertyBase.js'
+import {
+  scrollContainer,
+  onStartScroll,
+  onCompleteScroll,
+  scrollIn,
+  scrollOut,
+  getScrollTargets,
+  preventScroll,
+  toggleScrollEvents,
+} from './scrollPropertyBase.js';
 
 // Component Functions
-function getScroll(){
-  this.element = ('scroll' in this.valuesEnd) && (!this.element || this.element === window) ? scrollContainer : this.element;
-  return this.element === scrollContainer ? (window.pageYOffset || scrollContainer.scrollTop) : this.element.scrollTop;
+function getScroll() {
+  this.element = ('scroll' in this.valuesEnd) && (!this.element || this.element === window)
+    ? scrollContainer : this.element;
+
+  return this.element === scrollContainer
+    ? (window.pageYOffset || scrollContainer.scrollTop)
+    : this.element.scrollTop;
 }
-function prepareScroll(prop,value){
-  return parseInt(value);
+
+function prepareScroll(prop, value) {
+  return parseInt(value, 10);
 }
 
 // All Component Functions
@@ -19,20 +31,20 @@ const scrollFunctions = {
   prepareStart: getScroll,
   prepareProperty: prepareScroll,
   onStart: onStartScroll,
-  onComplete: onCompleteScroll
-}
+  onComplete: onCompleteScroll,
+};
 
 // Full Component
 const scrollProperty = {
   component: 'scrollProperty',
   property: 'scroll',
   defaultValue: 0,
-  Interpolate: {numbers},
+  Interpolate: { numbers },
   functions: scrollFunctions,
   // export stuff to global
-  Util: { preventScroll, scrollIn, scrollOut, getScrollTargets, toggleScrollEvents, supportPassive }
-}
+  Util: {
+    preventScroll, scrollIn, scrollOut, getScrollTargets, toggleScrollEvents, supportPassive,
+  },
+};
 
-export default scrollProperty
-
-Components.ScrollProperty = scrollProperty
+export default scrollProperty;

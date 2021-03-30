@@ -1,2 +1,2 @@
 // used in preparePropertiesObject
-export default {} 
+export default {};

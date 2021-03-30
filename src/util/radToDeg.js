@@ -1,3 +1,1 @@
-export default (a) => {
-  return a * 180 / Math.PI;
-}
+export default (a) => (a * 180) / Math.PI;

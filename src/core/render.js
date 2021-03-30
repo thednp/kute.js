@@ -1,61 +1,62 @@
-import KUTE from '../objects/kute.js'
-import Tweens from '../objects/tweens.js'
-import globalObject from '../objects/globalObject.js'
-import Interpolate from  '../objects/interpolate.js'
-import onStart from  '../objects/onStart.js'
+import KUTE from '../objects/kute.js';
+import Tweens from '../objects/tweens.js';
+import globalObject from '../objects/globalObject.js';
+import Interpolate from '../objects/interpolate.js';
+import onStart from '../objects/onStart.js';
 
-// const Time = window.performance
+const Time = {};
+const that = window.self || window || {};
+Time.now = that.performance.now.bind(that.performance);
 
-const Time = {}
-Time.now = self.performance.now.bind(self.performance)
-// export {Time}
+let Tick = 0;
+export { Tick };
 
-let Tick = 0
-export {Tick}
-
-let Ticker = (time) => {
+const Ticker = (time) => {
   let i = 0;
-  while ( i < Tweens.length ) {
-    if ( Tweens[i].update(time) ) {
-      i++;
+  while (i < Tweens.length) {
+    if (Tweens[i].update(time)) {
+      i += 1;
     } else {
       Tweens.splice(i, 1);
     }
   }
   Tick = requestAnimationFrame(Ticker);
-}
-export {Ticker}
-
+};
+export { Ticker };
 
 // stop requesting animation frame
 export function stop() {
   setTimeout(() => { // re-added for #81
-    if (!Tweens.length && Tick) { 
-      cancelAnimationFrame(Tick); 
+    if (!Tweens.length && Tick) {
+      cancelAnimationFrame(Tick);
       Tick = null;
-      for (let obj in onStart) {
+      Object.keys(onStart).forEach((obj) => {
         if (typeof (onStart[obj]) === 'function') {
-          KUTE[obj] && (delete KUTE[obj])
+          if (KUTE[obj]) delete KUTE[obj];
         } else {
-          for (let prop in onStart[obj]) {
-            KUTE[prop] && (delete KUTE[prop])
-          }
+          Object.keys(onStart[obj]).forEach((prop) => {
+            if (KUTE[prop]) delete KUTE[prop];
+          });
         }
-      }
-      for (let i in Interpolate) {
-        KUTE[i] && (delete KUTE[i])
-      }
+      });
+
+      Object.keys(Interpolate).forEach((i) => {
+        if (KUTE[i]) delete KUTE[i];
+      });
     }
-  },64)
+  }, 64);
 }
 
 // KUTE.js render update functions
 // ===============================
-const Render = {Tick,Ticker,Tweens,Time}
-for ( const blob in Render ) {
+const Render = {
+  Tick, Ticker, Tweens, Time,
+};
+Object.keys(Render).forEach((blob) => {
   if (!KUTE[blob]) {
     KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
   }
-}
-export default Render
-globalObject[`_KUTE`] = KUTE
+});
+
+export default Render;
+globalObject._KUTE = KUTE;

@@ -1,2 +1,3 @@
-import Tweens from '../objects/tweens.js'
-export default () => { Tweens.length = 0 }
+import Tweens from '../objects/tweens.js';
+
+export default () => { Tweens.length = 0; };

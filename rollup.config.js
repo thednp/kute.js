@@ -2,7 +2,6 @@
 import buble from '@rollup/plugin-buble'
 import {terser} from 'rollup-plugin-terser'
 import node from '@rollup/plugin-node-resolve'
-import cleanup from 'rollup-plugin-cleanup'
 import json from '@rollup/plugin-json'
 import * as pkg from "./package.json"
 
@@ -35,7 +34,6 @@ const PLUGINS = [
   node({mainFields: ['jsnext','module'], dedupe: ['svg-path-commander']}) ,
   json(),
   buble(),
-  cleanup()
 ]
 
 if (MIN){

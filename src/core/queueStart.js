@@ -1,17 +1,18 @@
-import onStart from '../objects/onStart.js'
-import linkInterpolation from './linkInterpolation.js'
+import onStart from '../objects/onStart.js';
+import linkInterpolation from './linkInterpolation.js';
 
-export default function(){
+export default function queueStart() {
   // fire onStart actions
-  for (let obj in onStart) {
+  Object.keys(onStart).forEach((obj) => {
     if (typeof (onStart[obj]) === 'function') {
-      onStart[obj].call(this,obj) // easing functions
+      onStart[obj].call(this, obj); // easing functions
     } else {
-      for (let prop in onStart[obj]) {
-        onStart[obj][prop].call(this,prop);
-      }
+      Object.keys(onStart[obj]).forEach((prop) => {
+        onStart[obj][prop].call(this, prop);
+      });
     }
-  }
+  });
+
   // add interpolations
-  linkInterpolation.call(this)
+  linkInterpolation.call(this);
 }

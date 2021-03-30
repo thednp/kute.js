@@ -1,6 +1,6 @@
 /*!
-  * KUTE.js Polyfill v2.0.14 (http://thednp.github.io/kute.js)
-  * Copyright 2015-2020 © thednp
+  * KUTE.js Polyfill v2.1.1-alpha1 (http://thednp.github.io/kute.js)
+  * Copyright 2015-2021 © thednp
   * Licensed under MIT (https://github.com/thednp/bootstrap.native/blob/master/LICENSE)
   */
  "use strict";
@@ -21,7 +21,8 @@ if (!Array.from) {
       var len = toInteger(value);
       return Math.min(Math.max(len, 0), maxSafeInteger);
     };
-    return function from(arrayLike) {
+
+    return function from(arrayLike/*, mapFn, thisArg */) {
       var C = this, items = Object(arrayLike);
       if (arrayLike == null) {
         throw new TypeError('Array.from requires an array-like object - not null or undefined');
@@ -31,12 +32,14 @@ if (!Array.from) {
         if (!isCallable(mapFn)) {
           throw new TypeError('Array.from: when provided, the second argument must be a function');
         }
+
         if (arguments.length > 2) {
           T = arguments[2];
         }
       }
       var len = toLength(items.length);
       var A = isCallable(C) ? Object(new C(len)) : new Array(len);
+
       var k = 0;
       var kValue;
       while (k < len) {
@@ -54,8 +57,30 @@ if (!Array.from) {
   }());
 }
 
+// https://github.com/jonathantneal/array-flat-polyfill/blob/master/src/polyfill-flat.js
+
+if (!Array.prototype.flat) {
+	Object.defineProperty(Array.prototype, 'flat', {
+		configurable: true,
+		value: function flat () {
+			var depth = isNaN(arguments[0]) ? 1 : Number(arguments[0]);
+
+			return depth ? Array.prototype.reduce.call(this, function (acc, cur) {
+				if (Array.isArray(cur)) {
+					acc.push.apply(acc, flat.call(cur, depth - 1));
+				} else {
+					acc.push(cur);
+				}
+
+				return acc;
+			}, []) : Array.prototype.slice.call(this);
+		},
+		writable: true
+	});
+}
+
 if (!Array.prototype.includes) {
-  Array.prototype.includes = function(searchElement  ) {
+  Array.prototype.includes = function(searchElement /*, fromIndex*/ ) {
     var O = Object(this);
     var len = parseInt(O.length) || 0;
     if (len === 0) {
@@ -86,8 +111,30 @@ if (!String.prototype.includes) {
   String.prototype.includes = function(search, start) {
     if (search instanceof RegExp) {
       throw TypeError('first argument must not be a RegExp');
-    }
+    } 
     if (start === undefined) { start = 0; }
     return this.indexOf(search, start) !== -1;
+  };
+}
+
+if (!Number.isFinite) {
+  Number.isFinite = function(value) {
+    return typeof value === 'number'
+      && isFinite(value);
+  };
+}
+
+if (!Number.isInteger) {
+  Number.isInteger = function(value) {
+    return typeof value === 'number'
+      && isFinite(value)
+      && Math.floor(value) === value;
+  };
+}
+
+if (!Number.isNaN) {
+  Number.isNaN = function(value) {
+    return typeof value === 'number'
+      && value !== value;
   };
 }

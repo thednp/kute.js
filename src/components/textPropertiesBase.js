@@ -1,22 +1,28 @@
-import KUTE from '../objects/kute.js'
-import units from '../interpolation/units.js'  
+import KUTE from '../objects/kute.js';
+import units from '../interpolation/units.js';
 
-// const opacity = { category : 'textProperties', defaultValues: [], interpolators: {units} }, functions = { prepareStart, prepareProperty, onStart:{} }
+/* textProperties = {
+  category: 'textProperties',
+  defaultValues: [],
+  interpolators: {units},
+  functions = { prepareStart, prepareProperty, onStart:{}
+} */
 
 // Component Properties
-const textProperties = ['fontSize','lineHeight','letterSpacing','wordSpacing']
-const textOnStart = {}
+const textProperties = ['fontSize', 'lineHeight', 'letterSpacing', 'wordSpacing'];
+const textOnStart = {};
 
-export function textPropOnStart(tweenProp){
+export function textPropOnStart(tweenProp) {
   if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = (elem,a,b,v) => {
-      elem.style[tweenProp] = units(a.v,b.v,b.u,v);
-    }
+    KUTE[tweenProp] = (elem, a, b, v) => {
+      elem.style[tweenProp] = units(a.v, b.v, b.u, v);
+    };
   }
 }
-textProperties.forEach(tweenProp => {
-  textOnStart[tweenProp] = textPropOnStart
-})
+
+textProperties.forEach((tweenProp) => {
+  textOnStart[tweenProp] = textPropOnStart;
+});
 
 // Component Base
 const baseTextProperties = {
@@ -24,8 +30,8 @@ const baseTextProperties = {
   category: 'textProps',
   // properties: textProperties,
   // defaultValues: {fontSize:0,lineHeight:0,letterSpacing:0,wordSpacing:0},
-  Interpolate: {units},
-  functions: {onStart:textOnStart}
-}
+  Interpolate: { units },
+  functions: { onStart: textOnStart },
+};
 
-export default baseTextProperties
+export default baseTextProperties;

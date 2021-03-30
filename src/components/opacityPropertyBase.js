@@ -1,14 +1,20 @@
-import KUTE from '../objects/kute.js'
-import numbers from '../interpolation/numbers.js' 
+import KUTE from '../objects/kute.js';
+import numbers from '../interpolation/numbers.js';
 
-// const opacityProperty = { property : 'opacity', defaultValue: 1, interpolators: {numbers} }, functions = { prepareStart, prepareProperty, onStart }
+/* opacityProperty = {
+  property: 'opacity',
+  defaultValue: 1,
+  interpolators: {numbers},
+  functions = { prepareStart, prepareProperty, onStart }
+} */
 
 // Component Functions
-export function onStartOpacity(tweenProp){
-  if ( tweenProp in this.valuesEnd && !KUTE[tweenProp]) { // opacity could be 0
+export function onStartOpacity(tweenProp/* , value */) {
+  // opacity could be 0 sometimes, we need to check regardless
+  if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
     KUTE[tweenProp] = (elem, a, b, v) => {
-      elem.style[tweenProp] = ((numbers(a,b,v) * 1000)>>0)/1000;
-    }
+      elem.style[tweenProp] = ((numbers(a, b, v) * 1000) >> 0) / 1000;
+    };
   }
 }
 
@@ -17,8 +23,8 @@ const baseOpacity = {
   component: 'baseOpacity',
   property: 'opacity',
   // defaultValue: 1,
-  Interpolate: {numbers},
-  functions: {onStart: onStartOpacity}
-}
+  Interpolate: { numbers },
+  functions: { onStart: onStartOpacity },
+};
 
-export default baseOpacity
+export default baseOpacity;

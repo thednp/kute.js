@@ -1,93 +1,112 @@
-import defaultValues from '../objects/defaultValues.js'
-import onStart from '../objects/onStart.js'
-import Components from '../objects/components.js'
-import trueColor from '../util/trueColor.js' 
-import trueDimension from '../util/trueDimension.js' 
-import numbers from '../interpolation/numbers.js' 
-import colors from '../interpolation/colors.js' 
-import {attributes,onStartAttr} from './htmlAttributesBase.js'
+import defaultValues from '../objects/defaultValues.js';
+import onStart from '../objects/onStart.js';
+import trueColor from '../util/trueColor.js';
+import trueDimension from '../util/trueDimension.js';
+import numbers from '../interpolation/numbers.js';
+import colors from '../interpolation/colors.js';
+import { attributes, onStartAttr } from './htmlAttributesBase.js';
 
 // Component Name
-let ComponentName = 'htmlAttributes'
+const ComponentName = 'htmlAttributes';
 
 // Component Properties
-const svgColors = ['fill','stroke','stop-color'];
+const svgColors = ['fill', 'stroke', 'stop-color'];
 
 // Component Util
-function replaceUppercase (a) { return a.replace(/[A-Z]/g, "-$&").toLowerCase(); }
+function replaceUppercase(a) { return a.replace(/[A-Z]/g, '-$&').toLowerCase(); }
 
 // Component Functions
-export function getAttr(tweenProp,value){
-  let attrStartValues = {};
-  for (let attr in value){
-    let attribute = replaceUppercase(attr).replace(/_+[a-z]+/,''), // get the value for 'fill-opacity' not fillOpacity, also 'width' not the internal 'width_px'
-        currentValue = this.element.getAttribute(attribute);
-    attrStartValues[attribute] = svgColors.includes(attribute) ? (currentValue || 'rgba(0,0,0,0)') : (currentValue || (/opacity/i.test(attr) ? 1 : 0));
-  }
+export function getAttr(tweenProp, value) {
+  const attrStartValues = {};
+  Object.keys(value).forEach((attr) => {
+    // get the value for 'fill-opacity' not fillOpacity, also 'width' not the internal 'width_px'
+    const attribute = replaceUppercase(attr).replace(/_+[a-z]+/, '');
+    const currentValue = this.element.getAttribute(attribute);
+    attrStartValues[attribute] = svgColors.includes(attribute)
+      ? (currentValue || 'rgba(0,0,0,0)')
+      : (currentValue || (/opacity/i.test(attr) ? 1 : 0));
+  });
+
   return attrStartValues;
 }
-export function prepareAttr(tweenProp,attrObj){ // attr (string),attrObj (object)
-  let attributesObject = {};
-  for ( let p in attrObj ) {
-    let prop = replaceUppercase(p),
-        regex = /(%|[a-z]+)$/,
-        currentValue = this.element.getAttribute(prop.replace(/_+[a-z]+/,''));
-    if ( !svgColors.includes(prop)) {
-      if ( currentValue !== null && regex.test(currentValue) ) { // attributes set with unit suffixes
-        let unit = trueDimension(currentValue).u || trueDimension(attrObj[p]).u,
-            suffix = /%/.test(unit) ? '_percent' : `_${unit}`;
-        onStart[ComponentName][prop+suffix] = function(tp) { // most "unknown" attributes cannot register into onStart, so we manually add them
-          if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
-            attributes[tp] = (elem, p, a, b, v) => {
-              let _p = p.replace(suffix,'');
-              elem.setAttribute(_p, ( (numbers(a.v,b.v,v)*1000>>0)/1000) + b.u );
-            }
-          }
-        }
-        attributesObject[prop+suffix] = trueDimension(attrObj[p]);
-      } else if ( !regex.test(attrObj[p]) || currentValue === null || currentValue !== null && !regex.test(currentValue) ) {
-        onStart[ComponentName][prop] = function(tp) { // most "unknown" attributes cannot register into onStart, so we manually add them
-          if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
+
+export function prepareAttr(tweenProp, attrObj) { // attr (string),attrObj (object)
+  const attributesObject = {};
+
+  Object.keys(attrObj).forEach((p) => {
+    const prop = replaceUppercase(p);
+    const regex = /(%|[a-z]+)$/;
+    const currentValue = this.element.getAttribute(prop.replace(/_+[a-z]+/, ''));
+
+    if (!svgColors.includes(prop)) {
+      // attributes set with unit suffixes
+      if (currentValue !== null && regex.test(currentValue)) {
+        const unit = trueDimension(currentValue).u || trueDimension(attrObj[p]).u;
+        const suffix = /%/.test(unit) ? '_percent' : `_${unit}`;
+
+        // most "unknown" attributes cannot register into onStart, so we manually add them
+        onStart[ComponentName][prop + suffix] = (tp) => {
+          if (this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
             attributes[tp] = (elem, oneAttr, a, b, v) => {
-              elem.setAttribute(oneAttr, (numbers(a,b,v) * 1000 >> 0) / 1000 );
-            }
+              const _p = oneAttr.replace(suffix, '');
+              elem.setAttribute(_p, ((numbers(a.v, b.v, v) * 1000 >> 0) / 1000) + b.u);
+            };
           }
-        }
+        };
+        attributesObject[prop + suffix] = trueDimension(attrObj[p]);
+      } else if (!regex.test(attrObj[p]) || currentValue === null
+        || (currentValue !== null && !regex.test(currentValue))) {
+        // most "unknown" attributes cannot register into onStart, so we manually add them
+        onStart[ComponentName][prop] = (tp) => {
+          if (this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
+            attributes[tp] = (elem, oneAttr, a, b, v) => {
+              elem.setAttribute(oneAttr, (numbers(a, b, v) * 1000 >> 0) / 1000);
+            };
+          }
+        };
         attributesObject[prop] = parseFloat(attrObj[p]);
       }
     } else { // colors
-      onStart[ComponentName][prop] = function(tp) { // most "unknown" attributes cannot register into onStart, so we manually add them
-        if ( this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes) ) {
+      // most "unknown" attributes cannot register into onStart, so we manually add them
+      onStart[ComponentName][prop] = (tp) => {
+        if (this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
           attributes[tp] = (elem, oneAttr, a, b, v) => {
-            elem.setAttribute(oneAttr, colors(a,b,v));
-          }
+            elem.setAttribute(oneAttr, colors(a, b, v));
+          };
         }
-      }
+      };
       attributesObject[prop] = trueColor(attrObj[p]) || defaultValues.htmlAttributes[p];
     }
-  }
+  });
+
   return attributesObject;
 }
 
-// All Component Functions 
+// All Component Functions
 const attrFunctions = {
   prepareStart: getAttr,
   prepareProperty: prepareAttr,
-  onStart: onStartAttr
-}
+  onStart: onStartAttr,
+};
 
 // Component Full
 const htmlAttributes = {
   component: ComponentName,
   property: 'attr',
-  subProperties: ['fill','stroke','stop-color','fill-opacity','stroke-opacity'], // the Animation class will need some values to validate this Object attribute
-  defaultValue: {fill : 'rgb(0,0,0)', stroke: 'rgb(0,0,0)', 'stop-color': 'rgb(0,0,0)', opacity: 1, 'stroke-opacity': 1,'fill-opacity': 1}, // same here
-  Interpolate: { numbers,colors },
+  // the Animation class will need some values to validate this Object attribute
+  subProperties: ['fill', 'stroke', 'stop-color', 'fill-opacity', 'stroke-opacity'],
+  defaultValue: {
+    fill: 'rgb(0,0,0)',
+    stroke: 'rgb(0,0,0)',
+    'stop-color': 'rgb(0,0,0)',
+    opacity: 1,
+    'stroke-opacity': 1,
+    'fill-opacity': 1, // same here
+  },
+  Interpolate: { numbers, colors },
   functions: attrFunctions,
   // export to global for faster execution
-  Util: { replaceUppercase, trueColor, trueDimension }
-}
+  Util: { replaceUppercase, trueColor, trueDimension },
+};
 
-export default htmlAttributes
-
-Components.HTMLAttributes = htmlAttributes
+export default htmlAttributes;

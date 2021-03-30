@@ -1,30 +1,31 @@
-import defaultValues from '../objects/defaultValues.js'
-import Components from '../objects/components.js'
-import getStyleForProperty from '../process/getStyleForProperty.js' 
-import trueColor from '../util/trueColor.js' 
-import numbers from '../interpolation/numbers.js' 
-import colors from '../interpolation/colors.js' 
-import {onStartColors} from './colorPropertiesBase.js' 
+import defaultValues from '../objects/defaultValues.js';
+import getStyleForProperty from '../process/getStyleForProperty.js';
+import trueColor from '../util/trueColor.js';
+import numbers from '../interpolation/numbers.js';
+import colors from '../interpolation/colors.js';
+import { onStartColors } from './colorPropertiesBase.js';
 
 // Component Interpolation
 // Component Properties
 // supported formats
 // 'hex', 'rgb', 'rgba' '#fff' 'rgb(0,0,0)' / 'rgba(0,0,0,0)' 'red' (IE9+)
-const supportedColors = ['color', 'backgroundColor','borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor']
-const defaultColors = {}
+const supportedColors = ['color', 'backgroundColor', 'borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
 
-supportedColors.map(tweenProp => {
-  defaultColors[tweenProp] = '#000'
+const defaultColors = {};
+supportedColors.forEach((tweenProp) => {
+  defaultColors[tweenProp] = '#000';
 });
 
 // Component Functions
-const colorsOnStart = {}
-supportedColors.map(x => colorsOnStart[x] = onStartColors)
+const colorsOnStart = {};
+supportedColors.forEach((x) => {
+  colorsOnStart[x] = onStartColors;
+});
 
-function getColor(prop,value) {
-  return getStyleForProperty(this.element,prop) || defaultValues[prop];
+function getColor(prop/* , value */) {
+  return getStyleForProperty(this.element, prop) || defaultValues[prop];
 }
-function prepareColor(prop,value) {
+function prepareColor(prop, value) {
   return trueColor(value);
 }
 
@@ -32,8 +33,8 @@ function prepareColor(prop,value) {
 const colorFunctions = {
   prepareStart: getColor,
   prepareProperty: prepareColor,
-  onStart: colorsOnStart
-}
+  onStart: colorsOnStart,
+};
 
 // Component Full
 const colorProperties = {
@@ -41,11 +42,9 @@ const colorProperties = {
   category: 'colors',
   properties: supportedColors,
   defaultValues: defaultColors,
-  Interpolate: {numbers,colors},
+  Interpolate: { numbers, colors },
   functions: colorFunctions,
-  Util: {trueColor}
-}
+  Util: { trueColor },
+};
 
-export default colorProperties
-
-Components.ColorProperties = colorProperties
+export default colorProperties;

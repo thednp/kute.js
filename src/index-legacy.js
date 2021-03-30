@@ -1,4 +1,3 @@
-import CubicBezier from 'cubic-bezier-easing';
 import { version as Version } from '../package.json';
 import Render from './core/render.js';
 import Interpolate from './objects/interpolate.js';
@@ -6,7 +5,7 @@ import Objects from './objects/objects.js';
 import Util from './objects/util.js';
 import Internals from './core/internals.js';
 import Process from './process/process.js';
-import Easing from './easing/easing-bezier.js';
+import Easing from './easing/easing.js';
 import Selector from './util/selector.js';
 
 // TweenConstructor
@@ -17,26 +16,25 @@ import to from './interface/to.js';
 import fromTo from './interface/fromTo.js';
 import allTo from './interface/allTo.js';
 import allFromTo from './interface/allFromTo.js';
-
 import Animation from './animation/animation.js';
 
 // components
-import EssentialBoxModel from './components/boxModelEssential.js';
-import ColorsProperties from './components/colorProperties.js';
+import BoxModel from './components/boxModelEssential.js';
+import ColorProperties from './components/colorProperties.js';
 import HTMLAttributes from './components/htmlAttributes.js';
 import OpacityProperty from './components/opacityProperty.js';
 import TextWrite from './components/textWrite.js';
-import TransformFunctions from './components/transformFunctions.js';
+import TransformLegacy from './components/transformLegacy.js';
 import SVGDraw from './components/svgDraw.js';
 import SVGMorph from './components/svgMorph.js';
 
 const Components = {
-  EssentialBoxModel,
-  ColorsProperties,
+  BoxModel,
+  ColorProperties,
   HTMLAttributes,
   OpacityProperty,
   TextWrite,
-  TransformFunctions,
+  TransformLegacy,
   SVGDraw,
   SVGMorph,
 };
@@ -64,7 +62,6 @@ export default {
   Objects,
   Util,
   Easing,
-  CubicBezier,
   Render,
   Interpolate,
   Process,

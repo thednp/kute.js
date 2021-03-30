@@ -1,2 +1,2 @@
 // link properties to interpolate functions
-export default {}
+export default {};

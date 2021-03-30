@@ -1,24 +1,30 @@
-import defaultValues from '../objects/defaultValues.js'
-import Components from '../objects/components.js'
-import getStyleForProperty from '../process/getStyleForProperty.js'
-import trueDimension from '../util/trueDimension.js'
-import units from '../interpolation/units.js' 
-import {textPropOnStart} from './textPropertiesBase.js' 
+import defaultValues from '../objects/defaultValues.js';
+import getStyleForProperty from '../process/getStyleForProperty.js';
+import trueDimension from '../util/trueDimension.js';
+import units from '../interpolation/units.js';
+import { textPropOnStart } from './textPropertiesBase.js';
 
-// const textProperties = { category : 'textProperties', defaultValues: [], interpolators: {units} }, functions = { prepareStart, prepareProperty, onStart:{} }
+/* textProperties = {
+  category: 'textProperties',
+  defaultValues: [],
+  interpolators: {units}
+  functions = { prepareStart, prepareProperty, onStart }
+} */
 
 // Component Properties
-const textProps = ['fontSize','lineHeight','letterSpacing','wordSpacing']
-const textOnStart = {}
+const textProps = ['fontSize', 'lineHeight', 'letterSpacing', 'wordSpacing'];
+const textOnStart = {};
 
 // Component Functions
-textProps.forEach(tweenProp => {
-  textOnStart[tweenProp] = textPropOnStart
-})
-export function getTextProp(prop) {
-  return getStyleForProperty(this.element,prop) || defaultValues[prop];
+textProps.forEach((tweenProp) => {
+  textOnStart[tweenProp] = textPropOnStart;
+});
+
+export function getTextProp(prop/* , value */) {
+  return getStyleForProperty(this.element, prop) || defaultValues[prop];
 }
-export function prepareTextProp(prop,value) {
+
+export function prepareTextProp(prop, value) {
   return trueDimension(value);
 }
 
@@ -26,20 +32,20 @@ export function prepareTextProp(prop,value) {
 const textPropFunctions = {
   prepareStart: getTextProp,
   prepareProperty: prepareTextProp,
-  onStart: textOnStart
-}
+  onStart: textOnStart,
+};
 
 // Component Full
 const textProperties = {
   component: 'textProperties',
   category: 'textProperties',
   properties: textProps,
-  defaultValues: {fontSize:0,lineHeight:0,letterSpacing:0,wordSpacing:0},
-  Interpolate: {units},
+  defaultValues: {
+    fontSize: 0, lineHeight: 0, letterSpacing: 0, wordSpacing: 0,
+  },
+  Interpolate: { units },
   functions: textPropFunctions,
-  Util: {trueDimension}
-}
+  Util: { trueDimension },
+};
 
-export default textProperties
-
-Components.TextProperties = textProperties
+export default textProperties;

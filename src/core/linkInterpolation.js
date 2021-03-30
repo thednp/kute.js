@@ -1,34 +1,32 @@
-import KUTE from '../objects/kute.js'
-import linkProperty from '../objects/linkProperty.js'
-import supportedProperties from '../objects/supportedProperties.js'
+import KUTE from '../objects/kute.js';
+import linkProperty from '../objects/linkProperty.js';
+import supportedProperties from '../objects/supportedProperties.js';
 
-export default function() { // DON'T change
-  for (const component in linkProperty){
-    const componentLink = linkProperty[component]
-    const componentProps = supportedProperties[component]
+export default function linkInterpolation() { // DON'T change
+  Object.keys(linkProperty).forEach((component) => {
+    const componentLink = linkProperty[component];
+    const componentProps = supportedProperties[component];
 
-    for ( const fnObj in componentLink ) {
-      if ( typeof(componentLink[fnObj]) === 'function' 
-          && Object.keys(this.valuesEnd).some(i => componentProps && componentProps.includes(i) 
-          || i=== 'attr' && Object.keys(this.valuesEnd[i]).some(j => componentProps && componentProps.includes(j)) ) ) 
-      { // ATTR, colors, scroll, boxModel, borderRadius
-        !KUTE[fnObj] && (KUTE[fnObj] = componentLink[fnObj])
+    Object.keys(componentLink).forEach((fnObj) => {
+      if (typeof (componentLink[fnObj]) === 'function' // ATTR, colors, scroll, boxModel, borderRadius
+          && Object.keys(this.valuesEnd).some((i) => (componentProps && componentProps.includes(i))
+          || (i === 'attr' && Object.keys(this.valuesEnd[i]).some((j) => componentProps && componentProps.includes(j))))) {
+        if (!KUTE[fnObj]) KUTE[fnObj] = componentLink[fnObj];
       } else {
-
-        for ( const prop in this.valuesEnd ) {
-          for ( const i in this.valuesEnd[prop] ) {
-            if ( typeof(componentLink[i]) === 'function' ) { // transformCSS3
-              !KUTE[i] && (KUTE[i] = componentLink[i])
+        Object.keys(this.valuesEnd).forEach((prop) => {
+          Object.keys(this.valuesEnd[prop]).forEach((i) => {
+            if (typeof (componentLink[i]) === 'function') { // transformCSS3
+              if (!KUTE[i]) KUTE[i] = componentLink[i];
             } else {
-              for (const j in componentLink[fnObj]){
-                if (componentLink[i] && typeof(componentLink[i][j]) === 'function' ) { // transformMatrix
-                  !KUTE[j] && (KUTE[j] = componentLink[i][j])
+              Object.keys(componentLink[fnObj]).forEach((j) => {
+                if (componentLink[i] && typeof (componentLink[i][j]) === 'function') { // transformMatrix
+                  if (!KUTE[j]) KUTE[j] = componentLink[i][j];
                 }
-              }
-            } 
-          }
-        }
+              });
+            }
+          });
+        });
       }
-    }
-  }
+    });
+  });
 }

@@ -6,10 +6,11 @@ var translateExamples = document.getElementById('translate-examples'),
     trx = translateExamples.getElementsByTagName('div')[1],
     trry = translateExamples.getElementsByTagName('div')[2],
     trz = translateExamples.getElementsByTagName('div')[3],
-    tr2dTween = KUTE.to(tr2d, {translate:[170,0]}, {easing:'easingCubicOut', yoyo:true, repeat: 1, duration:1500}),
-    trxTween = KUTE.to(trx, {translateX:-170}, {easing:'easingCubicOut', yoyo:true, repeat: 1, duration:1500})
+    tr2dTween = KUTE.to(tr2d, {translate:[170,170]}, {easing:'easingCubicOut', yoyo:true, repeat: 1, duration:1500}),
+    trxTween = KUTE.to(trx, {translateX:-170}, {easing:'easingCubicOut', yoyo:true, repeat: 1, duration:1500}),
     trryTween = KUTE.to(trry, {translate3d:[0,170,0]}, {easing:'easingCubicOut', yoyo:true, repeat: 1, duration:1500}),
     trzTween = KUTE.to(trz, {perspective:200, translate3d:[0,0,-100]}, {easing:'easingCubicOut', yoyo:true, repeat: 1, duration:1500});
+
 translateBtn.addEventListener('click', function(){
     !tr2dTween.playing && tr2dTween.start();
     !trxTween.playing && trxTween.start();
@@ -27,6 +28,7 @@ var rotExamples = document.getElementById('rotExamples'),
     rxTween = KUTE.to(rx, {rotateX:180}, {easing:'linear', yoyo:true, repeat: 1, duration:1500}),
     ryTween = KUTE.to(ry, {perspective:200, rotate3d:[0,-180,0],scale:1.2}, {easing:'easingCubicInOut', yoyo:true, repeat: 1, duration:1500}),
     rzTween = KUTE.to(rz, {rotateZ:360}, {easing:'easingBackOut', yoyo:true, repeat: 1, duration:1500});
+
 rotBtn.addEventListener('click', function(){
     !r2dTween.playing && r2dTween.start();
     !rxTween.playing && rxTween.start();

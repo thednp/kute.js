@@ -41,6 +41,20 @@ All above mentioned components have a BASE version which doesn't include value p
 # Wiki
 For a complete developer guide, usage and stuff like npm, visit [the wiki](https://github.com/thednp/kute.js/wiki).
 
+
+# ESLint
+If you include KUTE.js in your project, we recommend using the following ESLint rule:
+
+```js
+rules: {
+  // Disable bitwise for isArcCommand & isPathCommand from SVGPathCommander
+  // as well as the KUTE.js interpolation functions 
+  "no-bitwise": 0,
+}
+```
+Some **SVGPathCommander** as well as **KUTE.js** interpolation functions make use of `|` (OR) and `>>` operators for fastest number operations.
+
+
 # Browser Support
 KUTE.js is redeveloped for maximum performance on modern browsers. Some legacy browsers might some help, so give them a small polyfill set with most essential features required by KUTE.js to work, powered by [minifill](https://github.com/thednp/minifill), try it. For broader projects you might want to consider <a href="https://cdn.polyfill.io/v2/docs/">polyfills</a>. 
 

@@ -1,3 +1,3 @@
 // KUTE.js INTERPOLATE FUNCTIONS
 // =============================
-export default {}
+export default {};

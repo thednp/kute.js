@@ -1,62 +1,81 @@
-import KUTE from '../objects/kute.js'
-import numbers from '../interpolation/numbers.js'
-import arrays from '../interpolation/arrays.js'
+import KUTE from '../objects/kute.js';
+import numbers from '../interpolation/numbers.js';
+import arrays from '../interpolation/arrays.js';
 
-// const transformMatrix = { property : 'transform', defaultValue: {}, interpolators: {} }, functions = { prepareStart, prepareProperty, onStart, crossCheck }
+/* transformMatrix = {
+  property : 'transform',
+  defaultValue: {},
+  interpolators: {},
+  functions = { prepareStart, prepareProperty, onStart, crossCheck }
+} */
 
 // Component name
-const matrixComponent = 'transformMatrixBase'
+const matrixComponent = 'transformMatrixBase';
 
 // Component special
-const CSS3Matrix = typeof(DOMMatrix) !== 'undefined' ? DOMMatrix 
-                 : typeof(WebKitCSSMatrix) !== 'undefined' ? WebKitCSSMatrix
-                 : typeof(CSSMatrix) !== 'undefined' ? CSSMatrix
-                 : typeof(MSCSSMatrix) !== 'undefined' ? MSCSSMatrix
-                 : null
+// this component is restricted to modern browsers only
+const CSS3Matrix = typeof (DOMMatrix) !== 'undefined' ? DOMMatrix : null;
 
 // Component Functions
 export const onStartTransform = {
-  transform : function(tweenProp) {
-    if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-      
+  transform(tweenProp) {
+    if (CSS3Matrix && this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
       KUTE[tweenProp] = (elem, a, b, v) => {
-        let matrix = new CSS3Matrix(), transformObject = {}
+        let matrix = new CSS3Matrix();
+        const tObject = {};
 
-        for ( const p in b ) {
-          transformObject[p] = p === 'perspective' ? numbers(a[p],b[p],v) : arrays(a[p],b[p],v)
+        Object.keys(b).forEach((p) => {
+          tObject[p] = p === 'perspective' ? numbers(a[p], b[p], v) : arrays(a[p], b[p], v);
+        });
+
+        // set perspective
+        if (tObject.perspective) matrix.m34 = -1 / tObject.perspective;
+
+        // set translate
+        matrix = tObject.translate3d
+          ? matrix.translate(tObject.translate3d[0], tObject.translate3d[1], tObject.translate3d[2])
+          : matrix;
+
+        // set rotation
+        matrix = tObject.rotate3d
+          ? matrix.rotate(tObject.rotate3d[0], tObject.rotate3d[1], tObject.rotate3d[2])
+          : matrix;
+
+        // set skew
+        if (tObject.skew) {
+          matrix = tObject.skew[0] ? matrix.skewX(tObject.skew[0]) : matrix;
+          matrix = tObject.skew[1] ? matrix.skewY(tObject.skew[1]) : matrix;
         }
 
-        transformObject.perspective && (matrix.m34 = -1/transformObject.perspective)// set perspective
-        matrix = transformObject.translate3d ? (matrix.translate(transformObject.translate3d[0],transformObject.translate3d[1],transformObject.translate3d[2])) : matrix // set translate
-        matrix = transformObject.rotate3d ? (matrix.rotate(transformObject.rotate3d[0],transformObject.rotate3d[1],transformObject.rotate3d[2])) : matrix // set rotation
-        if (transformObject.skew) { // set skew
-          matrix = transformObject.skew[0] ? matrix.skewX(transformObject.skew[0]) : matrix;
-          matrix = transformObject.skew[1] ? matrix.skewY(transformObject.skew[1]) : matrix;
-        }
-        matrix = transformObject.scale3d ? (matrix.scale(transformObject.scale3d[0],transformObject.scale3d[1],transformObject.scale3d[2])): matrix // set scale
-        elem.style[tweenProp] = matrix.toString() // set element style
-      }
+        // set scale
+        matrix = tObject.scale3d
+          ? matrix.scale(tObject.scale3d[0], tObject.scale3d[1], tObject.scale3d[2])
+          : matrix;
+
+        // set element style
+        elem.style[tweenProp] = matrix.toString();
+      };
     }
   },
-  CSS3Matrix: function(prop) {
-    if (this.valuesEnd.transform){
-      !KUTE[prop] && (KUTE[prop] = CSS3Matrix)
+  CSS3Matrix(prop) {
+    if (CSS3Matrix && this.valuesEnd.transform) {
+      if (!KUTE[prop]) KUTE[prop] = CSS3Matrix;
     }
-  },    
-}
+  },
+};
 
 // Component Base Object
 export const baseMatrixTransform = {
   component: matrixComponent,
   property: 'transform',
-  functions: {onStart: onStartTransform},
+  functions: { onStart: onStartTransform },
   Interpolate: {
     perspective: numbers,
-    translate3d: arrays, 
+    translate3d: arrays,
     rotate3d: arrays,
     skew: arrays,
-    scale3d: arrays
-  }
-}
+    scale3d: arrays,
+  },
+};
 
-export default baseMatrixTransform
+export default baseMatrixTransform;

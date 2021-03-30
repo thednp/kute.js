@@ -1,1 +1,1 @@
-export default (a) => { a*Math.PI/180 }
+export default function degToRad(a) { return (a * Math.PI) / 180; }

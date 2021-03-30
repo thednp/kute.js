@@ -1,2 +1,3 @@
-import Tweens from '../objects/tweens.js'
-export default () => Tweens
+import Tweens from '../objects/tweens.js';
+
+export default () => Tweens;

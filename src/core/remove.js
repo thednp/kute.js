@@ -1,5 +1,6 @@
-import Tweens from '../objects/tweens.js'
-export default (tw) => { 
-  let i = Tweens.indexOf(tw)
-  i !== -1 && Tweens.splice(i, 1)
-}
+import Tweens from '../objects/tweens.js';
+
+export default (tw) => {
+  const i = Tweens.indexOf(tw);
+  if (i !== -1) Tweens.splice(i, 1);
+};
