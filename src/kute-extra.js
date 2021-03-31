@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Extra v2.1.1-alpha1 (http://thednp.github.io/kute.js)
+* KUTE.js Extra v2.1.1-alpha2 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -82,7 +82,7 @@
     return t2;
   };
 
-  var version = "2.1.1-alpha1";
+  var version = "2.1.1-alpha2";
 
   var KUTE = {};
 
@@ -228,17 +228,20 @@
           if (!KUTE[fnObj]) { KUTE[fnObj] = componentLink[fnObj]; }
         } else {
           Object.keys(this$1.valuesEnd).forEach(function (prop) {
-            Object.keys(this$1.valuesEnd[prop]).forEach(function (i) {
-              if (typeof (componentLink[i]) === 'function') { // transformCSS3
-                if (!KUTE[i]) { KUTE[i] = componentLink[i]; }
-              } else {
-                Object.keys(componentLink[fnObj]).forEach(function (j) {
-                  if (componentLink[i] && typeof (componentLink[i][j]) === 'function') { // transformMatrix
-                    if (!KUTE[j]) { KUTE[j] = componentLink[i][j]; }
-                  }
-                });
-              }
-            });
+            var propObject = this$1.valuesEnd[prop];
+            if (propObject instanceof Object) {
+              Object.keys(propObject).forEach(function (i) {
+                if (typeof (componentLink[i]) === 'function') { // transformCSS3
+                  if (!KUTE[i]) { KUTE[i] = componentLink[i]; }
+                } else {
+                  Object.keys(componentLink[fnObj]).forEach(function (j) {
+                    if (componentLink[i] && typeof (componentLink[i][j]) === 'function') { // transformMatrix
+                      if (!KUTE[j]) { KUTE[j] = componentLink[i][j]; }
+                    }
+                  });
+                }
+              });
+            }
           });
         }
       });
@@ -1623,14 +1626,10 @@
   }
   function prepareClip(tweenProp, value) {
     if (value instanceof Array) {
-      // return [trueDimension(value[0]),
-      //   trueDimension(value[1]), trueDimension(value[2]), trueDimension(value[3])];
       return value.map(function (x) { return trueDimension(x); });
     }
     var clipValue = value.replace(/rect|\(|\)/g, '');
     clipValue = /,/g.test(clipValue) ? clipValue.split(',') : clipValue.split(/\s/);
-    // return [trueDimension(clipValue[0]),
-    //  trueDimension(clipValue[1]), trueDimension(clipValue[2]), trueDimension(clipValue[3])];
     return clipValue.map(function (x) { return trueDimension(x); });
   }
 
