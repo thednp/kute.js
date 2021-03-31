@@ -1,6 +1,6 @@
 {
   "name": "kute.js",
-  "version": "2.1.1-alpha2",
+  "version": "2.1.1-alpha3",
   "description": "JavaScript animation engine",
   "main": "dist/kute.min.js",
   "module": "dist/kute.esm.js",

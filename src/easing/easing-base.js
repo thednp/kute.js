@@ -11,7 +11,7 @@ const Easing = {
   easingCubicOut: (t0) => { const t = t0 - 1; return t * t * t + 1; },
   easingCubicInOut: (t) => (t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1),
   easingCircularIn: (t) => -(Math.sqrt(1 - (t * t)) - 1),
-  easingCircularOut: (t0) => { const t = t0 - 1; Math.sqrt(1 - t * t); },
+  easingCircularOut: (t0) => { const t = t0 - 1; return Math.sqrt(1 - t * t); },
   easingCircularInOut: (t0) => {
     let t = t0 * 2;
     if (t < 1) return -0.5 * (Math.sqrt(1 - t * t) - 1);
