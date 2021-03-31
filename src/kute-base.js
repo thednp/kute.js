@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Base v2.1.1-alpha2 (http://thednp.github.io/kute.js)
+* KUTE.js Base v2.1.1-alpha3 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,7 +9,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
 
-  var version = "2.1.1-alpha2";
+  var version = "2.1.1-alpha3";
 
   var KUTE = {};
 
@@ -120,7 +120,7 @@
     easingCubicOut: function (t0) { var t = t0 - 1; return t * t * t + 1; },
     easingCubicInOut: function (t) { return (t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1); },
     easingCircularIn: function (t) { return -(Math.sqrt(1 - (t * t)) - 1); },
-    easingCircularOut: function (t0) { },
+    easingCircularOut: function (t0) { var t = t0 - 1; return Math.sqrt(1 - t * t); },
     easingCircularInOut: function (t0) {
       var t = t0 * 2;
       if (t < 1) { return -0.5 * (Math.sqrt(1 - t * t) - 1); }

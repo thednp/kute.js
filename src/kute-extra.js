@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Extra v2.1.1-alpha2 (http://thednp.github.io/kute.js)
+* KUTE.js Extra v2.1.1-alpha3 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -82,7 +82,7 @@
     return t2;
   };
 
-  var version = "2.1.1-alpha2";
+  var version = "2.1.1-alpha3";
 
   var KUTE = {};
 
