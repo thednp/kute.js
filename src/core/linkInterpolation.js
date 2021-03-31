@@ -14,17 +14,20 @@ export default function linkInterpolation() { // DON'T change
         if (!KUTE[fnObj]) KUTE[fnObj] = componentLink[fnObj];
       } else {
         Object.keys(this.valuesEnd).forEach((prop) => {
-          Object.keys(this.valuesEnd[prop]).forEach((i) => {
-            if (typeof (componentLink[i]) === 'function') { // transformCSS3
-              if (!KUTE[i]) KUTE[i] = componentLink[i];
-            } else {
-              Object.keys(componentLink[fnObj]).forEach((j) => {
-                if (componentLink[i] && typeof (componentLink[i][j]) === 'function') { // transformMatrix
-                  if (!KUTE[j]) KUTE[j] = componentLink[i][j];
-                }
-              });
-            }
-          });
+          const propObject = this.valuesEnd[prop];
+          if (propObject instanceof Object) {
+            Object.keys(propObject).forEach((i) => {
+              if (typeof (componentLink[i]) === 'function') { // transformCSS3
+                if (!KUTE[i]) KUTE[i] = componentLink[i];
+              } else {
+                Object.keys(componentLink[fnObj]).forEach((j) => {
+                  if (componentLink[i] && typeof (componentLink[i][j]) === 'function') { // transformMatrix
+                    if (!KUTE[j]) KUTE[j] = componentLink[i][j];
+                  }
+                });
+              }
+            });
+          }
         });
       }
     });

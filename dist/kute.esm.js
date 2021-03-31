@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Standard v2.1.1-alpha1 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.1.1-alpha2 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -76,7 +76,7 @@ CubicBezier.prototype.solveCurveX = function solveCurveX (x) {
   return t2;
 };
 
-var version = "2.1.1-alpha1";
+var version = "2.1.1-alpha2";
 
 var KUTE = {};
 
@@ -222,17 +222,20 @@ function linkInterpolation() {
         if (!KUTE[fnObj]) { KUTE[fnObj] = componentLink[fnObj]; }
       } else {
         Object.keys(this$1.valuesEnd).forEach(function (prop) {
-          Object.keys(this$1.valuesEnd[prop]).forEach(function (i) {
-            if (typeof (componentLink[i]) === 'function') { // transformCSS3
-              if (!KUTE[i]) { KUTE[i] = componentLink[i]; }
-            } else {
-              Object.keys(componentLink[fnObj]).forEach(function (j) {
-                if (componentLink[i] && typeof (componentLink[i][j]) === 'function') { // transformMatrix
-                  if (!KUTE[j]) { KUTE[j] = componentLink[i][j]; }
-                }
-              });
-            }
-          });
+          var propObject = this$1.valuesEnd[prop];
+          if (propObject instanceof Object) {
+            Object.keys(propObject).forEach(function (i) {
+              if (typeof (componentLink[i]) === 'function') { // transformCSS3
+                if (!KUTE[i]) { KUTE[i] = componentLink[i]; }
+              } else {
+                Object.keys(componentLink[fnObj]).forEach(function (j) {
+                  if (componentLink[i] && typeof (componentLink[i][j]) === 'function') { // transformMatrix
+                    if (!KUTE[j]) { KUTE[j] = componentLink[i][j]; }
+                  }
+                });
+              }
+            });
+          }
         });
       }
     });
