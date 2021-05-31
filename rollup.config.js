@@ -33,8 +33,11 @@ const OUTPUT = {
 const PLUGINS = [
   node({mainFields: ['jsnext','module'], dedupe: ['svg-path-commander']}) ,
   json(),
-  buble(),
 ]
+
+if (FORMAT!=='esm'){
+  PLUGINS.push(buble());
+}
 
 if (MIN){
   PLUGINS.push(terser({output: {preamble: miniBanner}}));

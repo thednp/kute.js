@@ -1,4 +1,3 @@
-import { version as Version } from '../package.json';
 import Render from './core/render.js';
 import Interpolate from './objects/interpolate.js';
 import Objects from './objects/objectsBase.js';
@@ -18,14 +17,16 @@ import fromTo from './interface/fromTo.js';
 import baseTransformMatrix from './components/transformMatrixBase.js';
 import baseBoxModel from './components/boxModelBase.js';
 import baseOpacity from './components/opacityPropertyBase.js';
+// const Move = new Animation(baseCrossBrowserMove)
+// support for kute-base.js ends here
+
+import { version as Version } from '../package.json';
 // import {baseCrossBrowserMove} from './components/crossBrowserMove.js'
 
 // const Transform = new Animation(baseTransform)
 const Transform = new Animation(baseTransformMatrix);
 const BoxModel = new Animation(baseBoxModel);
 const Opacity = new Animation(baseOpacity);
-// const Move = new Animation(baseCrossBrowserMove)
-// support for kute-base.js ends here
 
 export default {
   Animation,

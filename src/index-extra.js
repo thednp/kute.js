@@ -1,5 +1,4 @@
 import CubicBezier from 'cubic-bezier-easing';
-import { version as Version } from '../package.json';
 import Render from './core/render.js';
 import Interpolate from './objects/interpolate.js';
 import Objects from './objects/objects.js';
@@ -38,6 +37,8 @@ import ShadowProperties from './components/shadowProperties.js';
 import TextProperties from './components/textProperties.js';
 import TextWriteProperties from './components/textWrite.js';
 import MatrixTransform from './components/transformMatrix.js';
+
+import { version as Version } from '../package.json';
 
 const Components = {
   BackgroundPosition,

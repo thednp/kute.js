@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Extra v2.1.1-alpha3 (http://thednp.github.io/kute.js)
+* KUTE.js Extra v2.1.2 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -10,7 +10,7 @@
 }(this, (function () { 'use strict';
 
   var CubicBezier = function CubicBezier(p1x, p1y, p2x, p2y, functionName) {
-    var this$1 = this;
+    var this$1$1 = this;
 
     // pre-calculate the polynomial coefficients
     // First and last control points are implied to be (0,0) and (1.0, 1.0)
@@ -22,7 +22,7 @@
     this.by = 3.0 * (p2y - p1y) - this.cy;
     this.ay = 1.0 - this.cy - this.by;
 
-    var BezierEasing = function (t) { return this$1.sampleCurveY(this$1.solveCurveX(t)); };
+    var BezierEasing = function (t) { return this$1$1.sampleCurveY(this$1$1.solveCurveX(t)); };
 
     // this function needs a name
     Object.defineProperty(BezierEasing, 'name', { writable: true });
@@ -81,8 +81,6 @@
     // Give up
     return t2;
   };
-
-  var version = "2.1.1-alpha3";
 
   var KUTE = {};
 
@@ -156,6 +154,7 @@
       KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
     }
   });
+
   globalObject$1._KUTE = KUTE;
 
   var supportedProperties = {};
@@ -215,7 +214,7 @@
   function removeAll () { Tweens.length = 0; }
 
   function linkInterpolation() {
-    var this$1 = this;
+    var this$1$1 = this;
    // DON'T change
     Object.keys(linkProperty).forEach(function (component) {
       var componentLink = linkProperty[component];
@@ -223,12 +222,12 @@
 
       Object.keys(componentLink).forEach(function (fnObj) {
         if (typeof (componentLink[fnObj]) === 'function' // ATTR, colors, scroll, boxModel, borderRadius
-            && Object.keys(this$1.valuesEnd).some(function (i) { return (componentProps && componentProps.includes(i))
-            || (i === 'attr' && Object.keys(this$1.valuesEnd[i]).some(function (j) { return componentProps && componentProps.includes(j); })); })) {
+            && Object.keys(this$1$1.valuesEnd).some(function (i) { return (componentProps && componentProps.includes(i))
+            || (i === 'attr' && Object.keys(this$1$1.valuesEnd[i]).some(function (j) { return componentProps && componentProps.includes(j); })); })) {
           if (!KUTE[fnObj]) { KUTE[fnObj] = componentLink[fnObj]; }
         } else {
-          Object.keys(this$1.valuesEnd).forEach(function (prop) {
-            var propObject = this$1.valuesEnd[prop];
+          Object.keys(this$1$1.valuesEnd).forEach(function (prop) {
+            var propObject = this$1$1.valuesEnd[prop];
             if (propObject instanceof Object) {
               Object.keys(propObject).forEach(function (i) {
                 if (typeof (componentLink[i]) === 'function') { // transformCSS3
@@ -303,7 +302,7 @@
 
   // prepareObject - returns all processed valuesStart / valuesEnd
   function prepareObject(obj, fn) {
-    var this$1 = this;
+    var this$1$1 = this;
    // this, props object, type: start/end
     var propertiesObject = fn === 'start' ? this.valuesStart : this.valuesEnd;
 
@@ -318,7 +317,7 @@
           // scroll, opacity, other components
           if (defaultValues[tweenProp] && prepareComponent[tweenProp]) {
             propertiesObject[tweenProp] = prepareComponent[tweenProp]
-              .call(this$1, tweenProp, obj[tweenProp]);
+              .call(this$1$1, tweenProp, obj[tweenProp]);
 
           // transform
           } else if (!defaultValues[tweenCategory] && tweenCategory === 'transform'
@@ -333,14 +332,14 @@
           } else if (!defaultValues[tweenCategory]
             && supportComponent && supportComponent.includes(tweenProp)) {
             propertiesObject[tweenProp] = prepareComponent[tweenCategory]
-              .call(this$1, tweenProp, obj[tweenProp]);
+              .call(this$1$1, tweenProp, obj[tweenProp]);
           }
         });
 
         // we filter out older browsers by checking Object.keys
         if (Object.keys(transformObject).length) {
           propertiesObject[tweenCategory] = prepareComponent[tweenCategory]
-            .call(this$1, tweenCategory, transformObject);
+            .call(this$1$1, tweenCategory, transformObject);
         }
       });
     });
@@ -348,7 +347,7 @@
 
   // getStartValues - returns the startValue for to() method
   function getStartValues() {
-    var this$1 = this;
+    var this$1$1 = this;
 
     var startValues = {};
     var currentStyle = getInlineStyle(this.element);
@@ -361,12 +360,12 @@
           // clip, opacity, scroll
           if (tweenCategory === tweenProp && componentStart[tweenProp]) {
             startValues[tweenProp] = componentStart[tweenCategory]
-              .call(this$1, tweenProp, this$1.valuesStart[tweenProp]);
+              .call(this$1$1, tweenProp, this$1$1.valuesStart[tweenProp]);
           // find in an array of properties
           } else if (supportedProperties[component]
             && supportedProperties[component].includes(tweenProp)) {
             startValues[tweenProp] = componentStart[tweenCategory]
-              .call(this$1, tweenProp, this$1.valuesStart[tweenProp]);
+              .call(this$1$1, tweenProp, this$1$1.valuesStart[tweenProp]);
           }
         });
       });
@@ -375,7 +374,7 @@
     // stack transformCSS props for .to() chains
     // also add to startValues values from previous tweens
     Object.keys(currentStyle).forEach(function (current) {
-      if (!(current in this$1.valuesStart)) {
+      if (!(current in this$1$1.valuesStart)) {
         startValues[current] = currentStyle[current] || defaultValues[current];
       }
     });
@@ -465,15 +464,15 @@
   }
 
   function queueStart() {
-    var this$1 = this;
+    var this$1$1 = this;
 
     // fire onStart actions
     Object.keys(onStart).forEach(function (obj) {
       if (typeof (onStart[obj]) === 'function') {
-        onStart[obj].call(this$1, obj); // easing functions
+        onStart[obj].call(this$1$1, obj); // easing functions
       } else {
         Object.keys(onStart[obj]).forEach(function (prop) {
-          onStart[obj][prop].call(this$1, prop);
+          onStart[obj][prop].call(this$1$1, prop);
         });
       }
     });
@@ -485,7 +484,7 @@
   // single Tween object construct
   // TweenBase is meant to be use for pre-processed values
   var TweenBase = function TweenBase(targetElement, startObject, endObject, opsObject) {
-    var this$1 = this;
+    var this$1$1 = this;
 
     // element animation is applied to
     this.element = targetElement;
@@ -511,7 +510,7 @@
     // set other options
     Object.keys(options).forEach(function (op) {
       var internalOption = "_" + op;
-      if (!(internalOption in this$1)) { this$1[internalOption] = options[op]; }
+      if (!(internalOption in this$1$1)) { this$1$1[internalOption] = options[op]; }
     });
 
     // callbacks should not be set as undefined
@@ -570,12 +569,12 @@
   };
 
   TweenBase.prototype.close = function close () {
-      var this$1 = this;
+      var this$1$1 = this;
 
     // scroll|transformMatrix need this
     Object.keys(onComplete).forEach(function (component) {
       Object.keys(onComplete[component]).forEach(function (toClose) {
-        onComplete[component][toClose].call(this$1, toClose);
+        onComplete[component][toClose].call(this$1$1, toClose);
       });
     });
     // when all animations are finished, stop ticking after ~3 frames
@@ -594,7 +593,7 @@
   };
 
   TweenBase.prototype.update = function update (time) {
-      var this$1 = this;
+      var this$1$1 = this;
 
     var T = time !== undefined ? time : KUTE.Time();
 
@@ -610,9 +609,9 @@
 
     // render the update
     Object.keys(this.valuesEnd).forEach(function (tweenProp) {
-      KUTE[tweenProp](this$1.element,
-        this$1.valuesStart[tweenProp],
-        this$1.valuesEnd[tweenProp],
+      KUTE[tweenProp](this$1$1.element,
+        this$1$1.valuesStart[tweenProp],
+        this$1$1.valuesEnd[tweenProp],
         progress);
     });
 
@@ -659,7 +658,7 @@
   // the constructor that supports to, allTo methods
   var Tween = /*@__PURE__*/(function (TweenBase) {
     function Tween() {
-      var this$1 = this;
+      var this$1$1 = this;
       var args = [], len = arguments.length;
       while ( len-- ) args[ len ] = arguments[ len ];
 
@@ -686,7 +685,7 @@
       if (!this._resetStart) {
         Object.keys(crossCheck).forEach(function (component) {
           Object.keys(crossCheck[component]).forEach(function (checkProp) {
-            crossCheck[component][checkProp].call(this$1, checkProp);
+            crossCheck[component][checkProp].call(this$1$1, checkProp);
           });
         });
       }
@@ -723,7 +722,7 @@
 
     // additions to start method
     Tween.prototype.start = function start (time) {
-      var this$1 = this;
+      var this$1$1 = this;
 
       // on start we reprocess the valuesStart for TO() method
       if (this._resetStart) {
@@ -733,7 +732,7 @@
         // this is where we do the valuesStart and valuesEnd check for fromTo() method
         Object.keys(crossCheck).forEach(function (component) {
           Object.keys(crossCheck[component]).forEach(function (checkProp) {
-            crossCheck[component][checkProp].call(this$1, checkProp);
+            crossCheck[component][checkProp].call(this$1$1, checkProp);
           });
         });
       }
@@ -743,7 +742,7 @@
       // set yoyo values
       if (this._yoyo) {
         Object.keys(this.valuesEnd).forEach(function (endProp) {
-          this$1.valuesRepeat[endProp] = this$1.valuesStart[endProp];
+          this$1$1.valuesRepeat[endProp] = this$1$1.valuesStart[endProp];
         });
       }
 
@@ -807,20 +806,20 @@
     };
 
     Tween.prototype.reverse = function reverse () {
-      var this$1 = this;
+      var this$1$1 = this;
 
       // if (this._yoyo) {
       Object.keys(this.valuesEnd).forEach(function (reverseProp) {
-        var tmp = this$1.valuesRepeat[reverseProp];
-        this$1.valuesRepeat[reverseProp] = this$1.valuesEnd[reverseProp];
-        this$1.valuesEnd[reverseProp] = tmp;
-        this$1.valuesStart[reverseProp] = this$1.valuesRepeat[reverseProp];
+        var tmp = this$1$1.valuesRepeat[reverseProp];
+        this$1$1.valuesRepeat[reverseProp] = this$1$1.valuesEnd[reverseProp];
+        this$1$1.valuesEnd[reverseProp] = tmp;
+        this$1$1.valuesStart[reverseProp] = this$1$1.valuesRepeat[reverseProp];
       });
       // }
     };
 
     Tween.prototype.update = function update (time) {
-      var this$1 = this;
+      var this$1$1 = this;
 
       var T = time !== undefined ? time : KUTE.Time();
 
@@ -836,9 +835,9 @@
 
       // render the update
       Object.keys(this.valuesEnd).forEach(function (tweenProp) {
-        KUTE[tweenProp](this$1.element,
-          this$1.valuesStart[tweenProp],
-          this$1.valuesEnd[tweenProp],
+        KUTE[tweenProp](this$1$1.element,
+          this$1$1.valuesStart[tweenProp],
+          this$1$1.valuesEnd[tweenProp],
           progress);
       });
 
@@ -952,7 +951,7 @@
   // ========================
 
   var TweenCollection = function TweenCollection(els, vS, vE, Options) {
-    var this$1 = this;
+    var this$1$1 = this;
 
     this.tweens = [];
 
@@ -970,7 +969,7 @@
       options[i] = Ops || {};
       options[i].delay = i > 0 ? Ops.delay + (Ops.offset || defaultOptions.offset) : Ops.delay;
       if (el instanceof Element) {
-        this$1.tweens.push(new TweenConstructor(el, vS, vE, options[i]));
+        this$1$1.tweens.push(new TweenConstructor(el, vS, vE, options[i]));
       } else {
         throw Error(("KUTE.js - " + el + " not instanceof [Element]"));
       }
@@ -1497,6 +1496,17 @@
     return (A + B * v) + u;
   }
 
+  /* borderRadius = {
+    category: 'borderRadius',
+    properties : [..],
+    defaultValues: {..},
+    interpolation: {units}
+  } */
+
+  // Component Properties
+  var radiusProps$1 = ['borderRadius',
+    'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'];
+
   // Component Functions
   function radiusOnStartFn(tweenProp) {
     if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
@@ -1505,6 +1515,10 @@
       };
     }
   }
+  var radiusOnStart$1 = {};
+  radiusProps$1.forEach(function (tweenProp) {
+    radiusOnStart$1[tweenProp] = radiusOnStartFn;
+  });
 
   /* borderRadius = {
     category: 'borderRadius',
@@ -1562,6 +1576,11 @@
       };
     }
   }
+
+  // Component Base Props
+  var baseBoxProps = ['top', 'left', 'width', 'height'];
+  var baseBoxOnStart = {};
+  baseBoxProps.forEach(function (x) { baseBoxOnStart[x] = boxModelOnStart; });
 
   // Component Properties
   var boxModelProperties = ['top', 'left', 'width', 'height', 'right', 'bottom', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight',
@@ -1723,6 +1742,15 @@
       : rgba + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
   }
 
+  // Component Interpolation
+  // rgba1, rgba2, progress
+
+  // Component Properties
+  // supported formats
+  // 'hex', 'rgb', 'rgba' '#fff' 'rgb(0,0,0)' / 'rgba(0,0,0,0)' 'red' (IE9+)
+  var supportedColors$1 = ['color', 'backgroundColor', 'borderColor',
+    'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
+
   // Component Functions
   function onStartColors(tweenProp) {
     if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
@@ -1731,6 +1759,9 @@
       };
     }
   }
+
+  var colorsOnStart$1 = {};
+  supportedColors$1.forEach(function (x) { colorsOnStart$1[x] = onStartColors; });
 
   // Component Interpolation
   // Component Properties
@@ -1915,12 +1946,12 @@
   }
 
   function crossCheckFilter(tweenProp) {
-    var this$1 = this;
+    var this$1$1 = this;
 
     if (this.valuesEnd[tweenProp]) {
       Object.keys(this.valuesStart[tweenProp]).forEach(function (fn) {
-        if (!this$1.valuesEnd[tweenProp][fn]) {
-          this$1.valuesEnd[tweenProp][fn] = this$1.valuesStart[tweenProp][fn];
+        if (!this$1$1.valuesEnd[tweenProp][fn]) {
+          this$1$1.valuesEnd[tweenProp][fn] = this$1$1.valuesStart[tweenProp][fn];
         }
       });
     }
@@ -2005,13 +2036,13 @@
 
   // Component Functions
   function getAttr(tweenProp, value) {
-    var this$1 = this;
+    var this$1$1 = this;
 
     var attrStartValues = {};
     Object.keys(value).forEach(function (attr) {
       // get the value for 'fill-opacity' not fillOpacity, also 'width' not the internal 'width_px'
       var attribute = replaceUppercase(attr).replace(/_+[a-z]+/, '');
-      var currentValue = this$1.element.getAttribute(attribute);
+      var currentValue = this$1$1.element.getAttribute(attribute);
       attrStartValues[attribute] = svgColors.includes(attribute)
         ? (currentValue || 'rgba(0,0,0,0)')
         : (currentValue || (/opacity/i.test(attr) ? 1 : 0));
@@ -2021,14 +2052,14 @@
   }
 
   function prepareAttr(tweenProp, attrObj) {
-    var this$1 = this;
+    var this$1$1 = this;
    // attr (string),attrObj (object)
     var attributesObject = {};
 
     Object.keys(attrObj).forEach(function (p) {
       var prop = replaceUppercase(p);
       var regex = /(%|[a-z]+)$/;
-      var currentValue = this$1.element.getAttribute(prop.replace(/_+[a-z]+/, ''));
+      var currentValue = this$1$1.element.getAttribute(prop.replace(/_+[a-z]+/, ''));
 
       if (!svgColors.includes(prop)) {
         // attributes set with unit suffixes
@@ -2038,7 +2069,7 @@
 
           // most "unknown" attributes cannot register into onStart, so we manually add them
           onStart[ComponentName][prop + suffix] = function (tp) {
-            if (this$1.valuesEnd[tweenProp] && this$1.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
+            if (this$1$1.valuesEnd[tweenProp] && this$1$1.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
               attributes[tp] = function (elem, oneAttr, a, b, v) {
                 var _p = oneAttr.replace(suffix, '');
                 elem.setAttribute(_p, ((numbers(a.v, b.v, v) * 1000 >> 0) / 1000) + b.u);
@@ -2050,7 +2081,7 @@
           || (currentValue !== null && !regex.test(currentValue))) {
           // most "unknown" attributes cannot register into onStart, so we manually add them
           onStart[ComponentName][prop] = function (tp) {
-            if (this$1.valuesEnd[tweenProp] && this$1.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
+            if (this$1$1.valuesEnd[tweenProp] && this$1$1.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
               attributes[tp] = function (elem, oneAttr, a, b, v) {
                 elem.setAttribute(oneAttr, (numbers(a, b, v) * 1000 >> 0) / 1000);
               };
@@ -2061,7 +2092,7 @@
       } else { // colors
         // most "unknown" attributes cannot register into onStart, so we manually add them
         onStart[ComponentName][prop] = function (tp) {
-          if (this$1.valuesEnd[tweenProp] && this$1.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
+          if (this$1$1.valuesEnd[tweenProp] && this$1$1.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
             attributes[tp] = function (elem, oneAttr, a, b, v) {
               elem.setAttribute(oneAttr, colors(a, b, v));
             };
@@ -2341,14 +2372,14 @@
     });
   }
 
-  var options = {
+  var SVGPCO = {
     origin: null,
     decimals: 4,
     round: 1,
   };
 
   function roundPath(pathArray, round) {
-    var decimalsOption = !Number.isNaN(+round) ? +round : options.decimals;
+    var decimalsOption = !Number.isNaN(+round) ? +round : SVGPCO.decimals;
     var result;
 
     if (decimalsOption) {
@@ -3795,6 +3826,9 @@
     },
   };
 
+  // Component Properties
+  var shadowProps$1 = ['boxShadow', 'textShadow'];
+
   // Component Functions
   function onStartShadow(tweenProp) {
     if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
@@ -3817,6 +3851,8 @@
       };
     }
   }
+  var shadowPropOnStart$1 = {};
+  shadowProps$1.forEach(function (x) { shadowPropOnStart$1[x] = onStartShadow; });
 
   // Component Properties
   var shadowProps = ['boxShadow', 'textShadow'];
@@ -3920,6 +3956,17 @@
     Util: { processShadowArray: processShadowArray, trueColor: trueColor },
   };
 
+  /* textProperties = {
+    category: 'textProperties',
+    defaultValues: [],
+    interpolators: {units},
+    functions = { prepareStart, prepareProperty, onStart:{}
+  } */
+
+  // Component Properties
+  var textProperties$1 = ['fontSize', 'lineHeight', 'letterSpacing', 'wordSpacing'];
+  var textOnStart$1 = {};
+
   function textPropOnStart(tweenProp) {
     if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
       KUTE[tweenProp] = function (elem, a, b, v) {
@@ -3927,6 +3974,10 @@
       };
     }
   }
+
+  textProperties$1.forEach(function (tweenProp) {
+    textOnStart$1[tweenProp] = textPropOnStart;
+  });
 
   /* textProperties = {
     category: 'textProperties',
@@ -4359,12 +4410,12 @@
   }
 
   function onCompleteTransform(tweenProp) {
-    var this$1 = this;
+    var this$1$1 = this;
 
     if (this.valuesEnd[tweenProp]) {
       this.element[matrixComponent] = {};
       Object.keys(this.valuesEnd[tweenProp]).forEach(function (tf) {
-        this$1.element[matrixComponent][tf] = this$1.valuesEnd[tweenProp][tf];
+        this$1$1.element[matrixComponent][tf] = this$1$1.valuesEnd[tweenProp][tf];
       });
     }
   }
@@ -4421,6 +4472,8 @@
       scale3d: arrays,
     },
   };
+
+  var version = "2.1.2";
 
   var Components = {
     BackgroundPosition: BackgroundPosition,

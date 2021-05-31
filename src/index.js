@@ -1,5 +1,4 @@
 import CubicBezier from 'cubic-bezier-easing';
-import { version as Version } from '../package.json';
 import Render from './core/render.js';
 import Interpolate from './objects/interpolate.js';
 import Objects from './objects/objects.js';
@@ -29,6 +28,8 @@ import TextWrite from './components/textWrite.js';
 import TransformFunctions from './components/transformFunctions.js';
 import SVGDraw from './components/svgDraw.js';
 import SVGMorph from './components/svgMorph.js';
+
+import { version as Version } from '../package.json';
 
 const Components = {
   EssentialBoxModel,

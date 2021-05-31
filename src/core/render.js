@@ -58,5 +58,5 @@ Object.keys(Render).forEach((blob) => {
   }
 });
 
-export default Render;
 globalObject._KUTE = KUTE;
+export default Render;

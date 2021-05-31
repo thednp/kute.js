@@ -1,93 +1,91 @@
 /*!
-* KUTE.js Standard v2.1.1-alpha3 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.1.2 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
-var CubicBezier = function CubicBezier(p1x, p1y, p2x, p2y, functionName) {
-  var this$1 = this;
+class CubicBezier {
+  constructor(p1x, p1y, p2x, p2y, functionName) {
+    // pre-calculate the polynomial coefficients
+    // First and last control points are implied to be (0,0) and (1.0, 1.0)
+    this.cx = 3.0 * p1x;
+    this.bx = 3.0 * (p2x - p1x) - this.cx;
+    this.ax = 1.0 - this.cx - this.bx;
 
-  // pre-calculate the polynomial coefficients
-  // First and last control points are implied to be (0,0) and (1.0, 1.0)
-  this.cx = 3.0 * p1x;
-  this.bx = 3.0 * (p2x - p1x) - this.cx;
-  this.ax = 1.0 - this.cx - this.bx;
+    this.cy = 3.0 * p1y;
+    this.by = 3.0 * (p2y - p1y) - this.cy;
+    this.ay = 1.0 - this.cy - this.by;
 
-  this.cy = 3.0 * p1y;
-  this.by = 3.0 * (p2y - p1y) - this.cy;
-  this.ay = 1.0 - this.cy - this.by;
+    const BezierEasing = (t) => this.sampleCurveY(this.solveCurveX(t));
 
-  var BezierEasing = function (t) { return this$1.sampleCurveY(this$1.solveCurveX(t)); };
+    // this function needs a name
+    Object.defineProperty(BezierEasing, 'name', { writable: true });
+    BezierEasing.name = functionName || `cubic-bezier(${[p1x, p1y, p2x, p2y]})`;
 
-  // this function needs a name
-  Object.defineProperty(BezierEasing, 'name', { writable: true });
-  BezierEasing.name = functionName || ("cubic-bezier(" + ([p1x, p1y, p2x, p2y]) + ")");
-
-  return BezierEasing;
-};
-
-CubicBezier.prototype.sampleCurveX = function sampleCurveX (t) {
-  return ((this.ax * t + this.bx) * t + this.cx) * t;
-};
-
-CubicBezier.prototype.sampleCurveY = function sampleCurveY (t) {
-  return ((this.ay * t + this.by) * t + this.cy) * t;
-};
-
-CubicBezier.prototype.sampleCurveDerivativeX = function sampleCurveDerivativeX (t) {
-  return (3.0 * this.ax * t + 2.0 * this.bx) * t + this.cx;
-};
-
-CubicBezier.prototype.solveCurveX = function solveCurveX (x) {
-  var t0;
-  var t1;
-  var t2;
-  var x2;
-  var d2;
-  var i;
-  var epsilon = 1e-5; // Precision
-
-  // First try a few iterations of Newton's method -- normally very fast.
-  for (t2 = x, i = 0; i < 32; i += 1) {
-    x2 = this.sampleCurveX(t2) - x;
-    if (Math.abs(x2) < epsilon) { return t2; }
-    d2 = this.sampleCurveDerivativeX(t2);
-    if (Math.abs(d2) < epsilon) { break; }
-    t2 -= x2 / d2;
+    return BezierEasing;
   }
 
-  // No solution found - use bi-section
-  t0 = 0.0;
-  t1 = 1.0;
-  t2 = x;
-
-  if (t2 < t0) { return t0; }
-  if (t2 > t1) { return t1; }
-
-  while (t0 < t1) {
-    x2 = this.sampleCurveX(t2);
-    if (Math.abs(x2 - x) < epsilon) { return t2; }
-    if (x > x2) { t0 = t2; }
-    else { t1 = t2; }
-
-    t2 = (t1 - t0) * 0.5 + t0;
+  sampleCurveX(t) {
+    return ((this.ax * t + this.bx) * t + this.cx) * t;
   }
 
-  // Give up
-  return t2;
-};
+  sampleCurveY(t) {
+    return ((this.ay * t + this.by) * t + this.cy) * t;
+  }
 
-var version = "2.1.1-alpha3";
+  sampleCurveDerivativeX(t) {
+    return (3.0 * this.ax * t + 2.0 * this.bx) * t + this.cx;
+  }
+
+  solveCurveX(x) {
+    let t0;
+    let t1;
+    let t2;
+    let x2;
+    let d2;
+    let i;
+    const epsilon = 1e-5; // Precision
+
+    // First try a few iterations of Newton's method -- normally very fast.
+    for (t2 = x, i = 0; i < 32; i += 1) {
+      x2 = this.sampleCurveX(t2) - x;
+      if (Math.abs(x2) < epsilon) return t2;
+      d2 = this.sampleCurveDerivativeX(t2);
+      if (Math.abs(d2) < epsilon) break;
+      t2 -= x2 / d2;
+    }
+
+    // No solution found - use bi-section
+    t0 = 0.0;
+    t1 = 1.0;
+    t2 = x;
+
+    if (t2 < t0) return t0;
+    if (t2 > t1) return t1;
+
+    while (t0 < t1) {
+      x2 = this.sampleCurveX(t2);
+      if (Math.abs(x2 - x) < epsilon) return t2;
+      if (x > x2) t0 = t2;
+      else t1 = t2;
+
+      t2 = (t1 - t0) * 0.5 + t0;
+    }
+
+    // Give up
+    return t2;
+  }
+}
 
 var KUTE = {};
 
 var Tweens = [];
 
-var globalObject;
+let globalObject;
 
-if (typeof (global) !== 'undefined') { globalObject = global; }
-else if (typeof (window.self) !== 'undefined') { globalObject = window.self; }
-else if (typeof (window) !== 'undefined') { globalObject = window; }
-else { globalObject = {}; }
+if (typeof (global) !== 'undefined') globalObject = global;
+else if (typeof (window.self) !== 'undefined') globalObject = window.self;
+else if (typeof (window) !== 'undefined') globalObject = window;
+else globalObject = {};
 
 var globalObject$1 = globalObject;
 
@@ -99,14 +97,14 @@ var Interpolate = {};
 // link property update function to KUTE.js execution context
 var onStart = {};
 
-var Time = {};
-var that = window.self || window || {};
+const Time = {};
+const that = window.self || window || {};
 Time.now = that.performance.now.bind(that.performance);
 
-var Tick = 0;
+let Tick = 0;
 
-var Ticker = function (time) {
-  var i = 0;
+const Ticker = (time) => {
+  let i = 0;
   while (i < Tweens.length) {
     if (Tweens[i].update(time)) {
       i += 1;
@@ -119,22 +117,22 @@ var Ticker = function (time) {
 
 // stop requesting animation frame
 function stop() {
-  setTimeout(function () { // re-added for #81
+  setTimeout(() => { // re-added for #81
     if (!Tweens.length && Tick) {
       cancelAnimationFrame(Tick);
       Tick = null;
-      Object.keys(onStart).forEach(function (obj) {
+      Object.keys(onStart).forEach((obj) => {
         if (typeof (onStart[obj]) === 'function') {
-          if (KUTE[obj]) { delete KUTE[obj]; }
+          if (KUTE[obj]) delete KUTE[obj];
         } else {
-          Object.keys(onStart[obj]).forEach(function (prop) {
-            if (KUTE[prop]) { delete KUTE[prop]; }
+          Object.keys(onStart[obj]).forEach((prop) => {
+            if (KUTE[prop]) delete KUTE[prop];
           });
         }
       });
 
-      Object.keys(Interpolate).forEach(function (i) {
-        if (KUTE[i]) { delete KUTE[i]; }
+      Object.keys(Interpolate).forEach((i) => {
+        if (KUTE[i]) delete KUTE[i];
       });
     }
   }, 64);
@@ -142,21 +140,22 @@ function stop() {
 
 // KUTE.js render update functions
 // ===============================
-var Render = {
-  Tick: Tick, Ticker: Ticker, Tweens: Tweens, Time: Time,
+const Render = {
+  Tick, Ticker, Tweens, Time,
 };
-Object.keys(Render).forEach(function (blob) {
+Object.keys(Render).forEach((blob) => {
   if (!KUTE[blob]) {
     KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
   }
 });
+
 globalObject$1._KUTE = KUTE;
 
 var supportedProperties = {};
 
 var defaultValues = {};
 
-var defaultOptions = {
+const defaultOptions = {
   duration: 700,
   delay: 0,
   easing: 'linear',
@@ -183,54 +182,52 @@ var linkProperty = {};
 // import connect from './connect.js'
 
 var Objects = {
-  supportedProperties: supportedProperties,
-  defaultValues: defaultValues,
-  defaultOptions: defaultOptions,
-  prepareProperty: prepareProperty,
-  prepareStart: prepareStart,
-  crossCheck: crossCheck,
-  onStart: onStart,
-  onComplete: onComplete,
-  linkProperty: linkProperty,
+  supportedProperties,
+  defaultValues,
+  defaultOptions,
+  prepareProperty,
+  prepareStart,
+  crossCheck,
+  onStart,
+  onComplete,
+  linkProperty,
 };
 
 // util - a general object for utils like rgbToHex, processEasing
 var Util = {};
 
-function add (tw) { return Tweens.push(tw); }
+var add = (tw) => Tweens.push(tw);
 
-function remove (tw) {
-  var i = Tweens.indexOf(tw);
-  if (i !== -1) { Tweens.splice(i, 1); }
-}
+var remove = (tw) => {
+  const i = Tweens.indexOf(tw);
+  if (i !== -1) Tweens.splice(i, 1);
+};
 
-function getAll () { return Tweens; }
+var getAll = () => Tweens;
 
-function removeAll () { Tweens.length = 0; }
+var removeAll = () => { Tweens.length = 0; };
 
-function linkInterpolation() {
-  var this$1 = this;
- // DON'T change
-  Object.keys(linkProperty).forEach(function (component) {
-    var componentLink = linkProperty[component];
-    var componentProps = supportedProperties[component];
+function linkInterpolation() { // DON'T change
+  Object.keys(linkProperty).forEach((component) => {
+    const componentLink = linkProperty[component];
+    const componentProps = supportedProperties[component];
 
-    Object.keys(componentLink).forEach(function (fnObj) {
+    Object.keys(componentLink).forEach((fnObj) => {
       if (typeof (componentLink[fnObj]) === 'function' // ATTR, colors, scroll, boxModel, borderRadius
-          && Object.keys(this$1.valuesEnd).some(function (i) { return (componentProps && componentProps.includes(i))
-          || (i === 'attr' && Object.keys(this$1.valuesEnd[i]).some(function (j) { return componentProps && componentProps.includes(j); })); })) {
-        if (!KUTE[fnObj]) { KUTE[fnObj] = componentLink[fnObj]; }
+          && Object.keys(this.valuesEnd).some((i) => (componentProps && componentProps.includes(i))
+          || (i === 'attr' && Object.keys(this.valuesEnd[i]).some((j) => componentProps && componentProps.includes(j))))) {
+        if (!KUTE[fnObj]) KUTE[fnObj] = componentLink[fnObj];
       } else {
-        Object.keys(this$1.valuesEnd).forEach(function (prop) {
-          var propObject = this$1.valuesEnd[prop];
+        Object.keys(this.valuesEnd).forEach((prop) => {
+          const propObject = this.valuesEnd[prop];
           if (propObject instanceof Object) {
-            Object.keys(propObject).forEach(function (i) {
+            Object.keys(propObject).forEach((i) => {
               if (typeof (componentLink[i]) === 'function') { // transformCSS3
-                if (!KUTE[i]) { KUTE[i] = componentLink[i]; }
+                if (!KUTE[i]) KUTE[i] = componentLink[i];
               } else {
-                Object.keys(componentLink[fnObj]).forEach(function (j) {
+                Object.keys(componentLink[fnObj]).forEach((j) => {
                   if (componentLink[i] && typeof (componentLink[i][j]) === 'function') { // transformMatrix
-                    if (!KUTE[j]) { KUTE[j] = componentLink[i][j]; }
+                    if (!KUTE[j]) KUTE[j] = componentLink[i][j];
                   }
                 });
               }
@@ -243,32 +240,32 @@ function linkInterpolation() {
 }
 
 var Internals = {
-  add: add,
-  remove: remove,
-  getAll: getAll,
-  removeAll: removeAll,
-  stop: stop,
-  linkInterpolation: linkInterpolation,
+  add,
+  remove,
+  getAll,
+  removeAll,
+  stop,
+  linkInterpolation,
 };
 
 // getInlineStyle - get transform style for element from cssText for .to() method
 function getInlineStyle(el) {
   // if the scroll applies to `window` it returns as it has no styling
-  if (!el.style) { return false; }
+  if (!el.style) return false;
   // the cssText | the resulting transform object
-  var css = el.style.cssText.replace(/\s/g, '').split(';');
-  var transformObject = {};
-  var arrayFn = ['translate3d', 'translate', 'scale3d', 'skew'];
+  const css = el.style.cssText.replace(/\s/g, '').split(';');
+  const transformObject = {};
+  const arrayFn = ['translate3d', 'translate', 'scale3d', 'skew'];
 
-  css.forEach(function (cs) {
+  css.forEach((cs) => {
     if (/transform/i.test(cs)) {
       // all transform properties
-      var tps = cs.split(':')[1].split(')');
-      tps.forEach(function (tpi) {
-        var tpv = tpi.split('(');
-        var tp = tpv[0];
+      const tps = cs.split(':')[1].split(')');
+      tps.forEach((tpi) => {
+        const tpv = tpi.split('(');
+        const tp = tpv[0];
         // each transform property
-        var tv = tpv[1];
+        const tv = tpv[1];
         if (!/matrix/.test(tp)) {
           transformObject[tp] = arrayFn.includes(tp) ? tv.split(',') : tv;
         }
@@ -281,12 +278,12 @@ function getInlineStyle(el) {
 
 // getStyleForProperty - get computed style property for element for .to() method
 function getStyleForProperty(elem, propertyName) {
-  var styleAttribute = elem.style;
-  var computedStyle = getComputedStyle(elem) || elem.currentStyle;
-  var styleValue = styleAttribute[propertyName] && !/auto|initial|none|unset/.test(styleAttribute[propertyName])
+  const styleAttribute = elem.style;
+  const computedStyle = getComputedStyle(elem) || elem.currentStyle;
+  const styleValue = styleAttribute[propertyName] && !/auto|initial|none|unset/.test(styleAttribute[propertyName])
     ? styleAttribute[propertyName]
     : computedStyle[propertyName];
-  var result = defaultValues[propertyName];
+  let result = defaultValues[propertyName];
 
   if (propertyName !== 'transform' && (propertyName in computedStyle || propertyName in styleAttribute)) {
     result = styleValue;
@@ -296,23 +293,21 @@ function getStyleForProperty(elem, propertyName) {
 }
 
 // prepareObject - returns all processed valuesStart / valuesEnd
-function prepareObject(obj, fn) {
-  var this$1 = this;
- // this, props object, type: start/end
-  var propertiesObject = fn === 'start' ? this.valuesStart : this.valuesEnd;
+function prepareObject(obj, fn) { // this, props object, type: start/end
+  const propertiesObject = fn === 'start' ? this.valuesStart : this.valuesEnd;
 
-  Object.keys(prepareProperty).forEach(function (component) {
-    var prepareComponent = prepareProperty[component];
-    var supportComponent = supportedProperties[component];
+  Object.keys(prepareProperty).forEach((component) => {
+    const prepareComponent = prepareProperty[component];
+    const supportComponent = supportedProperties[component];
 
-    Object.keys(prepareComponent).forEach(function (tweenCategory) {
-      var transformObject = {};
+    Object.keys(prepareComponent).forEach((tweenCategory) => {
+      const transformObject = {};
 
-      Object.keys(obj).forEach(function (tweenProp) {
+      Object.keys(obj).forEach((tweenProp) => {
         // scroll, opacity, other components
         if (defaultValues[tweenProp] && prepareComponent[tweenProp]) {
           propertiesObject[tweenProp] = prepareComponent[tweenProp]
-            .call(this$1, tweenProp, obj[tweenProp]);
+            .call(this, tweenProp, obj[tweenProp]);
 
         // transform
         } else if (!defaultValues[tweenCategory] && tweenCategory === 'transform'
@@ -327,14 +322,14 @@ function prepareObject(obj, fn) {
         } else if (!defaultValues[tweenCategory]
           && supportComponent && supportComponent.includes(tweenProp)) {
           propertiesObject[tweenProp] = prepareComponent[tweenCategory]
-            .call(this$1, tweenProp, obj[tweenProp]);
+            .call(this, tweenProp, obj[tweenProp]);
         }
       });
 
       // we filter out older browsers by checking Object.keys
       if (Object.keys(transformObject).length) {
         propertiesObject[tweenCategory] = prepareComponent[tweenCategory]
-          .call(this$1, tweenCategory, transformObject);
+          .call(this, tweenCategory, transformObject);
       }
     });
   });
@@ -342,25 +337,23 @@ function prepareObject(obj, fn) {
 
 // getStartValues - returns the startValue for to() method
 function getStartValues() {
-  var this$1 = this;
+  const startValues = {};
+  const currentStyle = getInlineStyle(this.element);
 
-  var startValues = {};
-  var currentStyle = getInlineStyle(this.element);
+  Object.keys(this.valuesStart).forEach((tweenProp) => {
+    Object.keys(prepareStart).forEach((component) => {
+      const componentStart = prepareStart[component];
 
-  Object.keys(this.valuesStart).forEach(function (tweenProp) {
-    Object.keys(prepareStart).forEach(function (component) {
-      var componentStart = prepareStart[component];
-
-      Object.keys(componentStart).forEach(function (tweenCategory) {
+      Object.keys(componentStart).forEach((tweenCategory) => {
         // clip, opacity, scroll
         if (tweenCategory === tweenProp && componentStart[tweenProp]) {
           startValues[tweenProp] = componentStart[tweenCategory]
-            .call(this$1, tweenProp, this$1.valuesStart[tweenProp]);
+            .call(this, tweenProp, this.valuesStart[tweenProp]);
         // find in an array of properties
         } else if (supportedProperties[component]
           && supportedProperties[component].includes(tweenProp)) {
           startValues[tweenProp] = componentStart[tweenCategory]
-            .call(this$1, tweenProp, this$1.valuesStart[tweenProp]);
+            .call(this, tweenProp, this.valuesStart[tweenProp]);
         }
       });
     });
@@ -368,8 +361,8 @@ function getStartValues() {
 
   // stack transformCSS props for .to() chains
   // also add to startValues values from previous tweens
-  Object.keys(currentStyle).forEach(function (current) {
-    if (!(current in this$1.valuesStart)) {
+  Object.keys(currentStyle).forEach((current) => {
+    if (!(current in this.valuesStart)) {
       startValues[current] = currentStyle[current] || defaultValues[current];
     }
   });
@@ -379,15 +372,15 @@ function getStartValues() {
 }
 
 var Process = {
-  getInlineStyle: getInlineStyle,
-  getStyleForProperty: getStyleForProperty,
-  getStartValues: getStartValues,
-  prepareObject: prepareObject,
+  getInlineStyle,
+  getStyleForProperty,
+  getStartValues,
+  prepareObject,
 };
 
 var connect = {};
 
-var Easing = {
+const Easing = {
   linear: new CubicBezier(0, 0, 1, 1, 'linear'),
   easingSinusoidalIn: new CubicBezier(0.47, 0, 0.745, 0.715, 'easingSinusoidalIn'),
   easingSinusoidalOut: new CubicBezier(0.39, 0.575, 0.565, 1, 'easingSinusoidalOut'),
@@ -428,7 +421,7 @@ function processBezierEasing(fn) {
   } if (typeof (Easing[fn]) === 'function') {
     return Easing[fn];
   } if (/bezier/.test(fn)) {
-    var bz = fn.replace(/bezier|\s|\(|\)/g, '').split(',');
+    const bz = fn.replace(/bezier|\s|\(|\)/g, '').split(',');
     return new CubicBezier(bz[0] * 1, bz[1] * 1, bz[2] * 1, bz[3] * 1); // bezier easing
   }
   // if (/elastic|bounce/i.test(fn)) {
@@ -442,10 +435,10 @@ connect.processEasing = processBezierEasing;
 // a public selector utility
 function selector(el, multi) {
   try {
-    var requestedElem;
-    var itemsArray;
+    let requestedElem;
+    let itemsArray;
     if (multi) {
-      itemsArray = el instanceof Array && el.every(function (x) { return x instanceof Element; });
+      itemsArray = el instanceof Array && el.every((x) => x instanceof Element);
       requestedElem = el instanceof HTMLCollection || el instanceof NodeList || itemsArray
         ? el : document.querySelectorAll(el);
     } else {
@@ -454,20 +447,18 @@ function selector(el, multi) {
     }
     return requestedElem;
   } catch (e) {
-    throw TypeError(("KUTE.js - Element(s) not found: " + el + "."));
+    throw TypeError(`KUTE.js - Element(s) not found: ${el}.`);
   }
 }
 
 function queueStart() {
-  var this$1 = this;
-
   // fire onStart actions
-  Object.keys(onStart).forEach(function (obj) {
+  Object.keys(onStart).forEach((obj) => {
     if (typeof (onStart[obj]) === 'function') {
-      onStart[obj].call(this$1, obj); // easing functions
+      onStart[obj].call(this, obj); // easing functions
     } else {
-      Object.keys(onStart[obj]).forEach(function (prop) {
-        onStart[obj][prop].call(this$1, prop);
+      Object.keys(onStart[obj]).forEach((prop) => {
+        onStart[obj][prop].call(this, prop);
       });
     }
   });
@@ -478,165 +469,161 @@ function queueStart() {
 
 // single Tween object construct
 // TweenBase is meant to be use for pre-processed values
-var TweenBase = function TweenBase(targetElement, startObject, endObject, opsObject) {
-  var this$1 = this;
+class TweenBase {
+  constructor(targetElement, startObject, endObject, opsObject) {
+    // element animation is applied to
+    this.element = targetElement;
 
-  // element animation is applied to
-  this.element = targetElement;
-
-  this.playing = false;
-
-  this._startTime = null;
-  this._startFired = false;
-
-  this.valuesEnd = endObject; // valuesEnd
-  this.valuesStart = startObject; // valuesStart
-
-  // OPTIONS
-  var options = opsObject || {};
-  // internal option to process inline/computed style at start instead of init
-  // used by to() method and expects object : {} / false
-  this._resetStart = options.resetStart || 0;
-  // you can only set a core easing function as default
-  this._easing = typeof (options.easing) === 'function' ? options.easing : connect.processEasing(options.easing);
-  this._duration = options.duration || defaultOptions.duration; // duration option | default
-  this._delay = options.delay || defaultOptions.delay; // delay option | default
-
-  // set other options
-  Object.keys(options).forEach(function (op) {
-    var internalOption = "_" + op;
-    if (!(internalOption in this$1)) { this$1[internalOption] = options[op]; }
-  });
-
-  // callbacks should not be set as undefined
-  // this._onStart = options.onStart
-  // this._onUpdate = options.onUpdate
-  // this._onStop = options.onStop
-  // this._onComplete = options.onComplete
-
-  // queue the easing
-  var easingFnName = this._easing.name;
-  if (!onStart[easingFnName]) {
-    onStart[easingFnName] = function easingFn(prop) {
-      if (!KUTE[prop] && prop === this._easing.name) { KUTE[prop] = this._easing; }
-    };
-  }
-
-  return this;
-};
-
-// tween prototype
-// queue tween object to main frame update
-// move functions that use the ticker outside the prototype to be in the same scope with it
-TweenBase.prototype.start = function start (time) {
-  // now it's a good time to start
-  add(this);
-  this.playing = true;
-
-  this._startTime = typeof time !== 'undefined' ? time : KUTE.Time();
-  this._startTime += this._delay;
-
-  if (!this._startFired) {
-    if (this._onStart) {
-      this._onStart.call(this);
-    }
-
-    queueStart.call(this);
-
-    this._startFired = true;
-  }
-
-  if (!Tick) { Ticker(); }
-  return this;
-};
-
-TweenBase.prototype.stop = function stop () {
-  if (this.playing) {
-    remove(this);
     this.playing = false;
 
-    if (this._onStop) {
-      this._onStop.call(this);
-    }
-    this.close();
-  }
-  return this;
-};
+    this._startTime = null;
+    this._startFired = false;
 
-TweenBase.prototype.close = function close () {
-    var this$1 = this;
+    this.valuesEnd = endObject; // valuesEnd
+    this.valuesStart = startObject; // valuesStart
 
-  // scroll|transformMatrix need this
-  Object.keys(onComplete).forEach(function (component) {
-    Object.keys(onComplete[component]).forEach(function (toClose) {
-      onComplete[component][toClose].call(this$1, toClose);
+    // OPTIONS
+    const options = opsObject || {};
+    // internal option to process inline/computed style at start instead of init
+    // used by to() method and expects object : {} / false
+    this._resetStart = options.resetStart || 0;
+    // you can only set a core easing function as default
+    this._easing = typeof (options.easing) === 'function' ? options.easing : connect.processEasing(options.easing);
+    this._duration = options.duration || defaultOptions.duration; // duration option | default
+    this._delay = options.delay || defaultOptions.delay; // delay option | default
+
+    // set other options
+    Object.keys(options).forEach((op) => {
+      const internalOption = `_${op}`;
+      if (!(internalOption in this)) this[internalOption] = options[op];
     });
-  });
-  // when all animations are finished, stop ticking after ~3 frames
-  this._startFired = false;
-  stop.call(this);
-};
 
-TweenBase.prototype.chain = function chain (args) {
-  this._chain = [];
-  this._chain = args.length ? args : this._chain.concat(args);
-  return this;
-};
+    // callbacks should not be set as undefined
+    // this._onStart = options.onStart
+    // this._onUpdate = options.onUpdate
+    // this._onStop = options.onStop
+    // this._onComplete = options.onComplete
 
-TweenBase.prototype.stopChainedTweens = function stopChainedTweens () {
-  if (this._chain && this._chain.length) { this._chain.forEach(function (tw) { return tw.stop(); }); }
-};
-
-TweenBase.prototype.update = function update (time) {
-    var this$1 = this;
-
-  var T = time !== undefined ? time : KUTE.Time();
-
-  var elapsed;
-
-  if (T < this._startTime && this.playing) { return true; }
-
-  elapsed = (T - this._startTime) / this._duration;
-  elapsed = (this._duration === 0 || elapsed > 1) ? 1 : elapsed;
-
-  // calculate progress
-  var progress = this._easing(elapsed);
-
-  // render the update
-  Object.keys(this.valuesEnd).forEach(function (tweenProp) {
-    KUTE[tweenProp](this$1.element,
-      this$1.valuesStart[tweenProp],
-      this$1.valuesEnd[tweenProp],
-      progress);
-  });
-
-  // fire the updateCallback
-  if (this._onUpdate) {
-    this._onUpdate.call(this);
-  }
-
-  if (elapsed === 1) {
-    // fire the complete callback
-    if (this._onComplete) {
-      this._onComplete.call(this);
+    // queue the easing
+    const easingFnName = this._easing.name;
+    if (!onStart[easingFnName]) {
+      onStart[easingFnName] = function easingFn(prop) {
+        if (!KUTE[prop] && prop === this._easing.name) KUTE[prop] = this._easing;
+      };
     }
 
-    // now we're sure no animation is running
-    this.playing = false;
-
-    // stop ticking when finished
-    this.close();
-
-    // start animating chained tweens
-    if (this._chain !== undefined && this._chain.length) {
-      this._chain.map(function (tw) { return tw.start(); });
-    }
-
-    return false;
+    return this;
   }
 
-  return true;
-};
+  // tween prototype
+  // queue tween object to main frame update
+  // move functions that use the ticker outside the prototype to be in the same scope with it
+  start(time) {
+    // now it's a good time to start
+    add(this);
+    this.playing = true;
+
+    this._startTime = typeof time !== 'undefined' ? time : KUTE.Time();
+    this._startTime += this._delay;
+
+    if (!this._startFired) {
+      if (this._onStart) {
+        this._onStart.call(this);
+      }
+
+      queueStart.call(this);
+
+      this._startFired = true;
+    }
+
+    if (!Tick) Ticker();
+    return this;
+  }
+
+  stop() {
+    if (this.playing) {
+      remove(this);
+      this.playing = false;
+
+      if (this._onStop) {
+        this._onStop.call(this);
+      }
+      this.close();
+    }
+    return this;
+  }
+
+  close() {
+    // scroll|transformMatrix need this
+    Object.keys(onComplete).forEach((component) => {
+      Object.keys(onComplete[component]).forEach((toClose) => {
+        onComplete[component][toClose].call(this, toClose);
+      });
+    });
+    // when all animations are finished, stop ticking after ~3 frames
+    this._startFired = false;
+    stop.call(this);
+  }
+
+  chain(args) {
+    this._chain = [];
+    this._chain = args.length ? args : this._chain.concat(args);
+    return this;
+  }
+
+  stopChainedTweens() {
+    if (this._chain && this._chain.length) this._chain.forEach((tw) => tw.stop());
+  }
+
+  update(time) {
+    const T = time !== undefined ? time : KUTE.Time();
+
+    let elapsed;
+
+    if (T < this._startTime && this.playing) { return true; }
+
+    elapsed = (T - this._startTime) / this._duration;
+    elapsed = (this._duration === 0 || elapsed > 1) ? 1 : elapsed;
+
+    // calculate progress
+    const progress = this._easing(elapsed);
+
+    // render the update
+    Object.keys(this.valuesEnd).forEach((tweenProp) => {
+      KUTE[tweenProp](this.element,
+        this.valuesStart[tweenProp],
+        this.valuesEnd[tweenProp],
+        progress);
+    });
+
+    // fire the updateCallback
+    if (this._onUpdate) {
+      this._onUpdate.call(this);
+    }
+
+    if (elapsed === 1) {
+      // fire the complete callback
+      if (this._onComplete) {
+        this._onComplete.call(this);
+      }
+
+      // now we're sure no animation is running
+      this.playing = false;
+
+      // stop ticking when finished
+      this.close();
+
+      // start animating chained tweens
+      if (this._chain !== undefined && this._chain.length) {
+        this._chain.map((tw) => tw.start());
+      }
+
+      return false;
+    }
+
+    return true;
+  }
+}
 
 // Update Tween Interface
 connect.tween = TweenBase;
@@ -651,20 +638,16 @@ defaultOptions.resetStart = false;
 // defaultOptions.onResume = undefined
 
 // the constructor that supports to, allTo methods
-var Tween = /*@__PURE__*/(function (TweenBase) {
-  function Tween() {
-    var this$1 = this;
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    TweenBase.apply(this, args); // this calls the constructor of TweenBase
+class Tween extends TweenBase {
+  constructor(...args) {
+    super(...args); // this calls the constructor of TweenBase
 
     // reset interpolation values
     this.valuesStart = {};
     this.valuesEnd = {};
 
-    var startObject = args[1];
-    var endObject = args[2];
+    const startObject = args[1];
+    const endObject = args[2];
 
     // set valuesEnd
     prepareObject.call(this, endObject, 'end');
@@ -678,9 +661,9 @@ var Tween = /*@__PURE__*/(function (TweenBase) {
 
     // ready for crossCheck
     if (!this._resetStart) {
-      Object.keys(crossCheck).forEach(function (component) {
-        Object.keys(crossCheck[component]).forEach(function (checkProp) {
-          crossCheck[component][checkProp].call(this$1, checkProp);
+      Object.keys(crossCheck).forEach((component) => {
+        Object.keys(crossCheck[component]).forEach((checkProp) => {
+          crossCheck[component][checkProp].call(this, checkProp);
         });
       });
     }
@@ -690,7 +673,7 @@ var Tween = /*@__PURE__*/(function (TweenBase) {
     this._pauseTime = null;
 
     // additional properties and options
-    var options = args[3];
+    const options = args[3];
 
     this._repeat = options.repeat || defaultOptions.repeat;
     this._repeatDelay = options.repeatDelay || defaultOptions.repeatDelay;
@@ -711,23 +694,17 @@ var Tween = /*@__PURE__*/(function (TweenBase) {
     return this;
   }
 
-  if ( TweenBase ) Tween.__proto__ = TweenBase;
-  Tween.prototype = Object.create( TweenBase && TweenBase.prototype );
-  Tween.prototype.constructor = Tween;
-
   // additions to start method
-  Tween.prototype.start = function start (time) {
-    var this$1 = this;
-
+  start(time) {
     // on start we reprocess the valuesStart for TO() method
     if (this._resetStart) {
       this.valuesStart = this._resetStart;
       getStartValues.call(this);
 
       // this is where we do the valuesStart and valuesEnd check for fromTo() method
-      Object.keys(crossCheck).forEach(function (component) {
-        Object.keys(crossCheck[component]).forEach(function (checkProp) {
-          crossCheck[component][checkProp].call(this$1, checkProp);
+      Object.keys(crossCheck).forEach((component) => {
+        Object.keys(crossCheck[component]).forEach((checkProp) => {
+          crossCheck[component][checkProp].call(this, checkProp);
         });
       });
     }
@@ -736,28 +713,28 @@ var Tween = /*@__PURE__*/(function (TweenBase) {
 
     // set yoyo values
     if (this._yoyo) {
-      Object.keys(this.valuesEnd).forEach(function (endProp) {
-        this$1.valuesRepeat[endProp] = this$1.valuesStart[endProp];
+      Object.keys(this.valuesEnd).forEach((endProp) => {
+        this.valuesRepeat[endProp] = this.valuesStart[endProp];
       });
     }
 
-    TweenBase.prototype.start.call(this, time);
+    super.start(time);
 
     return this;
-  };
+  }
 
   // updates to super methods
-  Tween.prototype.stop = function stop () {
-    TweenBase.prototype.stop.call(this);
+  stop() {
+    super.stop();
     if (!this.paused && this.playing) {
       this.paused = false;
       this.stopChainedTweens();
     }
     return this;
-  };
+  }
 
-  Tween.prototype.close = function close () {
-    TweenBase.prototype.close.call(this);
+  close() {
+    super.close();
 
     if (this._repeatOption > 0) {
       this._repeat = this._repeatOption;
@@ -768,10 +745,10 @@ var Tween = /*@__PURE__*/(function (TweenBase) {
     }
 
     return this;
-  };
+  }
 
   // additions to prototype
-  Tween.prototype.resume = function resume () {
+  resume() {
     if (this.paused && this.playing) {
       this.paused = false;
       if (this._onResume !== undefined) {
@@ -783,12 +760,12 @@ var Tween = /*@__PURE__*/(function (TweenBase) {
       this._startTime += KUTE.Time() - this._pauseTime;
       add(this);
       // restart ticker if stopped
-      if (!Tick) { Ticker(); }
+      if (!Tick) Ticker();
     }
     return this;
-  };
+  }
 
-  Tween.prototype.pause = function pause () {
+  pause() {
     if (!this.paused && this.playing) {
       remove(this);
       this.paused = true;
@@ -798,27 +775,23 @@ var Tween = /*@__PURE__*/(function (TweenBase) {
       }
     }
     return this;
-  };
+  }
 
-  Tween.prototype.reverse = function reverse () {
-    var this$1 = this;
-
+  reverse() {
     // if (this._yoyo) {
-    Object.keys(this.valuesEnd).forEach(function (reverseProp) {
-      var tmp = this$1.valuesRepeat[reverseProp];
-      this$1.valuesRepeat[reverseProp] = this$1.valuesEnd[reverseProp];
-      this$1.valuesEnd[reverseProp] = tmp;
-      this$1.valuesStart[reverseProp] = this$1.valuesRepeat[reverseProp];
+    Object.keys(this.valuesEnd).forEach((reverseProp) => {
+      const tmp = this.valuesRepeat[reverseProp];
+      this.valuesRepeat[reverseProp] = this.valuesEnd[reverseProp];
+      this.valuesEnd[reverseProp] = tmp;
+      this.valuesStart[reverseProp] = this.valuesRepeat[reverseProp];
     });
     // }
-  };
+  }
 
-  Tween.prototype.update = function update (time) {
-    var this$1 = this;
+  update(time) {
+    const T = time !== undefined ? time : KUTE.Time();
 
-    var T = time !== undefined ? time : KUTE.Time();
-
-    var elapsed;
+    let elapsed;
 
     if (T < this._startTime && this.playing) { return true; }
 
@@ -826,13 +799,13 @@ var Tween = /*@__PURE__*/(function (TweenBase) {
     elapsed = (this._duration === 0 || elapsed > 1) ? 1 : elapsed;
 
     // calculate progress
-    var progress = this._easing(elapsed);
+    const progress = this._easing(elapsed);
 
     // render the update
-    Object.keys(this.valuesEnd).forEach(function (tweenProp) {
-      KUTE[tweenProp](this$1.element,
-        this$1.valuesStart[tweenProp],
-        this$1.valuesEnd[tweenProp],
+    Object.keys(this.valuesEnd).forEach((tweenProp) => {
+      KUTE[tweenProp](this.element,
+        this.valuesStart[tweenProp],
+        this.valuesEnd[tweenProp],
         progress);
     });
 
@@ -843,7 +816,7 @@ var Tween = /*@__PURE__*/(function (TweenBase) {
 
     if (elapsed === 1) {
       if (this._repeat > 0) {
-        if (Number.isFinite(this._repeat)) { this._repeat -= 1; }
+        if (Number.isFinite(this._repeat)) this._repeat -= 1;
 
         // set the right time for delay
         this._startTime = T;
@@ -872,16 +845,14 @@ var Tween = /*@__PURE__*/(function (TweenBase) {
 
       // start animating chained tweens
       if (this._chain !== undefined && this._chain.length) {
-        this._chain.forEach(function (tw) { return tw.start(); });
+        this._chain.forEach((tw) => tw.start());
       }
 
       return false;
     }
     return true;
-  };
-
-  return Tween;
-}(TweenBase));
+  }
+}
 
 // Update Tween Interface Update
 connect.tween = Tween;
@@ -889,108 +860,108 @@ connect.tween = Tween;
 // KUTE.js Tween Collection
 // ========================
 
-var TweenCollection = function TweenCollection(els, vS, vE, Options) {
-  var this$1 = this;
+class TweenCollection {
+  constructor(els, vS, vE, Options) {
+    this.tweens = [];
 
-  this.tweens = [];
+    // set default offset
+    if (!('offset' in defaultOptions)) defaultOptions.offset = 0;
 
-  // set default offset
-  if (!('offset' in defaultOptions)) { defaultOptions.offset = 0; }
+    const Ops = Options || {};
+    Ops.delay = Ops.delay || defaultOptions.delay;
 
-  var Ops = Options || {};
-  Ops.delay = Ops.delay || defaultOptions.delay;
+    // set all options
+    const options = [];
 
-  // set all options
-  var options = [];
+    Array.from(els).forEach((el, i) => {
+      const TweenConstructor = connect.tween;
+      options[i] = Ops || {};
+      options[i].delay = i > 0 ? Ops.delay + (Ops.offset || defaultOptions.offset) : Ops.delay;
+      if (el instanceof Element) {
+        this.tweens.push(new TweenConstructor(el, vS, vE, options[i]));
+      } else {
+        throw Error(`KUTE.js - ${el} not instanceof [Element]`);
+      }
+    });
 
-  Array.from(els).forEach(function (el, i) {
-    var TweenConstructor = connect.tween;
-    options[i] = Ops || {};
-    options[i].delay = i > 0 ? Ops.delay + (Ops.offset || defaultOptions.offset) : Ops.delay;
-    if (el instanceof Element) {
-      this$1.tweens.push(new TweenConstructor(el, vS, vE, options[i]));
-    } else {
-      throw Error(("KUTE.js - " + el + " not instanceof [Element]"));
-    }
-  });
-
-  this.length = this.tweens.length;
-  return this;
-};
-
-TweenCollection.prototype.start = function start (time) {
-  var T = time === undefined ? KUTE.Time() : time;
-  this.tweens.map(function (tween) { return tween.start(T); });
-  return this;
-};
-
-TweenCollection.prototype.stop = function stop () {
-  this.tweens.map(function (tween) { return tween.stop(); });
-  return this;
-};
-
-TweenCollection.prototype.pause = function pause (time) {
-  var T = time === undefined ? KUTE.Time() : time;
-  this.tweens.map(function (tween) { return tween.pause(T); });
-  return this;
-};
-
-TweenCollection.prototype.resume = function resume (time) {
-  var T = time === undefined ? KUTE.Time() : time;
-  this.tweens.map(function (tween) { return tween.resume(T); });
-  return this;
-};
-
-TweenCollection.prototype.chain = function chain (args) {
-  var lastTween = this.tweens[this.length - 1];
-  if (args instanceof TweenCollection) {
-    lastTween.chain(args.tweens);
-  } else if (args instanceof connect.tween) {
-    lastTween.chain(args);
-  } else {
-    throw new TypeError('KUTE.js - invalid chain value');
+    this.length = this.tweens.length;
+    return this;
   }
-  return this;
-};
 
-TweenCollection.prototype.playing = function playing () {
-  return this.tweens.some(function (tw) { return tw.playing; });
-};
+  start(time) {
+    const T = time === undefined ? KUTE.Time() : time;
+    this.tweens.map((tween) => tween.start(T));
+    return this;
+  }
 
-TweenCollection.prototype.removeTweens = function removeTweens () {
-  this.tweens = [];
-};
+  stop() {
+    this.tweens.map((tween) => tween.stop());
+    return this;
+  }
 
-TweenCollection.prototype.getMaxDuration = function getMaxDuration () {
-  var durations = [];
-  this.tweens.forEach(function (tw) {
-    durations.push(tw._duration + tw._delay + tw._repeat * tw._repeatDelay);
-  });
-  return Math.max(durations);
-};
+  pause(time) {
+    const T = time === undefined ? KUTE.Time() : time;
+    this.tweens.map((tween) => tween.pause(T));
+    return this;
+  }
+
+  resume(time) {
+    const T = time === undefined ? KUTE.Time() : time;
+    this.tweens.map((tween) => tween.resume(T));
+    return this;
+  }
+
+  chain(args) {
+    const lastTween = this.tweens[this.length - 1];
+    if (args instanceof TweenCollection) {
+      lastTween.chain(args.tweens);
+    } else if (args instanceof connect.tween) {
+      lastTween.chain(args);
+    } else {
+      throw new TypeError('KUTE.js - invalid chain value');
+    }
+    return this;
+  }
+
+  playing() {
+    return this.tweens.some((tw) => tw.playing);
+  }
+
+  removeTweens() {
+    this.tweens = [];
+  }
+
+  getMaxDuration() {
+    const durations = [];
+    this.tweens.forEach((tw) => {
+      durations.push(tw._duration + tw._delay + tw._repeat * tw._repeatDelay);
+    });
+    return Math.max(durations);
+  }
+}
 
 function to(element, endObject, optionsObj) {
-  var options = optionsObj || {};
-  var TweenConstructor = connect.tween;
+  const options = optionsObj || {};
+  const TweenConstructor = connect.tween;
   options.resetStart = endObject;
   return new TweenConstructor(selector(element), endObject, endObject, options);
 }
 
 function fromTo(element, startObject, endObject, optionsObj) {
-  var options = optionsObj || {};
-  var TweenConstructor = connect.tween;
+  const options = optionsObj || {};
+  const TweenConstructor = connect.tween;
   return new TweenConstructor(selector(element), startObject, endObject, options);
 }
 
 // multiple elements tween objects
 function allTo(elements, endObject, optionsObj) {
-  var options = optionsObj || {};
+  const options = optionsObj || {};
   optionsObj.resetStart = endObject;
   return new TweenCollection(selector(elements, true), endObject, endObject, options);
 }
 
 function allFromTo(elements, startObject, endObject, optionsObj) {
-  var options = optionsObj || {};
+  const options = optionsObj || {};
   return new TweenCollection(selector(elements, true), startObject, endObject, options);
 }
 
@@ -999,130 +970,132 @@ function allFromTo(elements, startObject, endObject, optionsObj) {
 // * populate KUTE objects
 // * AnimatonBase creates a KUTE.js build for pre-made Tween objects
 // * AnimatonDevelopment can help you debug your new components
-var Animation = function Animation(Component) {
-  try {
-    if (Component.component in supportedProperties) {
-      throw Error(("KUTE.js - " + (Component.component) + " already registered"));
-    } else if (Component.property in defaultValues) {
-      throw Error(("KUTE.js - " + (Component.property) + " already registered"));
-    } else {
-      this.setComponent(Component);
+class Animation {
+  constructor(Component) {
+    try {
+      if (Component.component in supportedProperties) {
+        throw Error(`KUTE.js - ${Component.component} already registered`);
+      } else if (Component.property in defaultValues) {
+        throw Error(`KUTE.js - ${Component.property} already registered`);
+      } else {
+        this.setComponent(Component);
+      }
+    } catch (e) {
+      throw Error(e);
     }
-  } catch (e) {
-    throw Error(e);
-  }
-};
-
-Animation.prototype.setComponent = function setComponent (Component) {
-  var propertyInfo = this;
-  var ComponentName = Component.component;
-  // const Objects = { defaultValues, defaultOptions, Interpolate, linkProperty, Util }
-  var Functions = {
-    prepareProperty: prepareProperty, prepareStart: prepareStart, onStart: onStart, onComplete: onComplete, crossCheck: crossCheck,
-  };
-  var Category = Component.category;
-  var Property = Component.property;
-  var Length = (Component.properties && Component.properties.length)
-    || (Component.subProperties && Component.subProperties.length);
-
-  // single property
-  // {property,defaultvalue,defaultOptions,Interpolate,functions}
-
-  // category colors, boxModel, borderRadius
-  // {category,properties,defaultvalues,defaultOptions,Interpolate,functions}
-
-  // property with multiple sub properties. Eg transform, filter
-  // {property,subProperties,defaultvalues,defaultOptions,Interpolate,functions}
-
-  // property with multiple sub properties. Eg htmlAttributes
-  // {category,subProperties,defaultvalues,defaultOptions,Interpolate,functions}
-
-  // set supported category/property
-  supportedProperties[ComponentName] = Component.properties
-    || Component.subProperties || Component.property;
-
-  // set defaultValues
-  if ('defaultValue' in Component) { // value 0 will invalidate
-    defaultValues[Property] = Component.defaultValue;
-
-    // minimal info
-    propertyInfo.supports = Property + " property";
-  } else if (Component.defaultValues) {
-    Object.keys(Component.defaultValues).forEach(function (dv) {
-      defaultValues[dv] = Component.defaultValues[dv];
-    });
-
-    // minimal info
-    propertyInfo.supports = (Length || Property) + " " + (Property || Category) + " properties";
   }
 
-  // set additional options
-  if (Component.defaultOptions) {
-    Object.keys(Component.defaultOptions).forEach(function (op) {
-      defaultOptions[op] = Component.defaultOptions[op];
-    });
-  }
+  setComponent(Component) {
+    const propertyInfo = this;
+    const ComponentName = Component.component;
+    // const Objects = { defaultValues, defaultOptions, Interpolate, linkProperty, Util }
+    const Functions = {
+      prepareProperty, prepareStart, onStart, onComplete, crossCheck,
+    };
+    const Category = Component.category;
+    const Property = Component.property;
+    const Length = (Component.properties && Component.properties.length)
+      || (Component.subProperties && Component.subProperties.length);
 
-  // set functions
-  if (Component.functions) {
-    Object.keys(Functions).forEach(function (fn) {
-      if (fn in Component.functions) {
-        if (typeof (Component.functions[fn]) === 'function') {
-          // if (!Functions[fn][ Category||Property ]) {
-          // Functions[fn][ Category||Property ] = Component.functions[fn];
-          // }
-          if (!Functions[fn][ComponentName]) { Functions[fn][ComponentName] = {}; }
-          if (!Functions[fn][ComponentName][Category || Property]) {
-            Functions[fn][ComponentName][Category || Property] = Component.functions[fn];
+    // single property
+    // {property,defaultvalue,defaultOptions,Interpolate,functions}
+
+    // category colors, boxModel, borderRadius
+    // {category,properties,defaultvalues,defaultOptions,Interpolate,functions}
+
+    // property with multiple sub properties. Eg transform, filter
+    // {property,subProperties,defaultvalues,defaultOptions,Interpolate,functions}
+
+    // property with multiple sub properties. Eg htmlAttributes
+    // {category,subProperties,defaultvalues,defaultOptions,Interpolate,functions}
+
+    // set supported category/property
+    supportedProperties[ComponentName] = Component.properties
+      || Component.subProperties || Component.property;
+
+    // set defaultValues
+    if ('defaultValue' in Component) { // value 0 will invalidate
+      defaultValues[Property] = Component.defaultValue;
+
+      // minimal info
+      propertyInfo.supports = `${Property} property`;
+    } else if (Component.defaultValues) {
+      Object.keys(Component.defaultValues).forEach((dv) => {
+        defaultValues[dv] = Component.defaultValues[dv];
+      });
+
+      // minimal info
+      propertyInfo.supports = `${Length || Property} ${Property || Category} properties`;
+    }
+
+    // set additional options
+    if (Component.defaultOptions) {
+      Object.keys(Component.defaultOptions).forEach((op) => {
+        defaultOptions[op] = Component.defaultOptions[op];
+      });
+    }
+
+    // set functions
+    if (Component.functions) {
+      Object.keys(Functions).forEach((fn) => {
+        if (fn in Component.functions) {
+          if (typeof (Component.functions[fn]) === 'function') {
+            // if (!Functions[fn][ Category||Property ]) {
+            //   Functions[fn][ Category||Property ] = Component.functions[fn];
+            // }
+            if (!Functions[fn][ComponentName]) Functions[fn][ComponentName] = {};
+            if (!Functions[fn][ComponentName][Category || Property]) {
+              Functions[fn][ComponentName][Category || Property] = Component.functions[fn];
+            }
+          } else {
+            Object.keys(Component.functions[fn]).forEach((ofn) => {
+              // !Functions[fn][ofn] && (Functions[fn][ofn] = Component.functions[fn][ofn])
+              if (!Functions[fn][ComponentName]) Functions[fn][ComponentName] = {};
+              if (!Functions[fn][ComponentName][ofn]) {
+                Functions[fn][ComponentName][ofn] = Component.functions[fn][ofn];
+              }
+            });
           }
+        }
+      });
+    }
+
+    // set component interpolate
+    if (Component.Interpolate) {
+      Object.keys(Component.Interpolate).forEach((fni) => {
+        const compIntObj = Component.Interpolate[fni];
+        if (typeof (compIntObj) === 'function' && !Interpolate[fni]) {
+          Interpolate[fni] = compIntObj;
         } else {
-          Object.keys(Component.functions[fn]).forEach(function (ofn) {
-            // !Functions[fn][ofn] && (Functions[fn][ofn] = Component.functions[fn][ofn])
-            if (!Functions[fn][ComponentName]) { Functions[fn][ComponentName] = {}; }
-            if (!Functions[fn][ComponentName][ofn]) {
-              Functions[fn][ComponentName][ofn] = Component.functions[fn][ofn];
+          Object.keys(compIntObj).forEach((sfn) => {
+            if (typeof (compIntObj[sfn]) === 'function' && !Interpolate[fni]) {
+              Interpolate[fni] = compIntObj[sfn];
             }
           });
         }
-      }
-    });
+      });
+
+      linkProperty[ComponentName] = Component.Interpolate;
+    }
+
+    // set component util
+    if (Component.Util) {
+      Object.keys(Component.Util).forEach((fnu) => {
+        if (!Util[fnu]) Util[fnu] = Component.Util[fnu];
+      });
+    }
+
+    return propertyInfo;
   }
-
-  // set component interpolate
-  if (Component.Interpolate) {
-    Object.keys(Component.Interpolate).forEach(function (fni) {
-      var compIntObj = Component.Interpolate[fni];
-      if (typeof (compIntObj) === 'function' && !Interpolate[fni]) {
-        Interpolate[fni] = compIntObj;
-      } else {
-        Object.keys(compIntObj).forEach(function (sfn) {
-          if (typeof (compIntObj[sfn]) === 'function' && !Interpolate[fni]) {
-            Interpolate[fni] = compIntObj[sfn];
-          }
-        });
-      }
-    });
-
-    linkProperty[ComponentName] = Component.Interpolate;
-  }
-
-  // set component util
-  if (Component.Util) {
-    Object.keys(Component.Util).forEach(function (fnu) {
-      if (!Util[fnu]) { Util[fnu] = Component.Util[fnu]; }
-    });
-  }
-
-  return propertyInfo;
-};
+}
 
 // trueDimension - returns { v = value, u = unit }
 function trueDimension(dimValue, isAngle) {
-  var intValue = parseInt(dimValue, 10) || 0;
-  var mUnits = ['px', '%', 'deg', 'rad', 'em', 'rem', 'vh', 'vw'];
-  var theUnit;
+  const intValue = parseInt(dimValue, 10) || 0;
+  const mUnits = ['px', '%', 'deg', 'rad', 'em', 'rem', 'vh', 'vw'];
+  let theUnit;
 
-  for (var mIndex = 0; mIndex < mUnits.length; mIndex += 1) {
+  for (let mIndex = 0; mIndex < mUnits.length; mIndex += 1) {
     if (typeof dimValue === 'string' && dimValue.includes(mUnits[mIndex])) {
       theUnit = mUnits[mIndex]; break;
     }
@@ -1135,8 +1108,8 @@ function trueDimension(dimValue, isAngle) {
 }
 
 function numbers(a, b, v) { // number1, number2, progress
-  var A = +a;
-  var B = b - a;
+  const A = +a;
+  const B = b - a;
   // a = +a; b -= a;
   return A + B * v;
 }
@@ -1144,70 +1117,75 @@ function numbers(a, b, v) { // number1, number2, progress
 // Component Functions
 function boxModelOnStart(tweenProp) {
   if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = function (elem, a, b, v) {
-      elem.style[tweenProp] = (v > 0.99 || v < 0.01
+    KUTE[tweenProp] = (elem, a, b, v) => {
+      elem.style[tweenProp] = `${v > 0.99 || v < 0.01
         ? ((numbers(a, b, v) * 10) >> 0) / 10
-        : (numbers(a, b, v)) >> 0) + "px";
+        : (numbers(a, b, v)) >> 0}px`;
     };
   }
 }
+
+// Component Base Props
+const baseBoxProps = ['top', 'left', 'width', 'height'];
+const baseBoxOnStart = {};
+baseBoxProps.forEach((x) => { baseBoxOnStart[x] = boxModelOnStart; });
 
 // Component Functions
 function getBoxModel(tweenProp) {
   return getStyleForProperty(this.element, tweenProp) || defaultValues[tweenProp];
 }
 function prepareBoxModel(tweenProp, value) {
-  var boxValue = trueDimension(value);
-  var offsetProp = tweenProp === 'height' ? 'offsetHeight' : 'offsetWidth';
+  const boxValue = trueDimension(value);
+  const offsetProp = tweenProp === 'height' ? 'offsetHeight' : 'offsetWidth';
   return boxValue.u === '%' ? (boxValue.v * this.element[offsetProp]) / 100 : boxValue.v;
 }
 
 // Component Base Props
-var essentialBoxProps = ['top', 'left', 'width', 'height'];
-var essentialBoxPropsValues = {
+const essentialBoxProps = ['top', 'left', 'width', 'height'];
+const essentialBoxPropsValues = {
   top: 0, left: 0, width: 0, height: 0,
 };
 
-var essentialBoxOnStart = {};
-essentialBoxProps.forEach(function (x) { essentialBoxOnStart[x] = boxModelOnStart; });
+const essentialBoxOnStart = {};
+essentialBoxProps.forEach((x) => { essentialBoxOnStart[x] = boxModelOnStart; });
 
 // All Component Functions
-var essentialBoxModelFunctions = {
+const essentialBoxModelFunctions = {
   prepareStart: getBoxModel,
   prepareProperty: prepareBoxModel,
   onStart: essentialBoxOnStart,
 };
 
 // Component Essential
-var essentialBoxModel = {
+const essentialBoxModel = {
   component: 'essentialBoxModel',
   category: 'boxModel',
   properties: essentialBoxProps,
   defaultValues: essentialBoxPropsValues,
-  Interpolate: { numbers: numbers },
+  Interpolate: { numbers },
   functions: essentialBoxModelFunctions,
-  Util: { trueDimension: trueDimension },
+  Util: { trueDimension },
 };
 
 // hexToRGB - returns RGB color object {r,g,b}
-function hexToRGB (hex) {
-  var hexShorthand = /^#?([a-f\d])([a-f\d])([a-f\d])$/i; // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-  var HEX = hex.replace(hexShorthand, function (m, r, g, b) { return r + r + g + g + b + b; });
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(HEX);
+var hexToRGB = (hex) => {
+  const hexShorthand = /^#?([a-f\d])([a-f\d])([a-f\d])$/i; // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  const HEX = hex.replace(hexShorthand, (m, r, g, b) => r + r + g + g + b + b);
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(HEX);
 
   return result ? {
     r: parseInt(result[1], 16),
     g: parseInt(result[2], 16),
     b: parseInt(result[3], 16),
   } : null;
-}
+};
 
 // trueColor - replace transparent and transform any color to rgba()/rgb()
 function trueColor(colorString) {
-  var result;
+  let result;
   if (/rgb|rgba/.test(colorString)) { // first check if it's a rgb string
-    var vrgb = colorString.replace(/\s|\)/, '').split('(')[1].split(',');
-    var colorAlpha = vrgb[3] ? vrgb[3] : null;
+    const vrgb = colorString.replace(/\s|\)/, '').split('(')[1].split(',');
+    const colorAlpha = vrgb[3] ? vrgb[3] : null;
     if (!colorAlpha) {
       result = { r: parseInt(vrgb[0], 10), g: parseInt(vrgb[1], 10), b: parseInt(vrgb[2], 10) };
     }
@@ -1218,7 +1196,7 @@ function trueColor(colorString) {
       a: parseFloat(colorAlpha),
     };
   } if (/^#/.test(colorString)) {
-    var fromHex = hexToRGB(colorString);
+    const fromHex = hexToRGB(colorString);
     result = { r: fromHex.r, g: fromHex.g, b: fromHex.b };
   } if (/transparent|none|initial|inherit/.test(colorString)) {
     result = {
@@ -1226,9 +1204,9 @@ function trueColor(colorString) {
     };
   }
   if (!/^#|^rgb/.test(colorString)) { // maybe we can check for web safe colors
-    var siteHead = document.getElementsByTagName('head')[0];
+    const siteHead = document.getElementsByTagName('head')[0];
     siteHead.style.color = colorString;
-    var webColor = getComputedStyle(siteHead, null).color;
+    let webColor = getComputedStyle(siteHead, null).color;
     webColor = /rgb/.test(webColor) ? webColor.replace(/[^\d,]/g, '').split(',') : [0, 0, 0];
     siteHead.style.color = '';
     result = {
@@ -1241,13 +1219,13 @@ function trueColor(colorString) {
 }
 
 function colors(a, b, v) {
-  var _c = {};
-  var ep = ')';
-  var cm = ',';
-  var rgb = 'rgb(';
-  var rgba = 'rgba(';
+  const _c = {};
+  const ep = ')';
+  const cm = ',';
+  const rgb = 'rgb(';
+  const rgba = 'rgba(';
 
-  Object.keys(b).forEach(function (c) {
+  Object.keys(b).forEach((c) => {
     // _c[c] = c !== 'a' ? (numbers(a[c], b[c], v) >> 0 || 0) : (a[c] && b[c])
     // ? (numbers(a[c], b[c], v) * 100 >> 0) / 100 : null;
     if (c !== 'a') {
@@ -1262,29 +1240,41 @@ function colors(a, b, v) {
     : rgba + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
 }
 
+// Component Interpolation
+// rgba1, rgba2, progress
+
+// Component Properties
+// supported formats
+// 'hex', 'rgb', 'rgba' '#fff' 'rgb(0,0,0)' / 'rgba(0,0,0,0)' 'red' (IE9+)
+const supportedColors$1 = ['color', 'backgroundColor', 'borderColor',
+  'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
+
 // Component Functions
 function onStartColors(tweenProp) {
   if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = function (elem, a, b, v) {
+    KUTE[tweenProp] = (elem, a, b, v) => {
       elem.style[tweenProp] = colors(a, b, v);
     };
   }
 }
 
+const colorsOnStart$1 = {};
+supportedColors$1.forEach((x) => { colorsOnStart$1[x] = onStartColors; });
+
 // Component Interpolation
 // Component Properties
 // supported formats
 // 'hex', 'rgb', 'rgba' '#fff' 'rgb(0,0,0)' / 'rgba(0,0,0,0)' 'red' (IE9+)
-var supportedColors = ['color', 'backgroundColor', 'borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
+const supportedColors = ['color', 'backgroundColor', 'borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
 
-var defaultColors = {};
-supportedColors.forEach(function (tweenProp) {
+const defaultColors = {};
+supportedColors.forEach((tweenProp) => {
   defaultColors[tweenProp] = '#000';
 });
 
 // Component Functions
-var colorsOnStart = {};
-supportedColors.forEach(function (x) {
+const colorsOnStart = {};
+supportedColors.forEach((x) => {
   colorsOnStart[x] = onStartColors;
 });
 
@@ -1296,37 +1286,37 @@ function prepareColor(prop, value) {
 }
 
 // All Component Functions
-var colorFunctions = {
+const colorFunctions = {
   prepareStart: getColor,
   prepareProperty: prepareColor,
   onStart: colorsOnStart,
 };
 
 // Component Full
-var colorProperties = {
+const colorProperties = {
   component: 'colorProperties',
   category: 'colors',
   properties: supportedColors,
   defaultValues: defaultColors,
-  Interpolate: { numbers: numbers, colors: colors },
+  Interpolate: { numbers, colors },
   functions: colorFunctions,
-  Util: { trueColor: trueColor },
+  Util: { trueColor },
 };
 
 // Component Special
-var attributes = {};
+const attributes = {};
 
-var onStartAttr = {
-  attr: function attr(tweenProp) {
+const onStartAttr = {
+  attr(tweenProp) {
     if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-      KUTE[tweenProp] = function (elem, vS, vE, v) {
-        Object.keys(vE).forEach(function (oneAttr) {
+      KUTE[tweenProp] = (elem, vS, vE, v) => {
+        Object.keys(vE).forEach((oneAttr) => {
           KUTE.attributes[oneAttr](elem, oneAttr, vS[oneAttr], vE[oneAttr], v);
         });
       };
     }
   },
-  attributes: function attributes$1(tweenProp) {
+  attributes(tweenProp) {
     if (!KUTE[tweenProp] && this.valuesEnd.attr) {
       KUTE[tweenProp] = attributes;
     }
@@ -1334,23 +1324,21 @@ var onStartAttr = {
 };
 
 // Component Name
-var ComponentName = 'htmlAttributes';
+const ComponentName = 'htmlAttributes';
 
 // Component Properties
-var svgColors = ['fill', 'stroke', 'stop-color'];
+const svgColors = ['fill', 'stroke', 'stop-color'];
 
 // Component Util
 function replaceUppercase(a) { return a.replace(/[A-Z]/g, '-$&').toLowerCase(); }
 
 // Component Functions
 function getAttr(tweenProp, value) {
-  var this$1 = this;
-
-  var attrStartValues = {};
-  Object.keys(value).forEach(function (attr) {
+  const attrStartValues = {};
+  Object.keys(value).forEach((attr) => {
     // get the value for 'fill-opacity' not fillOpacity, also 'width' not the internal 'width_px'
-    var attribute = replaceUppercase(attr).replace(/_+[a-z]+/, '');
-    var currentValue = this$1.element.getAttribute(attribute);
+    const attribute = replaceUppercase(attr).replace(/_+[a-z]+/, '');
+    const currentValue = this.element.getAttribute(attribute);
     attrStartValues[attribute] = svgColors.includes(attribute)
       ? (currentValue || 'rgba(0,0,0,0)')
       : (currentValue || (/opacity/i.test(attr) ? 1 : 0));
@@ -1359,27 +1347,25 @@ function getAttr(tweenProp, value) {
   return attrStartValues;
 }
 
-function prepareAttr(tweenProp, attrObj) {
-  var this$1 = this;
- // attr (string),attrObj (object)
-  var attributesObject = {};
+function prepareAttr(tweenProp, attrObj) { // attr (string),attrObj (object)
+  const attributesObject = {};
 
-  Object.keys(attrObj).forEach(function (p) {
-    var prop = replaceUppercase(p);
-    var regex = /(%|[a-z]+)$/;
-    var currentValue = this$1.element.getAttribute(prop.replace(/_+[a-z]+/, ''));
+  Object.keys(attrObj).forEach((p) => {
+    const prop = replaceUppercase(p);
+    const regex = /(%|[a-z]+)$/;
+    const currentValue = this.element.getAttribute(prop.replace(/_+[a-z]+/, ''));
 
     if (!svgColors.includes(prop)) {
       // attributes set with unit suffixes
       if (currentValue !== null && regex.test(currentValue)) {
-        var unit = trueDimension(currentValue).u || trueDimension(attrObj[p]).u;
-        var suffix = /%/.test(unit) ? '_percent' : ("_" + unit);
+        const unit = trueDimension(currentValue).u || trueDimension(attrObj[p]).u;
+        const suffix = /%/.test(unit) ? '_percent' : `_${unit}`;
 
         // most "unknown" attributes cannot register into onStart, so we manually add them
-        onStart[ComponentName][prop + suffix] = function (tp) {
-          if (this$1.valuesEnd[tweenProp] && this$1.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
-            attributes[tp] = function (elem, oneAttr, a, b, v) {
-              var _p = oneAttr.replace(suffix, '');
+        onStart[ComponentName][prop + suffix] = (tp) => {
+          if (this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
+            attributes[tp] = (elem, oneAttr, a, b, v) => {
+              const _p = oneAttr.replace(suffix, '');
               elem.setAttribute(_p, ((numbers(a.v, b.v, v) * 1000 >> 0) / 1000) + b.u);
             };
           }
@@ -1388,9 +1374,9 @@ function prepareAttr(tweenProp, attrObj) {
       } else if (!regex.test(attrObj[p]) || currentValue === null
         || (currentValue !== null && !regex.test(currentValue))) {
         // most "unknown" attributes cannot register into onStart, so we manually add them
-        onStart[ComponentName][prop] = function (tp) {
-          if (this$1.valuesEnd[tweenProp] && this$1.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
-            attributes[tp] = function (elem, oneAttr, a, b, v) {
+        onStart[ComponentName][prop] = (tp) => {
+          if (this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
+            attributes[tp] = (elem, oneAttr, a, b, v) => {
               elem.setAttribute(oneAttr, (numbers(a, b, v) * 1000 >> 0) / 1000);
             };
           }
@@ -1399,9 +1385,9 @@ function prepareAttr(tweenProp, attrObj) {
       }
     } else { // colors
       // most "unknown" attributes cannot register into onStart, so we manually add them
-      onStart[ComponentName][prop] = function (tp) {
-        if (this$1.valuesEnd[tweenProp] && this$1.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
-          attributes[tp] = function (elem, oneAttr, a, b, v) {
+      onStart[ComponentName][prop] = (tp) => {
+        if (this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
+          attributes[tp] = (elem, oneAttr, a, b, v) => {
             elem.setAttribute(oneAttr, colors(a, b, v));
           };
         }
@@ -1414,14 +1400,14 @@ function prepareAttr(tweenProp, attrObj) {
 }
 
 // All Component Functions
-var attrFunctions = {
+const attrFunctions = {
   prepareStart: getAttr,
   prepareProperty: prepareAttr,
   onStart: onStartAttr,
 };
 
 // Component Full
-var htmlAttributes = {
+const htmlAttributes = {
   component: ComponentName,
   property: 'attr',
   // the Animation class will need some values to validate this Object attribute
@@ -1434,10 +1420,10 @@ var htmlAttributes = {
     'stroke-opacity': 1,
     'fill-opacity': 1, // same here
   },
-  Interpolate: { numbers: numbers, colors: colors },
+  Interpolate: { numbers, colors },
   functions: attrFunctions,
   // export to global for faster execution
-  Util: { replaceUppercase: replaceUppercase, trueColor: trueColor, trueDimension: trueDimension },
+  Util: { replaceUppercase, trueColor, trueDimension },
 };
 
 /* opacityProperty = {
@@ -1451,7 +1437,7 @@ var htmlAttributes = {
 function onStartOpacity(tweenProp/* , value */) {
   // opacity could be 0 sometimes, we need to check regardless
   if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = function (elem, a, b, v) {
+    KUTE[tweenProp] = (elem, a, b, v) => {
       elem.style[tweenProp] = ((numbers(a, b, v) * 1000) >> 0) / 1000;
     };
   }
@@ -1474,44 +1460,44 @@ function prepareOpacity(tweenProp, value) {
 }
 
 // All Component Functions
-var opacityFunctions = {
+const opacityFunctions = {
   prepareStart: getOpacity,
   prepareProperty: prepareOpacity,
   onStart: onStartOpacity,
 };
 
 // Full Component
-var opacityProperty = {
+const opacityProperty = {
   component: 'opacityProperty',
   property: 'opacity',
   defaultValue: 1,
-  Interpolate: { numbers: numbers },
+  Interpolate: { numbers },
   functions: opacityFunctions,
 };
 
 // Component Values
-var lowerCaseAlpha = String('abcdefghijklmnopqrstuvwxyz').split(''); // lowercase
-var upperCaseAlpha = String('abcdefghijklmnopqrstuvwxyz').toUpperCase().split(''); // uppercase
-var nonAlpha = String("~!@#$%^&*()_+{}[];'<>,./?=-").split(''); // symbols
-var numeric = String('0123456789').split(''); // numeric
-var alphaNumeric = lowerCaseAlpha.concat(upperCaseAlpha, numeric); // alpha numeric
-var allTypes = alphaNumeric.concat(nonAlpha); // all caracters
+const lowerCaseAlpha = String('abcdefghijklmnopqrstuvwxyz').split(''); // lowercase
+const upperCaseAlpha = String('abcdefghijklmnopqrstuvwxyz').toUpperCase().split(''); // uppercase
+const nonAlpha = String("~!@#$%^&*()_+{}[];'<>,./?=-").split(''); // symbols
+const numeric = String('0123456789').split(''); // numeric
+const alphaNumeric = lowerCaseAlpha.concat(upperCaseAlpha, numeric); // alpha numeric
+const allTypes = alphaNumeric.concat(nonAlpha); // all caracters
 
-var charSet = {
+const charSet = {
   alpha: lowerCaseAlpha, // lowercase
   upper: upperCaseAlpha, // uppercase
   symbols: nonAlpha, // symbols
-  numeric: numeric,
+  numeric,
   alphanumeric: alphaNumeric,
   all: allTypes,
 };
 
 // Component Functions
-var onStartWrite = {
-  text: function text(tweenProp) {
+const onStartWrite = {
+  text(tweenProp) {
     if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-      var chars = this._textChars;
-      var charsets = charSet[defaultOptions.textChars];
+      const chars = this._textChars;
+      let charsets = charSet[defaultOptions.textChars];
 
       if (chars in charSet) {
         charsets = charSet[chars];
@@ -1519,13 +1505,13 @@ var onStartWrite = {
         charsets = chars;
       }
 
-      KUTE[tweenProp] = function (elem, a, b, v) {
-        var initialText = '';
-        var endText = '';
-        var finalText = b === '' ? ' ' : b;
-        var firstLetterA = a.substring(0);
-        var firstLetterB = b.substring(0);
-        var pointer = charsets[(Math.random() * charsets.length) >> 0];
+      KUTE[tweenProp] = (elem, a, b, v) => {
+        let initialText = '';
+        let endText = '';
+        const finalText = b === '' ? ' ' : b;
+        const firstLetterA = a.substring(0);
+        const firstLetterB = b.substring(0);
+        const pointer = charsets[(Math.random() * charsets.length) >> 0];
 
         if (a === ' ') {
           endText = firstLetterB
@@ -1546,9 +1532,9 @@ var onStartWrite = {
       };
     }
   },
-  number: function number(tweenProp) {
+  number(tweenProp) {
     if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) { // numbers can be 0
-      KUTE[tweenProp] = function (elem, a, b, v) {
+      KUTE[tweenProp] = (elem, a, b, v) => {
         elem.innerHTML = numbers(a, b, v) >> 0;
       };
     }
@@ -1559,10 +1545,8 @@ var onStartWrite = {
 // utility for multi-child targets
 // wrapContentsSpan returns an [Element] with the SPAN.tagName and a desired class
 function wrapContentsSpan(el, classNAME) {
-  var assign;
-
-  var textWriteWrapper;
-  var newElem;
+  let textWriteWrapper;
+  let newElem;
   if (typeof (el) === 'string') {
     newElem = document.createElement('SPAN');
     newElem.innerHTML = el;
@@ -1570,27 +1554,27 @@ function wrapContentsSpan(el, classNAME) {
     return newElem;
   }
   if (!el.children.length || (el.children.length && el.children[0].className !== classNAME)) {
-    var elementInnerHTML = el.innerHTML;
+    const elementInnerHTML = el.innerHTML;
     textWriteWrapper = document.createElement('SPAN');
     textWriteWrapper.className = classNAME;
     textWriteWrapper.innerHTML = elementInnerHTML;
     el.appendChild(textWriteWrapper);
     el.innerHTML = textWriteWrapper.outerHTML;
   } else if (el.children.length && el.children[0].className === classNAME) {
-    (assign = el.children, textWriteWrapper = assign[0]);
+    [textWriteWrapper] = el.children;
   }
   return textWriteWrapper;
 }
 
 function getTextPartsArray(el, classNAME) {
-  var elementsArray = [];
-  var len = el.children.length;
+  let elementsArray = [];
+  const len = el.children.length;
   if (len) {
-    var textParts = [];
-    var remainingMarkup = el.innerHTML;
-    var wrapperParts;
+    const textParts = [];
+    let remainingMarkup = el.innerHTML;
+    let wrapperParts;
 
-    for (var i = 0, currentChild = (void 0), childOuter = (void 0), unTaggedContent = (void 0); i < len; i += 1) {
+    for (let i = 0, currentChild, childOuter, unTaggedContent; i < len; i += 1) {
       currentChild = el.children[i];
       childOuter = currentChild.outerHTML;
       wrapperParts = remainingMarkup.split(childOuter);
@@ -1605,13 +1589,13 @@ function getTextPartsArray(el, classNAME) {
         remainingMarkup = remainingMarkup.replace(wrapperParts[0].split('<')[0], '');
       }
 
-      if (!currentChild.classList.contains(classNAME)) { currentChild.classList.add(classNAME); }
+      if (!currentChild.classList.contains(classNAME)) currentChild.classList.add(classNAME);
       textParts.push(currentChild);
       remainingMarkup = remainingMarkup.replace(childOuter, '');
     }
 
     if (remainingMarkup !== '') {
-      var unTaggedRemaining = wrapContentsSpan(remainingMarkup, classNAME);
+      const unTaggedRemaining = wrapContentsSpan(remainingMarkup, classNAME);
       textParts.push(unTaggedRemaining);
     }
 
@@ -1623,20 +1607,20 @@ function getTextPartsArray(el, classNAME) {
 }
 
 function setSegments(target, newText) {
-  var oldTargetSegs = getTextPartsArray(target, 'text-part');
-  var newTargetSegs = getTextPartsArray(wrapContentsSpan(newText), 'text-part');
+  const oldTargetSegs = getTextPartsArray(target, 'text-part');
+  const newTargetSegs = getTextPartsArray(wrapContentsSpan(newText), 'text-part');
 
   target.innerHTML = '';
-  target.innerHTML += oldTargetSegs.map(function (s) { s.className += ' oldText'; return s.outerHTML; }).join('');
-  target.innerHTML += newTargetSegs.map(function (s) { s.className += ' newText'; return s.outerHTML.replace(s.innerHTML, ''); }).join('');
+  target.innerHTML += oldTargetSegs.map((s) => { s.className += ' oldText'; return s.outerHTML; }).join('');
+  target.innerHTML += newTargetSegs.map((s) => { s.className += ' newText'; return s.outerHTML.replace(s.innerHTML, ''); }).join('');
 
   return [oldTargetSegs, newTargetSegs];
 }
 
 function createTextTweens(target, newText, ops) {
-  if (target.playing) { return false; }
+  if (target.playing) return false;
 
-  var options = ops || {};
+  const options = ops || {};
   options.duration = 1000;
 
   if (ops.duration === 'auto') {
@@ -1645,17 +1629,17 @@ function createTextTweens(target, newText, ops) {
     options.duration = ops.duration * 1;
   }
 
-  var TweenContructor = connect.tween;
-  var segs = setSegments(target, newText);
-  var oldTargetSegs = segs[0];
-  var newTargetSegs = segs[1];
-  var oldTargets = [].slice.call(target.getElementsByClassName('oldText')).reverse();
-  var newTargets = [].slice.call(target.getElementsByClassName('newText'));
+  const TweenContructor = connect.tween;
+  const segs = setSegments(target, newText);
+  const oldTargetSegs = segs[0];
+  const newTargetSegs = segs[1];
+  const oldTargets = [].slice.call(target.getElementsByClassName('oldText')).reverse();
+  const newTargets = [].slice.call(target.getElementsByClassName('newText'));
 
-  var textTween = [];
-  var totalDelay = 0;
+  let textTween = [];
+  let totalDelay = 0;
 
-  textTween = textTween.concat(oldTargets.map(function (el, i) {
+  textTween = textTween.concat(oldTargets.map((el, i) => {
     options.duration = options.duration === 'auto'
       ? oldTargetSegs[i].innerHTML.length * 75
       : options.duration;
@@ -1665,7 +1649,7 @@ function createTextTweens(target, newText, ops) {
     totalDelay += options.duration;
     return new TweenContructor(el, { text: el.innerHTML }, { text: '' }, options);
   }));
-  textTween = textTween.concat(newTargets.map(function (el, i) {
+  textTween = textTween.concat(newTargets.map((el, i) => {
     function onComplete() {
       target.innerHTML = newText;
       target.playing = false;
@@ -1681,7 +1665,7 @@ function createTextTweens(target, newText, ops) {
 
   textTween.start = function startTweens() {
     if (!target.playing) {
-      textTween.forEach(function (tw) { return tw.start(); });
+      textTween.forEach((tw) => tw.start());
       target.playing = true;
     }
   };
@@ -1703,7 +1687,7 @@ function prepareText(tweenProp, value) {
 }
 
 // All Component Functions
-var textWriteFunctions = {
+const textWriteFunctions = {
   prepareStart: getWrite,
   prepareProperty: prepareText,
   onStart: onStartWrite,
@@ -1717,59 +1701,59 @@ var textWriteFunctions = {
 } */
 
 // Full Component
-var textWrite = {
+const textWrite = {
   component: 'textWriteProperties',
   category: 'textWrite',
   properties: ['text', 'number'],
   defaultValues: { text: ' ', numbers: '0' },
   defaultOptions: { textChars: 'alpha' },
-  Interpolate: { numbers: numbers },
+  Interpolate: { numbers },
   functions: textWriteFunctions,
   // export to global for faster execution
-  Util: { charSet: charSet, createTextTweens: createTextTweens },
+  Util: { charSet, createTextTweens },
 };
 
 function perspective(a, b, u, v) {
-  return ("perspective(" + (((a + (b - a) * v) * 1000 >> 0) / 1000) + u + ")");
+  return `perspective(${((a + (b - a) * v) * 1000 >> 0) / 1000}${u})`;
 }
 
 function translate3d(a, b, u, v) {
-  var translateArray = [];
-  for (var ax = 0; ax < 3; ax += 1) {
+  const translateArray = [];
+  for (let ax = 0; ax < 3; ax += 1) {
     translateArray[ax] = (a[ax] || b[ax]
       ? ((a[ax] + (b[ax] - a[ax]) * v) * 1000 >> 0) / 1000 : 0) + u;
   }
-  return ("translate3d(" + (translateArray.join(',')) + ")");
+  return `translate3d(${translateArray.join(',')})`;
 }
 
 function rotate3d(a, b, u, v) {
-  var rotateStr = '';
-  rotateStr += a[0] || b[0] ? ("rotateX(" + (((a[0] + (b[0] - a[0]) * v) * 1000 >> 0) / 1000) + u + ")") : '';
-  rotateStr += a[1] || b[1] ? ("rotateY(" + (((a[1] + (b[1] - a[1]) * v) * 1000 >> 0) / 1000) + u + ")") : '';
-  rotateStr += a[2] || b[2] ? ("rotateZ(" + (((a[2] + (b[2] - a[2]) * v) * 1000 >> 0) / 1000) + u + ")") : '';
+  let rotateStr = '';
+  rotateStr += a[0] || b[0] ? `rotateX(${((a[0] + (b[0] - a[0]) * v) * 1000 >> 0) / 1000}${u})` : '';
+  rotateStr += a[1] || b[1] ? `rotateY(${((a[1] + (b[1] - a[1]) * v) * 1000 >> 0) / 1000}${u})` : '';
+  rotateStr += a[2] || b[2] ? `rotateZ(${((a[2] + (b[2] - a[2]) * v) * 1000 >> 0) / 1000}${u})` : '';
   return rotateStr;
 }
 
 function translate(a, b, u, v) {
-  var translateArray = [];
+  const translateArray = [];
   translateArray[0] = (a[0] === b[0] ? b[0] : ((a[0] + (b[0] - a[0]) * v) * 1000 >> 0) / 1000) + u;
   translateArray[1] = a[1] || b[1] ? ((a[1] === b[1] ? b[1] : ((a[1] + (b[1] - a[1]) * v) * 1000 >> 0) / 1000) + u) : '0';
-  return ("translate(" + (translateArray.join(',')) + ")");
+  return `translate(${translateArray.join(',')})`;
 }
 
 function rotate(a, b, u, v) {
-  return ("rotate(" + (((a + (b - a) * v) * 1000 >> 0) / 1000) + u + ")");
+  return `rotate(${((a + (b - a) * v) * 1000 >> 0) / 1000}${u})`;
 }
 
 function scale(a, b, v) {
-  return ("scale(" + (((a + (b - a) * v) * 1000 >> 0) / 1000) + ")");
+  return `scale(${((a + (b - a) * v) * 1000 >> 0) / 1000})`;
 }
 
 function skew(a, b, u, v) {
-  var skewArray = [];
+  const skewArray = [];
   skewArray[0] = (a[0] === b[0] ? b[0] : ((a[0] + (b[0] - a[0]) * v) * 1000 >> 0) / 1000) + u;
   skewArray[1] = a[1] || b[1] ? ((a[1] === b[1] ? b[1] : ((a[1] + (b[1] - a[1]) * v) * 1000 >> 0) / 1000) + u) : '0';
-  return ("skew(" + (skewArray.join(',')) + ")");
+  return `skew(${skewArray.join(',')})`;
 }
 
 /* transformFunctions = {
@@ -1784,7 +1768,7 @@ function skew(a, b, u, v) {
 // Component Functions
 function onStartTransform(tweenProp) {
   if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-    KUTE[tweenProp] = function (elem, a, b, v) {
+    KUTE[tweenProp] = (elem, a, b, v) => {
       elem.style[tweenProp] = (a.perspective || b.perspective ? perspective(a.perspective, b.perspective, 'px', v) : '') // one side might be 0
         + (a.translate3d ? translate3d(a.translate3d, b.translate3d, 'px', v) : '') // array [x,y,z]
         + (a.rotate3d ? rotate3d(a.rotate3d, b.rotate3d, 'deg', v) : '') // array [x,y,z]
@@ -1806,23 +1790,23 @@ function onStartTransform(tweenProp) {
 
 // Component Functions
 function getTransform(tweenProperty/* , value */) {
-  var currentStyle = getInlineStyle(this.element);
+  const currentStyle = getInlineStyle(this.element);
   return currentStyle[tweenProperty] ? currentStyle[tweenProperty] : defaultValues[tweenProperty];
 }
 
 function prepareTransform(prop, obj) {
-  var prepAxis = ['X', 'Y', 'Z']; // coordinates
-  var transformObject = {};
-  var translateArray = []; var rotateArray = []; var skewArray = [];
-  var arrayFunctions = ['translate3d', 'translate', 'rotate3d', 'skew'];
+  const prepAxis = ['X', 'Y', 'Z']; // coordinates
+  const transformObject = {};
+  const translateArray = []; const rotateArray = []; const skewArray = [];
+  const arrayFunctions = ['translate3d', 'translate', 'rotate3d', 'skew'];
 
-  Object.keys(obj).forEach(function (x) {
-    var pv = typeof obj[x] === 'object' && obj[x].length
-      ? obj[x].map(function (v) { return parseInt(v, 10); })
+  Object.keys(obj).forEach((x) => {
+    const pv = typeof obj[x] === 'object' && obj[x].length
+      ? obj[x].map((v) => parseInt(v, 10))
       : parseInt(obj[x], 10);
 
     if (arrayFunctions.includes(x)) {
-      var propId = x === 'translate' || x === 'rotate' ? (x + "3d") : x;
+      const propId = x === 'translate' || x === 'rotate' ? `${x}3d` : x;
 
       if (x === 'skew') {
         transformObject[propId] = pv.length
@@ -1836,10 +1820,10 @@ function prepareTransform(prop, obj) {
         transformObject[propId] = [pv[0] || 0, pv[1] || 0, pv[2] || 0];
       }
     } else if (/[XYZ]/.test(x)) {
-      var fn = x.replace(/[XYZ]/, '');
-      var fnId = fn === 'skew' ? fn : (fn + "3d");
-      var fnLen = fn === 'skew' ? 2 : 3;
-      var fnArray = [];
+      const fn = x.replace(/[XYZ]/, '');
+      const fnId = fn === 'skew' ? fn : `${fn}3d`;
+      const fnLen = fn === 'skew' ? 2 : 3;
+      let fnArray = [];
 
       if (fn === 'translate') {
         fnArray = translateArray;
@@ -1849,9 +1833,9 @@ function prepareTransform(prop, obj) {
         fnArray = skewArray;
       }
 
-      for (var fnIndex = 0; fnIndex < fnLen; fnIndex += 1) {
-        var fnAxis = prepAxis[fnIndex];
-        fnArray[fnIndex] = (("" + fn + fnAxis) in obj) ? parseInt(obj[("" + fn + fnAxis)], 10) : 0;
+      for (let fnIndex = 0; fnIndex < fnLen; fnIndex += 1) {
+        const fnAxis = prepAxis[fnIndex];
+        fnArray[fnIndex] = (`${fn}${fnAxis}` in obj) ? parseInt(obj[`${fn}${fnAxis}`], 10) : 0;
       }
       transformObject[fnId] = fnArray;
     } else if (x === 'rotate') { //  rotate
@@ -1875,21 +1859,22 @@ function crossCheckTransform(tweenProp) {
 }
 
 // All Component Functions
-var transformFunctions = {
+const transformFunctions = {
   prepareStart: getTransform,
   prepareProperty: prepareTransform,
   onStart: onStartTransform,
   crossCheck: crossCheckTransform,
 };
 
-var supportedTransformProperties = [
+const supportedTransformProperties = [
   'perspective',
   'translate3d', 'translateX', 'translateY', 'translateZ', 'translate',
   'rotate3d', 'rotateX', 'rotateY', 'rotateZ', 'rotate',
   'skewX', 'skewY', 'skew',
-  'scale' ];
+  'scale',
+];
 
-var defaultTransformValues = {
+const defaultTransformValues = {
   perspective: 400,
   translate3d: [0, 0, 0],
   translateX: 0,
@@ -1908,20 +1893,20 @@ var defaultTransformValues = {
 };
 
 // Full Component
-var transformFunctionsComponent = {
+const transformFunctionsComponent = {
   component: 'transformFunctions',
   property: 'transform',
   subProperties: supportedTransformProperties,
   defaultValues: defaultTransformValues,
   functions: transformFunctions,
   Interpolate: {
-    perspective: perspective,
-    translate3d: translate3d,
-    rotate3d: rotate3d,
-    translate: translate,
-    rotate: rotate,
-    scale: scale,
-    skew: skew,
+    perspective,
+    translate3d,
+    rotate3d,
+    translate,
+    rotate,
+    scale,
+    skew,
   },
 };
 
@@ -1935,15 +1920,15 @@ var transformFunctionsComponent = {
 // Component Functions
 function onStartDraw(tweenProp) {
   if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = function (elem, a, b, v) {
-      var pathLength = (a.l * 100 >> 0) / 100;
-      var start = (numbers(a.s, b.s, v) * 100 >> 0) / 100;
-      var end = (numbers(a.e, b.e, v) * 100 >> 0) / 100;
-      var offset = 0 - start;
-      var dashOne = end + offset;
+    KUTE[tweenProp] = (elem, a, b, v) => {
+      const pathLength = (a.l * 100 >> 0) / 100;
+      const start = (numbers(a.s, b.s, v) * 100 >> 0) / 100;
+      const end = (numbers(a.e, b.e, v) * 100 >> 0) / 100;
+      const offset = 0 - start;
+      const dashOne = end + offset;
 
-      elem.style.strokeDashoffset = offset + "px";
-      elem.style.strokeDasharray = (((dashOne < 1 ? 0 : dashOne) * 100 >> 0) / 100) + "px, " + pathLength + "px";
+      elem.style.strokeDashoffset = `${offset}px`;
+      elem.style.strokeDasharray = `${((dashOne < 1 ? 0 : dashOne) * 100 >> 0) / 100}px, ${pathLength}px`;
     };
   }
 }
@@ -1963,34 +1948,34 @@ function percent(v, l) {
 // http://stackoverflow.com/a/30376660
 // returns the length of a Rect
 function getRectLength(el) {
-  var w = el.getAttribute('width');
-  var h = el.getAttribute('height');
+  const w = el.getAttribute('width');
+  const h = el.getAttribute('height');
   return (w * 2) + (h * 2);
 }
 
 // getPolygonLength / getPolylineLength
 // returns the length of the Polygon / Polyline
 function getPolyLength(el) {
-  var points = el.getAttribute('points').split(' ');
+  const points = el.getAttribute('points').split(' ');
 
-  var len = 0;
+  let len = 0;
   if (points.length > 1) {
-    var coord = function (p) {
-      var c = p.split(',');
+    const coord = (p) => {
+      const c = p.split(',');
       if (c.length !== 2) { return 0; } // return undefined
       if (Number.isNaN(c[0] * 1) || Number.isNaN(c[1] * 1)) { return 0; }
       return [parseFloat(c[0]), parseFloat(c[1])];
     };
 
-    var dist = function (c1, c2) {
+    const dist = (c1, c2) => {
       if (c1 !== undefined && c2 !== undefined) {
-        return Math.sqrt(Math.pow( (c2[0] - c1[0]), 2 ) + Math.pow( (c2[1] - c1[1]), 2 ));
+        return Math.sqrt((c2[0] - c1[0]) ** 2 + (c2[1] - c1[1]) ** 2);
       }
       return 0;
     };
 
     if (points.length > 2) {
-      for (var i = 0; i < points.length - 1; i += 1) {
+      for (let i = 0; i < points.length - 1; i += 1) {
         len += dist(coord(points[i]), coord(points[i + 1]));
       }
     }
@@ -2002,25 +1987,25 @@ function getPolyLength(el) {
 
 // return the length of the line
 function getLineLength(el) {
-  var x1 = el.getAttribute('x1');
-  var x2 = el.getAttribute('x2');
-  var y1 = el.getAttribute('y1');
-  var y2 = el.getAttribute('y2');
-  return Math.sqrt(Math.pow( (x2 - x1), 2 ) + Math.pow( (y2 - y1), 2 ));
+  const x1 = el.getAttribute('x1');
+  const x2 = el.getAttribute('x2');
+  const y1 = el.getAttribute('y1');
+  const y2 = el.getAttribute('y2');
+  return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 }
 
 // return the length of the circle
 function getCircleLength(el) {
-  var r = el.getAttribute('r');
+  const r = el.getAttribute('r');
   return 2 * Math.PI * r;
 }
 
 // returns the length of an ellipse
 function getEllipseLength(el) {
-  var rx = el.getAttribute('rx');
-  var ry = el.getAttribute('ry');
-  var len = 2 * rx;
-  var wid = 2 * ry;
+  const rx = el.getAttribute('rx');
+  const ry = el.getAttribute('ry');
+  const len = 2 * rx;
+  const wid = 2 * ry;
   return ((Math.sqrt(0.5 * ((len * len) + (wid * wid)))) * (Math.PI * 2)) / 2;
 }
 
@@ -2042,18 +2027,18 @@ function getTotalLength(el) {
 }
 
 function getDraw(element, value) {
-  var length = /path|glyph/.test(element.tagName)
+  const length = /path|glyph/.test(element.tagName)
     ? element.getTotalLength()
     : getTotalLength(element);
-  var start;
-  var end;
-  var dasharray;
-  var offset;
+  let start;
+  let end;
+  let dasharray;
+  let offset;
 
   if (value instanceof Object) {
     return value;
   } if (typeof value === 'string') {
-    var v = value.split(/,|\s/);
+    const v = value.split(/,|\s/);
     start = /%/.test(v[0]) ? percent(v[0].trim(), length) : parseFloat(v[0]);
     end = /%/.test(v[1]) ? percent(v[1].trim(), length) : parseFloat(v[1]);
   } else if (typeof value === 'undefined') {
@@ -2080,41 +2065,41 @@ function prepareDraw(a, o) {
 }
 
 // All Component Functions
-var svgDrawFunctions = {
+const svgDrawFunctions = {
   prepareStart: getDrawValue,
   prepareProperty: prepareDraw,
   onStart: onStartDraw,
 };
 
 // Component Full
-var svgDraw = {
+const svgDraw = {
   component: 'svgDraw',
   property: 'draw',
   defaultValue: '0% 0%',
-  Interpolate: { numbers: numbers },
+  Interpolate: { numbers },
   functions: svgDrawFunctions,
   // Export to global for faster execution
   Util: {
-    getRectLength: getRectLength,
-    getPolyLength: getPolyLength,
-    getLineLength: getLineLength,
-    getCircleLength: getCircleLength,
-    getEllipseLength: getEllipseLength,
-    getTotalLength: getTotalLength,
-    resetDraw: resetDraw,
-    getDraw: getDraw,
-    percent: percent,
+    getRectLength,
+    getPolyLength,
+    getLineLength,
+    getCircleLength,
+    getEllipseLength,
+    getTotalLength,
+    resetDraw,
+    getDraw,
+    percent,
   },
 };
 
-var options = {
+const SVGPCO = {
   origin: null,
   decimals: 4,
   round: 1,
 };
 
 function clonePath(pathArray) {
-  return pathArray.map(function (x) {
+  return pathArray.map((x) => {
     if (Array.isArray(x)) {
       return clonePath(x);
     }
@@ -2123,18 +2108,18 @@ function clonePath(pathArray) {
 }
 
 function roundPath(pathArray, round) {
-  var decimalsOption = !Number.isNaN(+round) ? +round : options.decimals;
-  var result;
+  const decimalsOption = !Number.isNaN(+round) ? +round : SVGPCO.decimals;
+  let result;
 
   if (decimalsOption) {
-    result = pathArray.map(function (seg) { return seg.map(function (c) {
-      var nr = +c;
-      var dc = Math.pow( 10, decimalsOption );
+    result = pathArray.map((seg) => seg.map((c) => {
+      const nr = +c;
+      const dc = 10 ** decimalsOption;
       if (nr) {
         return nr % 1 === 0 ? nr : Math.round(nr * dc) / dc;
       }
       return c;
-    }); });
+    }));
   } else {
     result = clonePath(pathArray);
   }
@@ -2144,9 +2129,9 @@ function roundPath(pathArray, round) {
 function fixArc(pathArray, allPathCommands, i) {
   if (pathArray[i].length > 7) {
     pathArray[i].shift();
-    var pi = pathArray[i];
+    const pi = pathArray[i];
     // const ni = i + 1;
-    var ni = i;
+    let ni = i;
     while (pi.length) {
       // if created multiple C:s, their original seg is saved
       allPathCommands[i] = 'A';
@@ -2163,20 +2148,20 @@ var paramsCount = {
 };
 
 function isPathArray(pathArray) {
-  return Array.isArray(pathArray) && pathArray.every(function (seg) {
-    var pathCommand = seg[0].toLowerCase();
+  return Array.isArray(pathArray) && pathArray.every((seg) => {
+    const pathCommand = seg[0].toLowerCase();
     return paramsCount[pathCommand] === seg.length - 1 && /[achlmrqstvz]/g.test(pathCommand);
   });
 }
 
 function isCurveArray(pathArray) {
-  return isPathArray(pathArray) && pathArray.slice(1).every(function (seg) { return seg[0] === 'C'; });
+  return isPathArray(pathArray) && pathArray.slice(1).every((seg) => seg[0] === 'C');
 }
 
 function finalizeSegment(state) {
-  var pathCommand = state.pathValue[state.segmentStart];
-  var pathComLK = pathCommand.toLowerCase();
-  var params = state.data;
+  let pathCommand = state.pathValue[state.segmentStart];
+  let pathComLK = pathCommand.toLowerCase();
+  let params = state.data;
 
   // Process duplicated commands (without comand name)
   if (pathComLK === 'm' && params.length > 2) {
@@ -2201,7 +2186,7 @@ function finalizeSegment(state) {
 var invalidPathValue = 'Invalid path value';
 
 function scanFlag(state) {
-  var ch = state.pathValue.charCodeAt(state.index);
+  const ch = state.pathValue.charCodeAt(state.index);
 
   if (ch === 0x30/* 0 */) {
     state.param = 0;
@@ -2216,7 +2201,7 @@ function scanFlag(state) {
   }
 
   // state.err = 'SvgPath: arc flag can be 0 or 1 only (at pos ' + state.index + ')';
-  state.err = invalidPathValue + ": invalid Arc flag " + ch;
+  state.err = `${invalidPathValue}: invalid Arc flag ${ch}`;
 }
 
 function isDigit(code) {
@@ -2224,18 +2209,18 @@ function isDigit(code) {
 }
 
 function scanParam(state) {
-  var start = state.index;
-  var max = state.max;
-  var index = start;
-  var zeroFirst = false;
-  var hasCeiling = false;
-  var hasDecimal = false;
-  var hasDot = false;
-  var ch;
+  const start = state.index;
+  const { max } = state;
+  let index = start;
+  let zeroFirst = false;
+  let hasCeiling = false;
+  let hasDecimal = false;
+  let hasDot = false;
+  let ch;
 
   if (index >= max) {
     // state.err = 'SvgPath: missed param (at pos ' + index + ')';
-    state.err = invalidPathValue + ": missing param " + (state.pathValue[index]);
+    state.err = `${invalidPathValue}: missing param ${state.pathValue[index]}`;
     return;
   }
   ch = state.pathValue.charCodeAt(index);
@@ -2249,7 +2234,7 @@ function scanParam(state) {
   // https://github.com/ariya/esprimas
   if (!isDigit(ch) && ch !== 0x2E/* . */) {
     // state.err = 'SvgPath: param should start with 0..9 or `.` (at pos ' + index + ')';
-    state.err = invalidPathValue + " at index " + index + ": " + (state.pathValue[index]) + " is not a number";
+    state.err = `${invalidPathValue} at index ${index}: ${state.pathValue[index]} is not a number`;
     return;
   }
 
@@ -2264,7 +2249,7 @@ function scanParam(state) {
       if (ch && isDigit(ch)) {
         // state.err = 'SvgPath: numbers started with `0` such as `09`
         // are illegal (at pos ' + start + ')';
-        state.err = invalidPathValue + ": " + (state.pathValue[start]) + " illegal number";
+        state.err = `${invalidPathValue}: ${state.pathValue[start]} illegal number`;
         return;
       }
     }
@@ -2289,7 +2274,7 @@ function scanParam(state) {
   if (ch === 0x65/* e */ || ch === 0x45/* E */) {
     if (hasDot && !hasCeiling && !hasDecimal) {
       // state.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
-      state.err = invalidPathValue + ": " + (state.pathValue[index]) + " invalid float exponent";
+      state.err = `${invalidPathValue}: ${state.pathValue[index]} invalid float exponent`;
       return;
     }
 
@@ -2305,7 +2290,7 @@ function scanParam(state) {
       }
     } else {
       // state.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
-      state.err = invalidPathValue + ": " + (state.pathValue[index]) + " invalid float exponent";
+      state.err = `${invalidPathValue}: ${state.pathValue[index]} invalid float exponent`;
       return;
     }
   }
@@ -2315,7 +2300,7 @@ function scanParam(state) {
 }
 
 function isSpace(ch) {
-  var specialSpaces = [
+  const specialSpaces = [
     0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
     0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF];
   return (ch === 0x0A) || (ch === 0x0D) || (ch === 0x2028) || (ch === 0x2029) // Line terminators
@@ -2363,9 +2348,9 @@ function isArcCommand(code) {
 }
 
 function scanSegment(state) {
-  var max = state.max;
-  var cmdCode = state.pathValue.charCodeAt(state.index);
-  var reqParams = paramsCount[state.pathValue[state.index].toLowerCase()];
+  const { max } = state;
+  const cmdCode = state.pathValue.charCodeAt(state.index);
+  const reqParams = paramsCount[state.pathValue[state.index].toLowerCase()];
   // let hasComma;
 
   state.segmentStart = state.index;
@@ -2374,7 +2359,7 @@ function scanSegment(state) {
     // state.err = 'SvgPath: bad command '
     // + state.pathValue[state.index]
     // + ' (at pos ' + state.index + ')';
-    state.err = invalidPathValue + ": " + (state.pathValue[state.index]) + " not a path command";
+    state.err = `${invalidPathValue}: ${state.pathValue[state.index]} not a path command`;
     return;
   }
 
@@ -2392,9 +2377,9 @@ function scanSegment(state) {
   // hasComma = false;
 
   for (;;) {
-    for (var i = reqParams; i > 0; i -= 1) {
-      if (isArcCommand(cmdCode) && (i === 3 || i === 4)) { scanFlag(state); }
-      else { scanParam(state); }
+    for (let i = reqParams; i > 0; i -= 1) {
+      if (isArcCommand(cmdCode) && (i === 3 || i === 4)) scanFlag(state);
+      else scanParam(state);
 
       if (state.err.length) {
         return;
@@ -2447,7 +2432,7 @@ function parsePathString(pathString, round) {
     return clonePath(pathString);
   }
 
-  var state = new SVGPathArray(pathString);
+  const state = new SVGPathArray(pathString);
 
   skipSpaces(state);
 
@@ -2460,7 +2445,7 @@ function parsePathString(pathString, round) {
   } else if (state.segments.length) {
     if ('mM'.indexOf(state.segments[0][0]) < 0) {
       // state.err = 'Path string should start with `M` or `m`';
-      state.err = invalidPathValue + ": missing M/m";
+      state.err = `${invalidPathValue}: missing M/m`;
       state.segments = [];
     } else {
       state.segments[0][0] = 'M';
@@ -2471,7 +2456,7 @@ function parsePathString(pathString, round) {
 }
 
 function isAbsoluteArray(pathInput) {
-  return isPathArray(pathInput) && pathInput.every(function (x) { return x[0] === x[0].toUpperCase(); });
+  return isPathArray(pathInput) && pathInput.every((x) => x[0] === x[0].toUpperCase());
 }
 
 function pathToAbsolute(pathInput, round) {
@@ -2479,14 +2464,14 @@ function pathToAbsolute(pathInput, round) {
     return clonePath(pathInput);
   }
 
-  var pathArray = parsePathString(pathInput, round);
-  var ii = pathArray.length;
-  var resultArray = [];
-  var x = 0;
-  var y = 0;
-  var mx = 0;
-  var my = 0;
-  var start = 0;
+  const pathArray = parsePathString(pathInput, round);
+  const ii = pathArray.length;
+  const resultArray = [];
+  let x = 0;
+  let y = 0;
+  let mx = 0;
+  let my = 0;
+  let start = 0;
 
   if (pathArray[0][0] === 'M') {
     x = +pathArray[0][1];
@@ -2497,12 +2482,12 @@ function pathToAbsolute(pathInput, round) {
     resultArray.push(['M', x, y]);
   }
 
-  for (var i = start; i < ii; i += 1) {
-    var segment = pathArray[i];
-    var pathCommand = segment[0];
-    var absCommand = pathCommand.toUpperCase();
-    var absoluteSegment = [];
-    var newSeg = [];
+  for (let i = start; i < ii; i += 1) {
+    const segment = pathArray[i];
+    const [pathCommand] = segment;
+    const absCommand = pathCommand.toUpperCase();
+    const absoluteSegment = [];
+    let newSeg = [];
     resultArray.push(absoluteSegment);
 
     if (pathCommand !== absCommand) {
@@ -2511,7 +2496,7 @@ function pathToAbsolute(pathInput, round) {
       switch (absCommand) {
         case 'A':
           newSeg = segment.slice(1, -2).concat([+segment[6] + x, +segment[7] + y]);
-          for (var j = 0; j < newSeg.length; j += 1) {
+          for (let j = 0; j < newSeg.length; j += 1) {
             absoluteSegment.push(newSeg[j]);
           }
           break;
@@ -2527,17 +2512,17 @@ function pathToAbsolute(pathInput, round) {
             my = +segment[2] + y;
           }
           // for is here to stay for eslint
-          for (var j$1 = 1; j$1 < segment.length; j$1 += 1) {
-            absoluteSegment.push(+segment[j$1] + (j$1 % 2 ? x : y));
+          for (let j = 1; j < segment.length; j += 1) {
+            absoluteSegment.push(+segment[j] + (j % 2 ? x : y));
           }
       }
     } else {
-      for (var j$2 = 0; j$2 < segment.length; j$2 += 1) {
-        absoluteSegment.push(segment[j$2]);
+      for (let j = 0; j < segment.length; j += 1) {
+        absoluteSegment.push(segment[j]);
       }
     }
 
-    var segLength = absoluteSegment.length;
+    const segLength = absoluteSegment.length;
     switch (absCommand) {
       case 'Z':
         x = mx;
@@ -2574,13 +2559,13 @@ function shorthandToQuad(x1, y1, qx, qy, prevCommand) {
 function shorthandToCubic(x1, y1, x2, y2, prevCommand) {
   return 'CS'.indexOf(prevCommand) > -1
     ? { x1: x1 * 2 - x2, y1: y1 * 2 - y2 }
-    : { x1: x1, y1: y1 };
+    : { x1, y1 };
 }
 
 function normalizeSegment(segment, params, prevCommand) {
-  var pathCommand = segment[0];
-  var xy = segment.slice(1);
-  var result = segment;
+  const [pathCommand] = segment;
+  const xy = segment.slice(1);
+  let result = segment;
 
   if ('TQ'.indexOf(segment[0]) < 0) {
     // optional but good to be cautious
@@ -2593,22 +2578,17 @@ function normalizeSegment(segment, params, prevCommand) {
   } else if (pathCommand === 'V') {
     result = ['L', params.x1, segment[1]];
   } else if (pathCommand === 'S') {
-    var ref = shorthandToCubic(params.x1, params.y1, params.x2, params.y2, prevCommand);
-    var x1 = ref.x1;
-    var y1 = ref.y1;
+    const { x1, y1 } = shorthandToCubic(params.x1, params.y1, params.x2, params.y2, prevCommand);
     params.x1 = x1;
     params.y1 = y1;
     result = ['C', x1, y1].concat(xy);
   } else if (pathCommand === 'T') {
-    var ref$1 = shorthandToQuad(params.x1, params.y1, params.qx, params.qy, prevCommand);
-    var qx = ref$1.qx;
-    var qy = ref$1.qy;
+    const { qx, qy } = shorthandToQuad(params.x1, params.y1, params.qx, params.qy, prevCommand);
     params.qx = qx;
     params.qy = qy;
     result = ['Q', qx, qy].concat(xy);
   } else if (pathCommand === 'Q') {
-    var nqx = xy[0];
-    var nqy = xy[1];
+    const [nqx, nqy] = xy;
     params.qx = nqx;
     params.qy = nqy;
   }
@@ -2616,8 +2596,8 @@ function normalizeSegment(segment, params, prevCommand) {
 }
 
 function isNormalizedArray(pathArray) {
-  return Array.isArray(pathArray) && pathArray.every(function (seg) {
-    var pathCommand = seg[0].toLowerCase();
+  return Array.isArray(pathArray) && pathArray.every((seg) => {
+    const pathCommand = seg[0].toLowerCase();
     return paramsCount[pathCommand] === seg.length - 1 && /[ACLMQZ]/.test(seg[0]); // achlmrqstvz
   });
 }
@@ -2627,25 +2607,24 @@ function normalizePath(pathInput, round) { // pathArray|pathString
     return clonePath(pathInput);
   }
 
-  var pathArray = pathToAbsolute(pathInput, round);
-  var params = {
+  const pathArray = pathToAbsolute(pathInput, round);
+  const params = {
     x1: 0, y1: 0, x2: 0, y2: 0, x: 0, y: 0, qx: null, qy: null,
   };
-  var allPathCommands = [];
-  var ii = pathArray.length;
-  var prevCommand = '';
-  var segment;
-  var seglen;
+  const allPathCommands = [];
+  const ii = pathArray.length;
+  let prevCommand = '';
+  let segment;
+  let seglen;
 
-  for (var i = 0; i < ii; i += 1) {
+  for (let i = 0; i < ii; i += 1) {
     // save current path command
-    var ref = pathArray[i];
-    var pathCommand = ref[0];
+    const [pathCommand] = pathArray[i];
 
     // Save current path command
     allPathCommands[i] = pathCommand;
     // Get previous path command
-    if (i) { prevCommand = allPathCommands[i - 1]; }
+    if (i) prevCommand = allPathCommands[i - 1];
     // Previous path command is inputted to processSegment
     pathArray[i] = normalizeSegment(pathArray[i], params, prevCommand);
 
@@ -2661,8 +2640,8 @@ function normalizePath(pathInput, round) { // pathArray|pathString
 }
 
 function rotateVector(x, y, rad) {
-  var X = x * Math.cos(rad) - y * Math.sin(rad);
-  var Y = x * Math.sin(rad) + y * Math.cos(rad);
+  const X = x * Math.cos(rad) - y * Math.sin(rad);
+  const Y = x * Math.sin(rad) + y * Math.cos(rad);
   return { x: X, y: Y };
 }
 
@@ -2671,20 +2650,20 @@ function rotateVector(x, y, rad) {
 // LAF = largeArcFlag, SF = sweepFlag
 
 function arcToCubic(x1, y1, rx, ry, angle, LAF, SF, x2, y2, recursive) {
-  var d120 = (Math.PI * 120) / 180;
-  var rad = (Math.PI / 180) * (angle || 0);
-  var res = [];
-  var X1 = x1;
-  var X2 = x2;
-  var Y1 = y1;
-  var Y2 = y2;
-  var RX = rx;
-  var RY = ry;
-  var xy;
-  var f1;
-  var f2;
-  var cx;
-  var cy;
+  const d120 = (Math.PI * 120) / 180;
+  const rad = (Math.PI / 180) * (angle || 0);
+  let res = [];
+  let X1 = x1;
+  let X2 = x2;
+  let Y1 = y1;
+  let Y2 = y2;
+  let RX = rx;
+  let RY = ry;
+  let xy;
+  let f1;
+  let f2;
+  let cx;
+  let cy;
 
   if (!recursive) {
     xy = rotateVector(X1, Y1, -rad);
@@ -2694,17 +2673,17 @@ function arcToCubic(x1, y1, rx, ry, angle, LAF, SF, x2, y2, recursive) {
     X2 = xy.x;
     Y2 = xy.y;
 
-    var x = (X1 - X2) / 2;
-    var y = (Y1 - Y2) / 2;
-    var h = (x * x) / (RX * RY) + (Math.pow( y, 2 )) / (Math.pow( RY, 2 ));
+    const x = (X1 - X2) / 2;
+    const y = (Y1 - Y2) / 2;
+    let h = (x * x) / (RX * RY) + (y ** 2) / (RY ** 2);
     if (h > 1) {
       h = Math.sqrt(h);
       RX *= h;
       RY *= h;
     }
-    var rx2 = Math.pow( RX, 2 );
-    var ry2 = Math.pow( RY, 2 );
-    var k = (LAF === SF ? -1 : 1)
+    const rx2 = RX ** 2;
+    const ry2 = RY ** 2;
+    const k = (LAF === SF ? -1 : 1)
           * Math.sqrt(Math.abs((rx2 * ry2 - rx2 * y * y - ry2 * x * x)
           / (rx2 * y * y + ry2 * x * x)));
 
@@ -2713,14 +2692,14 @@ function arcToCubic(x1, y1, rx, ry, angle, LAF, SF, x2, y2, recursive) {
 
     // f1 = Math.asin(((Y1 - cy) / RY).toFixed(9)); // keep toFIxed(9)!
     // f2 = Math.asin(((Y2 - cy) / RY).toFixed(9));
-    f1 = Math.asin((((Y1 - cy) / RY) * Math.pow( 10, 9 ) >> 0) / (Math.pow( 10, 9 )));
-    f2 = Math.asin((((Y2 - cy) / RY) * Math.pow( 10, 9 ) >> 0) / (Math.pow( 10, 9 )));
+    f1 = Math.asin((((Y1 - cy) / RY) * 10 ** 9 >> 0) / (10 ** 9));
+    f2 = Math.asin((((Y2 - cy) / RY) * 10 ** 9 >> 0) / (10 ** 9));
 
     f1 = X1 < cx ? Math.PI - f1 : f1;
     f2 = X2 < cx ? Math.PI - f2 : f2;
 
-    if (f1 < 0) { f1 = Math.PI * 2 + f1; }
-    if (f2 < 0) { f2 = Math.PI * 2 + f2; }
+    if (f1 < 0) f1 = Math.PI * 2 + f1;
+    if (f2 < 0) f2 = Math.PI * 2 + f2;
 
     if (SF && f1 > f2) {
       f1 -= Math.PI * 2;
@@ -2729,20 +2708,17 @@ function arcToCubic(x1, y1, rx, ry, angle, LAF, SF, x2, y2, recursive) {
       f2 -= Math.PI * 2;
     }
   } else {
-    var r1 = recursive[0];
-    var r2 = recursive[1];
-    var r3 = recursive[2];
-    var r4 = recursive[3];
+    const [r1, r2, r3, r4] = recursive;
     f1 = r1;
     f2 = r2;
     cx = r3;
     cy = r4;
   }
 
-  var df = f2 - f1;
+  let df = f2 - f1;
 
   if (Math.abs(df) > d120) {
-    var f2old = f2; var x2old = X2; var
+    const f2old = f2; const x2old = X2; const
       y2old = Y2;
 
     f2 = f1 + d120 * (SF && f2 > f1 ? 1 : -1);
@@ -2752,17 +2728,17 @@ function arcToCubic(x1, y1, rx, ry, angle, LAF, SF, x2, y2, recursive) {
   }
 
   df = f2 - f1;
-  var c1 = Math.cos(f1);
-  var s1 = Math.sin(f1);
-  var c2 = Math.cos(f2);
-  var s2 = Math.sin(f2);
-  var t = Math.tan(df / 4);
-  var hx = (4 / 3) * RX * t;
-  var hy = (4 / 3) * RY * t;
-  var m1 = [X1, Y1];
-  var m2 = [X1 + hx * s1, Y1 - hy * c1];
-  var m3 = [X2 + hx * s2, Y2 - hy * c2];
-  var m4 = [X2, Y2];
+  const c1 = Math.cos(f1);
+  const s1 = Math.sin(f1);
+  const c2 = Math.cos(f2);
+  const s2 = Math.sin(f2);
+  const t = Math.tan(df / 4);
+  const hx = (4 / 3) * RX * t;
+  const hy = (4 / 3) * RY * t;
+  const m1 = [X1, Y1];
+  const m2 = [X1 + hx * s1, Y1 - hy * c1];
+  const m3 = [X2 + hx * s2, Y2 - hy * c2];
+  const m4 = [X2, Y2];
   m2[0] = 2 * m1[0] - m2[0];
   m2[1] = 2 * m1[1] - m2[1];
 
@@ -2770,7 +2746,7 @@ function arcToCubic(x1, y1, rx, ry, angle, LAF, SF, x2, y2, recursive) {
     return [m2, m3, m4].concat(res);
   }
   res = [m2, m3, m4].concat(res).join().split(',');
-  return res.map(function (rz, i) {
+  return res.map((rz, i) => {
     if (i % 2) {
       return rotateVector(res[i - 1], rz, rad).y;
     }
@@ -2779,50 +2755,51 @@ function arcToCubic(x1, y1, rx, ry, angle, LAF, SF, x2, y2, recursive) {
 }
 
 function quadToCubic(x1, y1, qx, qy, x2, y2) {
-  var r13 = 1 / 3;
-  var r23 = 2 / 3;
+  const r13 = 1 / 3;
+  const r23 = 2 / 3;
   return [
     r13 * x1 + r23 * qx, // cpx1
     r13 * y1 + r23 * qy, // cpy1
     r13 * x2 + r23 * qx, // cpx2
     r13 * y2 + r23 * qy, // cpy2
-    x2, y2 ];
+    x2, y2, // x,y
+  ];
 }
 
 // t = [0-1]
 function getPointAtSegLength(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
-  var t1 = 1 - t;
+  const t1 = 1 - t;
   return {
-    x: (Math.pow( t1, 3 )) * p1x
+    x: (t1 ** 3) * p1x
       + t1 * t1 * 3 * t * c1x
       + t1 * 3 * t * t * c2x
-      + (Math.pow( t, 3 )) * p2x,
-    y: (Math.pow( t1, 3 )) * p1y
+      + (t ** 3) * p2x,
+    y: (t1 ** 3) * p1y
       + t1 * t1 * 3 * t * c1y
       + t1 * 3 * t * t * c2y
-      + (Math.pow( t, 3 )) * p2y,
+      + (t ** 3) * p2y,
   };
 }
 
 function midPoint(a, b, t) {
-  var ax = a[0];
-  var ay = a[1];
-  var bx = b[0];
-  var by = b[1];
+  const ax = a[0];
+  const ay = a[1];
+  const bx = b[0];
+  const by = b[1];
   return [ax + (bx - ax) * t, ay + (by - ay) * t];
 }
 
 function lineToCubic(x1, y1, x2, y2) {
-  var t = 0.5;
-  var p0 = [x1, y1];
-  var p1 = [x2, y2];
-  var p2 = midPoint(p0, p1, t);
-  var p3 = midPoint(p1, p2, t);
-  var p4 = midPoint(p2, p3, t);
-  var p5 = midPoint(p3, p4, t);
-  var p6 = midPoint(p4, p5, t);
-  var cp1 = getPointAtSegLength.apply(0, p0.concat(p2, p4, p6, t));
-  var cp2 = getPointAtSegLength.apply(0, p6.concat(p5, p3, p1, 0));
+  const t = 0.5;
+  const p0 = [x1, y1];
+  const p1 = [x2, y2];
+  const p2 = midPoint(p0, p1, t);
+  const p3 = midPoint(p1, p2, t);
+  const p4 = midPoint(p2, p3, t);
+  const p5 = midPoint(p3, p4, t);
+  const p6 = midPoint(p4, p5, t);
+  const cp1 = getPointAtSegLength.apply(0, p0.concat(p2, p4, p6, t));
+  const cp2 = getPointAtSegLength.apply(0, p6.concat(p5, p3, p1, 0));
 
   return [cp1.x, cp1.y, cp2.x, cp2.y, x2, y2];
 }
@@ -2833,9 +2810,7 @@ function segmentToCubic(segment, params) {
     params.qy = null;
   }
 
-  var ref = segment.slice(1);
-  var s1 = ref[0];
-  var s2 = ref[1];
+  const [s1, s2] = segment.slice(1);
 
   switch (segment[0]) {
     case 'M':
@@ -2856,25 +2831,23 @@ function segmentToCubic(segment, params) {
   return segment;
 }
 
-function pathToCurve(pathInput, round) {
-  var assign;
- // pathArray|pathString
+function pathToCurve(pathInput, round) { // pathArray|pathString
   if (isCurveArray(pathInput)) {
     return clonePath(pathInput);
   }
 
-  var pathArray = normalizePath(pathInput, round);
-  var params = {
+  const pathArray = normalizePath(pathInput, round);
+  const params = {
     x1: 0, y1: 0, x2: 0, y2: 0, x: 0, y: 0, qx: null, qy: null,
   };
-  var allPathCommands = [];
-  var pathCommand = '';
-  var ii = pathArray.length;
-  var segment;
-  var seglen;
+  const allPathCommands = [];
+  let pathCommand = '';
+  let ii = pathArray.length;
+  let segment;
+  let seglen;
 
-  for (var i = 0; i < ii; i += 1) {
-    if (pathArray[i]) { (assign = pathArray[i], pathCommand = assign[0]); }
+  for (let i = 0; i < ii; i += 1) {
+    if (pathArray[i]) [pathCommand] = pathArray[i];
 
     allPathCommands[i] = pathCommand;
     pathArray[i] = segmentToCubic(pathArray[i], params);
@@ -2894,41 +2867,41 @@ function pathToCurve(pathInput, round) {
 }
 
 function pathToString(pathArray) {
-  return pathArray.map(function (x) { return x[0].concat(x.slice(1).join(' ')); }).join('');
+  return pathArray.map((x) => x[0].concat(x.slice(1).join(' '))).join('');
 }
 
 function splitPath(pathInput) {
   return pathToString(pathToAbsolute(pathInput, 0))
     .replace(/(m|M)/g, '|$1')
     .split('|')
-    .map(function (s) { return s.trim(); })
-    .filter(function (s) { return s; });
+    .map((s) => s.trim())
+    .filter((s) => s);
 }
 
 function base3(p1, p2, p3, p4, t) {
-  var t1 = -3 * p1 + 9 * p2 - 9 * p3 + 3 * p4;
-  var t2 = t * t1 + 6 * p1 - 12 * p2 + 6 * p3;
+  const t1 = -3 * p1 + 9 * p2 - 9 * p3 + 3 * p4;
+  const t2 = t * t1 + 6 * p1 - 12 * p2 + 6 * p3;
   return t * t2 - 3 * p1 + 3 * p2;
 }
 
 // returns the cubic bezier segment length
 function getSegCubicLength(x1, y1, x2, y2, x3, y3, x4, y4, z) {
-  var Z;
-  if (z === null || Number.isNaN(+z)) { Z = 1; }
+  let Z;
+  if (z === null || Number.isNaN(+z)) Z = 1;
 
   // Z = Z > 1 ? 1 : Z < 0 ? 0 : Z;
-  if (Z > 1) { Z = 1; }
-  if (Z < 0) { Z = 0; }
+  if (Z > 1) Z = 1;
+  if (Z < 0) Z = 0;
 
-  var z2 = Z / 2; var ct = 0; var xbase = 0; var ybase = 0; var sum = 0;
-  var Tvalues = [-0.1252, 0.1252, -0.3678, 0.3678,
+  const z2 = Z / 2; let ct = 0; let xbase = 0; let ybase = 0; let sum = 0;
+  const Tvalues = [-0.1252, 0.1252, -0.3678, 0.3678,
     -0.5873, 0.5873, -0.7699, 0.7699,
     -0.9041, 0.9041, -0.9816, 0.9816];
-  var Cvalues = [0.2491, 0.2491, 0.2335, 0.2335,
+  const Cvalues = [0.2491, 0.2491, 0.2335, 0.2335,
     0.2032, 0.2032, 0.1601, 0.1601,
     0.1069, 0.1069, 0.0472, 0.0472];
 
-  Tvalues.forEach(function (T, i) {
+  Tvalues.forEach((T, i) => {
     ct = z2 * T + z2;
     xbase = base3(x1, x2, x3, x4, ct);
     ybase = base3(y1, y2, y3, y4, ct);
@@ -2941,8 +2914,8 @@ function getSegCubicLength(x1, y1, x2, y2, x3, y3, x4, y4, z) {
 // equivalent to shape.getTotalLength()
 // pathToCurve version
 function getPathLength(pathArray, round) {
-  var totalLength = 0;
-  pathToCurve(pathArray, round).forEach(function (s, i, curveArray) {
+  let totalLength = 0;
+  pathToCurve(pathArray, round).forEach((s, i, curveArray) => {
     totalLength += s[0] !== 'M' ? getSegCubicLength.apply(0, curveArray[i - 1].slice(-2).concat(s.slice(1))) : 0;
   });
   return totalLength;
@@ -2951,12 +2924,12 @@ function getPathLength(pathArray, round) {
 // calculates the shape total length
 // almost equivalent to shape.getTotalLength()
 function getPointAtLength(pathArray, length) {
-  var totalLength = 0;
-  var segLen;
-  var data;
-  var result;
+  let totalLength = 0;
+  let segLen;
+  let data;
+  let result;
 
-  return pathToCurve(pathArray, 9).map(function (seg, i, curveArray) { // process data
+  return pathToCurve(pathArray, 9).map((seg, i, curveArray) => { // process data
     data = i ? curveArray[i - 1].slice(-2).concat(seg.slice(1)) : seg.slice(1);
     segLen = i ? getSegCubicLength.apply(0, data) : 0;
     totalLength += segLen;
@@ -2970,7 +2943,7 @@ function getPointAtLength(pathArray, length) {
     }
 
     return result;
-  }).filter(function (x) { return x; }).slice(-1)[0]; // isolate last segment
+  }).filter((x) => x).slice(-1)[0]; // isolate last segment
 }
 
 // https://github.com/paperjs/paper.js/blob/develop/src/path/Path.js
@@ -2983,11 +2956,9 @@ function getCubicSegArea(x0, y0, x1, y1, x2, y2, x3, y3) {
 }
 
 function getPathArea(pathArray, round) {
-  var x = 0; var y = 0; var mx = 0; var my = 0; var
+  let x = 0; let y = 0; let mx = 0; let my = 0; let
     len = 0;
-  return pathToCurve(pathArray, round).map(function (seg) {
-    var assign;
-
+  return pathToCurve(pathArray, round).map((seg) => {
     switch (seg[0]) {
       case 'M':
       case 'Z':
@@ -2998,10 +2969,10 @@ function getPathArea(pathArray, round) {
         return 0;
       default:
         len = getCubicSegArea.apply(0, [x, y].concat(seg.slice(1)));
-        (assign = seg.slice(-2), x = assign[0], y = assign[1]);
+        [x, y] = seg.slice(-2);
         return len;
     }
-  }).reduce(function (a, b) { return a + b; }, 0);
+  }).reduce((a, b) => a + b, 0);
 }
 
 function getDrawDirection(pathArray, round) {
@@ -3013,15 +2984,15 @@ var epsilon = 1e-9;
 function distanceSquareRoot(a, b) {
   return Math.sqrt(
     (a[0] - b[0]) * (a[0] - b[0])
-    + (a[1] - b[1]) * (a[1] - b[1])
+    + (a[1] - b[1]) * (a[1] - b[1]),
   );
 }
 
 function coords(a, b, l, v) {
-  var points = [];
-  for (var i = 0; i < l; i += 1) { // for each point
+  const points = [];
+  for (let i = 0; i < l; i += 1) { // for each point
     points[i] = [];
-    for (var j = 0; j < 2; j += 1) { // each point coordinate
+    for (let j = 0; j < 2; j += 1) { // each point coordinate
       points[i].push(((a[i][j] + (b[i][j] - a[i][j]) * v) * 1000 >> 0) / 1000);
     }
   }
@@ -3038,10 +3009,10 @@ function coords(a, b, l, v) {
 // Component functions
 function onStartSVGMorph(tweenProp) {
   if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-    KUTE[tweenProp] = function (elem, a, b, v) {
-      var path1 = a.pathArray; var path2 = b.pathArray; var
+    KUTE[tweenProp] = (elem, a, b, v) => {
+      const path1 = a.pathArray; const path2 = b.pathArray; const
         len = path2.length;
-      elem.setAttribute('d', (v === 1 ? b.original : ("M" + (coords(path1, path2, len, v).join('L')) + "Z")));
+      elem.setAttribute('d', (v === 1 ? b.original : `M${coords(path1, path2, len, v).join('L')}Z`));
     };
   }
 }
@@ -3061,27 +3032,25 @@ function onStartSVGMorph(tweenProp) {
 // https://github.com/veltman/flubber
 
 function polygonLength(ring) {
-  return ring.reduce(function (length, point, i) { return (i
+  return ring.reduce((length, point, i) => (i
     ? length + distanceSquareRoot(ring[i - 1], point)
-    : 0); }, 0);
+    : 0), 0);
 }
 
 function exactRing(pathArray) {
-  var assign;
-
-  var ring = [];
-  var pathlen = pathArray.length;
-  var segment = [];
-  var pathCommand = '';
-  var pathLength = 0;
+  const ring = [];
+  const pathlen = pathArray.length;
+  let segment = [];
+  let pathCommand = '';
+  let pathLength = 0;
 
   if (!pathArray.length || pathArray[0][0] !== 'M') {
     return false;
   }
 
-  for (var i = 0; i < pathlen; i += 1) {
+  for (let i = 0; i < pathlen; i += 1) {
     segment = pathArray[i];
-    (assign = segment, pathCommand = assign[0]);
+    [pathCommand] = segment;
 
     if ((pathCommand === 'M' && i) || pathCommand === 'Z') {
       break; // !!
@@ -3094,22 +3063,22 @@ function exactRing(pathArray) {
 
   pathLength = polygonLength(ring);
 
-  return pathlen ? { ring: ring, pathLength: pathLength } : false;
+  return pathlen ? { ring, pathLength } : false;
 }
 
 function approximateRing(parsed, maxSegmentLength) {
-  var ringPath = splitPath(pathToString(parsed))[0];
-  var curvePath = pathToCurve(ringPath, 4);
-  var pathLength = getPathLength(curvePath);
-  var ring = [];
-  var numPoints = 3;
-  var point;
+  const ringPath = splitPath(pathToString(parsed))[0];
+  const curvePath = pathToCurve(ringPath, 4);
+  const pathLength = getPathLength(curvePath);
+  const ring = [];
+  let numPoints = 3;
+  let point;
 
   if (maxSegmentLength && !Number.isNaN(maxSegmentLength) && +maxSegmentLength > 0) {
     numPoints = Math.max(numPoints, Math.ceil(pathLength / maxSegmentLength));
   }
 
-  for (var i = 0; i < numPoints; i += 1) {
+  for (let i = 0; i < numPoints; i += 1) {
     point = getPointAtLength(curvePath, (pathLength * i) / numPoints);
     ring.push([point.x, point.y]);
   }
@@ -3120,34 +3089,34 @@ function approximateRing(parsed, maxSegmentLength) {
   }
 
   return {
-    pathLength: pathLength,
-    ring: ring,
+    pathLength,
+    ring,
     skipBisect: true,
   };
 }
 
 function pathStringToRing(str, maxSegmentLength) {
-  var parsed = normalizePath(str, 0);
+  const parsed = normalizePath(str, 0);
   return exactRing(parsed) || approximateRing(parsed, maxSegmentLength);
 }
 
 function rotateRing(ring, vs) {
-  var len = ring.length;
-  var min = Infinity;
-  var bestOffset;
-  var sumOfSquares = 0;
-  var spliced;
-  var d;
-  var p;
+  const len = ring.length;
+  let min = Infinity;
+  let bestOffset;
+  let sumOfSquares = 0;
+  let spliced;
+  let d;
+  let p;
 
-  for (var offset = 0; offset < len; offset += 1) {
+  for (let offset = 0; offset < len; offset += 1) {
     sumOfSquares = 0;
 
     // vs.forEach((p, i) => {
     //   const d = distanceSquareRoot(ring[(offset + i) % len], p);
     //   sumOfSquares += d * d;
     // });
-    for (var i = 0; i < vs.length; i += 1) {
+    for (let i = 0; i < vs.length; i += 1) {
       p = vs[i];
       d = distanceSquareRoot(ring[(offset + i) % len], p);
       sumOfSquares += d * d;
@@ -3161,21 +3130,21 @@ function rotateRing(ring, vs) {
 
   if (bestOffset) {
     spliced = ring.splice(0, bestOffset);
-    ring.splice.apply(ring, [ ring.length, 0 ].concat( spliced ));
+    ring.splice(ring.length, 0, ...spliced);
   }
 }
 
 function addPoints(ring, numPoints) {
-  var desiredLength = ring.length + numPoints;
+  const desiredLength = ring.length + numPoints;
   // const step = ring.pathLength / numPoints;
-  var step = polygonLength(ring) / numPoints;
+  const step = polygonLength(ring) / numPoints;
 
-  var i = 0;
-  var cursor = 0;
-  var insertAt = step / 2;
-  var a;
-  var b;
-  var segment;
+  let i = 0;
+  let cursor = 0;
+  let insertAt = step / 2;
+  let a;
+  let b;
+  let segment;
 
   while (ring.length < desiredLength) {
     a = ring[i];
@@ -3195,13 +3164,11 @@ function addPoints(ring, numPoints) {
   }
 }
 
-function bisect(ring, maxSegmentLength) {
-  if ( maxSegmentLength === void 0 ) maxSegmentLength = Infinity;
+function bisect(ring, maxSegmentLength = Infinity) {
+  let a = [];
+  let b = [];
 
-  var a = [];
-  var b = [];
-
-  for (var i = 0; i < ring.length; i += 1) {
+  for (let i = 0; i < ring.length; i += 1) {
     a = ring[i];
     b = i === ring.length - 1 ? ring[0] : ring[i + 1];
 
@@ -3215,31 +3182,31 @@ function bisect(ring, maxSegmentLength) {
 
 function validRing(ring) {
   return Array.isArray(ring)
-    && ring.every(function (point) { return Array.isArray(point)
+    && ring.every((point) => Array.isArray(point)
       && point.length === 2
       && !Number.isNaN(point[0])
-      && !Number.isNaN(point[1]); });
+      && !Number.isNaN(point[1]));
 }
 
 function normalizeRing(input, maxSegmentLength) {
-  var skipBisect;
-  var pathLength;
-  var ring = input;
+  let skipBisect;
+  let pathLength;
+  let ring = input;
 
   if (typeof (ring) === 'string') {
-    var converted = pathStringToRing(ring, maxSegmentLength);
+    const converted = pathStringToRing(ring, maxSegmentLength);
     ring = converted.ring;
     skipBisect = converted.skipBisect;
     pathLength = converted.pathLength;
   } else if (!Array.isArray(ring)) {
-    throw Error((invalidPathValue + ": " + ring));
+    throw Error(`${invalidPathValue}: ${ring}`);
   }
 
-  var points = ring.slice(0);
+  const points = ring.slice(0);
   points.pathLength = pathLength;
 
   if (!validRing(points)) {
-    throw Error((invalidPathValue + ": " + points));
+    throw Error(`${invalidPathValue}: ${points}`);
   }
 
   // TODO skip this test to avoid scale issues?
@@ -3257,10 +3224,10 @@ function normalizeRing(input, maxSegmentLength) {
 }
 
 function getInterpolationPoints(pathArray1, pathArray2, precision) {
-  var morphPrecision = precision || defaultOptions.morphPrecision;
-  var fromRing = normalizeRing(pathArray1, morphPrecision);
-  var toRing = normalizeRing(pathArray2, morphPrecision);
-  var diff = fromRing.length - toRing.length;
+  const morphPrecision = precision || defaultOptions.morphPrecision;
+  const fromRing = normalizeRing(pathArray1, morphPrecision);
+  const toRing = normalizeRing(pathArray2, morphPrecision);
+  const diff = fromRing.length - toRing.length;
 
   addPoints(fromRing, diff < 0 ? diff * -1 : 0);
   addPoints(toRing, diff > 0 ? diff : 0);
@@ -3276,10 +3243,10 @@ function getSVGMorph(/* tweenProp */) {
 }
 
 function prepareSVGMorph(tweenProp, value) {
-  var pathObject = {};
+  const pathObject = {};
   // remove newlines, they brake JSON strings sometimes
-  var pathReg = new RegExp('\\n', 'ig');
-  var elem = null;
+  const pathReg = new RegExp('\\n', 'ig');
+  let elem = null;
 
   if (value instanceof SVGElement) {
     elem = value;
@@ -3301,22 +3268,20 @@ function prepareSVGMorph(tweenProp, value) {
 }
 function crossCheckSVGMorph(prop) {
   if (this.valuesEnd[prop]) {
-    var pathArray1 = this.valuesStart[prop].pathArray;
-    var pathArray2 = this.valuesEnd[prop].pathArray;
+    const pathArray1 = this.valuesStart[prop].pathArray;
+    const pathArray2 = this.valuesEnd[prop].pathArray;
     // skip already processed paths
     // allow the component to work with pre-processed values
     if (!pathArray1 || !pathArray2
       || (pathArray1 && pathArray2 && pathArray1.length !== pathArray2.length)) {
-      var p1 = this.valuesStart[prop].original;
-      var p2 = this.valuesEnd[prop].original;
+      const p1 = this.valuesStart[prop].original;
+      const p2 = this.valuesEnd[prop].original;
       // process morphPrecision
-      var morphPrecision = this._morphPrecision
+      const morphPrecision = this._morphPrecision
         ? parseInt(this._morphPrecision, 10)
         : defaultOptions.morphPrecision;
 
-      var ref = getInterpolationPoints(p1, p2, morphPrecision);
-      var path1 = ref[0];
-      var path2 = ref[1];
+      const [path1, path2] = getInterpolationPoints(p1, p2, morphPrecision);
       this.valuesStart[prop].pathArray = path1;
       this.valuesEnd[prop].pathArray = path2;
     }
@@ -3324,7 +3289,7 @@ function crossCheckSVGMorph(prop) {
 }
 
 // All Component Functions
-var svgMorphFunctions = {
+const svgMorphFunctions = {
   prepareStart: getSVGMorph,
   prepareProperty: prepareSVGMorph,
   onStart: onStartSVGMorph,
@@ -3332,7 +3297,7 @@ var svgMorphFunctions = {
 };
 
 // Component Full
-var svgMorph = {
+const svgMorph = {
   component: 'svgMorph',
   property: 'path',
   defaultValue: [],
@@ -3341,26 +3306,28 @@ var svgMorph = {
   functions: svgMorphFunctions,
   // Export utils to global for faster execution
   Util: {
-    addPoints: addPoints,
-    bisect: bisect,
-    normalizeRing: normalizeRing,
-    validRing: validRing, // component
-    getInterpolationPoints: getInterpolationPoints,
-    pathStringToRing: pathStringToRing,
-    distanceSquareRoot: distanceSquareRoot,
-    midPoint: midPoint,
-    approximateRing: approximateRing,
-    rotateRing: rotateRing,
-    pathToString: pathToString,
-    pathToCurve: pathToCurve, // svg-path-commander
-    getPathLength: getPathLength,
-    getPointAtLength: getPointAtLength,
-    getDrawDirection: getDrawDirection,
-    roundPath: roundPath,
+    addPoints,
+    bisect,
+    normalizeRing,
+    validRing, // component
+    getInterpolationPoints,
+    pathStringToRing,
+    distanceSquareRoot,
+    midPoint,
+    approximateRing,
+    rotateRing,
+    pathToString,
+    pathToCurve, // svg-path-commander
+    getPathLength,
+    getPointAtLength,
+    getDrawDirection,
+    roundPath,
   },
 };
 
-var Components = {
+var version = "2.1.2";
+
+const Components = {
   EssentialBoxModel: essentialBoxModel,
   ColorsProperties: colorProperties,
   HTMLAttributes: htmlAttributes,
@@ -3372,33 +3339,33 @@ var Components = {
 };
 
 // init components
-Object.keys(Components).forEach(function (component) {
-  var compOps = Components[component];
+Object.keys(Components).forEach((component) => {
+  const compOps = Components[component];
   Components[component] = new Animation(compOps);
 });
 
 var index = {
-  Animation: Animation,
-  Components: Components,
+  Animation,
+  Components,
 
   // Tween Interface
-  Tween: Tween,
-  fromTo: fromTo,
-  to: to,
+  Tween,
+  fromTo,
+  to,
   // Tween Collection
-  TweenCollection: TweenCollection,
-  allFromTo: allFromTo,
-  allTo: allTo,
+  TweenCollection,
+  allFromTo,
+  allTo,
   // Tween Interface
 
-  Objects: Objects,
-  Util: Util,
-  Easing: Easing,
-  CubicBezier: CubicBezier,
-  Render: Render,
-  Interpolate: Interpolate,
-  Process: Process,
-  Internals: Internals,
+  Objects,
+  Util,
+  Easing,
+  CubicBezier,
+  Render,
+  Interpolate,
+  Process,
+  Internals,
   Selector: selector,
   Version: version,
 };
