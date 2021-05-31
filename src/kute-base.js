@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Base v2.1.1-alpha3 (http://thednp.github.io/kute.js)
+* KUTE.js Base v2.1.2 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -8,8 +8,6 @@
   typeof define === 'function' && define.amd ? define(factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.KUTE = factory());
 }(this, (function () { 'use strict';
-
-  var version = "2.1.1-alpha3";
 
   var KUTE = {};
 
@@ -83,6 +81,7 @@
       KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
     }
   });
+
   globalObject$1._KUTE = KUTE;
 
   var defaultOptions = {
@@ -165,7 +164,7 @@
   var supportedProperties = {};
 
   function linkInterpolation() {
-    var this$1 = this;
+    var this$1$1 = this;
    // DON'T change
     Object.keys(linkProperty).forEach(function (component) {
       var componentLink = linkProperty[component];
@@ -173,12 +172,12 @@
 
       Object.keys(componentLink).forEach(function (fnObj) {
         if (typeof (componentLink[fnObj]) === 'function' // ATTR, colors, scroll, boxModel, borderRadius
-            && Object.keys(this$1.valuesEnd).some(function (i) { return (componentProps && componentProps.includes(i))
-            || (i === 'attr' && Object.keys(this$1.valuesEnd[i]).some(function (j) { return componentProps && componentProps.includes(j); })); })) {
+            && Object.keys(this$1$1.valuesEnd).some(function (i) { return (componentProps && componentProps.includes(i))
+            || (i === 'attr' && Object.keys(this$1$1.valuesEnd[i]).some(function (j) { return componentProps && componentProps.includes(j); })); })) {
           if (!KUTE[fnObj]) { KUTE[fnObj] = componentLink[fnObj]; }
         } else {
-          Object.keys(this$1.valuesEnd).forEach(function (prop) {
-            var propObject = this$1.valuesEnd[prop];
+          Object.keys(this$1$1.valuesEnd).forEach(function (prop) {
+            var propObject = this$1$1.valuesEnd[prop];
             if (propObject instanceof Object) {
               Object.keys(propObject).forEach(function (i) {
                 if (typeof (componentLink[i]) === 'function') { // transformCSS3
@@ -305,15 +304,15 @@
   };
 
   function queueStart() {
-    var this$1 = this;
+    var this$1$1 = this;
 
     // fire onStart actions
     Object.keys(onStart).forEach(function (obj) {
       if (typeof (onStart[obj]) === 'function') {
-        onStart[obj].call(this$1, obj); // easing functions
+        onStart[obj].call(this$1$1, obj); // easing functions
       } else {
         Object.keys(onStart[obj]).forEach(function (prop) {
-          onStart[obj][prop].call(this$1, prop);
+          onStart[obj][prop].call(this$1$1, prop);
         });
       }
     });
@@ -325,7 +324,7 @@
   // single Tween object construct
   // TweenBase is meant to be use for pre-processed values
   var TweenBase = function TweenBase(targetElement, startObject, endObject, opsObject) {
-    var this$1 = this;
+    var this$1$1 = this;
 
     // element animation is applied to
     this.element = targetElement;
@@ -351,7 +350,7 @@
     // set other options
     Object.keys(options).forEach(function (op) {
       var internalOption = "_" + op;
-      if (!(internalOption in this$1)) { this$1[internalOption] = options[op]; }
+      if (!(internalOption in this$1$1)) { this$1$1[internalOption] = options[op]; }
     });
 
     // callbacks should not be set as undefined
@@ -410,12 +409,12 @@
   };
 
   TweenBase.prototype.close = function close () {
-      var this$1 = this;
+      var this$1$1 = this;
 
     // scroll|transformMatrix need this
     Object.keys(onComplete).forEach(function (component) {
       Object.keys(onComplete[component]).forEach(function (toClose) {
-        onComplete[component][toClose].call(this$1, toClose);
+        onComplete[component][toClose].call(this$1$1, toClose);
       });
     });
     // when all animations are finished, stop ticking after ~3 frames
@@ -434,7 +433,7 @@
   };
 
   TweenBase.prototype.update = function update (time) {
-      var this$1 = this;
+      var this$1$1 = this;
 
     var T = time !== undefined ? time : KUTE.Time();
 
@@ -450,9 +449,9 @@
 
     // render the update
     Object.keys(this.valuesEnd).forEach(function (tweenProp) {
-      KUTE[tweenProp](this$1.element,
-        this$1.valuesStart[tweenProp],
-        this$1.valuesEnd[tweenProp],
+      KUTE[tweenProp](this$1$1.element,
+        this$1$1.valuesStart[tweenProp],
+        this$1$1.valuesEnd[tweenProp],
         progress);
     });
 
@@ -635,14 +634,14 @@
     functions: { onStart: onStartOpacity },
   };
 
+  var version = "2.1.2";
+
   // import {baseCrossBrowserMove} from './components/crossBrowserMove.js'
 
   // const Transform = new Animation(baseTransform)
   var Transform = new AnimationBase(baseMatrixTransform);
   var BoxModel = new AnimationBase(baseBoxModel);
   var Opacity = new AnimationBase(baseOpacity);
-  // const Move = new Animation(baseCrossBrowserMove)
-  // support for kute-base.js ends here
 
   var indexBase = {
     Animation: AnimationBase,
