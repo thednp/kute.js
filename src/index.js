@@ -1,3 +1,5 @@
+if (typeof window === 'undefined') return;
+
 import CubicBezier from 'cubic-bezier-easing';
 import Render from './core/render.js';
 import Interpolate from './objects/interpolate.js';
