@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Standard v2.1.2 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.1.3 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -82,9 +82,8 @@ var Tweens = [];
 
 let globalObject;
 
-if (typeof (global) !== 'undefined') globalObject = global;
-else if (typeof (window.self) !== 'undefined') globalObject = window.self;
-else if (typeof (window) !== 'undefined') globalObject = window;
+if (typeof global !== 'undefined') globalObject = global;
+else if (typeof window !== 'undefined') globalObject = window.self;
 else globalObject = {};
 
 var globalObject$1 = globalObject;
@@ -97,7 +96,10 @@ var Interpolate = {};
 // link property update function to KUTE.js execution context
 var onStart = {};
 
+// import now from '../objects/now.js';
+
 const Time = {};
+// Time.now = now;
 const that = window.self || window || {};
 Time.now = that.performance.now.bind(that.performance);
 
@@ -178,8 +180,6 @@ var onComplete = {};
 
 // link properties to interpolate functions
 var linkProperty = {};
-
-// import connect from './connect.js'
 
 var Objects = {
   supportedProperties,
@@ -3325,7 +3325,7 @@ const svgMorph = {
   },
 };
 
-var version = "2.1.2";
+var version = "2.1.3";
 
 const Components = {
   EssentialBoxModel: essentialBoxModel,
@@ -3370,4 +3370,4 @@ var index = {
   Version: version,
 };
 
-export default index;
+export { index as default };

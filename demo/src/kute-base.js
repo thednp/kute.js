@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Base v2.1.2 (http://thednp.github.io/kute.js)
+* KUTE.js Base v2.1.3 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -7,7 +7,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.KUTE = factory());
-}(this, (function () { 'use strict';
+})(this, (function () { 'use strict';
 
   var KUTE = {};
 
@@ -15,9 +15,8 @@
 
   var globalObject;
 
-  if (typeof (global) !== 'undefined') { globalObject = global; }
-  else if (typeof (window.self) !== 'undefined') { globalObject = window.self; }
-  else if (typeof (window) !== 'undefined') { globalObject = window; }
+  if (typeof global !== 'undefined') { globalObject = global; }
+  else if (typeof window !== 'undefined') { globalObject = window.self; }
   else { globalObject = {}; }
 
   var globalObject$1 = globalObject;
@@ -30,7 +29,10 @@
   // link property update function to KUTE.js execution context
   var onStart = {};
 
+  // import now from '../objects/now.js';
+
   var Time = {};
+  // Time.now = now;
   var that = window.self || window || {};
   Time.now = that.performance.now.bind(that.performance);
 
@@ -634,7 +636,7 @@
     functions: { onStart: onStartOpacity },
   };
 
-  var version = "2.1.2";
+  var version = "2.1.3";
 
   // import {baseCrossBrowserMove} from './components/crossBrowserMove.js'
 
@@ -667,4 +669,4 @@
 
   return indexBase;
 
-})));
+}));

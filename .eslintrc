@@ -1,11 +1,11 @@
 {
   "extends": [
     // Extend the airbnb eslint config
-    "airbnb-base",
+    "airbnb-base"
     // Vue
-    "plugin:vue/vue3-recommended"
+    // "plugin:vue/vue3-recommended"
   ],
-  "parser": "vue-eslint-parser",
+  // "parser": "vue-eslint-parser",
   "parserOptions": {
     "sourceType": "module"
   },
@@ -19,6 +19,8 @@
   },
   // Rule overrides
   "rules": {
+    // Disable no-restricted-globals for global objects
+    "no-restricted-globals": 0,
     // Disable no-params-reassign for properties
     "no-param-reassign": ["error", { "props": false }],
     // Allow strict mode (we are not dealing with modules)

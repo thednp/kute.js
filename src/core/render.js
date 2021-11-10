@@ -3,8 +3,10 @@ import Tweens from '../objects/tweens.js';
 import globalObject from '../objects/globalObject.js';
 import Interpolate from '../objects/interpolate.js';
 import onStart from '../objects/onStart.js';
+// import now from '../objects/now.js';
 
 const Time = {};
+// Time.now = now;
 const that = window.self || window || {};
 Time.now = that.performance.now.bind(that.performance);
 
