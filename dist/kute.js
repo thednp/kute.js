@@ -82,7 +82,7 @@
     return t2;
   };
 
-  var KUTE = {};
+  var KUTE$1 = {};
 
   var Tweens = [];
 
@@ -131,16 +131,16 @@
         Tick = null;
         Object.keys(onStart).forEach(function (obj) {
           if (typeof (onStart[obj]) === 'function') {
-            if (KUTE[obj]) { delete KUTE[obj]; }
+            if (KUTE$1[obj]) { delete KUTE$1[obj]; }
           } else {
             Object.keys(onStart[obj]).forEach(function (prop) {
-              if (KUTE[prop]) { delete KUTE[prop]; }
+              if (KUTE$1[prop]) { delete KUTE$1[prop]; }
             });
           }
         });
 
         Object.keys(Interpolate).forEach(function (i) {
-          if (KUTE[i]) { delete KUTE[i]; }
+          if (KUTE$1[i]) { delete KUTE$1[i]; }
         });
       }
     }, 64);
@@ -152,12 +152,12 @@
     Tick: Tick, Ticker: Ticker, Tweens: Tweens, Time: Time,
   };
   Object.keys(Render).forEach(function (blob) {
-    if (!KUTE[blob]) {
-      KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
+    if (!KUTE$1[blob]) {
+      KUTE$1[blob] = blob === 'Time' ? Time.now : Render[blob];
     }
   });
 
-  globalObject$1._KUTE = KUTE;
+  globalObject$1._KUTE = KUTE$1;
 
   var supportedProperties = {};
 
@@ -224,18 +224,18 @@
         if (typeof (componentLink[fnObj]) === 'function' // ATTR, colors, scroll, boxModel, borderRadius
             && Object.keys(this$1$1.valuesEnd).some(function (i) { return (componentProps && componentProps.includes(i))
             || (i === 'attr' && Object.keys(this$1$1.valuesEnd[i]).some(function (j) { return componentProps && componentProps.includes(j); })); })) {
-          if (!KUTE[fnObj]) { KUTE[fnObj] = componentLink[fnObj]; }
+          if (!KUTE$1[fnObj]) { KUTE$1[fnObj] = componentLink[fnObj]; }
         } else {
           Object.keys(this$1$1.valuesEnd).forEach(function (prop) {
             var propObject = this$1$1.valuesEnd[prop];
             if (propObject instanceof Object) {
               Object.keys(propObject).forEach(function (i) {
                 if (typeof (componentLink[i]) === 'function') { // transformCSS3
-                  if (!KUTE[i]) { KUTE[i] = componentLink[i]; }
+                  if (!KUTE$1[i]) { KUTE$1[i] = componentLink[i]; }
                 } else {
                   Object.keys(componentLink[fnObj]).forEach(function (j) {
                     if (componentLink[i] && typeof (componentLink[i][j]) === 'function') { // transformMatrix
-                      if (!KUTE[j]) { KUTE[j] = componentLink[i][j]; }
+                      if (!KUTE$1[j]) { KUTE$1[j] = componentLink[i][j]; }
                     }
                   });
                 }
@@ -523,7 +523,7 @@
     var easingFnName = this._easing.name;
     if (!onStart[easingFnName]) {
       onStart[easingFnName] = function easingFn(prop) {
-        if (!KUTE[prop] && prop === this._easing.name) { KUTE[prop] = this._easing; }
+        if (!KUTE$1[prop] && prop === this._easing.name) { KUTE$1[prop] = this._easing; }
       };
     }
 
@@ -538,7 +538,7 @@
     add(this);
     this.playing = true;
 
-    this._startTime = typeof time !== 'undefined' ? time : KUTE.Time();
+    this._startTime = typeof time !== 'undefined' ? time : KUTE$1.Time();
     this._startTime += this._delay;
 
     if (!this._startFired) {
@@ -595,7 +595,7 @@
   TweenBase.prototype.update = function update (time) {
       var this$1$1 = this;
 
-    var T = time !== undefined ? time : KUTE.Time();
+    var T = time !== undefined ? time : KUTE$1.Time();
 
     var elapsed;
 
@@ -609,7 +609,7 @@
 
     // render the update
     Object.keys(this.valuesEnd).forEach(function (tweenProp) {
-      KUTE[tweenProp](this$1$1.element,
+      KUTE$1[tweenProp](this$1$1.element,
         this$1$1.valuesStart[tweenProp],
         this$1$1.valuesEnd[tweenProp],
         progress);
@@ -785,7 +785,7 @@
         // re-queue execution context
         queueStart.call(this);
         // update time and let it roll
-        this._startTime += KUTE.Time() - this._pauseTime;
+        this._startTime += KUTE$1.Time() - this._pauseTime;
         add(this);
         // restart ticker if stopped
         if (!Tick) { Ticker(); }
@@ -797,7 +797,7 @@
       if (!this.paused && this.playing) {
         remove(this);
         this.paused = true;
-        this._pauseTime = KUTE.Time();
+        this._pauseTime = KUTE$1.Time();
         if (this._onPause !== undefined) {
           this._onPause.call(this);
         }
@@ -821,7 +821,7 @@
     Tween.prototype.update = function update (time) {
       var this$1$1 = this;
 
-      var T = time !== undefined ? time : KUTE.Time();
+      var T = time !== undefined ? time : KUTE$1.Time();
 
       var elapsed;
 
@@ -835,7 +835,7 @@
 
       // render the update
       Object.keys(this.valuesEnd).forEach(function (tweenProp) {
-        KUTE[tweenProp](this$1$1.element,
+        KUTE$1[tweenProp](this$1$1.element,
           this$1$1.valuesStart[tweenProp],
           this$1$1.valuesEnd[tweenProp],
           progress);
@@ -924,7 +924,7 @@
   };
 
   TweenCollection.prototype.start = function start (time) {
-    var T = time === undefined ? KUTE.Time() : time;
+    var T = time === undefined ? KUTE$1.Time() : time;
     this.tweens.map(function (tween) { return tween.start(T); });
     return this;
   };
@@ -935,13 +935,13 @@
   };
 
   TweenCollection.prototype.pause = function pause (time) {
-    var T = time === undefined ? KUTE.Time() : time;
+    var T = time === undefined ? KUTE$1.Time() : time;
     this.tweens.map(function (tween) { return tween.pause(T); });
     return this;
   };
 
   TweenCollection.prototype.resume = function resume (time) {
-    var T = time === undefined ? KUTE.Time() : time;
+    var T = time === undefined ? KUTE$1.Time() : time;
     this.tweens.map(function (tween) { return tween.resume(T); });
     return this;
   };
@@ -1148,8 +1148,8 @@
 
   // Component Functions
   function boxModelOnStart(tweenProp) {
-    if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
+    if (tweenProp in this.valuesEnd && !KUTE$1[tweenProp]) {
+      KUTE$1[tweenProp] = function (elem, a, b, v) {
         elem.style[tweenProp] = (v > 0.99 || v < 0.01
           ? ((numbers(a, b, v) * 10) >> 0) / 10
           : (numbers(a, b, v)) >> 0) + "px";
@@ -1283,8 +1283,8 @@
 
   // Component Functions
   function onStartColors(tweenProp) {
-    if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
+    if (this.valuesEnd[tweenProp] && !KUTE$1[tweenProp]) {
+      KUTE$1[tweenProp] = function (elem, a, b, v) {
         elem.style[tweenProp] = colors(a, b, v);
       };
     }
@@ -1340,17 +1340,17 @@
 
   var onStartAttr = {
     attr: function attr(tweenProp) {
-      if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-        KUTE[tweenProp] = function (elem, vS, vE, v) {
+      if (!KUTE$1[tweenProp] && this.valuesEnd[tweenProp]) {
+        KUTE$1[tweenProp] = function (elem, vS, vE, v) {
           Object.keys(vE).forEach(function (oneAttr) {
-            KUTE.attributes[oneAttr](elem, oneAttr, vS[oneAttr], vE[oneAttr], v);
+            KUTE$1.attributes[oneAttr](elem, oneAttr, vS[oneAttr], vE[oneAttr], v);
           });
         };
       }
     },
     attributes: function attributes$1(tweenProp) {
-      if (!KUTE[tweenProp] && this.valuesEnd.attr) {
-        KUTE[tweenProp] = attributes;
+      if (!KUTE$1[tweenProp] && this.valuesEnd.attr) {
+        KUTE$1[tweenProp] = attributes;
       }
     },
   };
@@ -1472,8 +1472,8 @@
   // Component Functions
   function onStartOpacity(tweenProp/* , value */) {
     // opacity could be 0 sometimes, we need to check regardless
-    if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
+    if (tweenProp in this.valuesEnd && !KUTE$1[tweenProp]) {
+      KUTE$1[tweenProp] = function (elem, a, b, v) {
         elem.style[tweenProp] = ((numbers(a, b, v) * 1000) >> 0) / 1000;
       };
     }
@@ -1531,7 +1531,7 @@
   // Component Functions
   var onStartWrite = {
     text: function text(tweenProp) {
-      if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
+      if (!KUTE$1[tweenProp] && this.valuesEnd[tweenProp]) {
         var chars = this._textChars;
         var charsets = charSet[defaultOptions.textChars];
 
@@ -1541,7 +1541,7 @@
           charsets = chars;
         }
 
-        KUTE[tweenProp] = function (elem, a, b, v) {
+        KUTE$1[tweenProp] = function (elem, a, b, v) {
           var initialText = '';
           var endText = '';
           var finalText = b === '' ? ' ' : b;
@@ -1569,8 +1569,8 @@
       }
     },
     number: function number(tweenProp) {
-      if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) { // numbers can be 0
-        KUTE[tweenProp] = function (elem, a, b, v) {
+      if (tweenProp in this.valuesEnd && !KUTE$1[tweenProp]) { // numbers can be 0
+        KUTE$1[tweenProp] = function (elem, a, b, v) {
           elem.innerHTML = numbers(a, b, v) >> 0;
         };
       }
@@ -1731,19 +1731,12 @@
     onStart: onStartWrite,
   };
 
-  /* textWrite = {
-    category: 'textWrite',
-    defaultValues: {},
-    interpolators: {numbers},
-    functions = { prepareStart, prepareProperty, onStart }
-  } */
-
   // Full Component
   var textWrite = {
     component: 'textWriteProperties',
     category: 'textWrite',
     properties: ['text', 'number'],
-    defaultValues: { text: ' ', numbers: '0' },
+    defaultValues: { text: ' ', number: '0' },
     defaultOptions: { textChars: 'alpha' },
     Interpolate: { numbers: numbers },
     functions: textWriteFunctions,
@@ -1805,8 +1798,8 @@
 
   // Component Functions
   function onStartTransform(tweenProp) {
-    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
+    if (!KUTE$1[tweenProp] && this.valuesEnd[tweenProp]) {
+      KUTE$1[tweenProp] = function (elem, a, b, v) {
         elem.style[tweenProp] = (a.perspective || b.perspective ? perspective(a.perspective, b.perspective, 'px', v) : '') // one side might be 0
           + (a.translate3d ? translate3d(a.translate3d, b.translate3d, 'px', v) : '') // array [x,y,z]
           + (a.rotate3d ? rotate3d(a.rotate3d, b.rotate3d, 'deg', v) : '') // array [x,y,z]
@@ -1956,8 +1949,8 @@
 
   // Component Functions
   function onStartDraw(tweenProp) {
-    if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
+    if (tweenProp in this.valuesEnd && !KUTE$1[tweenProp]) {
+      KUTE$1[tweenProp] = function (elem, a, b, v) {
         var pathLength = (a.l * 100 >> 0) / 100;
         var start = (numbers(a.s, b.s, v) * 100 >> 0) / 100;
         var end = (numbers(a.e, b.e, v) * 100 >> 0) / 100;
@@ -3059,8 +3052,8 @@
 
   // Component functions
   function onStartSVGMorph(tweenProp) {
-    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
+    if (!KUTE$1[tweenProp] && this.valuesEnd[tweenProp]) {
+      KUTE$1[tweenProp] = function (elem, a, b, v) {
         var path1 = a.pathArray; var path2 = b.pathArray; var
           len = path2.length;
         elem.setAttribute('d', (v === 1 ? b.original : ("M" + (coords(path1, path2, len, v).join('L')) + "Z")));
@@ -3382,8 +3375,6 @@
     },
   };
 
-  var version = "2.1.3";
-
   var Components = {
     EssentialBoxModel: essentialBoxModel,
     ColorsProperties: colorProperties,
@@ -3401,7 +3392,9 @@
     Components[component] = new Animation(compOps);
   });
 
-  var index = {
+  var version = "2.1.3";
+
+  var KUTE = {
     Animation: Animation,
     Components: Components,
 
@@ -3427,6 +3420,6 @@
     Version: version,
   };
 
-  return index;
+  return KUTE;
 
 }));

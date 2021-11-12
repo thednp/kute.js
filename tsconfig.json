@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "emitDeclarationOnly": true,
+    "strict": true,
+    "allowJs": true,
+    "outFile": "typescript/index.d.ts"
+  },
+  "files": ["src/index.js"],
+}

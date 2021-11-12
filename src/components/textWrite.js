@@ -155,19 +155,12 @@ export const textWriteFunctions = {
   onStart: onStartWrite,
 };
 
-/* textWrite = {
-  category: 'textWrite',
-  defaultValues: {},
-  interpolators: {numbers},
-  functions = { prepareStart, prepareProperty, onStart }
-} */
-
 // Full Component
 export const textWrite = {
   component: 'textWriteProperties',
   category: 'textWrite',
   properties: ['text', 'number'],
-  defaultValues: { text: ' ', numbers: '0' },
+  defaultValues: { text: ' ', number: '0' },
   defaultOptions: { textChars: 'alpha' },
   Interpolate: { numbers },
   functions: textWriteFunctions,

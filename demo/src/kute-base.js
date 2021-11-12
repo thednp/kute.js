@@ -305,6 +305,154 @@
     return { name: ComponentName };
   };
 
+  function perspective(a, b, u, v) {
+    return ("perspective(" + (((a + (b - a) * v) * 1000 >> 0) / 1000) + u + ")");
+  }
+
+  function translate3d(a, b, u, v) {
+    var translateArray = [];
+    for (var ax = 0; ax < 3; ax += 1) {
+      translateArray[ax] = (a[ax] || b[ax]
+        ? ((a[ax] + (b[ax] - a[ax]) * v) * 1000 >> 0) / 1000 : 0) + u;
+    }
+    return ("translate3d(" + (translateArray.join(',')) + ")");
+  }
+
+  function rotate3d(a, b, u, v) {
+    var rotateStr = '';
+    rotateStr += a[0] || b[0] ? ("rotateX(" + (((a[0] + (b[0] - a[0]) * v) * 1000 >> 0) / 1000) + u + ")") : '';
+    rotateStr += a[1] || b[1] ? ("rotateY(" + (((a[1] + (b[1] - a[1]) * v) * 1000 >> 0) / 1000) + u + ")") : '';
+    rotateStr += a[2] || b[2] ? ("rotateZ(" + (((a[2] + (b[2] - a[2]) * v) * 1000 >> 0) / 1000) + u + ")") : '';
+    return rotateStr;
+  }
+
+  function translate(a, b, u, v) {
+    var translateArray = [];
+    translateArray[0] = (a[0] === b[0] ? b[0] : ((a[0] + (b[0] - a[0]) * v) * 1000 >> 0) / 1000) + u;
+    translateArray[1] = a[1] || b[1] ? ((a[1] === b[1] ? b[1] : ((a[1] + (b[1] - a[1]) * v) * 1000 >> 0) / 1000) + u) : '0';
+    return ("translate(" + (translateArray.join(',')) + ")");
+  }
+
+  function rotate(a, b, u, v) {
+    return ("rotate(" + (((a + (b - a) * v) * 1000 >> 0) / 1000) + u + ")");
+  }
+
+  function scale(a, b, v) {
+    return ("scale(" + (((a + (b - a) * v) * 1000 >> 0) / 1000) + ")");
+  }
+
+  function skew(a, b, u, v) {
+    var skewArray = [];
+    skewArray[0] = (a[0] === b[0] ? b[0] : ((a[0] + (b[0] - a[0]) * v) * 1000 >> 0) / 1000) + u;
+    skewArray[1] = a[1] || b[1] ? ((a[1] === b[1] ? b[1] : ((a[1] + (b[1] - a[1]) * v) * 1000 >> 0) / 1000) + u) : '0';
+    return ("skew(" + (skewArray.join(',')) + ")");
+  }
+
+  /* transformFunctions = {
+    property: 'transform',
+    subProperties,
+    defaultValues,
+    Interpolate: {translate,rotate,skew,scale},
+    functions } */
+
+  // same to svg transform, attr
+
+  // Component Functions
+  function onStartTransform(tweenProp) {
+    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
+      KUTE[tweenProp] = function (elem, a, b, v) {
+        elem.style[tweenProp] = (a.perspective || b.perspective ? perspective(a.perspective, b.perspective, 'px', v) : '') // one side might be 0
+          + (a.translate3d ? translate3d(a.translate3d, b.translate3d, 'px', v) : '') // array [x,y,z]
+          + (a.rotate3d ? rotate3d(a.rotate3d, b.rotate3d, 'deg', v) : '') // array [x,y,z]
+          + (a.skew ? skew(a.skew, b.skew, 'deg', v) : '') // array [x,y]
+          + (a.scale || b.scale ? scale(a.scale, b.scale, v) : ''); // one side might be 0
+      };
+    }
+  }
+
+  // Base Component
+  var BaseTransform = {
+    component: 'baseTransform',
+    property: 'transform',
+    functions: { onStart: onStartTransform },
+    Interpolate: {
+      perspective: perspective,
+      translate3d: translate3d,
+      rotate3d: rotate3d,
+      translate: translate,
+      rotate: rotate,
+      scale: scale,
+      skew: skew,
+    },
+  };
+
+  function numbers(a, b, v) { // number1, number2, progress
+    var A = +a;
+    var B = b - a;
+    // a = +a; b -= a;
+    return A + B * v;
+  }
+
+  // Component Functions
+  function boxModelOnStart(tweenProp) {
+    if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
+      KUTE[tweenProp] = function (elem, a, b, v) {
+        elem.style[tweenProp] = (v > 0.99 || v < 0.01
+          ? ((numbers(a, b, v) * 10) >> 0) / 10
+          : (numbers(a, b, v)) >> 0) + "px";
+      };
+    }
+  }
+
+  // Component Base Props
+  var baseBoxProps = ['top', 'left', 'width', 'height'];
+  var baseBoxOnStart = {};
+  baseBoxProps.forEach(function (x) { baseBoxOnStart[x] = boxModelOnStart; });
+
+  // Component Base
+  var baseBoxModel = {
+    component: 'baseBoxModel',
+    category: 'boxModel',
+    properties: baseBoxProps,
+    Interpolate: { numbers: numbers },
+    functions: { onStart: baseBoxOnStart },
+  };
+
+  /* opacityProperty = {
+    property: 'opacity',
+    defaultValue: 1,
+    interpolators: {numbers},
+    functions = { prepareStart, prepareProperty, onStart }
+  } */
+
+  // Component Functions
+  function onStartOpacity(tweenProp/* , value */) {
+    // opacity could be 0 sometimes, we need to check regardless
+    if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
+      KUTE[tweenProp] = function (elem, a, b, v) {
+        elem.style[tweenProp] = ((numbers(a, b, v) * 1000) >> 0) / 1000;
+      };
+    }
+  }
+
+  // Base Component
+  var baseOpacity = {
+    component: 'baseOpacity',
+    property: 'opacity',
+    // defaultValue: 1,
+    Interpolate: { numbers: numbers },
+    functions: { onStart: onStartOpacity },
+  };
+
+  // import {baseCrossBrowserMove} from '../components/crossBrowserMove.js'
+  // support for kute-base.js ends here
+
+  var Components = {
+    Transform: new AnimationBase(BaseTransform),
+    BoxModel: new AnimationBase(baseBoxModel),
+    Opacity: new AnimationBase(baseOpacity),
+  };
+
   function queueStart() {
     var this$1$1 = this;
 
@@ -494,165 +642,11 @@
     return new TweenConstructor(selector(element), startObject, endObject, options);
   }
 
-  function numbers(a, b, v) { // number1, number2, progress
-    var A = +a;
-    var B = b - a;
-    // a = +a; b -= a;
-    return A + B * v;
-  }
-
-  function arrays(a, b, v) {
-    var result = [];
-    for (var i = 0, l = b.length; i < l; i += 1) {
-      result[i] = ((a[i] + (b[i] - a[i]) * v) * 1000 >> 0) / 1000;
-    }
-    return result;
-  }
-
-  /* transformMatrix = {
-    property : 'transform',
-    defaultValue: {},
-    interpolators: {},
-    functions = { prepareStart, prepareProperty, onStart, crossCheck }
-  } */
-
-  // Component name
-  var matrixComponent = 'transformMatrixBase';
-
-  // Component special
-  // this component is restricted to modern browsers only
-  var CSS3Matrix = typeof (DOMMatrix) !== 'undefined' ? DOMMatrix : null;
-
-  // Component Functions
-  var onStartTransform = {
-    transform: function transform(tweenProp) {
-      if (CSS3Matrix && this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-        KUTE[tweenProp] = function (elem, a, b, v) {
-          var matrix = new CSS3Matrix();
-          var tObject = {};
-
-          Object.keys(b).forEach(function (p) {
-            tObject[p] = p === 'perspective' ? numbers(a[p], b[p], v) : arrays(a[p], b[p], v);
-          });
-
-          // set perspective
-          if (tObject.perspective) { matrix.m34 = -1 / tObject.perspective; }
-
-          // set translate
-          matrix = tObject.translate3d
-            ? matrix.translate(tObject.translate3d[0], tObject.translate3d[1], tObject.translate3d[2])
-            : matrix;
-
-          // set rotation
-          matrix = tObject.rotate3d
-            ? matrix.rotate(tObject.rotate3d[0], tObject.rotate3d[1], tObject.rotate3d[2])
-            : matrix;
-
-          // set skew
-          if (tObject.skew) {
-            matrix = tObject.skew[0] ? matrix.skewX(tObject.skew[0]) : matrix;
-            matrix = tObject.skew[1] ? matrix.skewY(tObject.skew[1]) : matrix;
-          }
-
-          // set scale
-          matrix = tObject.scale3d
-            ? matrix.scale(tObject.scale3d[0], tObject.scale3d[1], tObject.scale3d[2])
-            : matrix;
-
-          // set element style
-          elem.style[tweenProp] = matrix.toString();
-        };
-      }
-    },
-    CSS3Matrix: function CSS3Matrix$1(prop) {
-      if (CSS3Matrix && this.valuesEnd.transform) {
-        if (!KUTE[prop]) { KUTE[prop] = CSS3Matrix; }
-      }
-    },
-  };
-
-  // Component Base Object
-  var baseMatrixTransform = {
-    component: matrixComponent,
-    property: 'transform',
-    functions: { onStart: onStartTransform },
-    Interpolate: {
-      perspective: numbers,
-      translate3d: arrays,
-      rotate3d: arrays,
-      skew: arrays,
-      scale3d: arrays,
-    },
-  };
-
-  // Component Functions
-  function boxModelOnStart(tweenProp) {
-    if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
-        elem.style[tweenProp] = (v > 0.99 || v < 0.01
-          ? ((numbers(a, b, v) * 10) >> 0) / 10
-          : (numbers(a, b, v)) >> 0) + "px";
-      };
-    }
-  }
-
-  // Component Base Props
-  var baseBoxProps = ['top', 'left', 'width', 'height'];
-  var baseBoxOnStart = {};
-  baseBoxProps.forEach(function (x) { baseBoxOnStart[x] = boxModelOnStart; });
-
-  // Component Base
-  var baseBoxModel = {
-    component: 'baseBoxModel',
-    category: 'boxModel',
-    properties: baseBoxProps,
-    Interpolate: { numbers: numbers },
-    functions: { onStart: baseBoxOnStart },
-  };
-
-  /* opacityProperty = {
-    property: 'opacity',
-    defaultValue: 1,
-    interpolators: {numbers},
-    functions = { prepareStart, prepareProperty, onStart }
-  } */
-
-  // Component Functions
-  function onStartOpacity(tweenProp/* , value */) {
-    // opacity could be 0 sometimes, we need to check regardless
-    if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = function (elem, a, b, v) {
-        elem.style[tweenProp] = ((numbers(a, b, v) * 1000) >> 0) / 1000;
-      };
-    }
-  }
-
-  // Base Component
-  var baseOpacity = {
-    component: 'baseOpacity',
-    property: 'opacity',
-    // defaultValue: 1,
-    Interpolate: { numbers: numbers },
-    functions: { onStart: onStartOpacity },
-  };
-
   var version = "2.1.3";
-
-  // import {baseCrossBrowserMove} from './components/crossBrowserMove.js'
-
-  // const Transform = new Animation(baseTransform)
-  var Transform = new AnimationBase(baseMatrixTransform);
-  var BoxModel = new AnimationBase(baseBoxModel);
-  var Opacity = new AnimationBase(baseOpacity);
 
   var indexBase = {
     Animation: AnimationBase,
-    Components: {
-      Transform: Transform,
-      BoxModel: BoxModel,
-      Opacity: Opacity,
-      // Move
-    },
+    Components: Components,
 
     Tween: TweenBase,
     fromTo: fromTo,

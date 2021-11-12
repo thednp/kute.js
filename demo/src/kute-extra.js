@@ -4243,19 +4243,12 @@
     onStart: onStartWrite,
   };
 
-  /* textWrite = {
-    category: 'textWrite',
-    defaultValues: {},
-    interpolators: {numbers},
-    functions = { prepareStart, prepareProperty, onStart }
-  } */
-
   // Full Component
   var textWrite = {
     component: 'textWriteProperties',
     category: 'textWrite',
     properties: ['text', 'number'],
-    defaultValues: { text: ' ', numbers: '0' },
+    defaultValues: { text: ' ', number: '0' },
     defaultOptions: { textChars: 'alpha' },
     Interpolate: { numbers: numbers },
     functions: textWriteFunctions,
@@ -4473,8 +4466,6 @@
     },
   };
 
-  var version = "2.1.3";
-
   var Components = {
     BackgroundPosition: BackgroundPosition,
     BorderRadius: BorderRadius,
@@ -4494,10 +4485,13 @@
     MatrixTransform: matrixTransform,
   };
 
+  // init components
   Object.keys(Components).forEach(function (component) {
     var compOps = Components[component];
     Components[component] = new AnimationDevelopment(compOps);
   });
+
+  var version = "2.1.3";
 
   var indexExtra = {
     Animation: AnimationDevelopment,

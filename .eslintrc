@@ -6,6 +6,7 @@
     // "plugin:vue/vue3-recommended"
   ],
   // "parser": "vue-eslint-parser",
+  // "parser": "eslint-plugin-vue",
   "parserOptions": {
     "sourceType": "module"
   },

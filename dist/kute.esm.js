@@ -76,7 +76,7 @@ class CubicBezier {
   }
 }
 
-var KUTE = {};
+var KUTE$1 = {};
 
 var Tweens = [];
 
@@ -125,16 +125,16 @@ function stop() {
       Tick = null;
       Object.keys(onStart).forEach((obj) => {
         if (typeof (onStart[obj]) === 'function') {
-          if (KUTE[obj]) delete KUTE[obj];
+          if (KUTE$1[obj]) delete KUTE$1[obj];
         } else {
           Object.keys(onStart[obj]).forEach((prop) => {
-            if (KUTE[prop]) delete KUTE[prop];
+            if (KUTE$1[prop]) delete KUTE$1[prop];
           });
         }
       });
 
       Object.keys(Interpolate).forEach((i) => {
-        if (KUTE[i]) delete KUTE[i];
+        if (KUTE$1[i]) delete KUTE$1[i];
       });
     }
   }, 64);
@@ -146,12 +146,12 @@ const Render = {
   Tick, Ticker, Tweens, Time,
 };
 Object.keys(Render).forEach((blob) => {
-  if (!KUTE[blob]) {
-    KUTE[blob] = blob === 'Time' ? Time.now : Render[blob];
+  if (!KUTE$1[blob]) {
+    KUTE$1[blob] = blob === 'Time' ? Time.now : Render[blob];
   }
 });
 
-globalObject$1._KUTE = KUTE;
+globalObject$1._KUTE = KUTE$1;
 
 var supportedProperties = {};
 
@@ -216,18 +216,18 @@ function linkInterpolation() { // DON'T change
       if (typeof (componentLink[fnObj]) === 'function' // ATTR, colors, scroll, boxModel, borderRadius
           && Object.keys(this.valuesEnd).some((i) => (componentProps && componentProps.includes(i))
           || (i === 'attr' && Object.keys(this.valuesEnd[i]).some((j) => componentProps && componentProps.includes(j))))) {
-        if (!KUTE[fnObj]) KUTE[fnObj] = componentLink[fnObj];
+        if (!KUTE$1[fnObj]) KUTE$1[fnObj] = componentLink[fnObj];
       } else {
         Object.keys(this.valuesEnd).forEach((prop) => {
           const propObject = this.valuesEnd[prop];
           if (propObject instanceof Object) {
             Object.keys(propObject).forEach((i) => {
               if (typeof (componentLink[i]) === 'function') { // transformCSS3
-                if (!KUTE[i]) KUTE[i] = componentLink[i];
+                if (!KUTE$1[i]) KUTE$1[i] = componentLink[i];
               } else {
                 Object.keys(componentLink[fnObj]).forEach((j) => {
                   if (componentLink[i] && typeof (componentLink[i][j]) === 'function') { // transformMatrix
-                    if (!KUTE[j]) KUTE[j] = componentLink[i][j];
+                    if (!KUTE$1[j]) KUTE$1[j] = componentLink[i][j];
                   }
                 });
               }
@@ -508,7 +508,7 @@ class TweenBase {
     const easingFnName = this._easing.name;
     if (!onStart[easingFnName]) {
       onStart[easingFnName] = function easingFn(prop) {
-        if (!KUTE[prop] && prop === this._easing.name) KUTE[prop] = this._easing;
+        if (!KUTE$1[prop] && prop === this._easing.name) KUTE$1[prop] = this._easing;
       };
     }
 
@@ -523,7 +523,7 @@ class TweenBase {
     add(this);
     this.playing = true;
 
-    this._startTime = typeof time !== 'undefined' ? time : KUTE.Time();
+    this._startTime = typeof time !== 'undefined' ? time : KUTE$1.Time();
     this._startTime += this._delay;
 
     if (!this._startFired) {
@@ -576,7 +576,7 @@ class TweenBase {
   }
 
   update(time) {
-    const T = time !== undefined ? time : KUTE.Time();
+    const T = time !== undefined ? time : KUTE$1.Time();
 
     let elapsed;
 
@@ -590,7 +590,7 @@ class TweenBase {
 
     // render the update
     Object.keys(this.valuesEnd).forEach((tweenProp) => {
-      KUTE[tweenProp](this.element,
+      KUTE$1[tweenProp](this.element,
         this.valuesStart[tweenProp],
         this.valuesEnd[tweenProp],
         progress);
@@ -757,7 +757,7 @@ class Tween extends TweenBase {
       // re-queue execution context
       queueStart.call(this);
       // update time and let it roll
-      this._startTime += KUTE.Time() - this._pauseTime;
+      this._startTime += KUTE$1.Time() - this._pauseTime;
       add(this);
       // restart ticker if stopped
       if (!Tick) Ticker();
@@ -769,7 +769,7 @@ class Tween extends TweenBase {
     if (!this.paused && this.playing) {
       remove(this);
       this.paused = true;
-      this._pauseTime = KUTE.Time();
+      this._pauseTime = KUTE$1.Time();
       if (this._onPause !== undefined) {
         this._onPause.call(this);
       }
@@ -789,7 +789,7 @@ class Tween extends TweenBase {
   }
 
   update(time) {
-    const T = time !== undefined ? time : KUTE.Time();
+    const T = time !== undefined ? time : KUTE$1.Time();
 
     let elapsed;
 
@@ -803,7 +803,7 @@ class Tween extends TweenBase {
 
     // render the update
     Object.keys(this.valuesEnd).forEach((tweenProp) => {
-      KUTE[tweenProp](this.element,
+      KUTE$1[tweenProp](this.element,
         this.valuesStart[tweenProp],
         this.valuesEnd[tweenProp],
         progress);
@@ -889,7 +889,7 @@ class TweenCollection {
   }
 
   start(time) {
-    const T = time === undefined ? KUTE.Time() : time;
+    const T = time === undefined ? KUTE$1.Time() : time;
     this.tweens.map((tween) => tween.start(T));
     return this;
   }
@@ -900,13 +900,13 @@ class TweenCollection {
   }
 
   pause(time) {
-    const T = time === undefined ? KUTE.Time() : time;
+    const T = time === undefined ? KUTE$1.Time() : time;
     this.tweens.map((tween) => tween.pause(T));
     return this;
   }
 
   resume(time) {
-    const T = time === undefined ? KUTE.Time() : time;
+    const T = time === undefined ? KUTE$1.Time() : time;
     this.tweens.map((tween) => tween.resume(T));
     return this;
   }
@@ -1116,8 +1116,8 @@ function numbers(a, b, v) { // number1, number2, progress
 
 // Component Functions
 function boxModelOnStart(tweenProp) {
-  if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
+  if (tweenProp in this.valuesEnd && !KUTE$1[tweenProp]) {
+    KUTE$1[tweenProp] = (elem, a, b, v) => {
       elem.style[tweenProp] = `${v > 0.99 || v < 0.01
         ? ((numbers(a, b, v) * 10) >> 0) / 10
         : (numbers(a, b, v)) >> 0}px`;
@@ -1251,8 +1251,8 @@ const supportedColors$1 = ['color', 'backgroundColor', 'borderColor',
 
 // Component Functions
 function onStartColors(tweenProp) {
-  if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
+  if (this.valuesEnd[tweenProp] && !KUTE$1[tweenProp]) {
+    KUTE$1[tweenProp] = (elem, a, b, v) => {
       elem.style[tweenProp] = colors(a, b, v);
     };
   }
@@ -1308,17 +1308,17 @@ const attributes = {};
 
 const onStartAttr = {
   attr(tweenProp) {
-    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-      KUTE[tweenProp] = (elem, vS, vE, v) => {
+    if (!KUTE$1[tweenProp] && this.valuesEnd[tweenProp]) {
+      KUTE$1[tweenProp] = (elem, vS, vE, v) => {
         Object.keys(vE).forEach((oneAttr) => {
-          KUTE.attributes[oneAttr](elem, oneAttr, vS[oneAttr], vE[oneAttr], v);
+          KUTE$1.attributes[oneAttr](elem, oneAttr, vS[oneAttr], vE[oneAttr], v);
         });
       };
     }
   },
   attributes(tweenProp) {
-    if (!KUTE[tweenProp] && this.valuesEnd.attr) {
-      KUTE[tweenProp] = attributes;
+    if (!KUTE$1[tweenProp] && this.valuesEnd.attr) {
+      KUTE$1[tweenProp] = attributes;
     }
   },
 };
@@ -1436,8 +1436,8 @@ const htmlAttributes = {
 // Component Functions
 function onStartOpacity(tweenProp/* , value */) {
   // opacity could be 0 sometimes, we need to check regardless
-  if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
+  if (tweenProp in this.valuesEnd && !KUTE$1[tweenProp]) {
+    KUTE$1[tweenProp] = (elem, a, b, v) => {
       elem.style[tweenProp] = ((numbers(a, b, v) * 1000) >> 0) / 1000;
     };
   }
@@ -1495,7 +1495,7 @@ const charSet = {
 // Component Functions
 const onStartWrite = {
   text(tweenProp) {
-    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
+    if (!KUTE$1[tweenProp] && this.valuesEnd[tweenProp]) {
       const chars = this._textChars;
       let charsets = charSet[defaultOptions.textChars];
 
@@ -1505,7 +1505,7 @@ const onStartWrite = {
         charsets = chars;
       }
 
-      KUTE[tweenProp] = (elem, a, b, v) => {
+      KUTE$1[tweenProp] = (elem, a, b, v) => {
         let initialText = '';
         let endText = '';
         const finalText = b === '' ? ' ' : b;
@@ -1533,8 +1533,8 @@ const onStartWrite = {
     }
   },
   number(tweenProp) {
-    if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) { // numbers can be 0
-      KUTE[tweenProp] = (elem, a, b, v) => {
+    if (tweenProp in this.valuesEnd && !KUTE$1[tweenProp]) { // numbers can be 0
+      KUTE$1[tweenProp] = (elem, a, b, v) => {
         elem.innerHTML = numbers(a, b, v) >> 0;
       };
     }
@@ -1693,19 +1693,12 @@ const textWriteFunctions = {
   onStart: onStartWrite,
 };
 
-/* textWrite = {
-  category: 'textWrite',
-  defaultValues: {},
-  interpolators: {numbers},
-  functions = { prepareStart, prepareProperty, onStart }
-} */
-
 // Full Component
 const textWrite = {
   component: 'textWriteProperties',
   category: 'textWrite',
   properties: ['text', 'number'],
-  defaultValues: { text: ' ', numbers: '0' },
+  defaultValues: { text: ' ', number: '0' },
   defaultOptions: { textChars: 'alpha' },
   Interpolate: { numbers },
   functions: textWriteFunctions,
@@ -1767,8 +1760,8 @@ function skew(a, b, u, v) {
 
 // Component Functions
 function onStartTransform(tweenProp) {
-  if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
+  if (!KUTE$1[tweenProp] && this.valuesEnd[tweenProp]) {
+    KUTE$1[tweenProp] = (elem, a, b, v) => {
       elem.style[tweenProp] = (a.perspective || b.perspective ? perspective(a.perspective, b.perspective, 'px', v) : '') // one side might be 0
         + (a.translate3d ? translate3d(a.translate3d, b.translate3d, 'px', v) : '') // array [x,y,z]
         + (a.rotate3d ? rotate3d(a.rotate3d, b.rotate3d, 'deg', v) : '') // array [x,y,z]
@@ -1919,8 +1912,8 @@ const transformFunctionsComponent = {
 
 // Component Functions
 function onStartDraw(tweenProp) {
-  if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
+  if (tweenProp in this.valuesEnd && !KUTE$1[tweenProp]) {
+    KUTE$1[tweenProp] = (elem, a, b, v) => {
       const pathLength = (a.l * 100 >> 0) / 100;
       const start = (numbers(a.s, b.s, v) * 100 >> 0) / 100;
       const end = (numbers(a.e, b.e, v) * 100 >> 0) / 100;
@@ -3008,8 +3001,8 @@ function coords(a, b, l, v) {
 
 // Component functions
 function onStartSVGMorph(tweenProp) {
-  if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
+  if (!KUTE$1[tweenProp] && this.valuesEnd[tweenProp]) {
+    KUTE$1[tweenProp] = (elem, a, b, v) => {
       const path1 = a.pathArray; const path2 = b.pathArray; const
         len = path2.length;
       elem.setAttribute('d', (v === 1 ? b.original : `M${coords(path1, path2, len, v).join('L')}Z`));
@@ -3325,8 +3318,6 @@ const svgMorph = {
   },
 };
 
-var version = "2.1.3";
-
 const Components = {
   EssentialBoxModel: essentialBoxModel,
   ColorsProperties: colorProperties,
@@ -3344,7 +3335,9 @@ Object.keys(Components).forEach((component) => {
   Components[component] = new Animation(compOps);
 });
 
-var index = {
+var version = "2.1.3";
+
+const KUTE = {
   Animation,
   Components,
 
@@ -3370,4 +3363,4 @@ var index = {
   Version: version,
 };
 
-export { index as default };
+export { KUTE as default };

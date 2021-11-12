@@ -17,38 +17,15 @@ import fromTo from './interface/fromTo.js';
 import allTo from './interface/allTo.js';
 import allFromTo from './interface/allFromTo.js';
 
+// Animation
 import Animation from './animation/animation.js';
 
-// components
-import EssentialBoxModel from './components/boxModelEssential.js';
-import ColorsProperties from './components/colorProperties.js';
-import HTMLAttributes from './components/htmlAttributes.js';
-import OpacityProperty from './components/opacityProperty.js';
-import TextWrite from './components/textWrite.js';
-import TransformFunctions from './components/transformFunctions.js';
-import SVGDraw from './components/svgDraw.js';
-import SVGMorph from './components/svgMorph.js';
+// Default Components
+import Components from './objects/componentsDefault.js';
 
 import { version as Version } from '../package.json';
 
-const Components = {
-  EssentialBoxModel,
-  ColorsProperties,
-  HTMLAttributes,
-  OpacityProperty,
-  TextWrite,
-  TransformFunctions,
-  SVGDraw,
-  SVGMorph,
-};
-
-// init components
-Object.keys(Components).forEach((component) => {
-  const compOps = Components[component];
-  Components[component] = new Animation(compOps);
-});
-
-export default {
+const KUTE = {
   Animation,
   Components,
 
@@ -73,3 +50,5 @@ export default {
   Selector,
   Version,
 };
+
+export default KUTE;
