@@ -18,6 +18,10 @@ declare module "src/objects/onStart" {
     var _default: {};
     export default _default;
 }
+declare module "src/objects/now" {
+    export default now;
+    let now: any;
+}
 declare module "src/core/render" {
     export function stop(): void;
     export default Render;
@@ -31,8 +35,9 @@ declare module "src/core/render" {
     }
     import Tweens from "src/objects/tweens";
     namespace Time {
-        const now: () => number;
+        export { now };
     }
+    import now from "src/objects/now";
 }
 declare module "src/objects/supportedProperties" {
     var _default: {};
