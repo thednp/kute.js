@@ -18,7 +18,7 @@ declare module "src/objects/onStart" {
     var _default: {};
     export default _default;
 }
-declare module "src/objects/now" {
+declare module "src/util/now" {
     export default now;
     let now: any;
 }
@@ -37,7 +37,7 @@ declare module "src/core/render" {
     namespace Time {
         export { now };
     }
-    import now from "src/objects/now";
+    import now from "src/util/now";
 }
 declare module "src/objects/supportedProperties" {
     var _default: {};
