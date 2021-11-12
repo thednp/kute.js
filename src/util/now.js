@@ -1,7 +1,7 @@
-let now;
-
 // Include a performance.now polyfill.
 // source https://github.com/tweenjs/tween.js/blob/master/src/Now.ts
+let now;
+
 // In node.js, use process.hrtime.
 // eslint-disable-next-line
 // @ts-ignore
