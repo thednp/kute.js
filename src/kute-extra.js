@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Extra v2.1.2 (http://thednp.github.io/kute.js)
+* KUTE.js Extra v2.1.3 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -7,7 +7,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.KUTE = factory());
-}(this, (function () { 'use strict';
+})(this, (function () { 'use strict';
 
   var CubicBezier = function CubicBezier(p1x, p1y, p2x, p2y, functionName) {
     var this$1$1 = this;
@@ -88,9 +88,8 @@
 
   var globalObject;
 
-  if (typeof (global) !== 'undefined') { globalObject = global; }
-  else if (typeof (window.self) !== 'undefined') { globalObject = window.self; }
-  else if (typeof (window) !== 'undefined') { globalObject = window; }
+  if (typeof global !== 'undefined') { globalObject = global; }
+  else if (typeof window !== 'undefined') { globalObject = window.self; }
   else { globalObject = {}; }
 
   var globalObject$1 = globalObject;
@@ -103,9 +102,41 @@
   // link property update function to KUTE.js execution context
   var onStart = {};
 
+  // Include a performance.now polyfill.
+  // source https://github.com/tweenjs/tween.js/blob/master/src/Now.ts
+  var now;
+
+  // In node.js, use process.hrtime.
+  // eslint-disable-next-line
+  // @ts-ignore
+  if (typeof self === 'undefined' && typeof process !== 'undefined' && process.hrtime) {
+    now = function () {
+      // eslint-disable-next-line
+  		// @ts-ignore
+      var time = process.hrtime();
+
+      // Convert [seconds, nanoseconds] to milliseconds.
+      return time[0] * 1000 + time[1] / 1000000;
+    };
+  } else if (typeof self !== 'undefined' && self.performance !== undefined && self.performance.now !== undefined) {
+    // In a browser, use self.performance.now if it is available.
+    // This must be bound, because directly assigning this function
+    // leads to an invocation exception in Chrome.
+    now = self.performance.now.bind(self.performance);
+  } else if (typeof Date !== 'undefined' && Date.now) {
+    // Use Date.now if it is available.
+    now = Date.now;
+  } else {
+    // Otherwise, use 'new Date().getTime()'.
+    now = function () { return new Date().getTime(); };
+  }
+
+  var now$1 = now;
+
   var Time = {};
-  var that = window.self || window || {};
-  Time.now = that.performance.now.bind(that.performance);
+  Time.now = now$1;
+  // const that = window.self || window || {};
+  // Time.now = that.performance.now.bind(that.performance);
 
   var Tick = 0;
 
@@ -184,8 +215,6 @@
 
   // link properties to interpolate functions
   var linkProperty = {};
-
-  // import connect from './connect.js'
 
   var Objects = {
     supportedProperties: supportedProperties,
@@ -2666,7 +2695,7 @@
     this.segmentStart = 0;
     this.data = [];
     this.err = '';
-    return this;
+    // return this;
   }
 
   function isPathArray(pathArray) {
@@ -4243,19 +4272,12 @@
     onStart: onStartWrite,
   };
 
-  /* textWrite = {
-    category: 'textWrite',
-    defaultValues: {},
-    interpolators: {numbers},
-    functions = { prepareStart, prepareProperty, onStart }
-  } */
-
   // Full Component
   var textWrite = {
     component: 'textWriteProperties',
     category: 'textWrite',
     properties: ['text', 'number'],
-    defaultValues: { text: ' ', numbers: '0' },
+    defaultValues: { text: ' ', number: '0' },
     defaultOptions: { textChars: 'alpha' },
     Interpolate: { numbers: numbers },
     functions: textWriteFunctions,
@@ -4473,8 +4495,6 @@
     },
   };
 
-  var version = "2.1.2";
-
   var Components = {
     BackgroundPosition: BackgroundPosition,
     BorderRadius: BorderRadius,
@@ -4494,10 +4514,13 @@
     MatrixTransform: matrixTransform,
   };
 
+  // init components
   Object.keys(Components).forEach(function (component) {
     var compOps = Components[component];
     Components[component] = new AnimationDevelopment(compOps);
   });
+
+  var version = "2.1.3";
 
   var indexExtra = {
     Animation: AnimationDevelopment,
@@ -4528,4 +4551,4 @@
 
   return indexExtra;
 
-})));
+}));
