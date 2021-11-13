@@ -102,10 +102,10 @@
   // link property update function to KUTE.js execution context
   var onStart = {};
 
-  var now;
-
   // Include a performance.now polyfill.
   // source https://github.com/tweenjs/tween.js/blob/master/src/Now.ts
+  var now;
+
   // In node.js, use process.hrtime.
   // eslint-disable-next-line
   // @ts-ignore
@@ -2695,7 +2695,7 @@
     this.segmentStart = 0;
     this.data = [];
     this.err = '';
-    return this;
+    // return this;
   }
 
   function isPathArray(pathArray) {

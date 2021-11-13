@@ -23,7 +23,7 @@ import Animation from './animation/animation.js';
 // Default Components
 import Components from './objects/componentsDefault.js';
 
-import { version as Version } from '../package.json';
+import Version from './util/version.js';
 
 const KUTE = {
   Animation,

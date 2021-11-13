@@ -9,6 +9,7 @@
   "files": [
     "dist/*.{js,map}",
     "types/*.{ts,map}",
+    "types/**/*.{ts,map}",
     "src/**/*.{js,map}",
     "src/*.{js,map}"
   ],
@@ -60,10 +61,10 @@
   },
   "homepage": "http://thednp.github.io/kute.js",
   "dependencies": {
-    "cubic-bezier-easing": "^1.0.4",
+    "cubic-bezier-easing": "^1.0.8",
     "minifill": "^0.0.16",
     "shorter-js": "^0.2.1",
-    "svg-path-commander": "0.1.5"
+    "svg-path-commander": "0.1.7"
   },
   "devDependencies": {
     "@rollup/plugin-buble": "^0.21.3",

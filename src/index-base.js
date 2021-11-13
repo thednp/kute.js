@@ -16,7 +16,7 @@ import Tween from './tween/tweenBase.js';
 // Interface only fromTo
 import fromTo from './interface/fromTo.js';
 
-import { version as Version } from '../package.json';
+import Version from './util/version.js';
 
 export default {
   Animation,

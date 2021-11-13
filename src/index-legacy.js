@@ -27,7 +27,7 @@ import TransformLegacy from './components/transformLegacy.js';
 import SVGDraw from './components/svgDraw.js';
 import SVGMorph from './components/svgMorph.js';
 
-import { version as Version } from '../package.json';
+import Version from './util/version.js';
 
 const Components = {
   BoxModel,

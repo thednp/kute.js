@@ -1,0 +1,54 @@
+declare namespace _default {
+    export { Animation };
+    export { Components };
+    export { Tween };
+    export { fromTo };
+    export { to };
+    export { TweenCollection };
+    export { allFromTo };
+    export { allTo };
+    export { Objects };
+    export { Util };
+    export { Easing };
+    export { Render };
+    export { Interpolate };
+    export { Process };
+    export { Internals };
+    export { Selector };
+    export { Version };
+}
+export default _default;
+import Animation from "./animation/animation.js";
+declare namespace Components {
+    export { BoxModel };
+    export { ColorProperties };
+    export { HTMLAttributes };
+    export { OpacityProperty };
+    export { TextWrite };
+    export { TransformLegacy };
+    export { SVGDraw };
+    export { SVGMorph };
+}
+import Tween from "./tween/tween.js";
+import fromTo from "./interface/fromTo.js";
+import to from "./interface/to.js";
+import TweenCollection from "./tween/tweenCollection.js";
+import allFromTo from "./interface/allFromTo.js";
+import allTo from "./interface/allTo.js";
+import Objects from "./objects/objects.js";
+import Util from "./objects/util.js";
+import Easing from "./easing/easing.js";
+import Render from "./core/render.js";
+import Interpolate from "./objects/interpolate.js";
+import Process from "./process/process.js";
+import Internals from "./core/internals.js";
+import Selector from "./util/selector.js";
+import Version from "./util/version.js";
+import BoxModel from "./components/boxModelEssential.js";
+import ColorProperties from "./components/colorProperties.js";
+import HTMLAttributes from "./components/htmlAttributes.js";
+import OpacityProperty from "./components/opacityProperty.js";
+import TextWrite from "./components/textWrite.js";
+import TransformLegacy from "./components/transformLegacy.js";
+import SVGDraw from "./components/svgDraw.js";
+import SVGMorph from "./components/svgMorph.js";

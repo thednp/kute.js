@@ -96,10 +96,10 @@ var Interpolate = {};
 // link property update function to KUTE.js execution context
 var onStart = {};
 
-let now;
-
 // Include a performance.now polyfill.
 // source https://github.com/tweenjs/tween.js/blob/master/src/Now.ts
+let now;
+
 // In node.js, use process.hrtime.
 // eslint-disable-next-line
 // @ts-ignore
@@ -2445,7 +2445,7 @@ function SVGPathArray(pathString) {
   this.segmentStart = 0;
   this.data = [];
   this.err = '';
-  return this;
+  // return this;
 }
 
 // Returns array of segments:
