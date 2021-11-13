@@ -8,7 +8,7 @@
   "types": "typescript/index.d.ts",
   "files": [
     "dist/*.{js,map}",
-    "dist/types/*.{ts,map}",
+    "typescript/*.{ts,map}",
     "src/**/*.{js,map}",
     "src/*.{js,map}"
   ],
