@@ -4,7 +4,7 @@
     "emitDeclarationOnly": true,
     "strict": true,
     "allowJs": true,
-    "outFile": "typescript/index.d.ts"
+    "outFile": "types/index.d.ts"
   },
   "files": ["src/index.js"],
 }

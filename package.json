@@ -5,10 +5,10 @@
   "main": "dist/kute.min.js",
   "module": "dist/kute.esm.js",
   "jsnext": "src/index.js",
-  "types": "typescript/index.d.ts",
+  "types": "types/index.d.ts",
   "files": [
     "dist/*.{js,map}",
-    "typescript/*.{ts,map}",
+    "types/*.{ts,map}",
     "src/**/*.{js,map}",
     "src/*.{js,map}"
   ],
