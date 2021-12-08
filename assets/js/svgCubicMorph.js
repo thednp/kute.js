@@ -5,28 +5,22 @@ var morphOps = {
 
 // basic morph
 var morphTween  = KUTE.to('#rectangle',  { path: '#star'  }, morphOps);
-var morphTween1 = KUTE.to('#rectangle1', { path: '#star1' }, morphOps);
 var morphTween2 = KUTE.to('#rectangle2', { path: '#star2' }, morphOps);
 
 var morphBtn = document.getElementById('morphBtn');
 morphBtn.addEventListener('click', function(){
   !morphTween.playing  && morphTween.start();
-  !morphTween1.playing && morphTween1.start();
   !morphTween2.playing && morphTween2.start();
 }, false);
 
 // line to circle
 var lineMorph  = KUTE.to('#line' ,{path:'#circle' }, morphOps);
 var lineMorph1 = KUTE.to('#line1',{path:'#circle1'}, morphOps);
-var lineMorph2 = KUTE.to('#line2',{path:'#circle2'}, morphOps);
-var lineMorph3 = KUTE.to('#line3',{path:'#circle3'}, morphOps);
-var morphBtnClosed = document.getElementById('morphBtnClosed')
 
+var morphBtnClosed = document.getElementById('morphBtnClosed')
 morphBtnClosed.addEventListener('click', function(){
   !lineMorph.playing  && lineMorph.start();
   !lineMorph1.playing && lineMorph1.start();
-  !lineMorph2.playing && lineMorph2.start();
-  !lineMorph3.playing && lineMorph3.start();
 }, false);
 
 var morphOps1 = {
@@ -63,19 +57,14 @@ var compliMorph2 = KUTE.fromTo('#symbol-left', {path: '#symbol-left'},  { path: 
 var compliMorph3 = KUTE.fromTo('#symbol-left-clone', {path: '#symbol-left-clone'},  { path: '#mouth' }, morphOps1);
 var compliMorph4 = KUTE.fromTo('#symbol-right', {path: '#symbol-right'},  { path: '#eye-right' }, morphOps1);
 
-var compliMorph11 = KUTE.fromTo('#rectangle-container1', {path: '#rectangle-container1', attr:{ fill: "#9C27B0"} }, { path: '#circle-container1', attr:{ fill: "#FF5722"} }, morphOps1);
-var compliMorph21 = KUTE.fromTo('#symbol-left1', {path: '#symbol-left1'},  { path: '#eye-left1' }, morphOps1);
-var compliMorph31 = KUTE.fromTo('#symbol-left-clone1', {path: '#symbol-left-clone1'},  { path: '#mouth1' }, morphOps1);
-var compliMorph41 = KUTE.fromTo('#symbol-right1', {path: '#symbol-right1'},  { path: '#eye-right1' }, morphOps1);
-
 var compliMorph12 = KUTE.fromTo('#rectangle-container2', {path: '#rectangle-container2', attr:{ fill: "#e91b1f"} }, { path: '#circle-container2', attr:{ fill: "#FF5722"} }, morphOps1);
 var compliMorph22 = KUTE.fromTo('#symbol-left2', {path: '#symbol-left2'},  { path: '#eye-left2' }, morphOps1);
 var compliMorph32 = KUTE.fromTo('#sample-shape2', {path: '#sample-shape2'},  { path: '#mouth2' }, morphOps1);
 var compliMorph42 = KUTE.fromTo('#symbol-right2', {path: '#symbol-right2'},  { path: '#eye-right2' }, morphOps1);
 
 compliMorphBtn.addEventListener('click', function(){
-  !compliMorph1.playing && compliMorph1.start() && compliMorph11.start() && compliMorph12.start();
-  !compliMorph2.playing && compliMorph2.start() && compliMorph21.start() && compliMorph22.start();
-  !compliMorph3.playing && compliMorph3.start() && compliMorph31.start() && compliMorph32.start();
-  !compliMorph4.playing && compliMorph4.start() && compliMorph41.start() && compliMorph42.start();
+  !compliMorph1.playing && compliMorph1.start() && compliMorph12.start();
+  !compliMorph2.playing && compliMorph2.start() && compliMorph22.start();
+  !compliMorph3.playing && compliMorph3.start() && compliMorph32.start();
+  !compliMorph4.playing && compliMorph4.start() && compliMorph42.start();
 }, false);

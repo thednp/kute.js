@@ -381,7 +381,7 @@ var tween2 = KUTE.to('#triangle', { path: '#square' }).start();
         <li>Starting with KUTE.js version 2.0.14 the component implements <a href="https://github.com/thednp/svg-path-commander">SVGPathCommander</a> for path processing, solving previous issues with over-optimized 
           path strings among other issues. You can try the <a href="https://thednp.github.io/svg-path-commander/">SVGPathCommander demo page</a> to prepare your path strings.</li>        
         <li>Since <b>SVG Morph</b> animation works only with <code>path</code> elements, you might need a <code>convertToPath</code> feature, so 
-          <a href="https://github.com/Waest/SVGPathConverter" target="_blank">grab one here</a>.</li>
+          <a href="https://thednp.github.io/svg-path-commander/convert.html" target="_blank">grab one here</a>.</li>
         <li>Both SVG morph components will always animate first sub-path from both starting and ending shapes, and for any case hopefully this demo will guide you in mastering the technique.</li>
         <li>In some cases your start and end shapes don't have a very close size, you can use your vector graphics editor of choice or <a href="https://github.com/Waest/SVGPathConverter">SVGPathCommander</a> 
           to apply a scale transformation to your shapes' path commands.</li>
@@ -419,8 +419,7 @@ var tween2 = KUTE.to('#triangle', { path: '#square' }).start();
   <!-- Placed at the end of the document so the pages load faster -->
 
   <script src="./src/polyfill.min.js"></script>
-  <script src="./src/kute.min.js"></script>
-  <!-- <script src="../dist/kute.js"></script> -->
+  <script src="../dist/kute.js"></script>
   <script src="./assets/js/prism.js"></script>
   <script src="./assets/js/scripts.js"></script>
   <script src="./assets/js/svgMorph.js"></script>
