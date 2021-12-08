@@ -1,10 +1,17 @@
-import getInlineStyle from './getInlineStyle.js';
-import prepareObject from './prepareObject.js';
-import defaultValues from '../objects/defaultValues.js';
-import prepareStart from '../objects/prepareStart.js';
-import supportedProperties from '../objects/supportedProperties.js';
+import getInlineStyle from './getInlineStyle';
+import prepareObject from './prepareObject';
+import defaultValues from '../objects/defaultValues';
+import prepareStart from '../objects/prepareStart';
+import supportedProperties from '../objects/supportedProperties';
 
-// getStartValues - returns the startValue for to() method
+/**
+ * getStartValues
+ *
+ * Returns the start values for to() method.
+ * Used by for the `.to()` static method.
+ *
+ * @this {KUTE.Tween} the tween instance
+ */
 export default function getStartValues() {
   const startValues = {};
   const currentStyle = getInlineStyle(this.element);

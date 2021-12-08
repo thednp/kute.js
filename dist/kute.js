@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Standard v2.1.3 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.2.0alpha2 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -9,19 +9,36 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.KUTE = factory());
 })(this, (function () { 'use strict';
 
+  /**
+   * Creates cubic-bezier easing functions.
+   *
+   * @class
+   */
   var CubicBezier = function CubicBezier(p1x, p1y, p2x, p2y, functionName) {
     var this$1$1 = this;
 
     // pre-calculate the polynomial coefficients
     // First and last control points are implied to be (0,0) and (1.0, 1.0)
+    
+    /** @type {number} */
     this.cx = 3.0 * p1x;
+    
+    /** @type {number} */
     this.bx = 3.0 * (p2x - p1x) - this.cx;
+
+    /** @type {number} */
     this.ax = 1.0 - this.cx - this.bx;
-
+      
+    /** @type {number} */
     this.cy = 3.0 * p1y;
+    
+    /** @type {number} */
     this.by = 3.0 * (p2y - p1y) - this.cy;
+    
+    /** @type {number} */
     this.ay = 1.0 - this.cy - this.by;
-
+      
+    /** @type {(t: number) => number} */
     var BezierEasing = function (t) { return this$1$1.sampleCurveY(this$1$1.solveCurveX(t)); };
 
     // this function needs a name
@@ -31,18 +48,34 @@
     return BezierEasing;
   };
 
+  /**
+   * @param {number} t - progress [0-1]
+   * @return {number} - sampled X value
+   */
   CubicBezier.prototype.sampleCurveX = function sampleCurveX (t) {
     return ((this.ax * t + this.bx) * t + this.cx) * t;
   };
 
+  /**
+   * @param {number} t - progress [0-1]
+   * @return {number} - sampled Y value
+   */
   CubicBezier.prototype.sampleCurveY = function sampleCurveY (t) {
     return ((this.ay * t + this.by) * t + this.cy) * t;
   };
 
+  /**
+   * @param {number} t - progress [0-1]
+   * @return {number} - sampled curve derivative X value
+   */
   CubicBezier.prototype.sampleCurveDerivativeX = function sampleCurveDerivativeX (t) {
     return (3.0 * this.ax * t + 2.0 * this.bx) * t + this.cx;
   };
 
+  /**
+   * @param {number} x - progress [0-1]
+   * @return {number} - solved curve X value
+   */
   CubicBezier.prototype.solveCurveX = function solveCurveX (x) {
     var t0;
     var t1;
@@ -82,21 +115,24 @@
     return t2;
   };
 
-  var KUTE$1 = {};
+  /**
+   * The KUTE.js Execution Context
+   */
+  var KEC = {};
 
   var Tweens = [];
 
-  var globalObject;
+  var gl0bal;
 
-  if (typeof global !== 'undefined') { globalObject = global; }
-  else if (typeof window !== 'undefined') { globalObject = window.self; }
-  else { globalObject = {}; }
+  if (typeof global !== 'undefined') { gl0bal = global; }
+  else if (typeof window !== 'undefined') { gl0bal = window.self; }
+  else { gl0bal = {}; }
 
-  var globalObject$1 = globalObject;
+  var globalObject = gl0bal;
 
   // KUTE.js INTERPOLATE FUNCTIONS
   // =============================
-  var Interpolate = {};
+  var interpolate = {};
 
   // schedule property specific function on animation start
   // link property update function to KUTE.js execution context
@@ -104,13 +140,13 @@
 
   // Include a performance.now polyfill.
   // source https://github.com/tweenjs/tween.js/blob/master/src/Now.ts
-  var now;
+  var performanceNow;
 
   // In node.js, use process.hrtime.
   // eslint-disable-next-line
   // @ts-ignore
   if (typeof self === 'undefined' && typeof process !== 'undefined' && process.hrtime) {
-    now = function () {
+    performanceNow = function () {
       // eslint-disable-next-line
   		// @ts-ignore
       var time = process.hrtime();
@@ -122,24 +158,27 @@
     // In a browser, use self.performance.now if it is available.
     // This must be bound, because directly assigning this function
     // leads to an invocation exception in Chrome.
-    now = self.performance.now.bind(self.performance);
+    performanceNow = self.performance.now.bind(self.performance);
   } else if (typeof Date !== 'undefined' && Date.now) {
     // Use Date.now if it is available.
-    now = Date.now;
+    performanceNow = Date.now;
   } else {
     // Otherwise, use 'new Date().getTime()'.
-    now = function () { return new Date().getTime(); };
+    performanceNow = function () { return new Date().getTime(); };
   }
 
-  var now$1 = now;
+  var now = performanceNow;
 
   var Time = {};
-  Time.now = now$1;
-  // const that = window.self || window || {};
-  // Time.now = that.performance.now.bind(that.performance);
+  Time.now = now;
 
+  // eslint-disable-next-line import/no-mutable-exports -- impossible to satisfy
   var Tick = 0;
 
+  /**
+   *
+   * @param {number | Date} time
+   */
   var Ticker = function (time) {
     var i = 0;
     while (i < Tweens.length) {
@@ -160,42 +199,48 @@
         Tick = null;
         Object.keys(onStart).forEach(function (obj) {
           if (typeof (onStart[obj]) === 'function') {
-            if (KUTE$1[obj]) { delete KUTE$1[obj]; }
+            if (KEC[obj]) { delete KEC[obj]; }
           } else {
             Object.keys(onStart[obj]).forEach(function (prop) {
-              if (KUTE$1[prop]) { delete KUTE$1[prop]; }
+              if (KEC[prop]) { delete KEC[prop]; }
             });
           }
         });
 
-        Object.keys(Interpolate).forEach(function (i) {
-          if (KUTE$1[i]) { delete KUTE$1[i]; }
+        Object.keys(interpolate).forEach(function (i) {
+          if (KEC[i]) { delete KEC[i]; }
         });
       }
     }, 64);
   }
 
-  // KUTE.js render update functions
-  // ===============================
+  // render update functions
+  // =======================
   var Render = {
     Tick: Tick, Ticker: Ticker, Tweens: Tweens, Time: Time,
   };
   Object.keys(Render).forEach(function (blob) {
-    if (!KUTE$1[blob]) {
-      KUTE$1[blob] = blob === 'Time' ? Time.now : Render[blob];
+    if (!KEC[blob]) {
+      KEC[blob] = blob === 'Time' ? Time.now : Render[blob];
     }
   });
 
-  globalObject$1._KUTE = KUTE$1;
+  globalObject._KUTE = KEC;
 
+  // all supported properties
   var supportedProperties = {};
 
   var defaultValues = {};
 
-  var defaultOptions = {
+  var defaultOptions$1 = {
     duration: 700,
     delay: 0,
     easing: 'linear',
+    repeat: 0,
+    repeatDelay: 0,
+    yoyo: false,
+    resetStart: false,
+    offset: 0,
   };
 
   // used in preparePropertiesObject
@@ -219,7 +264,7 @@
   var Objects = {
     supportedProperties: supportedProperties,
     defaultValues: defaultValues,
-    defaultOptions: defaultOptions,
+    defaultOptions: defaultOptions$1,
     prepareProperty: prepareProperty,
     prepareStart: prepareStart,
     crossCheck: crossCheck,
@@ -231,17 +276,39 @@
   // util - a general object for utils like rgbToHex, processEasing
   var Util = {};
 
-  function add (tw) { return Tweens.push(tw); }
+  /**
+   * KUTE.add(Tween)
+   *
+   * @param {KUTE.Tween} tw a new tween to add
+   */
+  var add = function (tw) { return Tweens.push(tw); };
 
-  function remove (tw) {
+  /**
+   * KUTE.remove(Tween)
+   *
+   * @param {KUTE.Tween} tw a new tween to add
+   */
+  var remove = function (tw) {
     var i = Tweens.indexOf(tw);
     if (i !== -1) { Tweens.splice(i, 1); }
-  }
+  };
 
-  function getAll () { return Tweens; }
+  /**
+   * KUTE.add(Tween)
+   *
+   * @return {KUTE.Tween[]} tw a new tween to add
+   */
+  var getAll = function () { return Tweens; };
 
-  function removeAll () { Tweens.length = 0; }
+  /**
+   * KUTE.removeAll()
+   */
+  var removeAll = function () { Tweens.length = 0; };
 
+  /**
+   * linkInterpolation
+   * @this {KUTE.Tween}
+   */
   function linkInterpolation() {
     var this$1$1 = this;
    // DON'T change
@@ -253,18 +320,18 @@
         if (typeof (componentLink[fnObj]) === 'function' // ATTR, colors, scroll, boxModel, borderRadius
             && Object.keys(this$1$1.valuesEnd).some(function (i) { return (componentProps && componentProps.includes(i))
             || (i === 'attr' && Object.keys(this$1$1.valuesEnd[i]).some(function (j) { return componentProps && componentProps.includes(j); })); })) {
-          if (!KUTE$1[fnObj]) { KUTE$1[fnObj] = componentLink[fnObj]; }
+          if (!KEC[fnObj]) { KEC[fnObj] = componentLink[fnObj]; }
         } else {
           Object.keys(this$1$1.valuesEnd).forEach(function (prop) {
             var propObject = this$1$1.valuesEnd[prop];
             if (propObject instanceof Object) {
               Object.keys(propObject).forEach(function (i) {
                 if (typeof (componentLink[i]) === 'function') { // transformCSS3
-                  if (!KUTE$1[i]) { KUTE$1[i] = componentLink[i]; }
+                  if (!KEC[i]) { KEC[i] = componentLink[i]; }
                 } else {
                   Object.keys(componentLink[fnObj]).forEach(function (j) {
                     if (componentLink[i] && typeof (componentLink[i][j]) === 'function') { // transformMatrix
-                      if (!KUTE$1[j]) { KUTE$1[j] = componentLink[i][j]; }
+                      if (!KEC[j]) { KEC[j] = componentLink[i][j]; }
                     }
                   });
                 }
@@ -276,7 +343,7 @@
     });
   }
 
-  var Internals = {
+  var internals = {
     add: add,
     remove: remove,
     getAll: getAll,
@@ -285,7 +352,14 @@
     linkInterpolation: linkInterpolation,
   };
 
-  // getInlineStyle - get transform style for element from cssText for .to() method
+  /**
+   * getInlineStyle
+   * Returns the transform style for element from
+   * cssText. Used by for the `.to()` static method.
+   *
+   * @param {Element} el target element
+   * @returns {object}
+   */
   function getInlineStyle(el) {
     // if the scroll applies to `window` it returns as it has no styling
     if (!el.style) { return false; }
@@ -313,14 +387,23 @@
     return transformObject;
   }
 
-  // getStyleForProperty - get computed style property for element for .to() method
+  /**
+   * getStyleForProperty
+   *
+   * Returns the computed style property for element for .to() method.
+   * Used by for the `.to()` static method.
+   *
+   * @param {Element} elem
+   * @param {string} propertyName
+   * @returns {string}
+   */
   function getStyleForProperty(elem, propertyName) {
+    var result = defaultValues[propertyName];
     var styleAttribute = elem.style;
     var computedStyle = getComputedStyle(elem) || elem.currentStyle;
     var styleValue = styleAttribute[propertyName] && !/auto|initial|none|unset/.test(styleAttribute[propertyName])
       ? styleAttribute[propertyName]
       : computedStyle[propertyName];
-    var result = defaultValues[propertyName];
 
     if (propertyName !== 'transform' && (propertyName in computedStyle || propertyName in styleAttribute)) {
       result = styleValue;
@@ -329,7 +412,14 @@
     return result;
   }
 
-  // prepareObject - returns all processed valuesStart / valuesEnd
+  /**
+   * prepareObject
+   *
+   * Returns all processed valuesStart / valuesEnd.
+   *
+   * @param {Element} obj the values start/end object
+   * @param {string} fn toggles between the two
+   */
   function prepareObject(obj, fn) {
     var this$1$1 = this;
    // this, props object, type: start/end
@@ -374,7 +464,14 @@
     });
   }
 
-  // getStartValues - returns the startValue for to() method
+  /**
+   * getStartValues
+   *
+   * Returns the start values for to() method.
+   * Used by for the `.to()` static method.
+   *
+   * @this {KUTE.Tween} the tween instance
+   */
   function getStartValues() {
     var this$1$1 = this;
 
@@ -420,6 +517,9 @@
   };
 
   var connect = {};
+  /** @type {KUTE.TweenBase | KUTE.Tween | KUTE.TweenExtra} */
+  connect.tween = null;
+  connect.processEasing = null;
 
   var Easing = {
     linear: new CubicBezier(0, 0, 1, 1, 'linear'),
@@ -456,6 +556,12 @@
     easingBackInOut: new CubicBezier(0.68, -0.55, 0.265, 1.55, 'easingBackInOut'),
   };
 
+  /**
+   * Returns a valid `easingFunction`.
+   *
+   * @param {KUTE.easingFunction | string} fn function name or constructor name
+   * @returns {KUTE.easingFunction} a valid easingfunction
+   */
   function processBezierEasing(fn) {
     if (typeof fn === 'function') {
       return fn;
@@ -466,14 +572,22 @@
       return new CubicBezier(bz[0] * 1, bz[1] * 1, bz[2] * 1, bz[3] * 1); // bezier easing
     }
     // if (/elastic|bounce/i.test(fn)) {
-    //   throw TypeError(`KUTE.js - CubicBezier doesn't support ${fn} easing.`);
+    //   throw TypeError(`KUTE - CubicBezier doesn't support ${fn} easing.`);
     // }
     return Easing.linear;
   }
 
   connect.processEasing = processBezierEasing;
 
-  // a public selector utility
+  /**
+   * selector
+   *
+   * A selector utility for KUTE.js.
+   *
+   * @param {KUTE.selectorType} el target(s) or string selector
+   * @param {boolean | number} multi when true returns an array/collection of elements
+   * @returns {Element | Element[] | null}
+   */
   function selector(el, multi) {
     try {
       var requestedElem;
@@ -510,21 +624,28 @@
     linkInterpolation.call(this);
   }
 
-  // single Tween object construct
-  // TweenBase is meant to be use for pre-processed values
+  /**
+   * The `TweenBase` constructor creates a new `Tween` object
+   * for a single `HTMLElement` and returns it.
+   *
+   * `TweenBase` is meant to be used with pre-processed values.
+   */
   var TweenBase = function TweenBase(targetElement, startObject, endObject, opsObject) {
     var this$1$1 = this;
 
     // element animation is applied to
     this.element = targetElement;
 
+    /** @type {boolean} */
     this.playing = false;
-
+    /** @type {number?} */
     this._startTime = null;
+    /** @type {boolean} */
     this._startFired = false;
 
-    this.valuesEnd = endObject; // valuesEnd
-    this.valuesStart = startObject; // valuesStart
+    // type is set via KUTE.tweenProps
+    this.valuesEnd = endObject;
+    this.valuesStart = startObject;
 
     // OPTIONS
     var options = opsObject || {};
@@ -532,9 +653,12 @@
     // used by to() method and expects object : {} / false
     this._resetStart = options.resetStart || 0;
     // you can only set a core easing function as default
+    /** @type {KUTE.easingOption} */
     this._easing = typeof (options.easing) === 'function' ? options.easing : connect.processEasing(options.easing);
-    this._duration = options.duration || defaultOptions.duration; // duration option | default
-    this._delay = options.delay || defaultOptions.delay; // delay option | default
+    /** @type {number} */
+    this._duration = options.duration || defaultOptions$1.duration; // duration option | default
+    /** @type {number} */
+    this._delay = options.delay || defaultOptions$1.delay; // delay option | default
 
     // set other options
     Object.keys(options).forEach(function (op) {
@@ -552,22 +676,24 @@
     var easingFnName = this._easing.name;
     if (!onStart[easingFnName]) {
       onStart[easingFnName] = function easingFn(prop) {
-        if (!KUTE$1[prop] && prop === this._easing.name) { KUTE$1[prop] = this._easing; }
+        if (!KEC[prop] && prop === this._easing.name) { KEC[prop] = this._easing; }
       };
     }
 
     return this;
   };
 
-  // tween prototype
-  // queue tween object to main frame update
-  // move functions that use the ticker outside the prototype to be in the same scope with it
+  /**
+   * Starts tweening
+   * @param {number?} time the tween start time
+   * @returns {TweenBase} this instance
+   */
   TweenBase.prototype.start = function start (time) {
     // now it's a good time to start
     add(this);
     this.playing = true;
 
-    this._startTime = typeof time !== 'undefined' ? time : KUTE$1.Time();
+    this._startTime = typeof time !== 'undefined' ? time : KEC.Time();
     this._startTime += this._delay;
 
     if (!this._startFired) {
@@ -584,6 +710,10 @@
     return this;
   };
 
+  /**
+   * Stops tweening
+   * @returns {TweenBase} this instance
+   */
   TweenBase.prototype.stop = function stop () {
     if (this.playing) {
       remove(this);
@@ -597,6 +727,9 @@
     return this;
   };
 
+  /**
+   * Trigger internal completion callbacks.
+   */
   TweenBase.prototype.close = function close () {
       var this$1$1 = this;
 
@@ -611,20 +744,33 @@
     stop.call(this);
   };
 
+  /**
+   * Schedule another tween instance to start once this one completes.
+   * @param {KUTE.chainOption} args the tween animation start time
+   * @returns {TweenBase} this instance
+   */
   TweenBase.prototype.chain = function chain (args) {
     this._chain = [];
     this._chain = args.length ? args : this._chain.concat(args);
     return this;
   };
 
+  /**
+   * Stop tweening the chained tween instances.
+   */
   TweenBase.prototype.stopChainedTweens = function stopChainedTweens () {
     if (this._chain && this._chain.length) { this._chain.forEach(function (tw) { return tw.stop(); }); }
   };
 
+  /**
+   * Update the tween on each tick.
+   * @param {number} time the tick time
+   * @returns {boolean} this instance
+   */
   TweenBase.prototype.update = function update (time) {
       var this$1$1 = this;
 
-    var T = time !== undefined ? time : KUTE$1.Time();
+    var T = time !== undefined ? time : KEC.Time();
 
     var elapsed;
 
@@ -638,7 +784,7 @@
 
     // render the update
     Object.keys(this.valuesEnd).forEach(function (tweenProp) {
-      KUTE$1[tweenProp](this$1$1.element,
+      KEC[tweenProp](this$1$1.element,
         this$1$1.valuesStart[tweenProp],
         this$1$1.valuesEnd[tweenProp],
         progress);
@@ -675,16 +821,13 @@
   // Update Tween Interface
   connect.tween = TweenBase;
 
-  defaultOptions.repeat = 0;
-  defaultOptions.repeatDelay = 0;
-  defaultOptions.yoyo = false;
-  defaultOptions.resetStart = false;
-
-  // no need to set defaults for callbacks
-  // defaultOptions.onPause = undefined
-  // defaultOptions.onResume = undefined
-
-  // the constructor that supports to, allTo methods
+  /**
+   * The `KUTE.Tween()` constructor creates a new `Tween` object
+   * for a single `HTMLElement` and returns it.
+   *
+   * This constructor adds additional functionality and is the default
+   * Tween object constructor in KUTE.js.
+   */
   var Tween = /*@__PURE__*/(function (TweenBase) {
     function Tween() {
       var this$1$1 = this;
@@ -697,8 +840,12 @@
       this.valuesStart = {};
       this.valuesEnd = {};
 
-      var startObject = args[1];
-      var endObject = args[2];
+      // const startObject = args[1];
+      // const endObject = args[2];
+      var ref = args.slice(1);
+      var startObject = ref[0];
+      var endObject = ref[1];
+      var options = ref[2];
 
       // set valuesEnd
       prepareObject.call(this, endObject, 'end');
@@ -720,20 +867,26 @@
       }
 
       // set paused state
+      /** @type {boolean} */
       this.paused = false;
+      /** @type {number?} */
       this._pauseTime = null;
 
       // additional properties and options
-      var options = args[3];
-
-      this._repeat = options.repeat || defaultOptions.repeat;
-      this._repeatDelay = options.repeatDelay || defaultOptions.repeatDelay;
+      /** @type {number?} */
+      this._repeat = options.repeat || defaultOptions$1.repeat;
+      /** @type {number?} */
+      this._repeatDelay = options.repeatDelay || defaultOptions$1.repeatDelay;
       // we cache the number of repeats to be able to put it back after all cycles finish
+      /** @type {number?} */
       this._repeatOption = this._repeat;
 
       // yoyo needs at least repeat: 1
+      /** @type {KUTE.tweenProps} */
       this.valuesRepeat = {}; // valuesRepeat
-      this._yoyo = options.yoyo || defaultOptions.yoyo;
+      /** @type {boolean} */
+      this._yoyo = options.yoyo || defaultOptions$1.yoyo;
+      /** @type {boolean} */
       this._reversed = false;
 
       // don't load extra callbacks
@@ -749,7 +902,11 @@
     Tween.prototype = Object.create( TweenBase && TweenBase.prototype );
     Tween.prototype.constructor = Tween;
 
-    // additions to start method
+    /**
+     * Starts tweening, extended method
+     * @param {number?} time the tween start time
+     * @returns {Tween} this instance
+     */
     Tween.prototype.start = function start (time) {
       var this$1$1 = this;
 
@@ -780,7 +937,10 @@
       return this;
     };
 
-    // updates to super methods
+    /**
+     * Stops tweening, extended method
+     * @returns {Tween} this instance
+     */
     Tween.prototype.stop = function stop () {
       TweenBase.prototype.stop.call(this);
       if (!this.paused && this.playing) {
@@ -790,6 +950,9 @@
       return this;
     };
 
+    /**
+     * Trigger internal completion callbacks.
+     */
     Tween.prototype.close = function close () {
       TweenBase.prototype.close.call(this);
 
@@ -804,7 +967,10 @@
       return this;
     };
 
-    // additions to prototype
+    /**
+     * Resume tweening
+     * @returns {Tween} this instance
+     */
     Tween.prototype.resume = function resume () {
       if (this.paused && this.playing) {
         this.paused = false;
@@ -814,7 +980,7 @@
         // re-queue execution context
         queueStart.call(this);
         // update time and let it roll
-        this._startTime += KUTE$1.Time() - this._pauseTime;
+        this._startTime += KEC.Time() - this._pauseTime;
         add(this);
         // restart ticker if stopped
         if (!Tick) { Ticker(); }
@@ -822,11 +988,15 @@
       return this;
     };
 
+    /**
+     * Pause tweening
+     * @returns {Tween} this instance
+     */
     Tween.prototype.pause = function pause () {
       if (!this.paused && this.playing) {
         remove(this);
         this.paused = true;
-        this._pauseTime = KUTE$1.Time();
+        this._pauseTime = KEC.Time();
         if (this._onPause !== undefined) {
           this._onPause.call(this);
         }
@@ -834,23 +1004,29 @@
       return this;
     };
 
+    /**
+     * Reverses start values with end values
+     */
     Tween.prototype.reverse = function reverse () {
       var this$1$1 = this;
 
-      // if (this._yoyo) {
       Object.keys(this.valuesEnd).forEach(function (reverseProp) {
         var tmp = this$1$1.valuesRepeat[reverseProp];
         this$1$1.valuesRepeat[reverseProp] = this$1$1.valuesEnd[reverseProp];
         this$1$1.valuesEnd[reverseProp] = tmp;
         this$1$1.valuesStart[reverseProp] = this$1$1.valuesRepeat[reverseProp];
       });
-      // }
     };
 
+    /**
+     * Update the tween on each tick.
+     * @param {number} time the tick time
+     * @returns {boolean} this instance
+     */
     Tween.prototype.update = function update (time) {
       var this$1$1 = this;
 
-      var T = time !== undefined ? time : KUTE$1.Time();
+      var T = time !== undefined ? time : KEC.Time();
 
       var elapsed;
 
@@ -864,7 +1040,7 @@
 
       // render the update
       Object.keys(this.valuesEnd).forEach(function (tweenProp) {
-        KUTE$1[tweenProp](this$1$1.element,
+        KEC[tweenProp](this$1$1.element,
           this$1$1.valuesStart[tweenProp],
           this$1$1.valuesEnd[tweenProp],
           progress);
@@ -920,61 +1096,83 @@
   // Update Tween Interface Update
   connect.tween = Tween;
 
-  // KUTE.js Tween Collection
-  // ========================
-
+  /**
+   * The static method creates a new `Tween` object for each `HTMLElement`
+   * from and `Array`, `HTMLCollection` or `NodeList`.
+   */
   var TweenCollection = function TweenCollection(els, vS, vE, Options) {
     var this$1$1 = this;
 
+    var TweenConstructor = connect.tween;
+    /** @type {KUTE.twCollection[]} */
     this.tweens = [];
 
-    // set default offset
-    if (!('offset' in defaultOptions)) { defaultOptions.offset = 0; }
-
     var Ops = Options || {};
-    Ops.delay = Ops.delay || defaultOptions.delay;
+    /** @type {number?} */
+    Ops.delay = Ops.delay || defaultOptions$1.delay;
 
     // set all options
     var options = [];
 
     Array.from(els).forEach(function (el, i) {
-      var TweenConstructor = connect.tween;
       options[i] = Ops || {};
-      options[i].delay = i > 0 ? Ops.delay + (Ops.offset || defaultOptions.offset) : Ops.delay;
+      options[i].delay = i > 0 ? Ops.delay + (Ops.offset || defaultOptions$1.offset) : Ops.delay;
       if (el instanceof Element) {
         this$1$1.tweens.push(new TweenConstructor(el, vS, vE, options[i]));
       } else {
-        throw Error(("KUTE.js - " + el + " not instanceof [Element]"));
+        throw Error(("KUTE - " + el + " is not instanceof Element"));
       }
     });
 
+    /** @type {number?} */
     this.length = this.tweens.length;
     return this;
   };
 
+  /**
+   * Starts tweening, all targets
+   * @param {number?} time the tween start time
+   * @returns {TweenCollection} this instance
+   */
   TweenCollection.prototype.start = function start (time) {
-    var T = time === undefined ? KUTE$1.Time() : time;
+    var T = time === undefined ? KEC.Time() : time;
     this.tweens.map(function (tween) { return tween.start(T); });
     return this;
   };
 
+  /**
+   * Stops tweening, all targets and their chains
+   * @returns {TweenCollection} this instance
+   */
   TweenCollection.prototype.stop = function stop () {
     this.tweens.map(function (tween) { return tween.stop(); });
     return this;
   };
 
-  TweenCollection.prototype.pause = function pause (time) {
-    var T = time === undefined ? KUTE$1.Time() : time;
-    this.tweens.map(function (tween) { return tween.pause(T); });
+  /**
+   * Pause tweening, all targets
+   * @returns {TweenCollection} this instance
+   */
+  TweenCollection.prototype.pause = function pause () {
+    this.tweens.map(function (tween) { return tween.pause(); });
     return this;
   };
 
-  TweenCollection.prototype.resume = function resume (time) {
-    var T = time === undefined ? KUTE$1.Time() : time;
-    this.tweens.map(function (tween) { return tween.resume(T); });
+  /**
+   * Resume tweening, all targets
+   * @returns {TweenCollection} this instance
+   */
+  TweenCollection.prototype.resume = function resume () {
+    this.tweens.map(function (tween) { return tween.resume(); });
     return this;
   };
 
+  /**
+   * Schedule another tween or collection to start after
+   * this one is complete.
+   * @param {number?} args the tween start time
+   * @returns {TweenCollection} this instance
+   */
   TweenCollection.prototype.chain = function chain (args) {
     var lastTween = this.tweens[this.length - 1];
     if (args instanceof TweenCollection) {
@@ -987,14 +1185,26 @@
     return this;
   };
 
+  /**
+   * Check if any tween instance is playing
+   * @param {number?} time the tween start time
+   * @returns {TweenCollection} this instance
+   */
   TweenCollection.prototype.playing = function playing () {
     return this.tweens.some(function (tw) { return tw.playing; });
   };
 
+  /**
+   * Remove all tweens in the collection
+   */
   TweenCollection.prototype.removeTweens = function removeTweens () {
     this.tweens = [];
   };
 
+  /**
+   * Returns the maximum animation duration
+   * @returns {number} this instance
+   */
   TweenCollection.prototype.getMaxDuration = function getMaxDuration () {
     var durations = [];
     this.tweens.forEach(function (tw) {
@@ -1003,51 +1213,89 @@
     return Math.max(durations);
   };
 
+  var TweenConstructor$1 = connect.tween;
+
+  /**
+   * The `KUTE.to()` static method returns a new Tween object
+   * for a single `HTMLElement` at its current state.
+   *
+   * @param {Element} element target element
+   * @param {KUTE.tweenProps} endObject
+   * @param {KUTE.tweenOptions} optionsObj tween options
+   * @returns {KUTE.Tween} the resulting Tween object
+   */
   function to(element, endObject, optionsObj) {
     var options = optionsObj || {};
-    var TweenConstructor = connect.tween;
     options.resetStart = endObject;
-    return new TweenConstructor(selector(element), endObject, endObject, options);
+    return new TweenConstructor$1(selector(element), endObject, endObject, options);
   }
 
+  var TweenConstructor = connect.tween;
+
+  /**
+   * The `KUTE.fromTo()` static method returns a new Tween object
+   * for a single `HTMLElement` at a given state.
+   *
+   * @param {Element} element target element
+   * @param {KUTE.tweenProps} startObject
+   * @param {KUTE.tweenProps} endObject
+   * @param {KUTE.tweenOptions} optionsObj tween options
+   * @returns {KUTE.Tween} the resulting Tween object
+   */
   function fromTo(element, startObject, endObject, optionsObj) {
     var options = optionsObj || {};
-    var TweenConstructor = connect.tween;
     return new TweenConstructor(selector(element), startObject, endObject, options);
   }
 
-  // multiple elements tween objects
+  /**
+   * The `KUTE.allTo()` static method creates a new Tween object
+   * for multiple `HTMLElement`s, `HTMLCollection` or `NodeListat`
+   * at their current state.
+   *
+   * @param {Element[] | HTMLCollection | NodeList} elements target elements
+   * @param {KUTE.tweenProps} endObject
+   * @param {KUTE.tweenProps} optionsObj progress
+   * @returns {TweenCollection} the Tween object collection
+   */
   function allTo(elements, endObject, optionsObj) {
     var options = optionsObj || {};
-    optionsObj.resetStart = endObject;
+    options.resetStart = endObject;
     return new TweenCollection(selector(elements, true), endObject, endObject, options);
   }
 
+  /**
+   * The `KUTE.allFromTo()` static method creates a new Tween object
+   * for multiple `HTMLElement`s, `HTMLCollection` or `NodeListat`
+   * at a given state.
+   *
+   * @param {Element[] | HTMLCollection | NodeList} elements target elements
+   * @param {KUTE.tweenProps} startObject
+   * @param {KUTE.tweenProps} endObject
+   * @param {KUTE.tweenOptions} optionsObj tween options
+   * @returns {TweenCollection} the Tween object collection
+   */
   function allFromTo(elements, startObject, endObject, optionsObj) {
     var options = optionsObj || {};
     return new TweenCollection(selector(elements, true), startObject, endObject, options);
   }
 
-  // Animation class
-  // * builds KUTE components
-  // * populate KUTE objects
-  // * AnimatonBase creates a KUTE.js build for pre-made Tween objects
-  // * AnimatonDevelopment can help you debug your new components
+  /**
+   * Animation Class
+   *
+   * Registers components by populating KUTE.js objects and makes sure
+   * no duplicate component / property is allowed.
+   */
   var Animation = function Animation(Component) {
     try {
       if (Component.component in supportedProperties) {
-        throw Error(("KUTE.js - " + (Component.component) + " already registered"));
+        throw Error(("KUTE - " + (Component.component) + " already registered"));
       } else if (Component.property in defaultValues) {
-        throw Error(("KUTE.js - " + (Component.property) + " already registered"));
-      } else {
-        this.setComponent(Component);
+        throw Error(("KUTE - " + (Component.property) + " already registered"));
       }
     } catch (e) {
       throw Error(e);
     }
-  };
 
-  Animation.prototype.setComponent = function setComponent (Component) {
     var propertyInfo = this;
     var ComponentName = Component.component;
     // const Objects = { defaultValues, defaultOptions, Interpolate, linkProperty, Util }
@@ -1092,9 +1340,10 @@
 
     // set additional options
     if (Component.defaultOptions) {
-      Object.keys(Component.defaultOptions).forEach(function (op) {
-        defaultOptions[op] = Component.defaultOptions[op];
-      });
+      // Object.keys(Component.defaultOptions).forEach((op) => {
+      // defaultOptions[op] = Component.defaultOptions[op];
+      // });
+      Object.assign(defaultOptions$1, Component.defaultOptions);
     }
 
     // set functions
@@ -1122,16 +1371,16 @@
       });
     }
 
-    // set component interpolate
+    // set component interpolation functions
     if (Component.Interpolate) {
       Object.keys(Component.Interpolate).forEach(function (fni) {
         var compIntObj = Component.Interpolate[fni];
-        if (typeof (compIntObj) === 'function' && !Interpolate[fni]) {
-          Interpolate[fni] = compIntObj;
+        if (typeof (compIntObj) === 'function' && !interpolate[fni]) {
+          interpolate[fni] = compIntObj;
         } else {
           Object.keys(compIntObj).forEach(function (sfn) {
-            if (typeof (compIntObj[sfn]) === 'function' && !Interpolate[fni]) {
-              Interpolate[fni] = compIntObj[sfn];
+            if (typeof (compIntObj[sfn]) === 'function' && !interpolate[fni]) {
+              interpolate[fni] = compIntObj[sfn];
             }
           });
         }
@@ -1150,8 +1399,17 @@
     return propertyInfo;
   };
 
-  // trueDimension - returns { v = value, u = unit }
-  function trueDimension(dimValue, isAngle) {
+  /**
+   * trueDimension
+   *
+   * Returns the string value of a specific CSS property converted into a nice
+   * { v = value, u = unit } object.
+   *
+   * @param {string} dimValue the property string value
+   * @param {boolean | number} isAngle sets the utility to investigate angles
+   * @returns {{v: number, u: string}} the true {value, unit} tuple
+   */
+  var trueDimension = function (dimValue, isAngle) {
     var intValue = parseInt(dimValue, 10) || 0;
     var mUnits = ['px', '%', 'deg', 'rad', 'em', 'rem', 'vh', 'vw'];
     var theUnit;
@@ -1166,9 +1424,17 @@
     }
 
     return { v: intValue, u: theUnit };
-  }
+  };
 
-  function numbers(a, b, v) { // number1, number2, progress
+  /**
+   * Numbers Interpolation Function.
+   *
+   * @param {number} a start value
+   * @param {number} b end value
+   * @param {number} v progress
+   * @returns {number} the interpolated number
+   */
+  function numbers(a, b, v) {
     var A = +a;
     var B = b - a;
     // a = +a; b -= a;
@@ -1176,12 +1442,20 @@
   }
 
   // Component Functions
+  /**
+   * Sets the update function for the property.
+   * @param {string} tweenProp the property name
+   */
   function boxModelOnStart(tweenProp) {
-    if (tweenProp in this.valuesEnd && !KUTE$1[tweenProp]) {
-      KUTE$1[tweenProp] = function (elem, a, b, v) {
+    if (tweenProp in this.valuesEnd && !KEC[tweenProp]) {
+      KEC[tweenProp] = function (elem, a, b, v) {
+        /* eslint-disable no-param-reassign -- impossible to satisfy */
+        /* eslint-disable no-bitwise -- impossible to satisfy */
         elem.style[tweenProp] = (v > 0.99 || v < 0.01
           ? ((numbers(a, b, v) * 10) >> 0) / 10
           : (numbers(a, b, v)) >> 0) + "px";
+        /* eslint-enable no-bitwise */
+        /* eslint-enable no-param-reassign */
       };
     }
   }
@@ -1192,9 +1466,21 @@
   baseBoxProps.forEach(function (x) { baseBoxOnStart[x] = boxModelOnStart; });
 
   // Component Functions
+  /**
+   * Returns the current property computed style.
+   * @param {string} tweenProp the property name
+   * @returns {string} computed style for property
+   */
   function getBoxModel(tweenProp) {
     return getStyleForProperty(this.element, tweenProp) || defaultValues[tweenProp];
   }
+
+  /**
+   * Returns the property tween object.
+   * @param {string} tweenProp the property name
+   * @param {string} value the property name
+   * @returns {number} the property tween object
+   */
   function prepareBoxModel(tweenProp, value) {
     var boxValue = trueDimension(value);
     var offsetProp = tweenProp === 'height' ? 'offsetHeight' : 'offsetWidth';
@@ -1218,7 +1504,7 @@
   };
 
   // Component Essential
-  var essentialBoxModel = {
+  var BoxModelEssential = {
     component: 'essentialBoxModel',
     category: 'boxModel',
     properties: essentialBoxProps,
@@ -1228,10 +1514,19 @@
     Util: { trueDimension: trueDimension },
   };
 
-  // hexToRGB - returns RGB color object {r,g,b}
-  function hexToRGB (hex) {
-    var hexShorthand = /^#?([a-f\d])([a-f\d])([a-f\d])$/i; // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-    var HEX = hex.replace(hexShorthand, function (m, r, g, b) { return r + r + g + g + b + b; });
+  /**
+   * hexToRGB
+   *
+   * Converts a #HEX color format into RGB
+   * and returns a color object {r,g,b}.
+   *
+   * @param {string} hex the degree angle
+   * @returns {KUTE.colorObject | null} the radian angle
+   */
+  var hexToRGB = function (hex) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var hexShorthand = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    var HEX = hex.replace(hexShorthand, function (_, r, g, b) { return r + r + g + g + b + b; });
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(HEX);
 
     return result ? {
@@ -1239,10 +1534,17 @@
       g: parseInt(result[2], 16),
       b: parseInt(result[3], 16),
     } : null;
-  }
+  };
 
-  // trueColor - replace transparent and transform any color to rgba()/rgb()
-  function trueColor(colorString) {
+  /**
+   * trueColor
+   *
+   * Transform any color to rgba()/rgb() and return a nice RGB(a) object.
+   *
+   * @param {string} colorString the color input
+   * @returns {KUTE.colorObject} the {r,g,b,a} color object
+   */
+  var trueColor = function (colorString) {
     var result;
     if (/rgb|rgba/.test(colorString)) { // first check if it's a rgb string
       var vrgb = colorString.replace(/\s|\)/, '').split('(')[1].split(',');
@@ -1264,7 +1566,9 @@
         r: 0, g: 0, b: 0, a: 0,
       };
     }
-    if (!/^#|^rgb/.test(colorString)) { // maybe we can check for web safe colors
+    // maybe we can check for web safe colors
+    // only works in a browser
+    if (!/^#|^rgb/.test(colorString)) {
       var siteHead = document.getElementsByTagName('head')[0];
       siteHead.style.color = colorString;
       var webColor = getComputedStyle(siteHead, null).color;
@@ -1277,8 +1581,16 @@
       };
     }
     return result;
-  }
+  };
 
+  /**
+   * Color Interpolation Function.
+   *
+   * @param {KUTE.colorObject} a start color
+   * @param {KUTE.colorObject} b end color
+   * @param {number} v progress
+   * @returns {string} the resulting color
+   */
   function colors(a, b, v) {
     var _c = {};
     var ep = ')';
@@ -1287,12 +1599,10 @@
     var rgba = 'rgba(';
 
     Object.keys(b).forEach(function (c) {
-      // _c[c] = c !== 'a' ? (numbers(a[c], b[c], v) >> 0 || 0) : (a[c] && b[c])
-      // ? (numbers(a[c], b[c], v) * 100 >> 0) / 100 : null;
       if (c !== 'a') {
-        _c[c] = numbers(a[c], b[c], v) >> 0 || 0;
+        _c[c] = numbers(a[c], b[c], v) >> 0 || 0; // eslint-disable-line no-bitwise
       } else if (a[c] && b[c]) {
-        _c[c] = (numbers(a[c], b[c], v) * 100 >> 0) / 100;
+        _c[c] = (numbers(a[c], b[c], v) * 100 >> 0) / 100; // eslint-disable-line no-bitwise
       }
     });
 
@@ -1307,13 +1617,21 @@
   // Component Properties
   // supported formats
   // 'hex', 'rgb', 'rgba' '#fff' 'rgb(0,0,0)' / 'rgba(0,0,0,0)' 'red' (IE9+)
-  var supportedColors$1 = ['color', 'backgroundColor', 'borderColor',
-    'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
+  var supportedColors$1 = [
+    'color', 'backgroundColor', 'outlineColor',
+    'borderColor',
+    'borderTopColor', 'borderRightColor',
+    'borderBottomColor', 'borderLeftColor' ];
 
   // Component Functions
+  /**
+   * Sets the property update function.
+   * @param {string} tweenProp the property name
+   */
   function onStartColors(tweenProp) {
-    if (this.valuesEnd[tweenProp] && !KUTE$1[tweenProp]) {
-      KUTE$1[tweenProp] = function (elem, a, b, v) {
+    if (this.valuesEnd[tweenProp] && !KEC[tweenProp]) {
+      KEC[tweenProp] = function (elem, a, b, v) {
+        // eslint-disable-next-line no-param-reassign
         elem.style[tweenProp] = colors(a, b, v);
       };
     }
@@ -1322,11 +1640,13 @@
   var colorsOnStart$1 = {};
   supportedColors$1.forEach(function (x) { colorsOnStart$1[x] = onStartColors; });
 
-  // Component Interpolation
   // Component Properties
   // supported formats
   // 'hex', 'rgb', 'rgba' '#fff' 'rgb(0,0,0)' / 'rgba(0,0,0,0)' 'red' (IE9+)
-  var supportedColors = ['color', 'backgroundColor', 'borderColor', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
+  var supportedColors = [
+    'color', 'backgroundColor', 'outlineColor',
+    'borderColor', 'borderTopColor', 'borderRightColor',
+    'borderBottomColor', 'borderLeftColor' ];
 
   var defaultColors = {};
   supportedColors.forEach(function (tweenProp) {
@@ -1339,10 +1659,22 @@
     colorsOnStart[x] = onStartColors;
   });
 
+  /**
+   * Returns the current property computed style.
+   * @param {string} prop the property name
+   * @returns {string} property computed style
+   */
   function getColor(prop/* , value */) {
     return getStyleForProperty(this.element, prop) || defaultValues[prop];
   }
-  function prepareColor(prop, value) {
+
+  /**
+   * Returns the property tween object.
+   * @param {string} _ the property name
+   * @param {string} value the property value
+   * @returns {KUTE.colorObject} the property tween object
+   */
+  function prepareColor(/* prop, */_, value) {
     return trueColor(value);
   }
 
@@ -1368,18 +1700,30 @@
   var attributes = {};
 
   var onStartAttr = {
+    /**
+     * onStartAttr.attr
+     *
+     * Sets the sub-property update function.
+     * @param {string} tweenProp the property name
+     */
     attr: function attr(tweenProp) {
-      if (!KUTE$1[tweenProp] && this.valuesEnd[tweenProp]) {
-        KUTE$1[tweenProp] = function (elem, vS, vE, v) {
+      if (!KEC[tweenProp] && this.valuesEnd[tweenProp]) {
+        KEC[tweenProp] = function (elem, vS, vE, v) {
           Object.keys(vE).forEach(function (oneAttr) {
-            KUTE$1.attributes[oneAttr](elem, oneAttr, vS[oneAttr], vE[oneAttr], v);
+            KEC.attributes[oneAttr](elem, oneAttr, vS[oneAttr], vE[oneAttr], v);
           });
         };
       }
     },
+    /**
+     * onStartAttr.attributes
+     *
+     * Sets the update function for the property.
+     * @param {string} tweenProp the property name
+     */
     attributes: function attributes$1(tweenProp) {
-      if (!KUTE$1[tweenProp] && this.valuesEnd.attr) {
-        KUTE$1[tweenProp] = attributes;
+      if (!KEC[tweenProp] && this.valuesEnd.attr) {
+        KEC[tweenProp] = attributes;
       }
     },
   };
@@ -1391,15 +1735,27 @@
   var svgColors = ['fill', 'stroke', 'stop-color'];
 
   // Component Util
+  /**
+   * Returns non-camelcase property name.
+   * @param {string} a the camelcase property name
+   * @returns {string} the non-camelcase property name
+   */
   function replaceUppercase(a) { return a.replace(/[A-Z]/g, '-$&').toLowerCase(); }
 
   // Component Functions
-  function getAttr(tweenProp, value) {
+  /**
+   * Returns the current attribute value.
+   * @param {string} _ the property name
+   * @param {string} value the property value
+   * @returns {{[x:string]: string}} attribute value
+   */
+  function getAttr(/* tweenProp, */_, value) {
     var this$1$1 = this;
 
     var attrStartValues = {};
     Object.keys(value).forEach(function (attr) {
-      // get the value for 'fill-opacity' not fillOpacity, also 'width' not the internal 'width_px'
+      // get the value for 'fill-opacity' not fillOpacity
+      // also 'width' not the internal 'width_px'
       var attribute = replaceUppercase(attr).replace(/_+[a-z]+/, '');
       var currentValue = this$1$1.element.getAttribute(attribute);
       attrStartValues[attribute] = svgColors.includes(attribute)
@@ -1410,6 +1766,12 @@
     return attrStartValues;
   }
 
+  /**
+   * Returns the property tween object.
+   * @param {string} tweenProp the property name
+   * @param {string} attrObj the property value
+   * @returns {number} the property tween object
+   */
   function prepareAttr(tweenProp, attrObj) {
     var this$1$1 = this;
    // attr (string),attrObj (object)
@@ -1431,6 +1793,7 @@
             if (this$1$1.valuesEnd[tweenProp] && this$1$1.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
               attributes[tp] = function (elem, oneAttr, a, b, v) {
                 var _p = oneAttr.replace(suffix, '');
+                /* eslint no-bitwise: ["error", { "allow": [">>"] }] */
                 elem.setAttribute(_p, ((numbers(a.v, b.v, v) * 1000 >> 0) / 1000) + b.u);
               };
             }
@@ -1499,28 +1862,38 @@
   } */
 
   // Component Functions
+  /**
+   * Sets the property update function.
+   * @param {string} tweenProp the property name
+   */
   function onStartOpacity(tweenProp/* , value */) {
     // opacity could be 0 sometimes, we need to check regardless
-    if (tweenProp in this.valuesEnd && !KUTE$1[tweenProp]) {
-      KUTE$1[tweenProp] = function (elem, a, b, v) {
+    if (tweenProp in this.valuesEnd && !KEC[tweenProp]) {
+      KEC[tweenProp] = function (elem, a, b, v) {
+        /* eslint-disable */
         elem.style[tweenProp] = ((numbers(a, b, v) * 1000) >> 0) / 1000;
+        /* eslint-enable */
       };
     }
   }
 
-  /* opacityProperty = {
-    property: 'opacity',
-    defaultValue: 1,
-    interpolators: {numbers},
-    functions = { prepareStart, prepareProperty, onStart }
-  } */
-
   // Component Functions
+  /**
+   * Returns the current property computed style.
+   * @param {string} tweenProp the property name
+   * @returns {string} computed style for property
+   */
   function getOpacity(tweenProp/* , value */) {
     return getStyleForProperty(this.element, tweenProp);
   }
 
-  function prepareOpacity(tweenProp, value) {
+  /**
+   * Returns the property tween object.
+   * @param {string} _ the property name
+   * @param {string} value the property value
+   * @returns {number} the property tween object
+   */
+  function prepareOpacity(/* tweenProp, */_, value) {
     return parseFloat(value); // opacity always FLOAT
   }
 
@@ -1532,7 +1905,7 @@
   };
 
   // Full Component
-  var opacityProperty = {
+  var OpacityProperty = {
     component: 'opacityProperty',
     property: 'opacity',
     defaultValue: 1,
@@ -1559,10 +1932,16 @@
 
   // Component Functions
   var onStartWrite = {
+    /**
+     * onStartWrite.text
+     *
+     * Sets the property update function.
+     * @param {string} tweenProp the property name
+     */
     text: function text(tweenProp) {
-      if (!KUTE$1[tweenProp] && this.valuesEnd[tweenProp]) {
+      if (!KEC[tweenProp] && this.valuesEnd[tweenProp]) {
         var chars = this._textChars;
-        var charsets = charSet[defaultOptions.textChars];
+        var charsets = charSet[defaultOptions$1.textChars];
 
         if (chars in charSet) {
           charsets = charSet[chars];
@@ -1570,12 +1949,13 @@
           charsets = chars;
         }
 
-        KUTE$1[tweenProp] = function (elem, a, b, v) {
+        KEC[tweenProp] = function (elem, a, b, v) {
           var initialText = '';
           var endText = '';
           var finalText = b === '' ? ' ' : b;
           var firstLetterA = a.substring(0);
           var firstLetterB = b.substring(0);
+          /* eslint-disable */
           var pointer = charsets[(Math.random() * charsets.length) >> 0];
 
           if (a === ' ') {
@@ -1594,13 +1974,22 @@
               .substring(0, Math.min(v * firstLetterB.length, firstLetterB.length) >> 0);
             elem.innerHTML = v < 1 ? ((endText + pointer + initialText)) : finalText;
           }
+          /* eslint-enable */
         };
       }
     },
+    /**
+     * onStartWrite.number
+     *
+     * Sets the property update function.
+     * @param {string} tweenProp the property name
+     */
     number: function number(tweenProp) {
-      if (tweenProp in this.valuesEnd && !KUTE$1[tweenProp]) { // numbers can be 0
-        KUTE$1[tweenProp] = function (elem, a, b, v) {
+      if (tweenProp in this.valuesEnd && !KEC[tweenProp]) { // numbers can be 0
+        KEC[tweenProp] = function (elem, a, b, v) {
+          /* eslint-disable */
           elem.innerHTML = numbers(a, b, v) >> 0;
+          /* eslint-enable */
         };
       }
     },
@@ -1625,8 +2014,10 @@
       textWriteWrapper = document.createElement('SPAN');
       textWriteWrapper.className = classNAME;
       textWriteWrapper.innerHTML = elementInnerHTML;
+      /* eslint-disable no-param-reassign -- impossible to satisfy */
       el.appendChild(textWriteWrapper);
       el.innerHTML = textWriteWrapper.outerHTML;
+      /* eslint-enable no-param-reassign -- impossible to satisfy */
     } else if (el.children.length && el.children[0].className === classNAME) {
       (assign = el.children, textWriteWrapper = assign[0]);
     }
@@ -1677,9 +2068,11 @@
     var oldTargetSegs = getTextPartsArray(target, 'text-part');
     var newTargetSegs = getTextPartsArray(wrapContentsSpan(newText), 'text-part');
 
+    /* eslint-disable no-param-reassign */
     target.innerHTML = '';
     target.innerHTML += oldTargetSegs.map(function (s) { s.className += ' oldText'; return s.outerHTML; }).join('');
     target.innerHTML += newTargetSegs.map(function (s) { s.className += ' newText'; return s.outerHTML.replace(s.innerHTML, ''); }).join('');
+    /* eslint-enable no-param-reassign */
 
     return [oldTargetSegs, newTargetSegs];
   }
@@ -1718,8 +2111,10 @@
     }));
     textTween = textTween.concat(newTargets.map(function (el, i) {
       function onComplete() {
+        /* eslint-disable no-param-reassign */
         target.innerHTML = newText;
         target.playing = false;
+        /* eslint-enable no-param-reassign */
       }
 
       options.duration = options.duration === 'auto' ? newTargetSegs[i].innerHTML.length * 75 : options.duration;
@@ -1733,6 +2128,7 @@
     textTween.start = function startTweens() {
       if (!target.playing) {
         textTween.forEach(function (tw) { return tw.start(); });
+        // eslint-disable-next-line no-param-reassign
         target.playing = true;
       }
     };
@@ -1741,10 +2137,20 @@
   }
 
   // Component Functions
+  /**
+   * Returns the current element `innerHTML`.
+   * @returns {string} computed style for property
+   */
   function getWrite(/* tweenProp, value */) {
     return this.element.innerHTML;
   }
 
+  /**
+   * Returns the property tween object.
+   * @param {string} tweenProp the property name
+   * @param {string} value the property value
+   * @returns {number | string} the property tween object
+   */
   function prepareText(tweenProp, value) {
     if (tweenProp === 'number') {
       return parseFloat(value);
@@ -1761,7 +2167,7 @@
   };
 
   // Full Component
-  var textWrite = {
+  var TextWrite = {
     component: 'textWriteProperties',
     category: 'textWrite',
     properties: ['text', 'number'],
@@ -1773,62 +2179,132 @@
     Util: { charSet: charSet, createTextTweens: createTextTweens },
   };
 
+  /**
+   * Perspective Interpolation Function.
+   *
+   * @param {number} a start value
+   * @param {number} b end value
+   * @param {string} u unit
+   * @param {number} v progress
+   * @returns {string} the perspective function in string format
+   */
   function perspective(a, b, u, v) {
+    // eslint-disable-next-line no-bitwise
     return ("perspective(" + (((a + (b - a) * v) * 1000 >> 0) / 1000) + u + ")");
   }
 
+  /**
+   * Translate 3D Interpolation Function.
+   *
+   * @param {number[]} a start [x,y,z] position
+   * @param {number[]} b end [x,y,z] position
+   * @param {string} u unit, usually `px` degrees
+   * @param {number} v progress
+   * @returns {string} the interpolated 3D translation string
+   */
   function translate3d(a, b, u, v) {
     var translateArray = [];
     for (var ax = 0; ax < 3; ax += 1) {
       translateArray[ax] = (a[ax] || b[ax]
+        // eslint-disable-next-line no-bitwise
         ? ((a[ax] + (b[ax] - a[ax]) * v) * 1000 >> 0) / 1000 : 0) + u;
     }
     return ("translate3d(" + (translateArray.join(',')) + ")");
   }
 
+  /**
+   * 3D Rotation Interpolation Function.
+   *
+   * @param {number} a start [x,y,z] angles
+   * @param {number} b end [x,y,z] angles
+   * @param {string} u unit, usually `deg` degrees
+   * @param {number} v progress
+   * @returns {string} the interpolated 3D rotation string
+   */
   function rotate3d(a, b, u, v) {
     var rotateStr = '';
+    // eslint-disable-next-line no-bitwise
     rotateStr += a[0] || b[0] ? ("rotateX(" + (((a[0] + (b[0] - a[0]) * v) * 1000 >> 0) / 1000) + u + ")") : '';
+    // eslint-disable-next-line no-bitwise
     rotateStr += a[1] || b[1] ? ("rotateY(" + (((a[1] + (b[1] - a[1]) * v) * 1000 >> 0) / 1000) + u + ")") : '';
+    // eslint-disable-next-line no-bitwise
     rotateStr += a[2] || b[2] ? ("rotateZ(" + (((a[2] + (b[2] - a[2]) * v) * 1000 >> 0) / 1000) + u + ")") : '';
     return rotateStr;
   }
 
+  /**
+   * Translate 2D Interpolation Function.
+   *
+   * @param {number[]} a start [x,y] position
+   * @param {number[]} b end [x,y] position
+   * @param {string} u unit, usually `px` degrees
+   * @param {number} v progress
+   * @returns {string} the interpolated 2D translation string
+   */
   function translate(a, b, u, v) {
     var translateArray = [];
+    // eslint-disable-next-line no-bitwise
     translateArray[0] = (a[0] === b[0] ? b[0] : ((a[0] + (b[0] - a[0]) * v) * 1000 >> 0) / 1000) + u;
+    // eslint-disable-next-line no-bitwise
     translateArray[1] = a[1] || b[1] ? ((a[1] === b[1] ? b[1] : ((a[1] + (b[1] - a[1]) * v) * 1000 >> 0) / 1000) + u) : '0';
     return ("translate(" + (translateArray.join(',')) + ")");
   }
 
+  /**
+   * 2D Rotation Interpolation Function.
+   *
+   * @param {number} a start angle
+   * @param {number} b end angle
+   * @param {string} u unit, usually `deg` degrees
+   * @param {number} v progress
+   * @returns {string} the interpolated rotation
+   */
   function rotate(a, b, u, v) {
+    // eslint-disable-next-line no-bitwise
     return ("rotate(" + (((a + (b - a) * v) * 1000 >> 0) / 1000) + u + ")");
   }
 
+  /**
+   * Scale Interpolation Function.
+   *
+   * @param {number} a start scale
+   * @param {number} b end scale
+   * @param {number} v progress
+   * @returns {string} the interpolated scale
+   */
   function scale(a, b, v) {
+    // eslint-disable-next-line no-bitwise
     return ("scale(" + (((a + (b - a) * v) * 1000 >> 0) / 1000) + ")");
   }
 
+  /**
+   * Skew Interpolation Function.
+   *
+   * @param {number} a start {x,y} angles
+   * @param {number} b end {x,y} angles
+   * @param {string} u unit, usually `deg` degrees
+   * @param {number} v progress
+   * @returns {string} the interpolated string value of skew(s)
+   */
   function skew(a, b, u, v) {
     var skewArray = [];
+    // eslint-disable-next-line no-bitwise
     skewArray[0] = (a[0] === b[0] ? b[0] : ((a[0] + (b[0] - a[0]) * v) * 1000 >> 0) / 1000) + u;
+    // eslint-disable-next-line no-bitwise
     skewArray[1] = a[1] || b[1] ? ((a[1] === b[1] ? b[1] : ((a[1] + (b[1] - a[1]) * v) * 1000 >> 0) / 1000) + u) : '0';
     return ("skew(" + (skewArray.join(',')) + ")");
   }
 
-  /* transformFunctions = {
-    property: 'transform',
-    subProperties,
-    defaultValues,
-    Interpolate: {translate,rotate,skew,scale},
-    functions } */
-
-  // same to svg transform, attr
-
   // Component Functions
+  /**
+   * Sets the property update function.
+   * * same to svgTransform, htmlAttributes
+   * @param {string} tweenProp the property name
+   */
   function onStartTransform(tweenProp) {
-    if (!KUTE$1[tweenProp] && this.valuesEnd[tweenProp]) {
-      KUTE$1[tweenProp] = function (elem, a, b, v) {
+    if (!KEC[tweenProp] && this.valuesEnd[tweenProp]) {
+      KEC[tweenProp] = function (elem, a, b, v) {
+        // eslint-disable-next-line no-param-reassign
         elem.style[tweenProp] = (a.perspective || b.perspective ? perspective(a.perspective, b.perspective, 'px', v) : '') // one side might be 0
           + (a.translate3d ? translate3d(a.translate3d, b.translate3d, 'px', v) : '') // array [x,y,z]
           + (a.rotate3d ? rotate3d(a.rotate3d, b.rotate3d, 'deg', v) : '') // array [x,y,z]
@@ -1838,23 +2314,27 @@
     }
   }
 
-  /* transformFunctions = {
-    property: 'transform',
-    subProperties,
-    defaultValues,
-    Interpolate: {translate,rotate,skew,scale},
-    functions } */
-
   // same to svg transform, attr
   // the component developed for modern browsers supporting non-prefixed transform
 
   // Component Functions
-  function getTransform(tweenProperty/* , value */) {
+  /**
+   * Returns the current property inline style.
+   * @param {string} tweenProp the property name
+   * @returns {string} inline style for property
+   */
+  function getTransform(tweenProp/* , value */) {
     var currentStyle = getInlineStyle(this.element);
-    return currentStyle[tweenProperty] ? currentStyle[tweenProperty] : defaultValues[tweenProperty];
+    return currentStyle[tweenProp] ? currentStyle[tweenProp] : defaultValues[tweenProp];
   }
 
-  function prepareTransform(prop, obj) {
+  /**
+   * Returns the property tween object.
+   * @param {string} _ the property name
+   * @param {Object<string, string | number | (string | number)[]>} obj the property value
+   * @returns {KUTE.transformFObject} the property tween object
+   */
+  function prepareTransform(/* prop, */_, obj) {
     var prepAxis = ['X', 'Y', 'Z']; // coordinates
     var transformObject = {};
     var translateArray = []; var rotateArray = []; var skewArray = [];
@@ -1908,6 +2388,10 @@
     return transformObject;
   }
 
+  /**
+   * Prepare tween object in advance for `to()` method.
+   * @param {string} tweenProp the property name
+   */
   function crossCheckTransform(tweenProp) {
     if (this.valuesEnd[tweenProp]) {
       if (this.valuesEnd[tweenProp]) {
@@ -1952,7 +2436,7 @@
   };
 
   // Full Component
-  var transformFunctionsComponent = {
+  var TransformFunctions = {
     component: 'transformFunctions',
     property: 'transform',
     subProperties: supportedTransformProperties,
@@ -1969,51 +2453,58 @@
     },
   };
 
-  /* svgDraw = {
-    property: 'draw',
-    defaultValue,
-    Interpolate: {numbers} },
-    functions = { prepareStart, prepareProperty, onStart }
-  } */
-
   // Component Functions
+  /**
+   * Sets the property update function.
+   * @param {string} tweenProp the property name
+   */
   function onStartDraw(tweenProp) {
-    if (tweenProp in this.valuesEnd && !KUTE$1[tweenProp]) {
-      KUTE$1[tweenProp] = function (elem, a, b, v) {
+    if (tweenProp in this.valuesEnd && !KEC[tweenProp]) {
+      KEC[tweenProp] = function (elem, a, b, v) {
+        /* eslint-disable no-bitwise -- impossible to satisfy */
         var pathLength = (a.l * 100 >> 0) / 100;
         var start = (numbers(a.s, b.s, v) * 100 >> 0) / 100;
         var end = (numbers(a.e, b.e, v) * 100 >> 0) / 100;
         var offset = 0 - start;
         var dashOne = end + offset;
-
+        // eslint-disable-next-line no-param-reassign -- impossible to satisfy
         elem.style.strokeDashoffset = offset + "px";
+        // eslint-disable-next-line no-param-reassign -- impossible to satisfy
         elem.style.strokeDasharray = (((dashOne < 1 ? 0 : dashOne) * 100 >> 0) / 100) + "px, " + pathLength + "px";
+        /* eslint-disable no-bitwise -- impossible to satisfy */
       };
     }
   }
 
-  /* svgDraw = {
-    property: 'draw',
-    defaultValue,
-    Interpolate: {numbers} },
-    functions = { prepareStart, prepareProperty, onStart }
-  } */
-
   // Component Util
+  /**
+   * Convert a `<path>` length percent value to absolute.
+   * @param {string} v raw value
+   * @param {number} l length value
+   * @returns {number} the absolute value
+   */
   function percent(v, l) {
     return (parseFloat(v) / 100) * l;
   }
 
-  // http://stackoverflow.com/a/30376660
-  // returns the length of a Rect
+  /**
+   * Returns the `<rect>` length.
+   * It doesn't compute `rx` and / or `ry` of the element.
+   * @see http://stackoverflow.com/a/30376660
+   * @param {SVGRectElement} el target element
+   * @returns {number} the `<rect>` length
+   */
   function getRectLength(el) {
     var w = el.getAttribute('width');
     var h = el.getAttribute('height');
     return (w * 2) + (h * 2);
   }
 
-  // getPolygonLength / getPolylineLength
-  // returns the length of the Polygon / Polyline
+  /**
+   * Returns the `<polyline>` / `<polygon>` length.
+   * @param {SVGPolylineElement | SVGPolygonElement} el target element
+   * @returns {number} the element length
+   */
   function getPolyLength(el) {
     var points = el.getAttribute('points').split(' ');
 
@@ -2044,7 +2535,11 @@
     return len;
   }
 
-  // return the length of the line
+  /**
+   * Returns the `<line>` length.
+   * @param {SVGLineElement} el target element
+   * @returns {number} the element length
+   */
   function getLineLength(el) {
     var x1 = el.getAttribute('x1');
     var x2 = el.getAttribute('x2');
@@ -2053,13 +2548,22 @@
     return Math.sqrt(Math.pow( (x2 - x1), 2 ) + Math.pow( (y2 - y1), 2 ));
   }
 
-  // return the length of the circle
+  /**
+   * Returns the `<circle>` length.
+   * @param {SVGCircleElement} el target element
+   * @returns {number} the element length
+   */
   function getCircleLength(el) {
     var r = el.getAttribute('r');
     return 2 * Math.PI * r;
   }
 
   // returns the length of an ellipse
+  /**
+   * Returns the `<ellipse>` length.
+   * @param {SVGEllipseElement} el target element
+   * @returns {number} the element length
+   */
   function getEllipseLength(el) {
     var rx = el.getAttribute('rx');
     var ry = el.getAttribute('ry');
@@ -2068,7 +2572,11 @@
     return ((Math.sqrt(0.5 * ((len * len) + (wid * wid)))) * (Math.PI * 2)) / 2;
   }
 
-  // returns the result of any of the below functions
+  /**
+   * Returns the shape length.
+   * @param {SVGPathCommander.shapeTypes} el target element
+   * @returns {number} the element length
+   */
   function getTotalLength(el) {
     if (el.tagName === 'rect') {
       return getRectLength(el);
@@ -2085,6 +2593,12 @@
     return 0;
   }
 
+  /**
+   * Returns the property tween object.
+   * @param {SVGPathCommander.shapeTypes} element the target element
+   * @param {string | KUTE.drawObject} value the property value
+   * @returns {KUTE.drawObject} the property tween object
+   */
   function getDraw(element, value) {
     var length = /path|glyph/.test(element.tagName)
       ? element.getTotalLength()
@@ -2094,7 +2608,7 @@
     var dasharray;
     var offset;
 
-    if (value instanceof Object) {
+    if (value instanceof Object && Object.keys(value).every(function (v) { return ['s', 'e', 'l'].includes(v); })) {
       return value;
     } if (typeof value === 'string') {
       var v = value.split(/,|\s/);
@@ -2110,17 +2624,33 @@
     return { s: start, e: end, l: length };
   }
 
+  /**
+   * Reset CSS properties associated with the `draw` property.
+   * @param {SVGPathCommander.shapeTypes} element target
+   */
   function resetDraw(elem) {
+    /* eslint-disable no-param-reassign -- impossible to satisfy */
     elem.style.strokeDashoffset = '';
     elem.style.strokeDasharray = '';
+    /* eslint-disable no-param-reassign -- impossible to satisfy */
   }
 
   // Component Functions
+  /**
+   * Returns the property tween object.
+   * @returns {KUTE.drawObject} the property tween object
+   */
   function getDrawValue(/* prop, value */) {
     return getDraw(this.element);
   }
-  function prepareDraw(a, o) {
-    return getDraw(this.element, o);
+  /**
+   * Returns the property tween object.
+   * @param {string} _ the property name
+   * @param {string | KUTE.drawObject} value the property value
+   * @returns {KUTE.drawObject} the property tween object
+   */
+  function prepareDraw(_, value) {
+    return getDraw(this.element, value);
   }
 
   // All Component Functions
@@ -2131,7 +2661,7 @@
   };
 
   // Component Full
-  var svgDraw = {
+  var SvgDrawProperty = {
     component: 'svgDraw',
     property: 'draw',
     defaultValue: '0% 0%',
@@ -2151,125 +2681,114 @@
     },
   };
 
-  var SVGPCO = {
-    origin: null,
-    decimals: 4,
-    round: 1,
-  };
+  /**
+   * Splits an extended A (arc-to) segment into two cubic-bezier segments.
+   *
+   * @param {SVGPathCommander.pathArray} path the `pathArray` this segment belongs to
+   * @param {string[]} allPathCommands all previous path commands
+   * @param {number} i the segment index
+   */
 
-  function clonePath(pathArray) {
-    return pathArray.map(function (x) {
-      if (Array.isArray(x)) {
-        return clonePath(x);
-      }
-      return !Number.isNaN(+x) ? +x : x;
-    });
-  }
-
-  function roundPath(pathArray, round) {
-    var decimalsOption = !Number.isNaN(+round) ? +round : SVGPCO.decimals;
-    var result;
-
-    if (decimalsOption) {
-      result = pathArray.map(function (seg) { return seg.map(function (c) {
-        var nr = +c;
-        var dc = Math.pow( 10, decimalsOption );
-        if (nr) {
-          return nr % 1 === 0 ? nr : Math.round(nr * dc) / dc;
-        }
-        return c;
-      }); });
-    } else {
-      result = clonePath(pathArray);
-    }
-    return result;
-  }
-
-  function fixArc(pathArray, allPathCommands, i) {
-    if (pathArray[i].length > 7) {
-      pathArray[i].shift();
-      var pi = pathArray[i];
-      // const ni = i + 1;
-      var ni = i;
-      while (pi.length) {
+  function fixArc(path, allPathCommands, i) {
+    if (path[i].length > 7) {
+      path[i].shift();
+      var segment = path[i];
+      var ni = i; // ESLint
+      while (segment.length) {
         // if created multiple C:s, their original seg is saved
         allPathCommands[i] = 'A';
-        pathArray.splice(ni += 1, 0, ['C'].concat(pi.splice(0, 6)));
-        // pathArray.splice(i += 1, 0, ['C'].concat(pi.splice(0, 6)));
-        // pathArray.splice(i++, 0, ['C'].concat(pi.splice(0, 6)));
+        // @ts-ignore
+        path.splice(ni += 1, 0, ['C' ].concat( segment.splice(0, 6)));
       }
-      pathArray.splice(i, 1);
+      path.splice(i, 1);
     }
   }
 
+  /**
+   * Segment params length
+   */
   var paramsCount = {
     a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0,
   };
 
-  function isPathArray(pathArray) {
-    return Array.isArray(pathArray) && pathArray.every(function (seg) {
-      var pathCommand = seg[0].toLowerCase();
-      return paramsCount[pathCommand] === seg.length - 1 && /[achlmrqstvz]/g.test(pathCommand);
-    });
-  }
-
-  function isCurveArray(pathArray) {
-    return isPathArray(pathArray) && pathArray.slice(1).every(function (seg) { return seg[0] === 'C'; });
-  }
-
-  function finalizeSegment(state) {
-    var pathCommand = state.pathValue[state.segmentStart];
-    var pathComLK = pathCommand.toLowerCase();
-    var params = state.data;
+  /**
+   * Breaks the parsing of a pathString once a segment is finalized.
+   *
+   * @param {SVGPathCommander.PathParser} path the `PathParser` instance
+   */
+  function finalizeSegment(path) {
+    var pathCommand = path.pathValue[path.segmentStart];
+    var LK = pathCommand.toLowerCase();
+    var data = path.data;
 
     // Process duplicated commands (without comand name)
-    if (pathComLK === 'm' && params.length > 2) {
-      state.segments.push([pathCommand, params[0], params[1]]);
-      params = params.slice(2);
-      pathComLK = 'l';
-      pathCommand = (pathCommand === 'm') ? 'l' : 'L';
+    if (LK === 'm' && data.length > 2) {
+      // @ts-ignore
+      path.segments.push([pathCommand, data[0], data[1]]);
+      data = data.slice(2);
+      LK = 'l';
+      pathCommand = pathCommand === 'm' ? 'l' : 'L';
     }
 
-    if (pathComLK === 'r') {
-      state.segments.push([pathCommand].concat(params));
-    } else {
-      while (params.length >= paramsCount[pathComLK]) {
-        state.segments.push([pathCommand].concat(params.splice(0, paramsCount[pathComLK])));
-        if (!paramsCount[pathComLK]) {
-          break;
-        }
+    // @ts-ignore
+    while (data.length >= paramsCount[LK]) {
+      // path.segments.push([pathCommand].concat(data.splice(0, paramsCount[LK])));
+      // @ts-ignore
+      path.segments.push([pathCommand ].concat( data.splice(0, paramsCount[LK])));
+      // @ts-ignore
+      if (!paramsCount[LK]) {
+        break;
       }
     }
   }
 
   var invalidPathValue = 'Invalid path value';
 
-  function scanFlag(state) {
-    var ch = state.pathValue.charCodeAt(state.index);
+  /**
+   * Validates an A (arc-to) specific path command value.
+   * Usually a `large-arc-flag` or `sweep-flag`.
+   *
+   * @param {SVGPathCommander.PathParser} path the `PathParser` instance
+   */
+  function scanFlag(path) {
+    var index = path.index;
+    var ch = path.pathValue.charCodeAt(index);
 
     if (ch === 0x30/* 0 */) {
-      state.param = 0;
-      state.index += 1;
+      path.param = 0;
+      path.index += 1;
       return;
     }
 
     if (ch === 0x31/* 1 */) {
-      state.param = 1;
-      state.index += 1;
+      path.param = 1;
+      path.index += 1;
       return;
     }
 
-    // state.err = 'SvgPath: arc flag can be 0 or 1 only (at pos ' + state.index + ')';
-    state.err = invalidPathValue + ": invalid Arc flag " + ch;
+    path.err = invalidPathValue + ": invalid Arc flag \"" + ch + "\", expecting 0 or 1 at index " + index;
   }
 
+  /**
+   * Checks if a character is a digit.
+   *
+   * @param {number} code the character to check
+   * @returns {boolean} check result
+   */
   function isDigit(code) {
     return (code >= 48 && code <= 57); // 0..9
   }
 
-  function scanParam(state) {
-    var start = state.index;
-    var max = state.max;
+  /**
+   * Validates every character of the path string,
+   * every path command, negative numbers or floating point numbers.
+   *
+   * @param {SVGPathCommander.PathParser} path the `PathParser` instance
+   */
+  function scanParam(path) {
+    var max = path.max;
+    var pathValue = path.pathValue;
+    var start = path.index;
     var index = start;
     var zeroFirst = false;
     var hasCeiling = false;
@@ -2278,22 +2797,22 @@
     var ch;
 
     if (index >= max) {
-      // state.err = 'SvgPath: missed param (at pos ' + index + ')';
-      state.err = invalidPathValue + ": missing param " + (state.pathValue[index]);
+      // path.err = 'SvgPath: missed param (at pos ' + index + ')';
+      path.err = invalidPathValue + " at " + index + ": missing param " + (pathValue[index]);
       return;
     }
-    ch = state.pathValue.charCodeAt(index);
+    ch = pathValue.charCodeAt(index);
 
     if (ch === 0x2B/* + */ || ch === 0x2D/* - */) {
       index += 1;
-      ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
+      ch = (index < max) ? pathValue.charCodeAt(index) : 0;
     }
 
     // This logic is shamelessly borrowed from Esprima
     // https://github.com/ariya/esprimas
     if (!isDigit(ch) && ch !== 0x2E/* . */) {
-      // state.err = 'SvgPath: param should start with 0..9 or `.` (at pos ' + index + ')';
-      state.err = invalidPathValue + " at index " + index + ": " + (state.pathValue[index]) + " is not a number";
+      // path.err = 'SvgPath: param should start with 0..9 or `.` (at pos ' + index + ')';
+      path.err = invalidPathValue + " at index " + index + ": " + (pathValue[index]) + " is not a number";
       return;
     }
 
@@ -2301,63 +2820,68 @@
       zeroFirst = (ch === 0x30/* 0 */);
       index += 1;
 
-      ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
+      ch = (index < max) ? pathValue.charCodeAt(index) : 0;
 
       if (zeroFirst && index < max) {
         // decimal number starts with '0' such as '09' is illegal.
         if (ch && isDigit(ch)) {
-          // state.err = 'SvgPath: numbers started with `0` such as `09`
+          // path.err = 'SvgPath: numbers started with `0` such as `09`
           // are illegal (at pos ' + start + ')';
-          state.err = invalidPathValue + ": " + (state.pathValue[start]) + " illegal number";
+          path.err = invalidPathValue + " at index " + start + ": " + (pathValue[start]) + " illegal number";
           return;
         }
       }
 
-      while (index < max && isDigit(state.pathValue.charCodeAt(index))) {
+      while (index < max && isDigit(pathValue.charCodeAt(index))) {
         index += 1;
         hasCeiling = true;
       }
-      ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
+      ch = (index < max) ? pathValue.charCodeAt(index) : 0;
     }
 
     if (ch === 0x2E/* . */) {
       hasDot = true;
       index += 1;
-      while (isDigit(state.pathValue.charCodeAt(index))) {
+      while (isDigit(pathValue.charCodeAt(index))) {
         index += 1;
         hasDecimal = true;
       }
-      ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
+      ch = (index < max) ? pathValue.charCodeAt(index) : 0;
     }
 
     if (ch === 0x65/* e */ || ch === 0x45/* E */) {
       if (hasDot && !hasCeiling && !hasDecimal) {
-        // state.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
-        state.err = invalidPathValue + ": " + (state.pathValue[index]) + " invalid float exponent";
+        path.err = invalidPathValue + " at index " + index + ": " + (pathValue[index]) + " invalid float exponent";
         return;
       }
 
       index += 1;
 
-      ch = (index < max) ? state.pathValue.charCodeAt(index) : 0;
+      ch = (index < max) ? pathValue.charCodeAt(index) : 0;
       if (ch === 0x2B/* + */ || ch === 0x2D/* - */) {
         index += 1;
       }
-      if (index < max && isDigit(state.pathValue.charCodeAt(index))) {
-        while (index < max && isDigit(state.pathValue.charCodeAt(index))) {
+      if (index < max && isDigit(pathValue.charCodeAt(index))) {
+        while (index < max && isDigit(pathValue.charCodeAt(index))) {
           index += 1;
         }
       } else {
-        // state.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
-        state.err = invalidPathValue + ": " + (state.pathValue[index]) + " invalid float exponent";
+        // path.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
+        path.err = invalidPathValue + " at index " + index + ": " + (pathValue[index]) + " invalid float exponent";
         return;
       }
     }
 
-    state.index = index;
-    state.param = +state.pathValue.slice(start, index);
+    path.index = index;
+    path.param = +path.pathValue.slice(start, index);
   }
 
+  /**
+   * Checks if the character is a space.
+   *
+   * @param {number} ch the character to check
+   * @returns {boolean} check result
+   */
   function isSpace(ch) {
     var specialSpaces = [
       0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
@@ -2368,14 +2892,29 @@
       || (ch >= 0x1680 && specialSpaces.indexOf(ch) >= 0);
   }
 
-  function skipSpaces(state) {
-    while (state.index < state.max && isSpace(state.pathValue.charCodeAt(state.index))) {
-      state.index += 1;
+  /**
+   * Points the parser to the next character in the
+   * path string every time it encounters any kind of
+   * space character.
+   *
+   * @param {SVGPathCommander.PathParser} path the `PathParser` instance
+   */
+  function skipSpaces(path) {
+    var pathValue = path.pathValue;
+    var max = path.max;
+    while (path.index < max && isSpace(pathValue.charCodeAt(path.index))) {
+      path.index += 1;
     }
   }
 
+  /**
+   * Checks if the character is a path command.
+   *
+   * @param {any} code the character to check
+   * @returns {boolean} check result
+   */
   function isPathCommand(code) {
-    // eslint-disable no-bitwise
+    // eslint-disable-next-line no-bitwise -- Impossible to satisfy
     switch (code | 0x20) {
       case 0x6D/* m */:
       case 0x7A/* z */:
@@ -2387,13 +2926,20 @@
       case 0x71/* q */:
       case 0x74/* t */:
       case 0x61/* a */:
-      case 0x72/* r */:
+      // case 0x72/* r */:
         return true;
       default:
         return false;
     }
   }
 
+  /**
+   * Checks if the character is or belongs to a number.
+   * [0-9]|+|-|.
+   *
+   * @param {number} code the character to check
+   * @returns {boolean} check result
+   */
   function isDigitStart(code) {
     return (code >= 48 && code <= 57) /* 0..9 */
       || code === 0x2B /* + */
@@ -2401,184 +2947,238 @@
       || code === 0x2E; /* . */
   }
 
+  /**
+   * Checks if the character is an A (arc-to) path command.
+   *
+   * @param {number} code the character to check
+   * @returns {boolean} check result
+   */
   function isArcCommand(code) {
-    // eslint disable no-bitwise
+    // eslint-disable-next-line no-bitwise -- Impossible to satisfy
     return (code | 0x20) === 0x61;
   }
 
-  function scanSegment(state) {
-    var max = state.max;
-    var cmdCode = state.pathValue.charCodeAt(state.index);
-    var reqParams = paramsCount[state.pathValue[state.index].toLowerCase()];
-    // let hasComma;
+  /**
+   * Scans every character in the path string to determine
+   * where a segment starts and where it ends.
+   *
+   * @param {SVGPathCommander.PathParser} path the `PathParser` instance
+   */
+  function scanSegment(path) {
+    var max = path.max;
+    var pathValue = path.pathValue;
+    var index = path.index;
+    var cmdCode = pathValue.charCodeAt(index);
+    // @ts-ignore
+    var reqParams = paramsCount[pathValue[index].toLowerCase()];
 
-    state.segmentStart = state.index;
+    path.segmentStart = index;
 
     if (!isPathCommand(cmdCode)) {
-      // state.err = 'SvgPath: bad command '
-      // + state.pathValue[state.index]
-      // + ' (at pos ' + state.index + ')';
-      state.err = invalidPathValue + ": " + (state.pathValue[state.index]) + " not a path command";
+      path.err = invalidPathValue + ": " + (pathValue[index]) + " not a path command";
       return;
     }
 
-    state.index += 1;
-    skipSpaces(state);
+    path.index += 1;
+    skipSpaces(path);
 
-    state.data = [];
+    path.data = [];
 
     if (!reqParams) {
       // Z
-      finalizeSegment(state);
+      finalizeSegment(path);
       return;
     }
 
-    // hasComma = false;
-
     for (;;) {
       for (var i = reqParams; i > 0; i -= 1) {
-        if (isArcCommand(cmdCode) && (i === 3 || i === 4)) { scanFlag(state); }
-        else { scanParam(state); }
+        if (isArcCommand(cmdCode) && (i === 3 || i === 4)) { scanFlag(path); }
+        else { scanParam(path); }
 
-        if (state.err.length) {
+        if (path.err.length) {
           return;
         }
-        state.data.push(state.param);
+        path.data.push(path.param);
 
-        skipSpaces(state);
-        // hasComma = false;
+        skipSpaces(path);
 
-        if (state.index < max && state.pathValue.charCodeAt(state.index) === 0x2C/* , */) {
-          state.index += 1;
-          skipSpaces(state);
-          // hasComma = true;
+        // after ',' param is mandatory
+        if (path.index < max && pathValue.charCodeAt(path.index) === 0x2C/* , */) {
+          path.index += 1;
+          skipSpaces(path);
         }
       }
 
-      // after ',' param is mandatory
-      // if (hasComma) {
-      //   continue;
-      // }
-
-      if (state.index >= state.max) {
+      if (path.index >= path.max) {
         break;
       }
 
       // Stop on next segment
-      if (!isDigitStart(state.pathValue.charCodeAt(state.index))) {
+      if (!isDigitStart(pathValue.charCodeAt(path.index))) {
         break;
       }
     }
 
-    finalizeSegment(state);
+    finalizeSegment(path);
   }
 
-  function SVGPathArray(pathString) {
+  /**
+   * Returns a clone of an existing `pathArray`.
+   *
+   * @param {SVGPathCommander.pathArray | SVGPathCommander.pathSegment} path the source `pathArray`
+   * @returns {any} the cloned `pathArray`
+   */
+  function clonePath(path) {
+    return path.map(function (x) { return (Array.isArray(x) ? [].concat( x ) : x); });
+  }
+
+  /**
+   * The `PathParser` used by the parser.
+   *
+   * @param {string} pathString
+   */
+  function PathParser(pathString) {
+    /** @type {SVGPathCommander.pathArray} */
+    // @ts-ignore
     this.segments = [];
+    /** @type {string} */
     this.pathValue = pathString;
+    /** @type {number} */
     this.max = pathString.length;
+    /** @type {number} */
     this.index = 0;
+    /** @type {number} */
     this.param = 0.0;
+    /** @type {number} */
     this.segmentStart = 0;
+    /** @type {any} */
     this.data = [];
+    /** @type {string} */
     this.err = '';
-    // return this;
   }
 
-  // Returns array of segments:
-  function parsePathString(pathString, round) {
-    if (isPathArray(pathString)) {
-      return clonePath(pathString);
-    }
-
-    var state = new SVGPathArray(pathString);
-
-    skipSpaces(state);
-
-    while (state.index < state.max && !state.err.length) {
-      scanSegment(state);
-    }
-
-    if (state.err.length) {
-      state.segments = [];
-    } else if (state.segments.length) {
-      if ('mM'.indexOf(state.segments[0][0]) < 0) {
-        // state.err = 'Path string should start with `M` or `m`';
-        state.err = invalidPathValue + ": missing M/m";
-        state.segments = [];
-      } else {
-        state.segments[0][0] = 'M';
-      }
-    }
-
-    return roundPath(state.segments, round);
+  /**
+   * Iterates an array to check if it's an actual `pathArray`.
+   *
+   * @param {string | SVGPathCommander.pathArray} path the `pathArray` to be checked
+   * @returns {boolean} iteration result
+   */
+  function isPathArray(path) {
+    return Array.isArray(path) && path.every(function (seg) {
+      var lk = seg[0].toLowerCase();
+      return paramsCount[lk] === seg.length - 1 && 'achlmqstvz'.includes(lk);
+    });
   }
 
-  function isAbsoluteArray(pathInput) {
-    return isPathArray(pathInput) && pathInput.every(function (x) { return x[0] === x[0].toUpperCase(); });
-  }
-
-  function pathToAbsolute(pathInput, round) {
-    if (isAbsoluteArray(pathInput)) {
+  /**
+   * Parses a path string value and returns an array
+   * of segments we like to call `pathArray`.
+   *
+   * @param {SVGPathCommander.pathArray | string} pathInput the string to be parsed
+   * @returns {SVGPathCommander.pathArray} the resulted `pathArray`
+   */
+  function parsePathString(pathInput) {
+    if (Array.isArray(pathInput) && isPathArray(pathInput)) {
       return clonePath(pathInput);
     }
 
-    var pathArray = parsePathString(pathInput, round);
-    var ii = pathArray.length;
-    var resultArray = [];
-    var x = 0;
-    var y = 0;
-    var mx = 0;
-    var my = 0;
-    var start = 0;
+    // @ts-ignore
+    var path = new PathParser(pathInput); // TS expects string
 
-    if (pathArray[0][0] === 'M') {
-      x = +pathArray[0][1];
-      y = +pathArray[0][2];
-      mx = x;
-      my = y;
-      start += 1;
-      resultArray.push(['M', x, y]);
+    skipSpaces(path);
+
+    while (path.index < path.max && !path.err.length) {
+      scanSegment(path);
     }
 
-    for (var i = start; i < ii; i += 1) {
-      var segment = pathArray[i];
+    if (path.err.length) {
+      // @ts-ignore
+      path.segments = [];
+    } else if (path.segments.length) {
+      if (!'mM'.includes(path.segments[0][0])) {
+        path.err = invalidPathValue + ": missing M/m";
+        // @ts-ignore
+        path.segments = [];
+      } else {
+        path.segments[0][0] = 'M';
+      }
+    }
+
+    return path.segments;
+  }
+
+  /**
+   * Iterates an array to check if it's a `pathArray`
+   * with all absolute values.
+   *
+   * @param {SVGPathCommander.pathArray} path the `pathArray` to be checked
+   * @returns {boolean} iteration result
+   */
+  function isAbsoluteArray(path) {
+    return isPathArray(path)
+      && path.every(function (x) { return x[0] === x[0].toUpperCase(); });
+  }
+
+  /**
+   * Parses a path string value or object and returns an array
+   * of segments, all converted to absolute values.
+   *
+   * @param {SVGPathCommander.pathArray | string} pathInput the path string | object
+   * @returns {SVGPathCommander.absoluteArray} the resulted `pathArray` with absolute values
+   */
+  function pathToAbsolute(pathInput) {
+    if (Array.isArray(pathInput) && isAbsoluteArray(pathInput)) {
+      return clonePath(pathInput);
+    }
+
+    var path = parsePathString(pathInput);
+    var x = 0; var y = 0;
+    var mx = 0; var my = 0;
+
+    // @ts-ignore -- the `absoluteSegment[]` is for sure an `absolutePath`
+    return path.map(function (segment) {
+      var assign, assign$1, assign$2;
+
+      var values = segment.slice(1).map(Number);
       var pathCommand = segment[0];
+      /** @type {SVGPathCommander.absoluteCommand} */
+      // @ts-ignore
       var absCommand = pathCommand.toUpperCase();
+
+      if (pathCommand === 'M') {
+        (assign = values, x = assign[0], y = assign[1]);
+        mx = x;
+        my = y;
+        return ['M', x, y];
+      }
+      /** @type {SVGPathCommander.absoluteSegment} */
+      // @ts-ignore
       var absoluteSegment = [];
-      var newSeg = [];
-      resultArray.push(absoluteSegment);
 
       if (pathCommand !== absCommand) {
-        absoluteSegment[0] = absCommand;
-
         switch (absCommand) {
           case 'A':
-            newSeg = segment.slice(1, -2).concat([+segment[6] + x, +segment[7] + y]);
-            for (var j = 0; j < newSeg.length; j += 1) {
-              absoluteSegment.push(newSeg[j]);
-            }
+            absoluteSegment = [
+              absCommand, values[0], values[1], values[2],
+              values[3], values[4], values[5] + x, values[6] + y];
             break;
           case 'V':
-            absoluteSegment[1] = +segment[1] + y;
+            absoluteSegment = [absCommand, values[0] + y];
             break;
           case 'H':
-            absoluteSegment[1] = +segment[1] + x;
+            absoluteSegment = [absCommand, values[0] + x];
             break;
-          default:
-            if (absCommand === 'M') {
-              mx = +segment[1] + x;
-              my = +segment[2] + y;
-            }
-            // for is here to stay for eslint
-            for (var j$1 = 1; j$1 < segment.length; j$1 += 1) {
-              absoluteSegment.push(+segment[j$1] + (j$1 % 2 ? x : y));
-            }
+          default: {
+            // use brakets for `eslint: no-case-declaration`
+            // https://stackoverflow.com/a/50753272/803358
+            var absValues = values.map(function (n, j) { return n + (j % 2 ? y : x); });
+            // @ts-ignore for n, l, c, s, q, t
+            absoluteSegment = [absCommand ].concat( absValues);
+          }
         }
       } else {
-        for (var j$2 = 0; j$2 < segment.length; j$2 += 1) {
-          absoluteSegment.push(segment[j$2]);
-        }
+        // @ts-ignore
+        absoluteSegment = [absCommand ].concat( values);
       }
 
       var segLength = absoluteSegment.length;
@@ -2588,142 +3188,269 @@
           y = my;
           break;
         case 'H':
-          x = +absoluteSegment[1];
+          // @ts-ignore
+          (assign$1 = absoluteSegment, x = assign$1[1]);
           break;
         case 'V':
-          y = +absoluteSegment[1];
+          // @ts-ignore
+          (assign$2 = absoluteSegment, y = assign$2[1]);
           break;
         default:
-          x = +absoluteSegment[segLength - 2];
-          y = +absoluteSegment[segLength - 1];
+          // @ts-ignore
+          x = absoluteSegment[segLength - 2];
+          // @ts-ignore
+          y = absoluteSegment[segLength - 1];
 
           if (absCommand === 'M') {
             mx = x;
             my = y;
           }
       }
-    }
-
-    return roundPath(resultArray, round);
+      return absoluteSegment;
+    });
   }
 
-  // returns {qx,qy} for shorthand quadratic bezier segments
+  /**
+   * Returns the missing control point from an
+   * T (shorthand quadratic bezier) segment.
+   *
+   * @param {number} x1 curve start x
+   * @param {number} y1 curve start y
+   * @param {number} qx control point x
+   * @param {number} qy control point y
+   * @param {string} prevCommand the previous path command
+   * @returns {{qx: number, qy: number}}} the missing control point
+   */
   function shorthandToQuad(x1, y1, qx, qy, prevCommand) {
-    return 'QT'.indexOf(prevCommand) > -1
+    return 'QT'.includes(prevCommand)
       ? { qx: x1 * 2 - qx, qy: y1 * 2 - qy }
       : { qx: x1, qy: y1 };
   }
 
-  // returns {x1,x2} for shorthand cubic bezier segments
+  /**
+   * Returns the missing control point from an
+   * S (shorthand cubic bezier) segment.
+   *
+   * @param {number} x1 curve start x
+   * @param {number} y1 curve start y
+   * @param {number} x2 curve end x
+   * @param {number} y2 curve end y
+   * @param {string} prevCommand the previous path command
+   * @returns {{x1: number, y1: number}}} the missing control point
+   */
   function shorthandToCubic(x1, y1, x2, y2, prevCommand) {
-    return 'CS'.indexOf(prevCommand) > -1
+    return 'CS'.includes(prevCommand)
       ? { x1: x1 * 2 - x2, y1: y1 * 2 - y2 }
       : { x1: x1, y1: y1 };
   }
 
+  /**
+   * Normalizes a single segment of a `pathArray` object.
+   *
+   * @param {SVGPathCommander.pathSegment} segment the segment object
+   * @param {any} params the coordinates of the previous segment
+   * @param {string} prevCommand the path command of the previous segment
+   * @returns {SVGPathCommander.normalSegment} the normalized segment
+   */
   function normalizeSegment(segment, params, prevCommand) {
     var pathCommand = segment[0];
-    var xy = segment.slice(1);
+    var px1 = params.x1;
+    var py1 = params.y1;
+    var px2 = params.x2;
+    var py2 = params.y2;
+    var values = segment.slice(1).map(Number);
     var result = segment;
 
-    if ('TQ'.indexOf(segment[0]) < 0) {
+    if (!'TQ'.includes(pathCommand)) {
       // optional but good to be cautious
       params.qx = null;
       params.qy = null;
     }
 
     if (pathCommand === 'H') {
-      result = ['L', segment[1], params.y1];
+      result = ['L', segment[1], py1];
     } else if (pathCommand === 'V') {
-      result = ['L', params.x1, segment[1]];
+      result = ['L', px1, segment[1]];
     } else if (pathCommand === 'S') {
-      var ref = shorthandToCubic(params.x1, params.y1, params.x2, params.y2, prevCommand);
+      var ref = shorthandToCubic(px1, py1, px2, py2, prevCommand);
       var x1 = ref.x1;
       var y1 = ref.y1;
       params.x1 = x1;
       params.y1 = y1;
-      result = ['C', x1, y1].concat(xy);
+      // @ts-ignore
+      result = ['C', x1, y1 ].concat( values);
     } else if (pathCommand === 'T') {
-      var ref$1 = shorthandToQuad(params.x1, params.y1, params.qx, params.qy, prevCommand);
+      var ref$1 = shorthandToQuad(px1, py1, params.qx, params.qy, prevCommand);
       var qx = ref$1.qx;
       var qy = ref$1.qy;
       params.qx = qx;
       params.qy = qy;
-      result = ['Q', qx, qy].concat(xy);
+      // @ts-ignore
+      result = ['Q', qx, qy ].concat( values);
     } else if (pathCommand === 'Q') {
-      var nqx = xy[0];
-      var nqy = xy[1];
+      var nqx = values[0];
+      var nqy = values[1];
       params.qx = nqx;
       params.qy = nqy;
     }
+
+    // @ts-ignore -- we-re switching `pathSegment` type
     return result;
   }
 
-  function isNormalizedArray(pathArray) {
-    return Array.isArray(pathArray) && pathArray.every(function (seg) {
-      var pathCommand = seg[0].toLowerCase();
-      return paramsCount[pathCommand] === seg.length - 1 && /[ACLMQZ]/.test(seg[0]); // achlmrqstvz
-    });
+  /**
+   * Iterates an array to check if it's a `pathArray`
+   * with all segments are in non-shorthand notation
+   * with absolute values.
+   *
+   * @param {SVGPathCommander.pathArray} path the `pathArray` to be checked
+   * @returns {boolean} iteration result
+   */
+  function isNormalizedArray(path) {
+    return isAbsoluteArray(path) && path.every(function (seg) { return 'ACLMQZ'.includes(seg[0]); });
   }
 
-  function normalizePath(pathInput, round) { // pathArray|pathString
+  /**
+   * @type {SVGPathCommander.parserParams}
+   */
+  var paramsParser = {
+    x1: 0, y1: 0, x2: 0, y2: 0, x: 0, y: 0, qx: null, qy: null,
+  };
+
+  /**
+   * Normalizes a `path` object for further processing:
+   * * convert segments to absolute values
+   * * convert shorthand path commands to their non-shorthand notation
+   *
+   * @param {SVGPathCommander.pathArray} pathInput the string to be parsed or 'pathArray'
+   * @returns {SVGPathCommander.normalArray} the normalized `pathArray`
+   */
+  function normalizePath(pathInput) {
+    var assign;
+
     if (isNormalizedArray(pathInput)) {
       return clonePath(pathInput);
     }
 
-    var pathArray = pathToAbsolute(pathInput, round);
-    var params = {
-      x1: 0, y1: 0, x2: 0, y2: 0, x: 0, y: 0, qx: null, qy: null,
-    };
+    var path = pathToAbsolute(pathInput);
+    var params = Object.assign({}, paramsParser);
     var allPathCommands = [];
-    var ii = pathArray.length;
+    var ii = path.length;
+    var pathCommand = '';
     var prevCommand = '';
-    var segment;
-    var seglen;
 
     for (var i = 0; i < ii; i += 1) {
-      // save current path command
-      var ref = pathArray[i];
-      var pathCommand = ref[0];
+      (assign = path[i], pathCommand = assign[0]);
 
       // Save current path command
       allPathCommands[i] = pathCommand;
       // Get previous path command
       if (i) { prevCommand = allPathCommands[i - 1]; }
-      // Previous path command is inputted to processSegment
-      pathArray[i] = normalizeSegment(pathArray[i], params, prevCommand);
+      // Previous path command is used to normalizeSegment
+      // @ts-ignore -- expected on normalization
+      path[i] = normalizeSegment(path[i], params, prevCommand);
 
-      segment = pathArray[i];
-      seglen = segment.length;
+      var segment = path[i];
+      var seglen = segment.length;
 
       params.x1 = +segment[seglen - 2];
       params.y1 = +segment[seglen - 1];
       params.x2 = +(segment[seglen - 4]) || params.x1;
       params.y2 = +(segment[seglen - 3]) || params.y1;
     }
-    return roundPath(pathArray, round);
+
+    // @ts-ignore -- a `normalArray` is absolutely an `absoluteArray`
+    return path;
   }
 
+  /**
+   * Checks a `pathArray` for an unnecessary `Z` segment
+   * and returns a new `pathArray` without it.
+   *
+   * The `pathInput` must be a single path, without
+   * sub-paths. For multi-path `<path>` elements,
+   * use `splitPath` first and apply this utility on each
+   * sub-path separately.
+   *
+   * @param {SVGPathCommander.pathArray | string} pathInput the `pathArray` source
+   * @return {SVGPathCommander.pathArray} a fixed `pathArray`
+   */
+  function fixPath(pathInput) {
+    var pathArray = parsePathString(pathInput);
+    var normalArray = normalizePath(pathArray);
+    var length = pathArray.length;
+    var isClosed = normalArray.slice(-1)[0][0] === 'Z';
+    var segBeforeZ = isClosed ? length - 2 : length - 1;
+
+    var ref = normalArray[0].slice(1);
+    var mx = ref[0];
+    var my = ref[1];
+    var ref$1 = normalArray[segBeforeZ].slice(-2);
+    var x = ref$1[0];
+    var y = ref$1[1];
+
+    if (isClosed && mx === x && my === y) {
+      // @ts-ignore -- `pathSegment[]` is a `pathArray`
+      return pathArray.slice(0, -1);
+    }
+    return pathArray;
+  }
+
+  /**
+   * Iterates an array to check if it's a `pathArray`
+   * with all C (cubic bezier) segments.
+   *
+   * @param {SVGPathCommander.pathArray} path the `Array` to be checked
+   * @returns {boolean} iteration result
+   */
+  function isCurveArray(path) {
+    return isPathArray(path) && path.every(function (seg) { return 'MC'.includes(seg[0]); });
+  }
+
+  /**
+   * Returns an {x,y} vector rotated by a given
+   * angle in radian.
+   *
+   * @param {number} x the initial vector x
+   * @param {number} y the initial vector y
+   * @param {number} rad the radian vector angle
+   * @returns {{x: number, y: number}} the rotated vector
+   */
   function rotateVector(x, y, rad) {
     var X = x * Math.cos(rad) - y * Math.sin(rad);
     var Y = x * Math.sin(rad) + y * Math.cos(rad);
     return { x: X, y: Y };
   }
 
-  // for more information of where this math came from visit:
-  // http://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes
-  // LAF = largeArcFlag, SF = sweepFlag
+  /**
+   * Converts A (arc-to) segments to C (cubic-bezier-to).
+   *
+   * For more information of where this math came from visit:
+   * http://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes
+   *
+   * @param {number} X1 the starting x position
+   * @param {number} Y1 the starting y position
+   * @param {number} RX x-radius of the arc
+   * @param {number} RY y-radius of the arc
+   * @param {number} angle x-axis-rotation of the arc
+   * @param {number} LAF large-arc-flag of the arc
+   * @param {number} SF sweep-flag of the arc
+   * @param {number} X2 the ending x position
+   * @param {number} Y2 the ending y position
+   * @param {number[]=} recursive the parameters needed to split arc into 2 segments
+   * @return {number[]} the resulting cubic-bezier segment(s)
+   */
+  function arcToCubic(X1, Y1, RX, RY, angle, LAF, SF, X2, Y2, recursive) {
+    var assign;
 
-  function arcToCubic(x1, y1, rx, ry, angle, LAF, SF, x2, y2, recursive) {
+    var x1 = X1; var y1 = Y1; var rx = RX; var ry = RY; var x2 = X2; var y2 = Y2;
+    // for more information of where this Math came from visit:
+    // http://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes
     var d120 = (Math.PI * 120) / 180;
-    var rad = (Math.PI / 180) * (angle || 0);
+
+    var rad = (Math.PI / 180) * (+angle || 0);
+    /** @type {number[]} */
     var res = [];
-    var X1 = x1;
-    var X2 = x2;
-    var Y1 = y1;
-    var Y2 = y2;
-    var RX = rx;
-    var RY = ry;
     var xy;
     var f1;
     var f2;
@@ -2731,41 +3458,39 @@
     var cy;
 
     if (!recursive) {
-      xy = rotateVector(X1, Y1, -rad);
-      X1 = xy.x;
-      Y1 = xy.y;
-      xy = rotateVector(X2, Y2, -rad);
-      X2 = xy.x;
-      Y2 = xy.y;
+      xy = rotateVector(x1, y1, -rad);
+      x1 = xy.x;
+      y1 = xy.y;
+      xy = rotateVector(x2, y2, -rad);
+      x2 = xy.x;
+      y2 = xy.y;
 
-      var x = (X1 - X2) / 2;
-      var y = (Y1 - Y2) / 2;
-      var h = (x * x) / (RX * RY) + (Math.pow( y, 2 )) / (Math.pow( RY, 2 ));
+      var x = (x1 - x2) / 2;
+      var y = (y1 - y2) / 2;
+      var h = (x * x) / (rx * rx) + (y * y) / (ry * ry);
       if (h > 1) {
         h = Math.sqrt(h);
-        RX *= h;
-        RY *= h;
+        rx *= h;
+        ry *= h;
       }
-      var rx2 = Math.pow( RX, 2 );
-      var ry2 = Math.pow( RY, 2 );
+      var rx2 = rx * rx;
+      var ry2 = ry * ry;
+
       var k = (LAF === SF ? -1 : 1)
-            * Math.sqrt(Math.abs((rx2 * ry2 - rx2 * y * y - ry2 * x * x)
-            / (rx2 * y * y + ry2 * x * x)));
+              * Math.sqrt(Math.abs((rx2 * ry2 - rx2 * y * y - ry2 * x * x)
+                  / (rx2 * y * y + ry2 * x * x)));
 
-      cx = ((k * RX * y) / RY) + ((X1 + X2) / 2);
-      cy = ((k * -RY * x) / RX) + ((Y1 + Y2) / 2);
+      cx = ((k * rx * y) / ry) + ((x1 + x2) / 2);
+      cy = ((k * -ry * x) / rx) + ((y1 + y2) / 2);
+      // eslint-disable-next-line no-bitwise -- Impossible to satisfy no-bitwise
+      f1 = (Math.asin((((y1 - cy) / ry))) * (Math.pow( 10, 9 )) >> 0) / (Math.pow( 10, 9 ));
+      // eslint-disable-next-line no-bitwise -- Impossible to satisfy no-bitwise
+      f2 = (Math.asin((((y2 - cy) / ry))) * (Math.pow( 10, 9 )) >> 0) / (Math.pow( 10, 9 ));
 
-      // f1 = Math.asin(((Y1 - cy) / RY).toFixed(9)); // keep toFIxed(9)!
-      // f2 = Math.asin(((Y2 - cy) / RY).toFixed(9));
-      f1 = Math.asin((((Y1 - cy) / RY) * Math.pow( 10, 9 ) >> 0) / (Math.pow( 10, 9 )));
-      f2 = Math.asin((((Y2 - cy) / RY) * Math.pow( 10, 9 ) >> 0) / (Math.pow( 10, 9 )));
-
-      f1 = X1 < cx ? Math.PI - f1 : f1;
-      f2 = X2 < cx ? Math.PI - f2 : f2;
-
-      if (f1 < 0) { f1 = Math.PI * 2 + f1; }
-      if (f2 < 0) { f2 = Math.PI * 2 + f2; }
-
+      f1 = x1 < cx ? Math.PI - f1 : f1;
+      f2 = x2 < cx ? Math.PI - f2 : f2;
+      if (f1 < 0) { (f1 = Math.PI * 2 + f1); }
+      if (f2 < 0) { (f2 = Math.PI * 2 + f2); }
       if (SF && f1 > f2) {
         f1 -= Math.PI * 2;
       }
@@ -2773,55 +3498,56 @@
         f2 -= Math.PI * 2;
       }
     } else {
-      var r1 = recursive[0];
-      var r2 = recursive[1];
-      var r3 = recursive[2];
-      var r4 = recursive[3];
-      f1 = r1;
-      f2 = r2;
-      cx = r3;
-      cy = r4;
+      (assign = recursive, f1 = assign[0], f2 = assign[1], cx = assign[2], cy = assign[3]);
     }
-
     var df = f2 - f1;
-
     if (Math.abs(df) > d120) {
-      var f2old = f2; var x2old = X2; var
-        y2old = Y2;
-
+      var f2old = f2;
+      var x2old = x2;
+      var y2old = y2;
       f2 = f1 + d120 * (SF && f2 > f1 ? 1 : -1);
-      X2 = cx + RX * Math.cos(f2);
-      Y2 = cy + RY * Math.sin(f2);
-      res = arcToCubic(X2, Y2, RX, RY, angle, 0, SF, x2old, y2old, [f2, f2old, cx, cy]);
+      x2 = cx + rx * Math.cos(f2);
+      y2 = cy + ry * Math.sin(f2);
+      res = arcToCubic(x2, y2, rx, ry, angle, 0, SF, x2old, y2old, [f2, f2old, cx, cy]);
     }
-
     df = f2 - f1;
     var c1 = Math.cos(f1);
     var s1 = Math.sin(f1);
     var c2 = Math.cos(f2);
     var s2 = Math.sin(f2);
     var t = Math.tan(df / 4);
-    var hx = (4 / 3) * RX * t;
-    var hy = (4 / 3) * RY * t;
-    var m1 = [X1, Y1];
-    var m2 = [X1 + hx * s1, Y1 - hy * c1];
-    var m3 = [X2 + hx * s2, Y2 - hy * c2];
-    var m4 = [X2, Y2];
+    var hx = (4 / 3) * rx * t;
+    var hy = (4 / 3) * ry * t;
+    var m1 = [x1, y1];
+    var m2 = [x1 + hx * s1, y1 - hy * c1];
+    var m3 = [x2 + hx * s2, y2 - hy * c2];
+    var m4 = [x2, y2];
     m2[0] = 2 * m1[0] - m2[0];
     m2[1] = 2 * m1[1] - m2[1];
-
     if (recursive) {
-      return [m2, m3, m4].concat(res);
+      return m2.concat( m3, m4, res);
     }
-    res = [m2, m3, m4].concat(res).join().split(',');
-    return res.map(function (rz, i) {
-      if (i % 2) {
-        return rotateVector(res[i - 1], rz, rad).y;
-      }
-      return rotateVector(rz, res[i + 1], rad).x;
-    });
+    res = m2.concat( m3, m4, res);
+    var newres = [];
+    for (var i = 0, ii = res.length; i < ii; i += 1) {
+      newres[i] = i % 2
+        ? rotateVector(res[i - 1], res[i], rad).y
+        : rotateVector(res[i], res[i + 1], rad).x;
+    }
+    return newres;
   }
 
+  /**
+   * Converts a Q (quadratic-bezier) segment to C (cubic-bezier).
+   *
+   * @param {number} x1 curve start x
+   * @param {number} y1 curve start y
+   * @param {number} qx control point x
+   * @param {number} qy control point y
+   * @param {number} x2 curve end x
+   * @param {number} y2 curve end y
+   * @returns {number[]} the cubic-bezier segment
+   */
   function quadToCubic(x1, y1, qx, qy, x2, y2) {
     var r13 = 1 / 3;
     var r23 = 2 / 3;
@@ -2833,7 +3559,21 @@
       x2, y2 ];
   }
 
-  // t = [0-1]
+  /**
+   * Returns the {x,y} coordinates of a point at a
+   * given length of a cubic-bezier segment.
+   *
+   * @param {number} p1x the starting point X
+   * @param {number} p1y the starting point Y
+   * @param {number} c1x the first control point X
+   * @param {number} c1y the first control point Y
+   * @param {number} c2x the second control point X
+   * @param {number} c2y the second control point Y
+   * @param {number} p2x the ending point X
+   * @param {number} p2y the ending point Y
+   * @param {number} t a [0-1] ratio
+   * @returns {{x: number, y: number}} the requested {x,y} coordinates
+   */
   function getPointAtSegLength(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
     var t1 = 1 - t;
     return {
@@ -2848,116 +3588,241 @@
     };
   }
 
+  /**
+   * Returns the coordinates of a specified distance
+   * ratio between two points.
+   *
+   * @param {[number, number]} a the first point coordinates
+   * @param {[number, number]} b the second point coordinates
+   * @param {number} t the ratio
+   * @returns {[number, number]} the midpoint coordinates
+   */
   function midPoint(a, b, t) {
     var ax = a[0];
-    var ay = a[1];
-    var bx = b[0];
+    var ay = a[1]; var bx = b[0];
     var by = b[1];
     return [ax + (bx - ax) * t, ay + (by - ay) * t];
   }
 
+  /**
+   * Converts an L (line-to) segment to C (cubic-bezier).
+   *
+   * @param {number} x1 line start x
+   * @param {number} y1 line start y
+   * @param {number} x2 line end x
+   * @param {number} y2 line end y
+   * @returns {number[]} the cubic-bezier segment
+   */
   function lineToCubic(x1, y1, x2, y2) {
     var t = 0.5;
+    /** @type {[number, number]} */
     var p0 = [x1, y1];
+    /** @type {[number, number]} */
     var p1 = [x2, y2];
     var p2 = midPoint(p0, p1, t);
     var p3 = midPoint(p1, p2, t);
     var p4 = midPoint(p2, p3, t);
     var p5 = midPoint(p3, p4, t);
     var p6 = midPoint(p4, p5, t);
-    var cp1 = getPointAtSegLength.apply(0, p0.concat(p2, p4, p6, t));
-    var cp2 = getPointAtSegLength.apply(0, p6.concat(p5, p3, p1, 0));
+    // const cp1 = getPointAtSegLength.apply(0, p0.concat(p2, p4, p6, t));
+    var seg1 = p0.concat( p2, p4, p6, [t]);
+    // @ts-ignore
+    var cp1 = getPointAtSegLength.apply(void 0, seg1);
+    // const cp2 = getPointAtSegLength.apply(0, p6.concat(p5, p3, p1, 0));
+    var seg2 = p6.concat( p5, p3, p1, [0]);
+    // @ts-ignore
+    var cp2 = getPointAtSegLength.apply(void 0, seg2);
 
     return [cp1.x, cp1.y, cp2.x, cp2.y, x2, y2];
   }
 
+  /**
+   * Converts any segment to C (cubic-bezier).
+   *
+   * @param {SVGPathCommander.pathSegment} segment the source segment
+   * @param {SVGPathCommander.parserParams} params the source segment parameters
+   * @returns {SVGPathCommander.cubicSegment | SVGPathCommander.MSegment} the cubic-bezier segment
+   */
   function segmentToCubic(segment, params) {
-    if ('TQ'.indexOf(segment[0]) < 0) {
+    var pathCommand = segment[0];
+    var values = segment.slice(1).map(function (n) { return +n; });
+    var x = values[0];
+    var y = values[1];
+    var args;
+    var px1 = params.x1;
+    var py1 = params.y1;
+    var px = params.x;
+    var py = params.y;
+
+    if (!'TQ'.includes(pathCommand)) {
       params.qx = null;
       params.qy = null;
     }
 
-    var ref = segment.slice(1);
-    var s1 = ref[0];
-    var s2 = ref[1];
-
-    switch (segment[0]) {
+    switch (pathCommand) {
       case 'M':
-        params.x = s1;
-        params.y = s2;
+        params.x = x;
+        params.y = y;
         return segment;
       case 'A':
-        return ['C'].concat(arcToCubic.apply(0, [params.x1, params.y1].concat(segment.slice(1))));
+        args = [px1, py1 ].concat( values);
+        // @ts-ignore -- relax, the utility will return 6 numbers
+        return ['C' ].concat( arcToCubic.apply(void 0, args));
       case 'Q':
-        params.qx = s1;
-        params.qy = s2;
-        return ['C'].concat(quadToCubic.apply(0, [params.x1, params.y1].concat(segment.slice(1))));
+        params.qx = x;
+        params.qy = y;
+        args = [px1, py1 ].concat( values);
+        // @ts-ignore -- also returning 6 numbers
+        return ['C' ].concat( quadToCubic.apply(void 0, args));
       case 'L':
-        return ['C'].concat(lineToCubic(params.x1, params.y1, segment[1], segment[2]));
+        // @ts-ignore -- also returning 6 numbers
+        return ['C' ].concat( lineToCubic(px1, py1, x, y));
       case 'Z':
-        return ['C'].concat(lineToCubic(params.x1, params.y1, params.x, params.y));
+        // @ts-ignore -- also returning 6 numbers
+        return ['C' ].concat( lineToCubic(px1, py1, px, py));
     }
+    // @ts-ignore -- we're switching `pathSegment` type
     return segment;
   }
 
-  function pathToCurve(pathInput, round) {
+  /**
+   * Parses a path string value or 'pathArray' and returns a new one
+   * in which all segments are converted to cubic-bezier.
+   *
+   * In addition, un-necessary `Z` segment is removed if previous segment
+   * extends to the `M` segment.
+   *
+   * @param {SVGPathCommander.pathArray} pathInput the string to be parsed or 'pathArray'
+   * @returns {SVGPathCommander.curveArray} the resulted `pathArray` converted to cubic-bezier
+   */
+  function pathToCurve(pathInput) {
     var assign;
-   // pathArray|pathString
+
     if (isCurveArray(pathInput)) {
       return clonePath(pathInput);
     }
 
-    var pathArray = normalizePath(pathInput, round);
-    var params = {
-      x1: 0, y1: 0, x2: 0, y2: 0, x: 0, y: 0, qx: null, qy: null,
-    };
+    var path = fixPath(normalizePath(pathInput));
+    var params = Object.assign({}, paramsParser);
     var allPathCommands = [];
-    var pathCommand = '';
-    var ii = pathArray.length;
-    var segment;
-    var seglen;
+    var pathCommand = ''; // ts-lint
+    var ii = path.length;
 
     for (var i = 0; i < ii; i += 1) {
-      if (pathArray[i]) { (assign = pathArray[i], pathCommand = assign[0]); }
-
+      (assign = path[i], pathCommand = assign[0]);
       allPathCommands[i] = pathCommand;
-      pathArray[i] = segmentToCubic(pathArray[i], params);
 
-      fixArc(pathArray, allPathCommands, i);
-      ii = pathArray.length; // solves curveArrays ending in Z
+      path[i] = segmentToCubic(path[i], params);
 
-      segment = pathArray[i];
-      seglen = segment.length;
+      fixArc(path, allPathCommands, i);
+      ii = path.length;
 
+      var segment = path[i];
+      var seglen = segment.length;
       params.x1 = +segment[seglen - 2];
       params.y1 = +segment[seglen - 1];
       params.x2 = +(segment[seglen - 4]) || params.x1;
       params.y2 = +(segment[seglen - 3]) || params.y1;
     }
-    return roundPath(pathArray, round);
+
+    // @ts-ignore
+    return path;
   }
 
-  function pathToString(pathArray) {
-    return pathArray.map(function (x) { return x[0].concat(x.slice(1).join(' ')); }).join('');
+  /**
+   * SVGPathCommander default options
+   * @type {SVGPathCommander.options}
+   */
+  var defaultOptions = {
+    origin: [0, 0, 0],
+    round: 4,
+  };
+
+  /**
+   * Rounds the values of a `pathArray` instance to
+   * a specified amount of decimals and returns it.
+   *
+   * @param {SVGPathCommander.pathArray} path the source `pathArray`
+   * @param {number | boolean} roundOption the amount of decimals to round numbers to
+   * @returns {SVGPathCommander.pathArray} the resulted `pathArray` with rounded values
+   */
+  function roundPath(path, roundOption) {
+    var round = defaultOptions.round;
+    if (roundOption === false || round === false) { return clonePath(path); }
+    round = roundOption >= 1 ? roundOption : round;
+    // to round values to the power
+    // the `round` value must be integer
+    // @ts-ignore
+    var pow = round >= 1 ? (Math.pow( 10, round )) : 1;
+
+    // @ts-ignore -- `pathSegment[]` is `pathArray`
+    return path.map(function (pi) {
+      var values = pi.slice(1).map(Number)
+        .map(function (n) { return (n % 1 === 0 ? n : Math.round(n * pow) / pow); });
+      return [pi[0] ].concat( values);
+    });
   }
 
+  /**
+   * Returns a valid `d` attribute string value created
+   * by rounding values and concatenating the `pathArray` segments.
+   *
+   * @param {SVGPathCommander.pathArray} path the `pathArray` object
+   * @param {any} round amount of decimals to round values to
+   * @returns {string} the concatenated path string
+   */
+  function pathToString(path, round) {
+    return roundPath(path, round)
+      .map(function (x) { return x[0] + x.slice(1).join(' '); }).join('');
+  }
+
+  /**
+   * Split a path into an `Array` of sub-path strings.
+   *
+   * In the process, values are converted to absolute
+   * for visual consistency.
+   *
+   * @param {SVGPathCommander.pathArray | string} pathInput the source `pathArray`
+   * @return {string[]} an array with all sub-path strings
+   */
   function splitPath(pathInput) {
-    return pathToString(pathToAbsolute(pathInput, 0))
+    return pathToString(pathToAbsolute(pathInput), 0)
       .replace(/(m|M)/g, '|$1')
       .split('|')
       .map(function (s) { return s.trim(); })
       .filter(function (s) { return s; });
   }
 
+  /**
+   * @param {number} p1
+   * @param {number} p2
+   * @param {number} p3
+   * @param {number} p4
+   * @param {number} t a [0-1] ratio
+   * @returns {number}
+   */
   function base3(p1, p2, p3, p4, t) {
     var t1 = -3 * p1 + 9 * p2 - 9 * p3 + 3 * p4;
     var t2 = t * t1 + 6 * p1 - 12 * p2 + 6 * p3;
     return t * t2 - 3 * p1 + 3 * p2;
   }
 
-  // returns the cubic bezier segment length
+  /**
+   * Returns the C (cubic-bezier) segment length.
+   *
+   * @param {number} x1 the starting point X
+   * @param {number} y1 the starting point Y
+   * @param {number} x2 the first control point X
+   * @param {number} y2 the first control point Y
+   * @param {number} x3 the second control point X
+   * @param {number} y3 the second control point Y
+   * @param {number} x4 the ending point X
+   * @param {number} y4 the ending point Y
+   * @param {number} z a [0-1] ratio
+   * @returns {number} the cubic-bezier segment length
+   */
   function getSegCubicLength(x1, y1, x2, y2, x3, y3, x4, y4, z) {
-    var Z;
+    var Z = z;
     if (z === null || Number.isNaN(+z)) { Z = 1; }
 
     // Z = Z > 1 ? 1 : Z < 0 ? 0 : Z;
@@ -2981,34 +3846,50 @@
     return z2 * sum;
   }
 
-  // calculates the shape total length
-  // equivalent to shape.getTotalLength()
-  // pathToCurve version
-  function getPathLength(pathArray, round) {
+  /**
+   * Returns the shape total length,
+   * or the equivalent to `shape.getTotalLength()`
+   * pathToCurve version
+   *
+   * @param {SVGPathCommander.pathArray} path the target `pathArray`
+   * @returns {number} the shape total length
+   */
+  function getPathLength(path) {
     var totalLength = 0;
-    pathToCurve(pathArray, round).forEach(function (s, i, curveArray) {
-      totalLength += s[0] !== 'M' ? getSegCubicLength.apply(0, curveArray[i - 1].slice(-2).concat(s.slice(1))) : 0;
+    pathToCurve(path).forEach(function (s, i, curveArray) {
+      var args = s[0] !== 'M' ? curveArray[i - 1].slice(-2).concat( s.slice(1)) : [];
+      totalLength += s[0] === 'M' ? 0
+        // @ts-ignore
+        : getSegCubicLength.apply(void 0, args);
     });
     return totalLength;
   }
 
-  // calculates the shape total length
-  // almost equivalent to shape.getTotalLength()
-  function getPointAtLength(pathArray, length) {
+  /**
+   * Returns [x,y] coordinates of a point at a given length of a shape.
+   *
+   * @param {string | SVGPathCommander.pathArray} path the `pathArray` to look into
+   * @param {number} length the length of the shape to look at
+   * @returns {number[]} the requested [x,y] coordinates
+   */
+  function getPointAtLength(path, length) {
     var totalLength = 0;
     var segLen;
     var data;
     var result;
-
-    return pathToCurve(pathArray, 9).map(function (seg, i, curveArray) { // process data
-      data = i ? curveArray[i - 1].slice(-2).concat(seg.slice(1)) : seg.slice(1);
-      segLen = i ? getSegCubicLength.apply(0, data) : 0;
+    // @ts-ignore
+    return pathToCurve(path).map(function (seg, i, curveArray) {
+      data = i ? curveArray[i - 1].slice(-2).concat( seg.slice(1)) : seg.slice(1);
+      // @ts-ignore
+      segLen = i ? getSegCubicLength.apply(void 0, data) : 0;
       totalLength += segLen;
 
       if (i === 0) {
         result = { x: data[0], y: data[1] };
       } else if (totalLength > length && length > totalLength - segLen) {
-        result = getPointAtSegLength.apply(0, data.concat(1 - (totalLength - length) / segLen));
+        var args = data.concat( [1 - ((totalLength - length) / segLen)]);
+        // @ts-ignore
+        result = getPointAtSegLength.apply(void 0, args);
       } else {
         result = null;
       }
@@ -3017,43 +3898,82 @@
     }).filter(function (x) { return x; }).slice(-1)[0]; // isolate last segment
   }
 
-  // https://github.com/paperjs/paper.js/blob/develop/src/path/Path.js
-
+  /**
+   * Returns the area of a single segment shape.
+   *
+   * http://objectmix.com/graphics/133553-area-closed-bezier-curve.html
+   *
+   * @param {number} x0 the starting point X
+   * @param {number} y0 the starting point Y
+   * @param {number} x1 the first control point X
+   * @param {number} y1 the first control point Y
+   * @param {number} x2 the second control point X
+   * @param {number} y2 the second control point Y
+   * @param {number} x3 the ending point X
+   * @param {number} y3 the ending point Y
+   * @returns {number} the area of the cubic-bezier segment
+   */
   function getCubicSegArea(x0, y0, x1, y1, x2, y2, x3, y3) {
-    // http://objectmix.com/graphics/133553-area-closed-bezier-curve.html
     return (3 * ((y3 - y0) * (x1 + x2) - (x3 - x0) * (y1 + y2)
              + (y1 * (x0 - x2)) - (x1 * (y0 - y2))
              + (y3 * (x2 + x0 / 3)) - (x3 * (y2 + y0 / 3)))) / 20;
   }
 
-  function getPathArea(pathArray, round) {
-    var x = 0; var y = 0; var mx = 0; var my = 0; var
-      len = 0;
-    return pathToCurve(pathArray, round).map(function (seg) {
-      var assign;
+  /**
+   * Returns the area of a shape.
+   * @author Jürg Lehni & Jonathan Puckey
+   *
+   * => https://github.com/paperjs/paper.js/blob/develop/src/path/Path.js
+   *
+   * @param {SVGPathCommander.pathArray} path the shape `pathArray`
+   * @returns {number} the length of the cubic-bezier segment
+   */
+  function getPathArea(path) {
+    var x = 0; var y = 0;
+    var len = 0;
+    return pathToCurve(path).map(function (seg) {
+      var assign, assign$1;
 
       switch (seg[0]) {
         case 'M':
-        case 'Z':
-          mx = seg[0] === 'M' ? seg[1] : mx;
-          my = seg[0] === 'M' ? seg[2] : my;
-          x = mx;
-          y = my;
+          (assign = seg, x = assign[1], y = assign[2]);
           return 0;
         default:
-          len = getCubicSegArea.apply(0, [x, y].concat(seg.slice(1)));
-          (assign = seg.slice(-2), x = assign[0], y = assign[1]);
+          // @ts-ignore -- the utility will have proper amount of params
+          len = getCubicSegArea.apply(void 0, [ x, y ].concat( seg.slice(1) ));
+
+          (assign$1 = seg.slice(-2).map(Number), x = assign$1[0], y = assign$1[1]);
           return len;
       }
     }).reduce(function (a, b) { return a + b; }, 0);
   }
 
-  function getDrawDirection(pathArray, round) {
-    return getPathArea(pathToCurve(pathArray, round)) >= 0;
+  /**
+   * Check if a path is drawn clockwise and returns true if so,
+   * false otherwise.
+   *
+   * @param {SVGPathCommander.pathArray} path the path string or `pathArray`
+   * @returns {boolean} true when clockwise or false if not
+   */
+  function getDrawDirection(path) {
+    return getPathArea(pathToCurve(path)) >= 0;
   }
 
+  /**
+   * A global namespace for epsilon.
+   *
+   * @type {number}
+   */
   var epsilon = 1e-9;
 
+  /**
+   * Returns the square root of the distance
+   * between two given points.
+   *
+   * @param {[number, number]} a the first point coordinates
+   * @param {[number, number]} b the second point coordinates
+   * @returns {number} the distance value
+   */
   function distanceSquareRoot(a, b) {
     return Math.sqrt(
       (a[0] - b[0]) * (a[0] - b[0])
@@ -3061,11 +3981,21 @@
     );
   }
 
+  /**
+   * Coordinates Interpolation Function.
+   *
+   * @param {number[][]} a start coordinates
+   * @param {number[][]} b end coordinates
+   * @param {string} l amount of coordinates
+   * @param {number} v progress
+   * @returns {number[][]} the interpolated coordinates
+   */
   function coords(a, b, l, v) {
     var points = [];
     for (var i = 0; i < l; i += 1) { // for each point
       points[i] = [];
       for (var j = 0; j < 2; j += 1) { // each point coordinate
+        // eslint-disable-next-line no-bitwise
         points[i].push(((a[i][j] + (b[i][j] - a[i][j]) * v) * 1000 >> 0) / 1000);
       }
     }
@@ -3080,44 +4010,47 @@
   } */
 
   // Component functions
+  /**
+   * Sets the property update function.
+   * @param {string} tweenProp the property name
+   */
   function onStartSVGMorph(tweenProp) {
-    if (!KUTE$1[tweenProp] && this.valuesEnd[tweenProp]) {
-      KUTE$1[tweenProp] = function (elem, a, b, v) {
-        var path1 = a.pathArray; var path2 = b.pathArray; var
-          len = path2.length;
+    if (!KEC[tweenProp] && this.valuesEnd[tweenProp]) {
+      KEC[tweenProp] = function (elem, a, b, v) {
+        var path1 = a.polygon; var path2 = b.polygon;
+        var len = path2.length;
         elem.setAttribute('d', (v === 1 ? b.original : ("M" + (coords(path1, path2, len, v).join('L')) + "Z")));
       };
     }
   }
 
-  /* SVGMorph = {
-    property: 'path',
-    defaultValue: [],
-    interpolators: {numbers,coords},
-    functions = { prepareStart, prepareProperty, onStart, crossCheck }
-  } */
-
-  // Component Interpolation
-  // function function(array1, array2, length, progress)
-
   // Component Util
   // original script flubber
   // https://github.com/veltman/flubber
 
-  function polygonLength(ring) {
-    return ring.reduce(function (length, point, i) { return (i
-      ? length + distanceSquareRoot(ring[i - 1], point)
+  /**
+   * Returns polygon length.
+   * @param {KUTE.polygonMorph} polygon target polygon
+   * @returns {number} length
+   */
+  function polygonLength(polygon) {
+    return polygon.reduce(function (length, point, i) { return (i
+      ? length + distanceSquareRoot(polygon[i - 1], point)
       : 0); }, 0);
   }
 
+  /**
+   * Returns an existing polygin and its length or false if not polygon.
+   * @param {SVGPathCommander.pathArray} pathArray target polygon
+   * @returns {KUTE.exactRing} length
+   */
   function exactRing(pathArray) {
     var assign;
 
-    var ring = [];
+    var polygon = [];
     var pathlen = pathArray.length;
     var segment = [];
     var pathCommand = '';
-    var pathLength = 0;
 
     if (!pathArray.length || pathArray[0][0] !== 'M') {
       return false;
@@ -3129,54 +4062,68 @@
 
       if ((pathCommand === 'M' && i) || pathCommand === 'Z') {
         break; // !!
-      } else if ('ML'.indexOf(pathCommand) > -1) {
-        ring.push([segment[1], segment[2]]);
+      } else if ('ML'.includes(pathCommand)) {
+        polygon.push([segment[1], segment[2]]);
       } else {
         return false;
       }
     }
 
-    pathLength = polygonLength(ring);
-
-    return pathlen ? { ring: ring, pathLength: pathLength } : false;
+    return pathlen ? { polygon: polygon } : false;
   }
 
-  function approximateRing(parsed, maxSegmentLength) {
+  /**
+   * Returns polygon length.
+   * @param {SVGPathCommander.pathArray} parsed target polygon
+   * @param {number} maxLength the maximum segment length
+   * @returns {KUTE.exactRing} length
+   */
+  function approximatePolygon(parsed, maxLength) {
     var ringPath = splitPath(pathToString(parsed))[0];
-    var curvePath = pathToCurve(ringPath, 4);
+    var curvePath = pathToCurve(ringPath);
     var pathLength = getPathLength(curvePath);
-    var ring = [];
+    var polygon = [];
     var numPoints = 3;
     var point;
 
-    if (maxSegmentLength && !Number.isNaN(maxSegmentLength) && +maxSegmentLength > 0) {
-      numPoints = Math.max(numPoints, Math.ceil(pathLength / maxSegmentLength));
+    if (maxLength && !Number.isNaN(maxLength) && +maxLength > 0) {
+      numPoints = Math.max(numPoints, Math.ceil(pathLength / maxLength));
     }
 
     for (var i = 0; i < numPoints; i += 1) {
       point = getPointAtLength(curvePath, (pathLength * i) / numPoints);
-      ring.push([point.x, point.y]);
+      polygon.push([point.x, point.y]);
     }
 
     // Make all rings clockwise
     if (!getDrawDirection(curvePath)) {
-      ring.reverse();
+      polygon.reverse();
     }
 
     return {
-      pathLength: pathLength,
-      ring: ring,
+      polygon: polygon,
       skipBisect: true,
     };
   }
 
-  function pathStringToRing(str, maxSegmentLength) {
-    var parsed = normalizePath(str, 0);
-    return exactRing(parsed) || approximateRing(parsed, maxSegmentLength);
+  /**
+   * Parses a path string and returns a polygon array.
+   * @param {string} str path string
+   * @param {number} maxLength maximum amount of points
+   * @returns {KUTE.exactRing} the polygon array we need
+   */
+  function pathStringToPolygon(str, maxLength) {
+    var parsed = normalizePath(str);
+    return exactRing(parsed) || approximatePolygon(parsed, maxLength);
   }
 
-  function rotateRing(ring, vs) {
-    var len = ring.length;
+  /**
+   * Rotates a polygon to better match its pair.
+   * @param {KUTE.polygonMorph} polygon the target polygon
+   * @param {KUTE.polygonMorph} vs the reference polygon
+   */
+  function rotatePolygon(polygon, vs) {
+    var len = polygon.length;
     var min = Infinity;
     var bestOffset;
     var sumOfSquares = 0;
@@ -3187,13 +4134,9 @@
     for (var offset = 0; offset < len; offset += 1) {
       sumOfSquares = 0;
 
-      // vs.forEach((p, i) => {
-      //   const d = distanceSquareRoot(ring[(offset + i) % len], p);
-      //   sumOfSquares += d * d;
-      // });
       for (var i = 0; i < vs.length; i += 1) {
         p = vs[i];
-        d = distanceSquareRoot(ring[(offset + i) % len], p);
+        d = distanceSquareRoot(polygon[(offset + i) % len], p);
         sumOfSquares += d * d;
       }
 
@@ -3204,15 +4147,19 @@
     }
 
     if (bestOffset) {
-      spliced = ring.splice(0, bestOffset);
-      ring.splice.apply(ring, [ ring.length, 0 ].concat( spliced ));
+      spliced = polygon.splice(0, bestOffset);
+      polygon.splice.apply(polygon, [ polygon.length, 0 ].concat( spliced ));
     }
   }
 
-  function addPoints(ring, numPoints) {
-    var desiredLength = ring.length + numPoints;
-    // const step = ring.pathLength / numPoints;
-    var step = polygonLength(ring) / numPoints;
+  /**
+   * Sample additional points for a polygon to better match its pair.
+   * @param {KUTE.polygonObject} polygon the target polygon
+   * @param {number} numPoints the amount of points needed
+   */
+  function addPoints(polygon, numPoints) {
+    var desiredLength = polygon.length + numPoints;
+    var step = polygonLength(polygon) / numPoints;
 
     var i = 0;
     var cursor = 0;
@@ -3221,14 +4168,14 @@
     var b;
     var segment;
 
-    while (ring.length < desiredLength) {
-      a = ring[i];
-      b = ring[(i + 1) % ring.length];
+    while (polygon.length < desiredLength) {
+      a = polygon[i];
+      b = polygon[(i + 1) % polygon.length];
 
       segment = distanceSquareRoot(a, b);
 
       if (insertAt <= cursor + segment) {
-        ring.splice(i + 1, 0, segment
+        polygon.splice(i + 1, 0, segment
           ? midPoint(a, b, (insertAt - cursor) / segment)
           : a.slice(0));
         insertAt += step;
@@ -3239,50 +4186,66 @@
     }
   }
 
-  function bisect(ring, maxSegmentLength) {
+  /**
+   * Split segments of a polygon until it reaches a certain
+   * amount of points.
+   * @param {number[][]} polygon the target polygon
+   * @param {number} maxSegmentLength the maximum amount of points
+   */
+  function bisect(polygon, maxSegmentLength) {
     if ( maxSegmentLength === void 0 ) maxSegmentLength = Infinity;
 
     var a = [];
     var b = [];
 
-    for (var i = 0; i < ring.length; i += 1) {
-      a = ring[i];
-      b = i === ring.length - 1 ? ring[0] : ring[i + 1];
+    for (var i = 0; i < polygon.length; i += 1) {
+      a = polygon[i];
+      b = i === polygon.length - 1 ? polygon[0] : polygon[i + 1];
 
       // Could splice the whole set for a segment instead, but a bit messy
       while (distanceSquareRoot(a, b) > maxSegmentLength) {
         b = midPoint(a, b, 0.5);
-        ring.splice(i + 1, 0, b);
+        polygon.splice(i + 1, 0, b);
       }
     }
   }
 
-  function validRing(ring) {
-    return Array.isArray(ring)
-      && ring.every(function (point) { return Array.isArray(point)
+  /**
+   * Checks the validity of a polygon.
+   * @param {KUTE.polygonMorph} polygon the target polygon
+   * @returns {boolean} the result of the check
+   */
+  function validPolygon(polygon) {
+    return Array.isArray(polygon)
+      && polygon.every(function (point) { return Array.isArray(point)
         && point.length === 2
         && !Number.isNaN(point[0])
         && !Number.isNaN(point[1]); });
   }
 
-  function normalizeRing(input, maxSegmentLength) {
-    var skipBisect;
-    var pathLength;
-    var ring = input;
+  /**
+   * Returns a new polygon and its length from string or another `Array`.
+   * @param {KUTE.polygonMorph | string} input the target polygon
+   * @param {number} maxSegmentLength the maximum amount of points
+   * @returns {KUTE.polygonMorph} normalized polygon
+   */
+  function getPolygon(input, maxSegmentLength) {
+    var assign;
 
-    if (typeof (ring) === 'string') {
-      var converted = pathStringToRing(ring, maxSegmentLength);
-      ring = converted.ring;
-      skipBisect = converted.skipBisect;
-      pathLength = converted.pathLength;
-    } else if (!Array.isArray(ring)) {
-      throw Error((invalidPathValue + ": " + ring));
+    var skipBisect;
+    var polygon;
+
+    if (typeof (input) === 'string') {
+      var converted = pathStringToPolygon(input, maxSegmentLength);
+      ((assign = converted, polygon = assign.polygon, skipBisect = assign.skipBisect));
+    } else if (!Array.isArray(input)) {
+      throw Error((invalidPathValue + ": " + input));
     }
 
-    var points = ring.slice(0);
-    points.pathLength = pathLength;
+    /** @type {KUTE.polygonMorph} */
+    var points = [].concat( polygon );
 
-    if (!validRing(points)) {
+    if (!validPolygon(points)) {
       throw Error((invalidPathValue + ": " + points));
     }
 
@@ -3300,39 +4263,56 @@
     return points;
   }
 
-  function getInterpolationPoints(pathArray1, pathArray2, precision) {
-    var morphPrecision = precision || defaultOptions.morphPrecision;
-    var fromRing = normalizeRing(pathArray1, morphPrecision);
-    var toRing = normalizeRing(pathArray2, morphPrecision);
+  /**
+   * Returns two new polygons ready to tween.
+   * @param {string} path1 the first path string
+   * @param {string} path2 the second path string
+   * @param {number} precision the morphPrecision option value
+   * @returns {KUTE.polygonMorph[]} the two polygons
+   */
+  function getInterpolationPoints(path1, path2, precision) {
+    var morphPrecision = precision || defaultOptions$1.morphPrecision;
+    var fromRing = getPolygon(path1, morphPrecision);
+    var toRing = getPolygon(path2, morphPrecision);
     var diff = fromRing.length - toRing.length;
 
     addPoints(fromRing, diff < 0 ? diff * -1 : 0);
     addPoints(toRing, diff > 0 ? diff : 0);
 
-    rotateRing(fromRing, toRing);
+    rotatePolygon(fromRing, toRing);
 
     return [roundPath(fromRing), roundPath(toRing)];
   }
 
   // Component functions
+  /**
+   * Returns the current `d` attribute value.
+   * @returns {string} the `d` attribute value
+   */
   function getSVGMorph(/* tweenProp */) {
     return this.element.getAttribute('d');
   }
 
-  function prepareSVGMorph(tweenProp, value) {
+  /**
+   * Returns the property tween object.
+   * @param {string} _ the property name
+   * @param {string | KUTE.polygonObject} value the property value
+   * @returns {KUTE.polygonObject} the property tween object
+   */
+  function prepareSVGMorph(/* tweenProp */_, value) {
     var pathObject = {};
     // remove newlines, they brake JSON strings sometimes
     var pathReg = new RegExp('\\n', 'ig');
     var elem = null;
 
-    if (value instanceof SVGElement) {
+    if (value instanceof SVGPathElement) {
       elem = value;
     } else if (/^\.|^#/.test(value)) {
       elem = selector(value);
     }
 
     // first make sure we return pre-processed values
-    if (typeof (value) === 'object' && value.pathArray) {
+    if (typeof (value) === 'object' && value.polygon) {
       return value;
     } if (elem && ['path', 'glyph'].includes(elem.tagName)) {
       pathObject.original = elem.getAttribute('d').replace(pathReg, '');
@@ -3343,10 +4323,15 @@
 
     return pathObject;
   }
+
+  /**
+   * Enables the `to()` method by preparing the tween object in advance.
+   * @param {string} prop the `path` property name
+   */
   function crossCheckSVGMorph(prop) {
     if (this.valuesEnd[prop]) {
-      var pathArray1 = this.valuesStart[prop].pathArray;
-      var pathArray2 = this.valuesEnd[prop].pathArray;
+      var pathArray1 = this.valuesStart[prop].polygon;
+      var pathArray2 = this.valuesEnd[prop].polygon;
       // skip already processed paths
       // allow the component to work with pre-processed values
       if (!pathArray1 || !pathArray2
@@ -3356,13 +4341,13 @@
         // process morphPrecision
         var morphPrecision = this._morphPrecision
           ? parseInt(this._morphPrecision, 10)
-          : defaultOptions.morphPrecision;
+          : defaultOptions$1.morphPrecision;
 
         var ref = getInterpolationPoints(p1, p2, morphPrecision);
         var path1 = ref[0];
         var path2 = ref[1];
-        this.valuesStart[prop].pathArray = path1;
-        this.valuesEnd[prop].pathArray = path2;
+        this.valuesStart[prop].polygon = path1;
+        this.valuesEnd[prop].polygon = path2;
       }
     }
   }
@@ -3376,27 +4361,29 @@
   };
 
   // Component Full
-  var svgMorph = {
+  var SVGMorph = {
     component: 'svgMorph',
     property: 'path',
     defaultValue: [],
     Interpolate: coords,
-    defaultOptions: { morphPrecision: 10, morphIndex: 0 },
+    defaultOptions: { morphPrecision: 10 },
     functions: svgMorphFunctions,
     // Export utils to global for faster execution
     Util: {
+      // component
       addPoints: addPoints,
       bisect: bisect,
-      normalizeRing: normalizeRing,
-      validRing: validRing, // component
+      getPolygon: getPolygon,
+      validPolygon: validPolygon,
       getInterpolationPoints: getInterpolationPoints,
-      pathStringToRing: pathStringToRing,
+      pathStringToPolygon: pathStringToPolygon,
       distanceSquareRoot: distanceSquareRoot,
       midPoint: midPoint,
-      approximateRing: approximateRing,
-      rotateRing: rotateRing,
+      approximatePolygon: approximatePolygon,
+      rotatePolygon: rotatePolygon,
+      // svg-path-commander
       pathToString: pathToString,
-      pathToCurve: pathToCurve, // svg-path-commander
+      pathToCurve: pathToCurve,
       getPathLength: getPathLength,
       getPointAtLength: getPointAtLength,
       getDrawDirection: getDrawDirection,
@@ -3405,14 +4392,14 @@
   };
 
   var Components = {
-    EssentialBoxModel: essentialBoxModel,
+    EssentialBoxModel: BoxModelEssential,
     ColorsProperties: colorProperties,
     HTMLAttributes: htmlAttributes,
-    OpacityProperty: opacityProperty,
-    TextWrite: textWrite,
-    TransformFunctions: transformFunctionsComponent,
-    SVGDraw: svgDraw,
-    SVGMorph: svgMorph,
+    OpacityProperty: OpacityProperty,
+    TextWriteProp: TextWrite,
+    TransformFunctions: TransformFunctions,
+    SVGDraw: SvgDrawProperty,
+    SVGMorph: SVGMorph,
   };
 
   // init components
@@ -3421,7 +4408,17 @@
     Components[component] = new Animation(compOps);
   });
 
-  var version = "2.1.3";
+  var version = "2.2.0alpha2";
+
+  // @ts-ignore
+
+  /**
+   * A global namespace for library version.
+   * @type {string}
+   */
+  var Version = version;
+
+  // KUTE.js standard distribution version
 
   var KUTE = {
     Animation: Animation,
@@ -3442,11 +4439,11 @@
     Easing: Easing,
     CubicBezier: CubicBezier,
     Render: Render,
-    Interpolate: Interpolate,
+    Interpolate: interpolate,
     Process: Process,
-    Internals: Internals,
+    Internals: internals,
     Selector: selector,
-    Version: version,
+    Version: Version,
   };
 
   return KUTE;

@@ -1,5 +1,5 @@
-import KUTE from '../objects/kute.js';
-import units from '../interpolation/units.js';
+import KEC from '../objects/kute';
+import units from '../interpolation/units';
 
 /* borderRadius = {
   category: 'borderRadius',
@@ -9,13 +9,21 @@ import units from '../interpolation/units.js';
 } */
 
 // Component Properties
-const radiusProps = ['borderRadius',
-  'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'];
+const radiusProps = [
+  'borderRadius',
+  'borderTopLeftRadius', 'borderTopRightRadius',
+  'borderBottomLeftRadius', 'borderBottomRightRadius',
+];
 
 // Component Functions
+/**
+ * Sets the property update function.
+ * @param {string} tweenProp the property name
+ */
 export function radiusOnStartFn(tweenProp) {
-  if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
+  if (tweenProp in this.valuesEnd && !KEC[tweenProp]) {
+    KEC[tweenProp] = (elem, a, b, v) => {
+      // eslint-disable-next-line no-param-reassign -- impossible to satisfy
       elem.style[tweenProp] = units(a.v, b.v, b.u, v);
     };
   }
@@ -26,10 +34,10 @@ radiusProps.forEach((tweenProp) => {
 });
 
 // Base Component
-const baseBorderRadius = {
+const BorderRadiusBase = {
   component: 'baseBorderRadius',
   category: 'borderRadius',
   Interpolate: { units },
   functions: { onStart: radiusOnStart },
 };
-export default baseBorderRadius;
+export default BorderRadiusBase;

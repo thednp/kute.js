@@ -1,13 +1,25 @@
-import defaultValues from '../objects/defaultValues.js';
-import getStyleForProperty from '../process/getStyleForProperty.js';
-import trueDimension from '../util/trueDimension.js';
-import numbers from '../interpolation/numbers.js';
-import { boxModelOnStart } from './boxModelBase.js';
+import defaultValues from '../objects/defaultValues';
+import getStyleForProperty from '../process/getStyleForProperty';
+import trueDimension from '../util/trueDimension';
+import numbers from '../interpolation/numbers';
+import { boxModelOnStart } from './boxModelBase';
 
 // Component Functions
+/**
+ * Returns the current property computed style.
+ * @param {string} tweenProp the property name
+ * @returns {string} computed style for property
+ */
 function getBoxModel(tweenProp) {
   return getStyleForProperty(this.element, tweenProp) || defaultValues[tweenProp];
 }
+
+/**
+ * Returns the property tween object.
+ * @param {string} tweenProp the property name
+ * @param {string} value the property name
+ * @returns {number} the property tween object
+ */
 function prepareBoxModel(tweenProp, value) {
   const boxValue = trueDimension(value);
   const offsetProp = tweenProp === 'height' ? 'offsetHeight' : 'offsetWidth';
@@ -31,7 +43,7 @@ const essentialBoxModelFunctions = {
 };
 
 // Component Essential
-const essentialBoxModel = {
+const BoxModelEssential = {
   component: 'essentialBoxModel',
   category: 'boxModel',
   properties: essentialBoxProps,
@@ -41,4 +53,4 @@ const essentialBoxModel = {
   Util: { trueDimension },
 };
 
-export default essentialBoxModel;
+export default BoxModelEssential;

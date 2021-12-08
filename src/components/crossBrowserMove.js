@@ -1,14 +1,17 @@
-import KUTE from '../objects/kute.js';
-import getInlineStyle from '../process/getInlineStyle.js';
-import defaultValues from '../objects/defaultValues.js';
-import trueProperty from '../util/trueProperty.js';
-import numbers from '../interpolation/numbers.js';
+import KEC from '../objects/kute';
+import getInlineStyle from '../process/getInlineStyle';
+import defaultValues from '../objects/defaultValues';
+import trueProperty from '../util/trueProperty';
+import numbers from '../interpolation/numbers';
 
 // Component Const
 const transformProperty = trueProperty('transform');
 const supportTransform = transformProperty in document.body.style ? 1 : 0;
 
 // Component Functions
+/**
+ * Returns the property current style.
+ */
 function getComponentCurrentValue(/* tweenProp, value */) {
   const currentTransform = getInlineStyle(this.element);
   const { left } = this.element.style;
@@ -25,25 +28,38 @@ function getComponentCurrentValue(/* tweenProp, value */) {
 
   return [x, y];
 }
-function prepareComponentValue(tweenProp, value) {
+/**
+ * Returns the property tween object.
+ * @param {string} _ property name
+ * @param {string} value property value
+ * @returns {number[]} the property tween object
+ */
+function prepareComponentValue(/* tweenProp */_, value) {
   const x = Number.isFinite(value * 1) ? parseInt(value, 10) : parseInt(value[0], 10) || 0;
   const y = parseInt(value[1], 10) || 0;
 
   return [x, y];
 }
 
+/**
+ * Sets the property update function.
+ * @param {string} tweenProp the `path` property
+ */
 export function onStartComponent(tweenProp/* , value */) {
-  if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
+  if (!KEC[tweenProp] && this.valuesEnd[tweenProp]) {
     if (supportTransform) {
-      KUTE[tweenProp] = (elem, a, b, v) => {
+      KEC[tweenProp] = (elem, a, b, v) => {
+        /* eslint-disable-next-line no-param-reassign -- impossible to satisfy */
         elem.style[transformProperty] = `translate(${numbers(a[0], b[0], v)}px,${numbers(a[1], b[1], v)}px)`;
       };
     } else {
-      KUTE[tweenProp] = (elem, a, b, v) => {
+      KEC[tweenProp] = (elem, a, b, v) => {
         if (a[0] || b[0]) {
+          /* eslint-disable-next-line no-param-reassign -- impossible to satisfy */
           elem.style.left = `${numbers(a[0], b[0], v)}px`;
         }
         if (a[1] || b[1]) {
+          /* eslint-disable-next-line no-param-reassign -- impossible to satisfy */
           elem.style.top = `${numbers(a[1], b[1], v)}px`;
         }
       };

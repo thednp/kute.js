@@ -1,6 +1,6 @@
-import KUTE from '../objects/kute.js';
-import numbers from '../interpolation/numbers.js';
-import defaultOptions from '../objects/defaultOptions.js';
+import KEC from '../objects/kute';
+import numbers from '../interpolation/numbers';
+import defaultOptions from '../objects/defaultOptions';
 
 // Component Values
 const lowerCaseAlpha = String('abcdefghijklmnopqrstuvwxyz').split(''); // lowercase
@@ -23,8 +23,14 @@ export { charSet };
 
 // Component Functions
 export const onStartWrite = {
+  /**
+   * onStartWrite.text
+   *
+   * Sets the property update function.
+   * @param {string} tweenProp the property name
+   */
   text(tweenProp) {
-    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
+    if (!KEC[tweenProp] && this.valuesEnd[tweenProp]) {
       const chars = this._textChars;
       let charsets = charSet[defaultOptions.textChars];
 
@@ -34,12 +40,13 @@ export const onStartWrite = {
         charsets = chars;
       }
 
-      KUTE[tweenProp] = (elem, a, b, v) => {
+      KEC[tweenProp] = (elem, a, b, v) => {
         let initialText = '';
         let endText = '';
         const finalText = b === '' ? ' ' : b;
         const firstLetterA = a.substring(0);
         const firstLetterB = b.substring(0);
+        /* eslint-disable */
         const pointer = charsets[(Math.random() * charsets.length) >> 0];
 
         if (a === ' ') {
@@ -58,20 +65,29 @@ export const onStartWrite = {
             .substring(0, Math.min(v * firstLetterB.length, firstLetterB.length) >> 0);
           elem.innerHTML = v < 1 ? ((endText + pointer + initialText)) : finalText;
         }
+        /* eslint-enable */
       };
     }
   },
+  /**
+   * onStartWrite.number
+   *
+   * Sets the property update function.
+   * @param {string} tweenProp the property name
+   */
   number(tweenProp) {
-    if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) { // numbers can be 0
-      KUTE[tweenProp] = (elem, a, b, v) => {
+    if (tweenProp in this.valuesEnd && !KEC[tweenProp]) { // numbers can be 0
+      KEC[tweenProp] = (elem, a, b, v) => {
+        /* eslint-disable */
         elem.innerHTML = numbers(a, b, v) >> 0;
+        /* eslint-enable */
       };
     }
   },
 };
 
 // Base Component
-export const baseTextWrite = {
+export const TextWriteBase = {
   component: 'baseTextWrite',
   category: 'textWrite',
   // properties: ['text','number'],
@@ -83,4 +99,4 @@ export const baseTextWrite = {
   Util: { charSet },
 };
 
-export default baseTextWrite;
+export default TextWriteBase;

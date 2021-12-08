@@ -1,1 +1,3 @@
-export default {};
+// all supported properties
+const supportedProperties = {};
+export default supportedProperties;

@@ -1,2 +1,3 @@
 // link properties to interpolate functions
-export default {};
+const linkProperty = {};
+export default linkProperty;

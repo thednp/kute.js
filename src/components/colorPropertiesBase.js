@@ -1,6 +1,6 @@
-import KUTE from '../objects/kute.js';
-import numbers from '../interpolation/numbers.js';
-import colors from '../interpolation/colors.js';
+import KEC from '../objects/kute';
+import numbers from '../interpolation/numbers';
+import colors from '../interpolation/colors';
 
 // Component Interpolation
 // rgba1, rgba2, progress
@@ -8,13 +8,22 @@ import colors from '../interpolation/colors.js';
 // Component Properties
 // supported formats
 // 'hex', 'rgb', 'rgba' '#fff' 'rgb(0,0,0)' / 'rgba(0,0,0,0)' 'red' (IE9+)
-const supportedColors = ['color', 'backgroundColor', 'borderColor',
-  'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor', 'outlineColor'];
+const supportedColors = [
+  'color', 'backgroundColor', 'outlineColor',
+  'borderColor',
+  'borderTopColor', 'borderRightColor',
+  'borderBottomColor', 'borderLeftColor',
+];
 
 // Component Functions
+/**
+ * Sets the property update function.
+ * @param {string} tweenProp the property name
+ */
 export function onStartColors(tweenProp) {
-  if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
+  if (this.valuesEnd[tweenProp] && !KEC[tweenProp]) {
+    KEC[tweenProp] = (elem, a, b, v) => {
+      // eslint-disable-next-line no-param-reassign
       elem.style[tweenProp] = colors(a, b, v);
     };
   }

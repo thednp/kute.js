@@ -1,1 +1,2 @@
-export default [];
+const Tweens = [];
+export default Tweens;

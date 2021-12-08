@@ -1,20 +1,18 @@
-import KUTE from '../objects/kute.js';
-import units from '../interpolation/units.js';
-
-/* textProperties = {
-  category: 'textProperties',
-  defaultValues: [],
-  interpolators: {units},
-  functions = { prepareStart, prepareProperty, onStart:{}
-} */
+import KEC from '../objects/kute';
+import units from '../interpolation/units';
 
 // Component Properties
 const textProperties = ['fontSize', 'lineHeight', 'letterSpacing', 'wordSpacing'];
 const textOnStart = {};
 
+/**
+ * Sets the property update function.
+ * @param {string} tweenProp the property name
+ */
 export function textPropOnStart(tweenProp) {
-  if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
+  if (this.valuesEnd[tweenProp] && !KEC[tweenProp]) {
+    KEC[tweenProp] = (elem, a, b, v) => {
+      // eslint-disable-next-line no-param-reassign -- impossible to satisfy
       elem.style[tweenProp] = units(a.v, b.v, b.u, v);
     };
   }
@@ -25,7 +23,7 @@ textProperties.forEach((tweenProp) => {
 });
 
 // Component Base
-const baseTextProperties = {
+const TextPropertiesBase = {
   component: 'baseTextProperties',
   category: 'textProps',
   // properties: textProperties,
@@ -34,4 +32,4 @@ const baseTextProperties = {
   functions: { onStart: textOnStart },
 };
 
-export default baseTextProperties;
+export default TextPropertiesBase;

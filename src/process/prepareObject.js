@@ -1,8 +1,15 @@
-import prepareProperty from '../objects/prepareProperty.js';
-import supportedProperties from '../objects/supportedProperties.js';
-import defaultValues from '../objects/defaultValues.js';
+import prepareProperty from '../objects/prepareProperty';
+import supportedProperties from '../objects/supportedProperties';
+import defaultValues from '../objects/defaultValues';
 
-// prepareObject - returns all processed valuesStart / valuesEnd
+/**
+ * prepareObject
+ *
+ * Returns all processed valuesStart / valuesEnd.
+ *
+ * @param {Element} obj the values start/end object
+ * @param {string} fn toggles between the two
+ */
 export default function prepareObject(obj, fn) { // this, props object, type: start/end
   const propertiesObject = fn === 'start' ? this.valuesStart : this.valuesEnd;
 

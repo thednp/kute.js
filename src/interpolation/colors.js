@@ -1,5 +1,12 @@
-import numbers from './numbers.js';
-
+import numbers from './numbers';
+/**
+ * Color Interpolation Function.
+ *
+ * @param {KUTE.colorObject} a start color
+ * @param {KUTE.colorObject} b end color
+ * @param {number} v progress
+ * @returns {string} the resulting color
+ */
 export default function colors(a, b, v) {
   const _c = {};
   const ep = ')';
@@ -8,12 +15,10 @@ export default function colors(a, b, v) {
   const rgba = 'rgba(';
 
   Object.keys(b).forEach((c) => {
-    // _c[c] = c !== 'a' ? (numbers(a[c], b[c], v) >> 0 || 0) : (a[c] && b[c])
-    // ? (numbers(a[c], b[c], v) * 100 >> 0) / 100 : null;
     if (c !== 'a') {
-      _c[c] = numbers(a[c], b[c], v) >> 0 || 0;
+      _c[c] = numbers(a[c], b[c], v) >> 0 || 0; // eslint-disable-line no-bitwise
     } else if (a[c] && b[c]) {
-      _c[c] = (numbers(a[c], b[c], v) * 100 >> 0) / 100;
+      _c[c] = (numbers(a[c], b[c], v) * 100 >> 0) / 100; // eslint-disable-line no-bitwise
     }
   });
 

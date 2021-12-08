@@ -1,6 +1,6 @@
-import KUTE from '../objects/kute.js';
-import numbers from '../interpolation/numbers.js';
-import colors from '../interpolation/colors.js';
+import KEC from '../objects/kute';
+import numbers from '../interpolation/numbers';
+import colors from '../interpolation/colors';
 
 // Component Name
 const ComponentName = 'baseHTMLAttributes';
@@ -10,18 +10,30 @@ const attributes = {};
 export { attributes };
 
 export const onStartAttr = {
+  /**
+   * onStartAttr.attr
+   *
+   * Sets the sub-property update function.
+   * @param {string} tweenProp the property name
+   */
   attr(tweenProp) {
-    if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-      KUTE[tweenProp] = (elem, vS, vE, v) => {
+    if (!KEC[tweenProp] && this.valuesEnd[tweenProp]) {
+      KEC[tweenProp] = (elem, vS, vE, v) => {
         Object.keys(vE).forEach((oneAttr) => {
-          KUTE.attributes[oneAttr](elem, oneAttr, vS[oneAttr], vE[oneAttr], v);
+          KEC.attributes[oneAttr](elem, oneAttr, vS[oneAttr], vE[oneAttr], v);
         });
       };
     }
   },
+  /**
+   * onStartAttr.attributes
+   *
+   * Sets the update function for the property.
+   * @param {string} tweenProp the property name
+   */
   attributes(tweenProp) {
-    if (!KUTE[tweenProp] && this.valuesEnd.attr) {
-      KUTE[tweenProp] = attributes;
+    if (!KEC[tweenProp] && this.valuesEnd.attr) {
+      KEC[tweenProp] = attributes;
     }
   },
 };

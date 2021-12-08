@@ -1,20 +1,19 @@
-import defaultValues from '../objects/defaultValues.js';
-import numbers from '../interpolation/numbers.js';
-import arrays from '../interpolation/arrays.js';
-import { onStartTransform } from './transformMatrixBase.js';
-
-/* transformMatrix = {
-  property : 'transform',
-  defaultValue: {},
-  interpolators: {}
-  functions = { prepareStart, prepareProperty, onStart, crossCheck }
-} */
+import defaultValues from '../objects/defaultValues';
+import numbers from '../interpolation/numbers';
+import arrays from '../interpolation/arrays';
+import { onStartTransform } from './transformMatrixBase';
 
 // Component name
 const matrixComponent = 'transformMatrix';
 
 // Component Functions
-function getTransform(tweenProp, value) {
+/**
+ * Returns the current transform object.
+ * @param {string} _ the property name
+ * @param {string} value the property value
+ * @returns {KUTE.transformMObject} transform object
+ */
+function getTransform(/* tweenProp, */_, value) {
   const transformObject = {};
   const currentValue = this.element[matrixComponent];
 
@@ -30,7 +29,13 @@ function getTransform(tweenProp, value) {
   return transformObject;
 }
 
-function prepareTransform(tweenProp, value) {
+/**
+ * Returns the property tween object.
+ * @param {string} _ the property name
+ * @param {Object<string, string | number | (string | number)[]>} obj the property value
+ * @returns {KUTE.transformMObject} the property tween object
+ */
+function prepareTransform(/* tweenProp, */_, value) {
   if (typeof (value) === 'object' && !value.length) {
     let pv;
     const transformObject = {};
@@ -89,14 +94,20 @@ function prepareTransform(tweenProp, value) {
   throw Error(`KUTE.js - "${value}" is not valid/supported transform function`);
 }
 
+/**
+ * Sets the end values for the next `to()` method call.
+ * @param {string} tweenProp the property name
+ */
 function onCompleteTransform(tweenProp) {
   if (this.valuesEnd[tweenProp]) {
-    this.element[matrixComponent] = {};
-    Object.keys(this.valuesEnd[tweenProp]).forEach((tf) => {
-      this.element[matrixComponent][tf] = this.valuesEnd[tweenProp][tf];
-    });
+    this.element[matrixComponent] = { ...this.valuesEnd[tweenProp] };
   }
 }
+
+/**
+ * Prepare tween object in advance for `to()` method.
+ * @param {string} tweenProp the property name
+ */
 function crossCheckTransform(tweenProp) {
   if (this.valuesEnd[tweenProp]) {
     if (this.valuesEnd[tweenProp].perspective && !this.valuesStart[tweenProp].perspective) {

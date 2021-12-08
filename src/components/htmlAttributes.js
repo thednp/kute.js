@@ -1,10 +1,10 @@
-import defaultValues from '../objects/defaultValues.js';
-import onStart from '../objects/onStart.js';
-import trueColor from '../util/trueColor.js';
-import trueDimension from '../util/trueDimension.js';
-import numbers from '../interpolation/numbers.js';
-import colors from '../interpolation/colors.js';
-import { attributes, onStartAttr } from './htmlAttributesBase.js';
+import defaultValues from '../objects/defaultValues';
+import onStart from '../objects/onStart';
+import trueColor from '../util/trueColor';
+import trueDimension from '../util/trueDimension';
+import numbers from '../interpolation/numbers';
+import colors from '../interpolation/colors';
+import { attributes, onStartAttr } from './htmlAttributesBase';
 
 // Component Name
 const ComponentName = 'htmlAttributes';
@@ -13,13 +13,25 @@ const ComponentName = 'htmlAttributes';
 const svgColors = ['fill', 'stroke', 'stop-color'];
 
 // Component Util
+/**
+ * Returns non-camelcase property name.
+ * @param {string} a the camelcase property name
+ * @returns {string} the non-camelcase property name
+ */
 function replaceUppercase(a) { return a.replace(/[A-Z]/g, '-$&').toLowerCase(); }
 
 // Component Functions
-export function getAttr(tweenProp, value) {
+/**
+ * Returns the current attribute value.
+ * @param {string} _ the property name
+ * @param {string} value the property value
+ * @returns {{[x:string]: string}} attribute value
+ */
+export function getAttr(/* tweenProp, */_, value) {
   const attrStartValues = {};
   Object.keys(value).forEach((attr) => {
-    // get the value for 'fill-opacity' not fillOpacity, also 'width' not the internal 'width_px'
+    // get the value for 'fill-opacity' not fillOpacity
+    // also 'width' not the internal 'width_px'
     const attribute = replaceUppercase(attr).replace(/_+[a-z]+/, '');
     const currentValue = this.element.getAttribute(attribute);
     attrStartValues[attribute] = svgColors.includes(attribute)
@@ -30,6 +42,12 @@ export function getAttr(tweenProp, value) {
   return attrStartValues;
 }
 
+/**
+ * Returns the property tween object.
+ * @param {string} tweenProp the property name
+ * @param {string} attrObj the property value
+ * @returns {number} the property tween object
+ */
 export function prepareAttr(tweenProp, attrObj) { // attr (string),attrObj (object)
   const attributesObject = {};
 
@@ -49,6 +67,7 @@ export function prepareAttr(tweenProp, attrObj) { // attr (string),attrObj (obje
           if (this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
             attributes[tp] = (elem, oneAttr, a, b, v) => {
               const _p = oneAttr.replace(suffix, '');
+              /* eslint no-bitwise: ["error", { "allow": [">>"] }] */
               elem.setAttribute(_p, ((numbers(a.v, b.v, v) * 1000 >> 0) / 1000) + b.u);
             };
           }

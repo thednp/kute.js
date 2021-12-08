@@ -1,25 +1,22 @@
-import KUTE from '../objects/kute.js';
-import perspective from '../interpolation/perspective.js';
-import translate3d from '../interpolation/translate3d.js';
-import rotate3d from '../interpolation/rotate3d.js';
-import translate from '../interpolation/translate.js';
-import rotate from '../interpolation/rotate.js';
-import scale from '../interpolation/scale.js';
-import skew from '../interpolation/skew.js';
-
-/* transformFunctions = {
-  property: 'transform',
-  subProperties,
-  defaultValues,
-  Interpolate: {translate,rotate,skew,scale},
-  functions } */
-
-// same to svg transform, attr
+import KEC from '../objects/kute';
+import perspective from '../interpolation/perspective';
+import translate3d from '../interpolation/translate3d';
+import rotate3d from '../interpolation/rotate3d';
+import translate from '../interpolation/translate';
+import rotate from '../interpolation/rotate';
+import scale from '../interpolation/scale';
+import skew from '../interpolation/skew';
 
 // Component Functions
+/**
+ * Sets the property update function.
+ * * same to svgTransform, htmlAttributes
+ * @param {string} tweenProp the property name
+ */
 export function onStartTransform(tweenProp) {
-  if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
+  if (!KEC[tweenProp] && this.valuesEnd[tweenProp]) {
+    KEC[tweenProp] = (elem, a, b, v) => {
+      // eslint-disable-next-line no-param-reassign
       elem.style[tweenProp] = (a.perspective || b.perspective ? perspective(a.perspective, b.perspective, 'px', v) : '') // one side might be 0
         + (a.translate3d ? translate3d(a.translate3d, b.translate3d, 'px', v) : '') // array [x,y,z]
         + (a.rotate3d ? rotate3d(a.rotate3d, b.rotate3d, 'deg', v) : '') // array [x,y,z]
@@ -30,7 +27,7 @@ export function onStartTransform(tweenProp) {
 }
 
 // Base Component
-const BaseTransform = {
+const TransformFunctionsBase = {
   component: 'baseTransform',
   property: 'transform',
   functions: { onStart: onStartTransform },
@@ -45,4 +42,4 @@ const BaseTransform = {
   },
 };
 
-export default BaseTransform;
+export default TransformFunctionsBase;

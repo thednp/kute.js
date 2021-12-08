@@ -1,3 +1,10 @@
-import Tweens from '../objects/tweens.js';
+import Tweens from '../objects/tweens';
 
-export default () => Tweens;
+/**
+ * KUTE.add(Tween)
+ *
+ * @return {KUTE.Tween[]} tw a new tween to add
+ */
+const getAll = () => Tweens;
+
+export default getAll;

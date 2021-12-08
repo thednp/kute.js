@@ -1,11 +1,13 @@
-import defaultOptions from './defaultOptions.js';
-import linkProperty from './linkProperty.js';
-import onStart from './onStart.js';
-import onComplete from './onComplete.js';
+import defaultOptions from './defaultOptions';
+import linkProperty from './linkProperty';
+import onStart from './onStart';
+import onComplete from './onComplete';
 
-export default {
+const Objects = {
   defaultOptions,
   linkProperty,
   onStart,
   onComplete,
 };
+
+export default Objects;

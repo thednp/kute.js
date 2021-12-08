@@ -1,19 +1,25 @@
-import defaultValues from '../objects/defaultValues.js';
-import getStyleForProperty from '../process/getStyleForProperty.js';
-import trueColor from '../util/trueColor.js';
-import numbers from '../interpolation/numbers.js';
-import colors from '../interpolation/colors.js';
-import { onStartShadow } from './shadowPropertiesBase.js';
+import defaultValues from '../objects/defaultValues';
+import getStyleForProperty from '../process/getStyleForProperty';
+import trueColor from '../util/trueColor';
+import numbers from '../interpolation/numbers';
+import colors from '../interpolation/colors';
+import { onStartShadow } from './shadowPropertiesBase';
 
 // Component Properties
 const shadowProps = ['boxShadow', 'textShadow'];
 
 // Component Util
 
-// box-shadow: none | h-shadow v-shadow blur spread color inset|initial|inherit
-// text-shadow: none | offset-x offset-y blur-radius color |initial|inherit
-// utility function to process values accordingly
-// numbers must be floats and color must be rgb object
+/**
+ * Return the box-shadow / text-shadow tween object.
+ * * box-shadow: none | h-shadow v-shadow blur spread color inset|initial|inherit
+ * * text-shadow: none | offset-x offset-y blur-radius color |initial|inherit
+ * * numbers must be floats and color must be rgb object
+ *
+ * @param {(number | string)[]} shadow an `Array` with shadow parameters
+ * @param {string} tweenProp the property name
+ * @returns {KUTE.shadowObject} the property tween object
+ */
 function processShadowArray(shadow, tweenProp) {
   let newShadow;
 
@@ -45,12 +51,17 @@ function processShadowArray(shadow, tweenProp) {
 
   newShadow = tweenProp === 'boxShadow'
     ? newShadow
-    : newShadow.filter((x, i) => [0, 1, 2, 4].includes(i));
+    : newShadow.filter((_, i) => [0, 1, 2, 4].includes(i));
 
   return newShadow;
 }
 
 // Component Functions
+/**
+ * Returns the current property computed style.
+ * @param {string} tweenProp the property name
+ * @returns {string} computed style for property
+ */
 export function getShadow(tweenProp/* , value */) {
   const cssShadow = getStyleForProperty(this.element, tweenProp);
   // '0px 0px 0px 0px rgb(0,0,0)'
@@ -59,6 +70,12 @@ export function getShadow(tweenProp/* , value */) {
     : cssShadow;
 }
 
+/**
+ * Returns the property tween object.
+ * @param {string} tweenProp the property name
+ * @param {string} propValue the property value
+ * @returns {KUTE.shadowObject} the property tween object
+ */
 export function prepareShadow(tweenProp, propValue) {
   // [horizontal, vertical, blur, spread, color: {r:0,g:0,b:0}, inset]
   // parseProperty for boxShadow, builds basic structure with ready to tween values
@@ -95,7 +112,7 @@ const shadowFunctions = {
 };
 
 // Component Full
-const shadowProperties = {
+const ShadowProperties = {
   component: 'shadowProperties',
   properties: shadowProps,
   defaultValues: {
@@ -107,4 +124,4 @@ const shadowProperties = {
   Util: { processShadowArray, trueColor },
 };
 
-export default shadowProperties;
+export default ShadowProperties;

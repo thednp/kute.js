@@ -1,36 +1,37 @@
-import supportedProperties from '../objects/supportedProperties.js';
-import defaultValues from '../objects/defaultValues.js';
-import defaultOptions from '../objects/defaultOptions.js';
-import prepareProperty from '../objects/prepareProperty.js';
-import prepareStart from '../objects/prepareStart.js';
-import onStart from '../objects/onStart.js';
-import onComplete from '../objects/onComplete.js';
-import crossCheck from '../objects/crossCheck.js';
-import linkProperty from '../objects/linkProperty.js';
-import Util from '../objects/util.js';
-import Interpolate from '../objects/interpolate.js';
+import supportedProperties from '../objects/supportedProperties';
+import defaultValues from '../objects/defaultValues';
+import defaultOptions from '../objects/defaultOptions';
+import prepareProperty from '../objects/prepareProperty';
+import prepareStart from '../objects/prepareStart';
+import onStart from '../objects/onStart';
+import onComplete from '../objects/onComplete';
+import crossCheck from '../objects/crossCheck';
+import linkProperty from '../objects/linkProperty';
+import Util from '../objects/util';
+import Interpolate from '../objects/interpolate';
 
-// Animation class
-// * builds KUTE components
-// * populate KUTE objects
-// * AnimatonBase creates a KUTE.js build for pre-made Tween objects
-// * AnimatonDevelopment can help you debug your new components
+/**
+ * Animation Class
+ *
+ * Registers components by populating KUTE.js objects and makes sure
+ * no duplicate component / property is allowed.
+ */
 export default class Animation {
+  /**
+   * @constructor
+   * @param {KUTE.fullComponent} Component
+   */
   constructor(Component) {
     try {
       if (Component.component in supportedProperties) {
-        throw Error(`KUTE.js - ${Component.component} already registered`);
+        throw Error(`KUTE - ${Component.component} already registered`);
       } else if (Component.property in defaultValues) {
-        throw Error(`KUTE.js - ${Component.property} already registered`);
-      } else {
-        this.setComponent(Component);
+        throw Error(`KUTE - ${Component.property} already registered`);
       }
     } catch (e) {
       throw Error(e);
     }
-  }
 
-  setComponent(Component) {
     const propertyInfo = this;
     const ComponentName = Component.component;
     // const Objects = { defaultValues, defaultOptions, Interpolate, linkProperty, Util }
@@ -75,9 +76,10 @@ export default class Animation {
 
     // set additional options
     if (Component.defaultOptions) {
-      Object.keys(Component.defaultOptions).forEach((op) => {
-        defaultOptions[op] = Component.defaultOptions[op];
-      });
+      // Object.keys(Component.defaultOptions).forEach((op) => {
+      //   defaultOptions[op] = Component.defaultOptions[op];
+      // });
+      Object.assign(defaultOptions, Component.defaultOptions);
     }
 
     // set functions
@@ -105,7 +107,7 @@ export default class Animation {
       });
     }
 
-    // set component interpolate
+    // set component interpolation functions
     if (Component.Interpolate) {
       Object.keys(Component.Interpolate).forEach((fni) => {
         const compIntObj = Component.Interpolate[fni];

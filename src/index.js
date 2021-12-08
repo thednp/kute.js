@@ -1,29 +1,30 @@
+// KUTE.js standard distribution version
 import CubicBezier from 'cubic-bezier-easing';
-import Render from './core/render.js';
-import Interpolate from './objects/interpolate.js';
-import Objects from './objects/objects.js';
-import Util from './objects/util.js';
-import Internals from './core/internals.js';
-import Process from './process/process.js';
-import Easing from './easing/easing-bezier.js';
-import Selector from './util/selector.js';
+import Render from './core/render';
+import Interpolate from './objects/interpolate';
+import Objects from './objects/objects';
+import Util from './objects/util';
+import Internals from './core/internals';
+import Process from './process/process';
+import Easing from './easing/easing-bezier';
+import Selector from './util/selector';
 
 // TweenConstructor
-import Tween from './tween/tween.js';
-import TweenCollection from './tween/tweenCollection.js';
+import Tween from './tween/tween';
+import TweenCollection from './tween/tweenCollection';
 // interface
-import to from './interface/to.js';
-import fromTo from './interface/fromTo.js';
-import allTo from './interface/allTo.js';
-import allFromTo from './interface/allFromTo.js';
+import to from './interface/to';
+import fromTo from './interface/fromTo';
+import allTo from './interface/allTo';
+import allFromTo from './interface/allFromTo';
 
 // Animation
-import Animation from './animation/animation.js';
+import Animation from './animation/animation';
 
 // Default Components
-import Components from './objects/componentsDefault.js';
+import Components from './objects/componentsDefault';
 
-import Version from './util/version.js';
+import Version from './util/version';
 
 const KUTE = {
   Animation,

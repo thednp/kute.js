@@ -1,4 +1,12 @@
-// a public selector utility
+/**
+ * selector
+ *
+ * A selector utility for KUTE.js.
+ *
+ * @param {KUTE.selectorType} el target(s) or string selector
+ * @param {boolean | number} multi when true returns an array/collection of elements
+ * @returns {Element | Element[] | null}
+ */
 export default function selector(el, multi) {
   try {
     let requestedElem;

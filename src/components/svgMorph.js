@@ -1,46 +1,45 @@
-import pathToCurve from 'svg-path-commander/src/convert/pathToCurve.js';
-import pathToString from 'svg-path-commander/src/convert/pathToString.js';
-import normalizePath from 'svg-path-commander/src/process/normalizePath.js';
-import splitPath from 'svg-path-commander/src/process/splitPath.js';
-import roundPath from 'svg-path-commander/src/process/roundPath.js';
-import invalidPathValue from 'svg-path-commander/src/util/invalidPathValue.js';
-import getPathLength from 'svg-path-commander/src/util/getPathLength.js';
-import getPointAtLength from 'svg-path-commander/src/util/getPointAtLength.js';
-import getDrawDirection from 'svg-path-commander/src/util/getDrawDirection.js';
-import epsilon from 'svg-path-commander/src/math/epsilon.js';
-import midPoint from 'svg-path-commander/src/math/midPoint.js';
-import distanceSquareRoot from 'svg-path-commander/src/math/distanceSquareRoot.js';
-import { onStartSVGMorph } from './svgMorphBase.js';
-import coords from '../interpolation/coords.js';
-import defaultOptions from '../objects/defaultOptions.js';
-import selector from '../util/selector.js';
-
-/* SVGMorph = {
-  property: 'path',
-  defaultValue: [],
-  interpolators: {numbers,coords},
-  functions = { prepareStart, prepareProperty, onStart, crossCheck }
-} */
-
-// Component Interpolation
-// function function(array1, array2, length, progress)
+import pathToCurve from 'svg-path-commander/src/convert/pathToCurve';
+import pathToString from 'svg-path-commander/src/convert/pathToString';
+import normalizePath from 'svg-path-commander/src/process/normalizePath';
+import splitPath from 'svg-path-commander/src/process/splitPath';
+import roundPath from 'svg-path-commander/src/process/roundPath';
+import invalidPathValue from 'svg-path-commander/src/parser/invalidPathValue';
+import getPathLength from 'svg-path-commander/src/util/getPathLength';
+import getPointAtLength from 'svg-path-commander/src/util/getPointAtLength';
+import getDrawDirection from 'svg-path-commander/src/util/getDrawDirection';
+import epsilon from 'svg-path-commander/src/math/epsilon';
+import midPoint from 'svg-path-commander/src/math/midPoint';
+import distanceSquareRoot from 'svg-path-commander/src/math/distanceSquareRoot';
+import { onStartSVGMorph } from './svgMorphBase';
+import coords from '../interpolation/coords';
+import defaultOptions from '../objects/defaultOptions';
+import selector from '../util/selector';
 
 // Component Util
 // original script flubber
 // https://github.com/veltman/flubber
 
-function polygonLength(ring) {
-  return ring.reduce((length, point, i) => (i
-    ? length + distanceSquareRoot(ring[i - 1], point)
+/**
+ * Returns polygon length.
+ * @param {KUTE.polygonMorph} polygon target polygon
+ * @returns {number} length
+ */
+function polygonLength(polygon) {
+  return polygon.reduce((length, point, i) => (i
+    ? length + distanceSquareRoot(polygon[i - 1], point)
     : 0), 0);
 }
 
+/**
+ * Returns an existing polygin and its length or false if not polygon.
+ * @param {SVGPathCommander.pathArray} pathArray target polygon
+ * @returns {KUTE.exactRing} length
+ */
 function exactRing(pathArray) {
-  const ring = [];
+  const polygon = [];
   const pathlen = pathArray.length;
   let segment = [];
   let pathCommand = '';
-  let pathLength = 0;
 
   if (!pathArray.length || pathArray[0][0] !== 'M') {
     return false;
@@ -52,54 +51,68 @@ function exactRing(pathArray) {
 
     if ((pathCommand === 'M' && i) || pathCommand === 'Z') {
       break; // !!
-    } else if ('ML'.indexOf(pathCommand) > -1) {
-      ring.push([segment[1], segment[2]]);
+    } else if ('ML'.includes(pathCommand)) {
+      polygon.push([segment[1], segment[2]]);
     } else {
       return false;
     }
   }
 
-  pathLength = polygonLength(ring);
-
-  return pathlen ? { ring, pathLength } : false;
+  return pathlen ? { polygon } : false;
 }
 
-function approximateRing(parsed, maxSegmentLength) {
+/**
+ * Returns polygon length.
+ * @param {SVGPathCommander.pathArray} parsed target polygon
+ * @param {number} maxLength the maximum segment length
+ * @returns {KUTE.exactRing} length
+ */
+function approximatePolygon(parsed, maxLength) {
   const ringPath = splitPath(pathToString(parsed))[0];
-  const curvePath = pathToCurve(ringPath, 4);
+  const curvePath = pathToCurve(ringPath);
   const pathLength = getPathLength(curvePath);
-  const ring = [];
+  const polygon = [];
   let numPoints = 3;
   let point;
 
-  if (maxSegmentLength && !Number.isNaN(maxSegmentLength) && +maxSegmentLength > 0) {
-    numPoints = Math.max(numPoints, Math.ceil(pathLength / maxSegmentLength));
+  if (maxLength && !Number.isNaN(maxLength) && +maxLength > 0) {
+    numPoints = Math.max(numPoints, Math.ceil(pathLength / maxLength));
   }
 
   for (let i = 0; i < numPoints; i += 1) {
     point = getPointAtLength(curvePath, (pathLength * i) / numPoints);
-    ring.push([point.x, point.y]);
+    polygon.push([point.x, point.y]);
   }
 
   // Make all rings clockwise
   if (!getDrawDirection(curvePath)) {
-    ring.reverse();
+    polygon.reverse();
   }
 
   return {
-    pathLength,
-    ring,
+    polygon,
     skipBisect: true,
   };
 }
 
-function pathStringToRing(str, maxSegmentLength) {
-  const parsed = normalizePath(str, 0);
-  return exactRing(parsed) || approximateRing(parsed, maxSegmentLength);
+/**
+ * Parses a path string and returns a polygon array.
+ * @param {string} str path string
+ * @param {number} maxLength maximum amount of points
+ * @returns {KUTE.exactRing} the polygon array we need
+ */
+function pathStringToPolygon(str, maxLength) {
+  const parsed = normalizePath(str);
+  return exactRing(parsed) || approximatePolygon(parsed, maxLength);
 }
 
-function rotateRing(ring, vs) {
-  const len = ring.length;
+/**
+ * Rotates a polygon to better match its pair.
+ * @param {KUTE.polygonMorph} polygon the target polygon
+ * @param {KUTE.polygonMorph} vs the reference polygon
+ */
+function rotatePolygon(polygon, vs) {
+  const len = polygon.length;
   let min = Infinity;
   let bestOffset;
   let sumOfSquares = 0;
@@ -110,13 +123,9 @@ function rotateRing(ring, vs) {
   for (let offset = 0; offset < len; offset += 1) {
     sumOfSquares = 0;
 
-    // vs.forEach((p, i) => {
-    //   const d = distanceSquareRoot(ring[(offset + i) % len], p);
-    //   sumOfSquares += d * d;
-    // });
     for (let i = 0; i < vs.length; i += 1) {
       p = vs[i];
-      d = distanceSquareRoot(ring[(offset + i) % len], p);
+      d = distanceSquareRoot(polygon[(offset + i) % len], p);
       sumOfSquares += d * d;
     }
 
@@ -127,15 +136,19 @@ function rotateRing(ring, vs) {
   }
 
   if (bestOffset) {
-    spliced = ring.splice(0, bestOffset);
-    ring.splice(ring.length, 0, ...spliced);
+    spliced = polygon.splice(0, bestOffset);
+    polygon.splice(polygon.length, 0, ...spliced);
   }
 }
 
-function addPoints(ring, numPoints) {
-  const desiredLength = ring.length + numPoints;
-  // const step = ring.pathLength / numPoints;
-  const step = polygonLength(ring) / numPoints;
+/**
+ * Sample additional points for a polygon to better match its pair.
+ * @param {KUTE.polygonObject} polygon the target polygon
+ * @param {number} numPoints the amount of points needed
+ */
+function addPoints(polygon, numPoints) {
+  const desiredLength = polygon.length + numPoints;
+  const step = polygonLength(polygon) / numPoints;
 
   let i = 0;
   let cursor = 0;
@@ -144,14 +157,14 @@ function addPoints(ring, numPoints) {
   let b;
   let segment;
 
-  while (ring.length < desiredLength) {
-    a = ring[i];
-    b = ring[(i + 1) % ring.length];
+  while (polygon.length < desiredLength) {
+    a = polygon[i];
+    b = polygon[(i + 1) % polygon.length];
 
     segment = distanceSquareRoot(a, b);
 
     if (insertAt <= cursor + segment) {
-      ring.splice(i + 1, 0, segment
+      polygon.splice(i + 1, 0, segment
         ? midPoint(a, b, (insertAt - cursor) / segment)
         : a.slice(0));
       insertAt += step;
@@ -162,48 +175,62 @@ function addPoints(ring, numPoints) {
   }
 }
 
-function bisect(ring, maxSegmentLength = Infinity) {
+/**
+ * Split segments of a polygon until it reaches a certain
+ * amount of points.
+ * @param {number[][]} polygon the target polygon
+ * @param {number} maxSegmentLength the maximum amount of points
+ */
+function bisect(polygon, maxSegmentLength = Infinity) {
   let a = [];
   let b = [];
 
-  for (let i = 0; i < ring.length; i += 1) {
-    a = ring[i];
-    b = i === ring.length - 1 ? ring[0] : ring[i + 1];
+  for (let i = 0; i < polygon.length; i += 1) {
+    a = polygon[i];
+    b = i === polygon.length - 1 ? polygon[0] : polygon[i + 1];
 
     // Could splice the whole set for a segment instead, but a bit messy
     while (distanceSquareRoot(a, b) > maxSegmentLength) {
       b = midPoint(a, b, 0.5);
-      ring.splice(i + 1, 0, b);
+      polygon.splice(i + 1, 0, b);
     }
   }
 }
 
-function validRing(ring) {
-  return Array.isArray(ring)
-    && ring.every((point) => Array.isArray(point)
+/**
+ * Checks the validity of a polygon.
+ * @param {KUTE.polygonMorph} polygon the target polygon
+ * @returns {boolean} the result of the check
+ */
+function validPolygon(polygon) {
+  return Array.isArray(polygon)
+    && polygon.every((point) => Array.isArray(point)
       && point.length === 2
       && !Number.isNaN(point[0])
       && !Number.isNaN(point[1]));
 }
 
-function normalizeRing(input, maxSegmentLength) {
+/**
+ * Returns a new polygon and its length from string or another `Array`.
+ * @param {KUTE.polygonMorph | string} input the target polygon
+ * @param {number} maxSegmentLength the maximum amount of points
+ * @returns {KUTE.polygonMorph} normalized polygon
+ */
+function getPolygon(input, maxSegmentLength) {
   let skipBisect;
-  let pathLength;
-  let ring = input;
+  let polygon;
 
-  if (typeof (ring) === 'string') {
-    const converted = pathStringToRing(ring, maxSegmentLength);
-    ring = converted.ring;
-    skipBisect = converted.skipBisect;
-    pathLength = converted.pathLength;
-  } else if (!Array.isArray(ring)) {
-    throw Error(`${invalidPathValue}: ${ring}`);
+  if (typeof (input) === 'string') {
+    const converted = pathStringToPolygon(input, maxSegmentLength);
+    ({ polygon, skipBisect } = converted);
+  } else if (!Array.isArray(input)) {
+    throw Error(`${invalidPathValue}: ${input}`);
   }
 
-  const points = ring.slice(0);
-  points.pathLength = pathLength;
+  /** @type {KUTE.polygonMorph} */
+  const points = [...polygon];
 
-  if (!validRing(points)) {
+  if (!validPolygon(points)) {
     throw Error(`${invalidPathValue}: ${points}`);
   }
 
@@ -221,39 +248,56 @@ function normalizeRing(input, maxSegmentLength) {
   return points;
 }
 
-function getInterpolationPoints(pathArray1, pathArray2, precision) {
+/**
+ * Returns two new polygons ready to tween.
+ * @param {string} path1 the first path string
+ * @param {string} path2 the second path string
+ * @param {number} precision the morphPrecision option value
+ * @returns {KUTE.polygonMorph[]} the two polygons
+ */
+function getInterpolationPoints(path1, path2, precision) {
   const morphPrecision = precision || defaultOptions.morphPrecision;
-  const fromRing = normalizeRing(pathArray1, morphPrecision);
-  const toRing = normalizeRing(pathArray2, morphPrecision);
+  const fromRing = getPolygon(path1, morphPrecision);
+  const toRing = getPolygon(path2, morphPrecision);
   const diff = fromRing.length - toRing.length;
 
   addPoints(fromRing, diff < 0 ? diff * -1 : 0);
   addPoints(toRing, diff > 0 ? diff : 0);
 
-  rotateRing(fromRing, toRing);
+  rotatePolygon(fromRing, toRing);
 
   return [roundPath(fromRing), roundPath(toRing)];
 }
 
 // Component functions
+/**
+ * Returns the current `d` attribute value.
+ * @returns {string} the `d` attribute value
+ */
 function getSVGMorph(/* tweenProp */) {
   return this.element.getAttribute('d');
 }
 
-function prepareSVGMorph(tweenProp, value) {
+/**
+ * Returns the property tween object.
+ * @param {string} _ the property name
+ * @param {string | KUTE.polygonObject} value the property value
+ * @returns {KUTE.polygonObject} the property tween object
+ */
+function prepareSVGMorph(/* tweenProp */_, value) {
   const pathObject = {};
   // remove newlines, they brake JSON strings sometimes
   const pathReg = new RegExp('\\n', 'ig');
   let elem = null;
 
-  if (value instanceof SVGElement) {
+  if (value instanceof SVGPathElement) {
     elem = value;
   } else if (/^\.|^#/.test(value)) {
     elem = selector(value);
   }
 
   // first make sure we return pre-processed values
-  if (typeof (value) === 'object' && value.pathArray) {
+  if (typeof (value) === 'object' && value.polygon) {
     return value;
   } if (elem && ['path', 'glyph'].includes(elem.tagName)) {
     pathObject.original = elem.getAttribute('d').replace(pathReg, '');
@@ -264,10 +308,15 @@ function prepareSVGMorph(tweenProp, value) {
 
   return pathObject;
 }
+
+/**
+ * Enables the `to()` method by preparing the tween object in advance.
+ * @param {string} prop the `path` property name
+ */
 function crossCheckSVGMorph(prop) {
   if (this.valuesEnd[prop]) {
-    const pathArray1 = this.valuesStart[prop].pathArray;
-    const pathArray2 = this.valuesEnd[prop].pathArray;
+    const pathArray1 = this.valuesStart[prop].polygon;
+    const pathArray2 = this.valuesEnd[prop].polygon;
     // skip already processed paths
     // allow the component to work with pre-processed values
     if (!pathArray1 || !pathArray2
@@ -280,8 +329,8 @@ function crossCheckSVGMorph(prop) {
         : defaultOptions.morphPrecision;
 
       const [path1, path2] = getInterpolationPoints(p1, p2, morphPrecision);
-      this.valuesStart[prop].pathArray = path1;
-      this.valuesEnd[prop].pathArray = path2;
+      this.valuesStart[prop].polygon = path1;
+      this.valuesEnd[prop].polygon = path2;
     }
   }
 }
@@ -295,27 +344,29 @@ const svgMorphFunctions = {
 };
 
 // Component Full
-const svgMorph = {
+const SVGMorph = {
   component: 'svgMorph',
   property: 'path',
   defaultValue: [],
   Interpolate: coords,
-  defaultOptions: { morphPrecision: 10, morphIndex: 0 },
+  defaultOptions: { morphPrecision: 10 },
   functions: svgMorphFunctions,
   // Export utils to global for faster execution
   Util: {
+    // component
     addPoints,
     bisect,
-    normalizeRing,
-    validRing, // component
+    getPolygon,
+    validPolygon,
     getInterpolationPoints,
-    pathStringToRing,
+    pathStringToPolygon,
     distanceSquareRoot,
     midPoint,
-    approximateRing,
-    rotateRing,
+    approximatePolygon,
+    rotatePolygon,
+    // svg-path-commander
     pathToString,
-    pathToCurve, // svg-path-commander
+    pathToCurve,
     getPathLength,
     getPointAtLength,
     getDrawDirection,
@@ -323,4 +374,4 @@ const svgMorph = {
   },
 };
 
-export default svgMorph;
+export default SVGMorph;

@@ -1,11 +1,11 @@
-import add from './add.js';
-import remove from './remove.js';
-import getAll from './getAll.js';
-import removeAll from './removeAll.js';
-import { stop } from './render.js';
-import linkInterpolation from './linkInterpolation.js';
+import add from './add';
+import remove from './remove';
+import getAll from './getAll';
+import removeAll from './removeAll';
+import { stop } from './render';
+import linkInterpolation from './linkInterpolation';
 
-export default {
+const internals = {
   add,
   remove,
   getAll,
@@ -13,3 +13,5 @@ export default {
   stop,
   linkInterpolation,
 };
+
+export default internals;

@@ -1,2 +1,3 @@
 // schedule property specific function on animation complete
-export default {};
+const onComplete = {};
+export default onComplete;

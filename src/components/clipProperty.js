@@ -1,16 +1,29 @@
-import getStyleForProperty from '../process/getStyleForProperty.js';
-import trueDimension from '../util/trueDimension.js';
-import numbers from '../interpolation/numbers.js';
-import { onStartClip } from './clipPropertyBase.js';
+import getStyleForProperty from '../process/getStyleForProperty';
+import trueDimension from '../util/trueDimension';
+import numbers from '../interpolation/numbers';
+import { onStartClip } from './clipPropertyBase';
 
 // Component Functions
+/**
+ * Returns the current property computed style.
+ * @param {string} tweenProp the property name
+ * @returns {string | number[]} computed style for property
+ */
 function getClip(tweenProp/* , value */) {
-  const currentClip = getStyleForProperty(this.element, tweenProp);
-  const width = getStyleForProperty(this.element, 'width');
-  const height = getStyleForProperty(this.element, 'height');
+  const { element } = this;
+  const currentClip = getStyleForProperty(element, tweenProp);
+  const width = getStyleForProperty(element, 'width');
+  const height = getStyleForProperty(element, 'height');
   return !/rect/.test(currentClip) ? [0, width, height, 0] : currentClip;
 }
-function prepareClip(tweenProp, value) {
+
+/**
+ * Returns the property tween object.
+ * @param {string} _ the property name
+ * @param {string} value the property value
+ * @returns {number[]} the property tween object
+ */
+function prepareClip(/* tweenProp, */_, value) {
   if (value instanceof Array) {
     return value.map((x) => trueDimension(x));
   }
@@ -27,7 +40,7 @@ const clipFunctions = {
 };
 
 // Component Full
-const clipProperty = {
+const ClipProperty = {
   component: 'clipProperty',
   property: 'clip',
   defaultValue: [0, 0, 0, 0],
@@ -36,4 +49,4 @@ const clipProperty = {
   Util: { trueDimension },
 };
 
-export default clipProperty;
+export default ClipProperty;

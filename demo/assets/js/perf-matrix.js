@@ -78,18 +78,18 @@ function complete(){
 	container.style.display = 'none';
 }
 
-var engine = document.getElementById('kute'),
-		fromCSS = { 					  rotate3d: [ 0,  0,0 ], perspective:600 },
-		fromMX = { transform: { rotate3d: [ 0,  0,0 ], perspective:600 }},
-		toCSS =  { 						  rotate3d: [ 360,0,0 ], perspective:600 },
-		toMX =   { transform: { rotate3d: [ 0,360,0 ], perspective:600 }},
-		ops = { duration: 2000, repeat: 5 }
+var engine	= document.getElementById('kute'),
+		fromCSS	= { 					  rotate3d: [ 0,  0,0 ], perspective:600 },
+		fromMX	= { transform: { rotate3d: [ 0,  0,0 ], perspective:600 }},
+		toCSS		= { 						  rotate3d: [ 360,0,0 ], perspective:600 },
+		toMX		= { transform: { rotate3d: [ 0,360,0 ], perspective:600 }},
+		ops			= { duration: 2000, repeat: 5 }
 
 // since our engines don't do sync, we make it our own here
-if (engine.src.indexOf('kute.min.js')>-1) {
+if (!engine.src.includes('extra')) {
 	[].slice.call(collection).map((el,i) => { i===lastIdx && (ops.onComplete = complete); tws.push ( KUTE.fromTo(el,fromCSS,toCSS,ops) ) })
 }
-if (engine.src.indexOf('kute-extra.min.js')>-1) {
+if (engine.src.includes('extra')) {
 	[].slice.call(collection).map((el,i) => { i===lastIdx && (ops.onComplete = complete); tws.push ( KUTE.fromTo(el,fromMX,toMX,ops) ) })
 }
 
@@ -98,15 +98,13 @@ function startTest(){
 	infoContainer.style.display = 'none';
 	container.style.display = 'block'
 
-	!tws[0].playing && startKUTE();	
+	tws.length && !tws[0].playing && startKUTE();	
 }
 
 
 function startKUTE() {
 	var now = window.performance.now(), count = tws.length;
-	for (var t=0; t<count; t++){
-			tws[t].start(now)
-	}
+	tws.forEach((t) => t.start(now));
 }
 
 // the start  button handle

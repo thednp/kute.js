@@ -1,26 +1,27 @@
-import KUTE from '../objects/kute.js';
-import TweenBase from './tweenBase.js';
-import connect from '../objects/connect.js';
-import add from '../core/add.js';
-import remove from '../core/remove.js';
-import defaultOptions from '../objects/defaultOptions.js';
-import crossCheck from '../objects/crossCheck.js';
-import prepareObject from '../process/prepareObject.js';
-import getStartValues from '../process/getStartValues.js';
-import { Tick, Ticker } from '../core/render.js';
-import queueStart from '../core/queueStart.js';
+import KEC from '../objects/kute';
+import TweenBase from './tweenBase';
+import connect from '../objects/connect';
+import add from '../core/add';
+import remove from '../core/remove';
+import defaultOptions from '../objects/defaultOptions';
+import crossCheck from '../objects/crossCheck';
+import prepareObject from '../process/prepareObject';
+import getStartValues from '../process/getStartValues';
+import { Tick, Ticker } from '../core/render';
+import queueStart from '../core/queueStart';
 
-defaultOptions.repeat = 0;
-defaultOptions.repeatDelay = 0;
-defaultOptions.yoyo = false;
-defaultOptions.resetStart = false;
-
-// no need to set defaults for callbacks
-// defaultOptions.onPause = undefined
-// defaultOptions.onResume = undefined
-
-// the constructor that supports to, allTo methods
+/**
+ * The `KUTE.Tween()` constructor creates a new `Tween` object
+ * for a single `HTMLElement` and returns it.
+ *
+ * This constructor adds additional functionality and is the default
+ * Tween object constructor in KUTE.js.
+ */
 export default class Tween extends TweenBase {
+  /**
+   * @param {KUTE.tweenParams} args (*target*, *startValues*, *endValues*, *options*)
+   * @returns {Tween} the resulting Tween object
+   */
   constructor(...args) {
     super(...args); // this calls the constructor of TweenBase
 
@@ -28,8 +29,9 @@ export default class Tween extends TweenBase {
     this.valuesStart = {};
     this.valuesEnd = {};
 
-    const startObject = args[1];
-    const endObject = args[2];
+    // const startObject = args[1];
+    // const endObject = args[2];
+    const [startObject, endObject, options] = args.slice(1);
 
     // set valuesEnd
     prepareObject.call(this, endObject, 'end');
@@ -51,20 +53,26 @@ export default class Tween extends TweenBase {
     }
 
     // set paused state
+    /** @type {boolean} */
     this.paused = false;
+    /** @type {number?} */
     this._pauseTime = null;
 
     // additional properties and options
-    const options = args[3];
-
+    /** @type {number?} */
     this._repeat = options.repeat || defaultOptions.repeat;
+    /** @type {number?} */
     this._repeatDelay = options.repeatDelay || defaultOptions.repeatDelay;
     // we cache the number of repeats to be able to put it back after all cycles finish
+    /** @type {number?} */
     this._repeatOption = this._repeat;
 
     // yoyo needs at least repeat: 1
+    /** @type {KUTE.tweenProps} */
     this.valuesRepeat = {}; // valuesRepeat
+    /** @type {boolean} */
     this._yoyo = options.yoyo || defaultOptions.yoyo;
+    /** @type {boolean} */
     this._reversed = false;
 
     // don't load extra callbacks
@@ -76,7 +84,11 @@ export default class Tween extends TweenBase {
     return this;
   }
 
-  // additions to start method
+  /**
+   * Starts tweening, extended method
+   * @param {number?} time the tween start time
+   * @returns {Tween} this instance
+   */
   start(time) {
     // on start we reprocess the valuesStart for TO() method
     if (this._resetStart) {
@@ -105,7 +117,10 @@ export default class Tween extends TweenBase {
     return this;
   }
 
-  // updates to super methods
+  /**
+   * Stops tweening, extended method
+   * @returns {Tween} this instance
+   */
   stop() {
     super.stop();
     if (!this.paused && this.playing) {
@@ -115,6 +130,9 @@ export default class Tween extends TweenBase {
     return this;
   }
 
+  /**
+   * Trigger internal completion callbacks.
+   */
   close() {
     super.close();
 
@@ -129,7 +147,10 @@ export default class Tween extends TweenBase {
     return this;
   }
 
-  // additions to prototype
+  /**
+   * Resume tweening
+   * @returns {Tween} this instance
+   */
   resume() {
     if (this.paused && this.playing) {
       this.paused = false;
@@ -139,7 +160,7 @@ export default class Tween extends TweenBase {
       // re-queue execution context
       queueStart.call(this);
       // update time and let it roll
-      this._startTime += KUTE.Time() - this._pauseTime;
+      this._startTime += KEC.Time() - this._pauseTime;
       add(this);
       // restart ticker if stopped
       if (!Tick) Ticker();
@@ -147,11 +168,15 @@ export default class Tween extends TweenBase {
     return this;
   }
 
+  /**
+   * Pause tweening
+   * @returns {Tween} this instance
+   */
   pause() {
     if (!this.paused && this.playing) {
       remove(this);
       this.paused = true;
-      this._pauseTime = KUTE.Time();
+      this._pauseTime = KEC.Time();
       if (this._onPause !== undefined) {
         this._onPause.call(this);
       }
@@ -159,19 +184,25 @@ export default class Tween extends TweenBase {
     return this;
   }
 
+  /**
+   * Reverses start values with end values
+   */
   reverse() {
-    // if (this._yoyo) {
     Object.keys(this.valuesEnd).forEach((reverseProp) => {
       const tmp = this.valuesRepeat[reverseProp];
       this.valuesRepeat[reverseProp] = this.valuesEnd[reverseProp];
       this.valuesEnd[reverseProp] = tmp;
       this.valuesStart[reverseProp] = this.valuesRepeat[reverseProp];
     });
-    // }
   }
 
+  /**
+   * Update the tween on each tick.
+   * @param {number} time the tick time
+   * @returns {boolean} this instance
+   */
   update(time) {
-    const T = time !== undefined ? time : KUTE.Time();
+    const T = time !== undefined ? time : KEC.Time();
 
     let elapsed;
 
@@ -185,7 +216,7 @@ export default class Tween extends TweenBase {
 
     // render the update
     Object.keys(this.valuesEnd).forEach((tweenProp) => {
-      KUTE[tweenProp](this.element,
+      KEC[tweenProp](this.element,
         this.valuesStart[tweenProp],
         this.valuesEnd[tweenProp],
         progress);

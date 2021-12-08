@@ -1,29 +1,36 @@
-import getStyleForProperty from '../process/getStyleForProperty.js';
-import numbers from '../interpolation/numbers.js';
-import { onStartDraw } from './svgDrawBase.js';
-
-/* svgDraw = {
-  property: 'draw',
-  defaultValue,
-  Interpolate: {numbers} },
-  functions = { prepareStart, prepareProperty, onStart }
-} */
+import getStyleForProperty from '../process/getStyleForProperty';
+import numbers from '../interpolation/numbers';
+import { onStartDraw } from './svgDrawBase';
 
 // Component Util
+/**
+ * Convert a `<path>` length percent value to absolute.
+ * @param {string} v raw value
+ * @param {number} l length value
+ * @returns {number} the absolute value
+ */
 function percent(v, l) {
   return (parseFloat(v) / 100) * l;
 }
 
-// http://stackoverflow.com/a/30376660
-// returns the length of a Rect
+/**
+ * Returns the `<rect>` length.
+ * It doesn't compute `rx` and / or `ry` of the element.
+ * @see http://stackoverflow.com/a/30376660
+ * @param {SVGRectElement} el target element
+ * @returns {number} the `<rect>` length
+ */
 function getRectLength(el) {
   const w = el.getAttribute('width');
   const h = el.getAttribute('height');
   return (w * 2) + (h * 2);
 }
 
-// getPolygonLength / getPolylineLength
-// returns the length of the Polygon / Polyline
+/**
+ * Returns the `<polyline>` / `<polygon>` length.
+ * @param {SVGPolylineElement | SVGPolygonElement} el target element
+ * @returns {number} the element length
+ */
 function getPolyLength(el) {
   const points = el.getAttribute('points').split(' ');
 
@@ -54,7 +61,11 @@ function getPolyLength(el) {
   return len;
 }
 
-// return the length of the line
+/**
+ * Returns the `<line>` length.
+ * @param {SVGLineElement} el target element
+ * @returns {number} the element length
+ */
 function getLineLength(el) {
   const x1 = el.getAttribute('x1');
   const x2 = el.getAttribute('x2');
@@ -63,13 +74,22 @@ function getLineLength(el) {
   return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 }
 
-// return the length of the circle
+/**
+ * Returns the `<circle>` length.
+ * @param {SVGCircleElement} el target element
+ * @returns {number} the element length
+ */
 function getCircleLength(el) {
   const r = el.getAttribute('r');
   return 2 * Math.PI * r;
 }
 
 // returns the length of an ellipse
+/**
+ * Returns the `<ellipse>` length.
+ * @param {SVGEllipseElement} el target element
+ * @returns {number} the element length
+ */
 function getEllipseLength(el) {
   const rx = el.getAttribute('rx');
   const ry = el.getAttribute('ry');
@@ -78,7 +98,11 @@ function getEllipseLength(el) {
   return ((Math.sqrt(0.5 * ((len * len) + (wid * wid)))) * (Math.PI * 2)) / 2;
 }
 
-// returns the result of any of the below functions
+/**
+ * Returns the shape length.
+ * @param {SVGPathCommander.shapeTypes} el target element
+ * @returns {number} the element length
+ */
 function getTotalLength(el) {
   if (el.tagName === 'rect') {
     return getRectLength(el);
@@ -95,6 +119,12 @@ function getTotalLength(el) {
   return 0;
 }
 
+/**
+ * Returns the property tween object.
+ * @param {SVGPathCommander.shapeTypes} element the target element
+ * @param {string | KUTE.drawObject} value the property value
+ * @returns {KUTE.drawObject} the property tween object
+ */
 function getDraw(element, value) {
   const length = /path|glyph/.test(element.tagName)
     ? element.getTotalLength()
@@ -104,7 +134,7 @@ function getDraw(element, value) {
   let dasharray;
   let offset;
 
-  if (value instanceof Object) {
+  if (value instanceof Object && Object.keys(value).every((v) => ['s', 'e', 'l'].includes(v))) {
     return value;
   } if (typeof value === 'string') {
     const v = value.split(/,|\s/);
@@ -120,17 +150,33 @@ function getDraw(element, value) {
   return { s: start, e: end, l: length };
 }
 
+/**
+ * Reset CSS properties associated with the `draw` property.
+ * @param {SVGPathCommander.shapeTypes} element target
+ */
 function resetDraw(elem) {
+  /* eslint-disable no-param-reassign -- impossible to satisfy */
   elem.style.strokeDashoffset = '';
   elem.style.strokeDasharray = '';
+  /* eslint-disable no-param-reassign -- impossible to satisfy */
 }
 
 // Component Functions
+/**
+ * Returns the property tween object.
+ * @returns {KUTE.drawObject} the property tween object
+ */
 function getDrawValue(/* prop, value */) {
   return getDraw(this.element);
 }
-function prepareDraw(a, o) {
-  return getDraw(this.element, o);
+/**
+ * Returns the property tween object.
+ * @param {string} _ the property name
+ * @param {string | KUTE.drawObject} value the property value
+ * @returns {KUTE.drawObject} the property tween object
+ */
+function prepareDraw(_, value) {
+  return getDraw(this.element, value);
 }
 
 // All Component Functions
@@ -141,7 +187,7 @@ const svgDrawFunctions = {
 };
 
 // Component Full
-const svgDraw = {
+const SvgDrawProperty = {
   component: 'svgDraw',
   property: 'draw',
   defaultValue: '0% 0%',
@@ -161,4 +207,4 @@ const svgDraw = {
   },
 };
 
-export default svgDraw;
+export default SvgDrawProperty;

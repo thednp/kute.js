@@ -1,5 +1,14 @@
-// trueDimension - returns { v = value, u = unit }
-export default function trueDimension(dimValue, isAngle) {
+/**
+ * trueDimension
+ *
+ * Returns the string value of a specific CSS property converted into a nice
+ * { v = value, u = unit } object.
+ *
+ * @param {string} dimValue the property string value
+ * @param {boolean | number} isAngle sets the utility to investigate angles
+ * @returns {{v: number, u: string}} the true {value, unit} tuple
+ */
+const trueDimension = (dimValue, isAngle) => {
   const intValue = parseInt(dimValue, 10) || 0;
   const mUnits = ['px', '%', 'deg', 'rad', 'em', 'rem', 'vh', 'vw'];
   let theUnit;
@@ -14,4 +23,5 @@ export default function trueDimension(dimValue, isAngle) {
   }
 
   return { v: intValue, u: theUnit };
-}
+};
+export default trueDimension;

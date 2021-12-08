@@ -1,20 +1,24 @@
-import getStyleForProperty from '../process/getStyleForProperty.js';
-import numbers from '../interpolation/numbers.js';
-import { onStartOpacity } from './opacityPropertyBase.js';
-
-/* opacityProperty = {
-  property: 'opacity',
-  defaultValue: 1,
-  interpolators: {numbers},
-  functions = { prepareStart, prepareProperty, onStart }
-} */
+import getStyleForProperty from '../process/getStyleForProperty';
+import numbers from '../interpolation/numbers';
+import { onStartOpacity } from './opacityPropertyBase';
 
 // Component Functions
+/**
+ * Returns the current property computed style.
+ * @param {string} tweenProp the property name
+ * @returns {string} computed style for property
+ */
 function getOpacity(tweenProp/* , value */) {
   return getStyleForProperty(this.element, tweenProp);
 }
 
-function prepareOpacity(tweenProp, value) {
+/**
+ * Returns the property tween object.
+ * @param {string} _ the property name
+ * @param {string} value the property value
+ * @returns {number} the property tween object
+ */
+function prepareOpacity(/* tweenProp, */_, value) {
   return parseFloat(value); // opacity always FLOAT
 }
 
@@ -26,7 +30,7 @@ const opacityFunctions = {
 };
 
 // Full Component
-const opacityProperty = {
+const OpacityProperty = {
   component: 'opacityProperty',
   property: 'opacity',
   defaultValue: 1,
@@ -34,4 +38,4 @@ const opacityProperty = {
   functions: opacityFunctions,
 };
 
-export default opacityProperty;
+export default OpacityProperty;

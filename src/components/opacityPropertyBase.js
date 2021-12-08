@@ -1,5 +1,5 @@
-import KUTE from '../objects/kute.js';
-import numbers from '../interpolation/numbers.js';
+import KEC from '../objects/kute';
+import numbers from '../interpolation/numbers';
 
 /* opacityProperty = {
   property: 'opacity',
@@ -9,17 +9,23 @@ import numbers from '../interpolation/numbers.js';
 } */
 
 // Component Functions
+/**
+ * Sets the property update function.
+ * @param {string} tweenProp the property name
+ */
 export function onStartOpacity(tweenProp/* , value */) {
   // opacity could be 0 sometimes, we need to check regardless
-  if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
+  if (tweenProp in this.valuesEnd && !KEC[tweenProp]) {
+    KEC[tweenProp] = (elem, a, b, v) => {
+      /* eslint-disable */
       elem.style[tweenProp] = ((numbers(a, b, v) * 1000) >> 0) / 1000;
+      /* eslint-enable */
     };
   }
 }
 
 // Base Component
-const baseOpacity = {
+const OpacityPropertyBase = {
   component: 'baseOpacity',
   property: 'opacity',
   // defaultValue: 1,
@@ -27,4 +33,4 @@ const baseOpacity = {
   functions: { onStart: onStartOpacity },
 };
 
-export default baseOpacity;
+export default OpacityPropertyBase;

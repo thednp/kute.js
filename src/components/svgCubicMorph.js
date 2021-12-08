@@ -1,31 +1,31 @@
-import parsePathString from 'svg-path-commander/src/process/parsePathString.js';
-import pathToAbsolute from 'svg-path-commander/src/convert/pathToAbsolute.js';
-import pathToCurve from 'svg-path-commander/src/convert/pathToCurve.js';
-import pathToString from 'svg-path-commander/src/convert/pathToString.js';
-import reverseCurve from 'svg-path-commander/src/process/reverseCurve.js';
-import getDrawDirection from 'svg-path-commander/src/util/getDrawDirection.js';
-import clonePath from 'svg-path-commander/src/process/clonePath.js';
-import splitCubic from 'svg-path-commander/src/process/splitCubic.js';
-import splitPath from 'svg-path-commander/src/process/splitPath.js';
-import getSegCubicLength from 'svg-path-commander/src/util/getSegCubicLength.js';
-import distanceSquareRoot from 'svg-path-commander/src/math/distanceSquareRoot.js';
-import { onStartCubicMorph } from './svgCubicMorphBase.js';
-import numbers from '../interpolation/numbers.js';
-import selector from '../util/selector.js';
+import parsePathString from 'svg-path-commander/src/parser/parsePathString';
+import pathToAbsolute from 'svg-path-commander/src/convert/pathToAbsolute';
+import pathToCurve from 'svg-path-commander/src/convert/pathToCurve';
+import pathToString from 'svg-path-commander/src/convert/pathToString';
+import reverseCurve from 'svg-path-commander/src/process/reverseCurve';
+import getDrawDirection from 'svg-path-commander/src/util/getDrawDirection';
+import clonePath from 'svg-path-commander/src/process/clonePath';
+import splitCubic from 'svg-path-commander/src/process/splitCubic';
+import splitPath from 'svg-path-commander/src/process/splitPath';
+import fixPath from 'svg-path-commander/src/process/fixPath';
+import getSegCubicLength from 'svg-path-commander/src/util/getSegCubicLength';
+import distanceSquareRoot from 'svg-path-commander/src/math/distanceSquareRoot';
 
-/* SVGMorph = {
-  property: 'path',
-  defaultValue: [],
-  interpolators: {numbers},
-  functions = { prepareStart, prepareProperty, onStart, crossCheck }
-} */
+import { onStartCubicMorph } from './svgCubicMorphBase';
+import numbers from '../interpolation/numbers';
+import selector from '../util/selector';
 
 // Component Util
-function getCurveArray(pathString) {
-  return pathToCurve(splitPath(pathToString(pathToAbsolute(pathString)))[0])
+/**
+ * Returns first `pathArray` from multi-paths path.
+ * @param {SVGPathCommander.pathArray | string} source the source `pathArray` or string
+ * @returns {KUTE.curveSpecs[]} an `Array` with a custom tuple for `equalizeSegments`
+ */
+function getCurveArray(source) {
+  return pathToCurve(splitPath(source)[0])
     .map((segment, i, pathArray) => {
-      const segmentData = i && pathArray[i - 1].slice(-2).concat(segment.slice(1));
-      const curveLength = i ? getSegCubicLength.apply(0, segmentData) : 0;
+      const segmentData = i && [...pathArray[i - 1].slice(-2), ...segment.slice(1)];
+      const curveLength = i ? getSegCubicLength(...segmentData) : 0;
 
       let subsegs;
       if (i) {
@@ -43,6 +43,13 @@ function getCurveArray(pathString) {
     });
 }
 
+/**
+ * Returns two `curveArray` with same amount of segments.
+ * @param {SVGPathCommander.curveArray} path1 the first `curveArray`
+ * @param {SVGPathCommander.curveArray} path2 the second `curveArray`
+ * @param {number} TL the maximum `curveArray` length
+ * @returns {SVGPathCommander.curveArray[]} equalized segments
+ */
 function equalizeSegments(path1, path2, TL) {
   const c1 = getCurveArray(path1);
   const c2 = getCurveArray(path2);
@@ -70,23 +77,34 @@ function equalizeSegments(path1, path2, TL) {
     : equalizeSegments(result[0], result[1], tl);
 }
 
+/**
+ * Returns all possible path rotations for `curveArray`.
+ * @param {SVGPathCommander.curveArray} a the source `curveArray`
+ * @returns {SVGPathCommander.curveArray[]} all rotations for source
+ */
 function getRotations(a) {
   const segCount = a.length;
   const pointCount = segCount - 1;
 
-  return a.map((f, idx) => a.map((p, i) => {
+  return a.map((_, idx) => a.map((__, i) => {
     let oldSegIdx = idx + i;
     let seg;
 
     if (i === 0 || (a[oldSegIdx] && a[oldSegIdx][0] === 'M')) {
       seg = a[oldSegIdx];
-      return ['M'].concat(seg.slice(-2));
+      return ['M', ...seg.slice(-2)];
     }
     if (oldSegIdx >= segCount) oldSegIdx -= pointCount;
     return a[oldSegIdx];
   }));
 }
 
+/**
+ * Returns the `curveArray` rotation for the best morphing animation.
+ * @param {SVGPathCommander.curveArray} a the target `curveArray`
+ * @param {SVGPathCommander.curveArray} b the reference `curveArray`
+ * @returns {SVGPathCommander.curveArray} the best `a` rotation
+ */
 function getRotatedCurve(a, b) {
   const segCount = a.length - 1;
   const lineLengths = [];
@@ -94,8 +112,8 @@ function getRotatedCurve(a, b) {
   let sumLensSqrd = 0;
   const rotations = getRotations(a);
 
-  rotations.forEach((r, i) => {
-    a.slice(1).forEach((s, j) => {
+  rotations.forEach((_, i) => {
+    a.slice(1).forEach((__, j) => {
       sumLensSqrd += distanceSquareRoot(a[(i + j) % segCount].slice(-2), b[j % segCount].slice(-2));
     });
     lineLengths[i] = sumLensSqrd;
@@ -108,10 +126,23 @@ function getRotatedCurve(a, b) {
 }
 
 // Component Functions
+/**
+ * Returns the current `d` attribute value.
+ * @returns {string}
+ */
 function getCubicMorph(/* tweenProp, value */) {
   return this.element.getAttribute('d');
 }
-function prepareCubicMorph(tweenProp, value) {
+
+/**
+ * Returns the property tween object.
+ * @see KUTE.curveObject
+ *
+ * @param {string} _ is the `path` property name, not needed
+ * @param {string | KUTE.curveObject} value the `path` property value
+ * @returns {KUTE.curveObject}
+ */
+function prepareCubicMorph(/* tweenProp, */_, value) {
   // get path d attribute or create a path from string value
   const pathObject = {};
   // remove newlines, they break some JSON strings
@@ -135,7 +166,12 @@ function prepareCubicMorph(tweenProp, value) {
   }
   return pathObject;
 }
-function crossCheckCubicMorph(tweenProp) {
+
+/**
+ * Enables the `to()` method by preparing the tween object in advance.
+ * @param {string} tweenProp is `path` tween property, but it's not needed
+ */
+function crossCheckCubicMorph(tweenProp/** , value */) {
   if (this.valuesEnd[tweenProp]) {
     const pathCurve1 = this.valuesStart[tweenProp].curve;
     const pathCurve2 = this.valuesEnd[tweenProp].curve;
@@ -183,6 +219,8 @@ const svgCubicMorph = {
     clonePath,
     getDrawDirection,
     splitCubic,
+    splitPath,
+    fixPath,
     getCurveArray,
   },
 };

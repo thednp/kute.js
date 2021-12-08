@@ -1,22 +1,27 @@
-import defaultValues from '../objects/defaultValues.js';
-import getStyleForProperty from '../process/getStyleForProperty.js';
-import numbers from '../interpolation/numbers.js';
-import trueDimension from '../util/trueDimension.js';
-import { onStartBgPos } from './backgroundPositionBase.js';
-
-/* bgPosProp = {
-  property: 'backgroundPosition',
-  defaultValue: [0,0],
-  interpolators: {numbers},
-  functions = { prepareStart, prepareProperty, onStart }
-} */
+import defaultValues from '../objects/defaultValues';
+import getStyleForProperty from '../process/getStyleForProperty';
+import numbers from '../interpolation/numbers';
+import trueDimension from '../util/trueDimension';
+import { onStartBgPos } from './backgroundPositionBase';
 
 // Component Functions
+
+/**
+ * Returns the property computed style.
+ * @param {string} prop the property
+ * @returns {string} the property computed style
+ */
 function getBgPos(prop/* , value */) {
   return getStyleForProperty(this.element, prop) || defaultValues[prop];
 }
 
-function prepareBgPos(prop, value) {
+/**
+ * Returns the property tween object.
+ * @param {string} _ the property name
+ * @param {string} value the property value
+ * @returns {number[]} the property tween object
+ */
+function prepareBgPos(/* prop, */_, value) {
   if (value instanceof Array) {
     const x = trueDimension(value[0]).v;
     const y = trueDimension(value[1]).v;

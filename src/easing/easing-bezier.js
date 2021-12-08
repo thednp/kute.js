@@ -1,5 +1,5 @@
 import CubicBezier from 'cubic-bezier-easing';
-import connect from '../objects/connect.js';
+import connect from '../objects/connect';
 
 const Easing = {
   linear: new CubicBezier(0, 0, 1, 1, 'linear'),
@@ -36,6 +36,12 @@ const Easing = {
   easingBackInOut: new CubicBezier(0.68, -0.55, 0.265, 1.55, 'easingBackInOut'),
 };
 
+/**
+ * Returns a valid `easingFunction`.
+ *
+ * @param {KUTE.easingFunction | string} fn function name or constructor name
+ * @returns {KUTE.easingFunction} a valid easingfunction
+ */
 function processBezierEasing(fn) {
   if (typeof fn === 'function') {
     return fn;
@@ -46,7 +52,7 @@ function processBezierEasing(fn) {
     return new CubicBezier(bz[0] * 1, bz[1] * 1, bz[2] * 1, bz[3] * 1); // bezier easing
   }
   // if (/elastic|bounce/i.test(fn)) {
-  //   throw TypeError(`KUTE.js - CubicBezier doesn't support ${fn} easing.`);
+  //   throw TypeError(`KUTE - CubicBezier doesn't support ${fn} easing.`);
   // }
   return Easing.linear;
 }

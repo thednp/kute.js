@@ -1,18 +1,27 @@
-import supportedProperties from '../objects/supportedProperties.js';
-import defaultOptions from '../objects/defaultOptions.js';
-import onStart from '../objects/onStart.js';
-import onComplete from '../objects/onComplete.js';
-import linkProperty from '../objects/linkProperty.js';
-import Util from '../objects/util.js';
-import Interpolate from '../objects/interpolate.js';
+import supportedProperties from '../objects/supportedProperties';
+import defaultOptions from '../objects/defaultOptions';
+import onStart from '../objects/onStart';
+import onComplete from '../objects/onComplete';
+import linkProperty from '../objects/linkProperty';
+import Util from '../objects/util';
+import Interpolate from '../objects/interpolate';
 
-// Animation class
+/**
+ * Animation Base Class
+ *
+ * Registers components by populating KUTE.js objects and makes sure
+ * no duplicate component / property is allowed.
+ *
+ * This class only registers the minimal amount of component information
+ * required to enable components animation, which means value processing
+ * as well as `to()` and `allTo()` methods are not supported.
+ */
 export default class AnimationBase {
+  /**
+   * @class
+   * @param {KUTE.baseComponent} Component
+   */
   constructor(Component) {
-    return this.setComponent(Component);
-  }
-
-  setComponent(Component) {
     const ComponentName = Component.component;
     // const Objects = { defaultValues, defaultOptions, Interpolate, linkProperty }
     const Functions = { onStart, onComplete };
@@ -27,9 +36,10 @@ export default class AnimationBase {
 
     // set additional options
     if (Component.defaultOptions) {
-      Object.keys(Component.defaultOptions).forEach((op) => {
-        defaultOptions[op] = Component.defaultOptions[op];
-      });
+      // Object.keys(Component.defaultOptions).forEach((op) => {
+      //   defaultOptions[op] = Component.defaultOptions[op];
+      // });
+      Object.assign(defaultOptions, Component.defaultOptions);
     }
 
     // set functions

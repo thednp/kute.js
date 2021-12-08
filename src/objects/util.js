@@ -1,2 +1,3 @@
 // util - a general object for utils like rgbToHex, processEasing
-export default {};
+const Util = {};
+export default Util;

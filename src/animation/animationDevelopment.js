@@ -1,22 +1,28 @@
-import prepareProperty from '../objects/prepareProperty.js';
-import prepareStart from '../objects/prepareStart.js';
-import onStart from '../objects/onStart.js';
-import onComplete from '../objects/onComplete.js';
-import crossCheck from '../objects/crossCheck.js';
-import Interpolate from '../objects/interpolate.js';
+import prepareProperty from '../objects/prepareProperty';
+import prepareStart from '../objects/prepareStart';
+import onStart from '../objects/onStart';
+import onComplete from '../objects/onComplete';
+import crossCheck from '../objects/crossCheck';
+import Interpolate from '../objects/interpolate';
 
-import Animation from './animation.js';
+import Animation from './animation';
 
-// AnimationDevelopment class
+/**
+ * Animation Development Class
+ *
+ * Registers components by populating KUTE.js objects and makes sure
+ * no duplicate component / property is allowed.
+ *
+ * In addition to the default class, this one provides more component
+ * information to help you with custom component development.
+ */
 export default class AnimationDevelopment extends Animation {
-  constructor(...args) {
-    super(...args);
-
-    this.setComponent(...args);
-  }
-
-  setComponent(Component) {
-    super.setComponent(Component);
+  /**
+   *
+   * @param  {KUTE.fullComponent} args
+   */
+  constructor(Component) {
+    super(Component);
 
     const propertyInfo = this;
     // const Objects = { defaultValues, defaultOptions, Interpolate, linkProperty, Util }

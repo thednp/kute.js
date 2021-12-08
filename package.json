@@ -1,6 +1,6 @@
 {
   "name": "kute.js",
-  "version": "2.1.3",
+  "version": "2.2.0alpha2",
   "description": "JavaScript animation engine",
   "main": "dist/kute.min.js",
   "module": "dist/kute.esm.js",
@@ -23,7 +23,7 @@
     "lint:js": "eslint src/ --config .eslintrc",
     "copy-build": "rollup --environment OUTPUTFILE:demo/src/kute.min.js,DIST:standard,MIN:true,FORMAT:umd -c",
     "build-standard": "rollup --environment DIST:standard,MIN:false,FORMAT:umd -c",
-    "build-ts": "tsc -d",
+    "build:ts": "tsc -d",
     "build-standard-min": "rollup --environment DIST:standard,MIN:true,FORMAT:umd -c",
     "build-standard-esm": "rollup --environment DIST:standard,MIN:false,FORMAT:esm -c",
     "build-standard-esm-min": "rollup --environment DIST:standard,MIN:true,FORMAT:esm -c",
@@ -61,10 +61,10 @@
   },
   "homepage": "http://thednp.github.io/kute.js",
   "dependencies": {
-    "cubic-bezier-easing": "^1.0.8",
+    "cubic-bezier-easing": "^1.0.14",
     "minifill": "^0.0.16",
-    "shorter-js": "^0.2.1",
-    "svg-path-commander": "0.1.7"
+    "shorter-js": "^0.2.6",
+    "svg-path-commander": "0.1.17"
   },
   "devDependencies": {
     "@rollup/plugin-buble": "^0.21.3",
@@ -77,6 +77,6 @@
     "npm-run-all": "^4.1.5",
     "rollup": "^2.38.4",
     "rollup-plugin-terser": "^7.0.2",
-    "typescript": "^4.4.4"
+    "typescript": "^4.5.2"
   }
 }

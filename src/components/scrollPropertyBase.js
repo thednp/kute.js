@@ -1,8 +1,8 @@
-import supportPassive from 'shorter-js/src/boolean/supportPassive.js';
-import mouseHoverEvents from 'shorter-js/src/strings/mouseHoverEvents.js';
-import supportTouch from 'shorter-js/src/boolean/supportTouch.js';
-import numbers from '../interpolation/numbers.js';
-import KUTE from '../objects/kute.js';
+import passiveHandler from 'shorter-js/src/misc/passiveHandler';
+import mouseHoverEvents from 'shorter-js/src/strings/mouseHoverEvents';
+import supportTouch from 'shorter-js/src/boolean/supportTouch';
+import numbers from '../interpolation/numbers';
+import KEC from '../objects/kute';
 
 // Component Util
 // events preventing scroll
@@ -14,22 +14,36 @@ export const scrollContainer = navigator && /(EDGE|Mac)/i.test(navigator.userAge
   ? document.body
   : document.documentElement;
 
-// scroll event options
-// it's important to stop propagating when animating scroll
-const passiveHandler = supportPassive ? { passive: false } : false;
-
-// prevent mousewheel or touch events while tweening scroll
+/**
+ * Prevent further scroll events until scroll animation is over.
+ * @param {Event} e event object
+ */
 export function preventScroll(e) {
   if (this.scrolling) e.preventDefault();
 }
+
+/**
+ * Returns the scroll element / target.
+ * @returns {{el: Element, st: Element}}
+ */
 export function getScrollTargets() {
   const el = this.element;
   return el === scrollContainer ? { el: document, st: document.body } : { el, st: el };
 }
+
+/**
+ * Toggles scroll prevention callback on scroll events.
+ * @param {string} action addEventListener / removeEventListener
+ * @param {Element} element target
+ */
 export function toggleScrollEvents(action, element) {
   element[action](mouseHoverEvents[0], preventScroll, passiveHandler);
   element[action](touchOrWheel, preventScroll, passiveHandler);
 }
+
+/**
+ * Action performed before scroll animation start.
+ */
 export function scrollIn() {
   const targets = getScrollTargets.call(this);
 
@@ -39,6 +53,9 @@ export function scrollIn() {
     targets.st.style.pointerEvents = 'none';
   }
 }
+/**
+ * Action performed when scroll animation ends.
+ */
 export function scrollOut() { // prevent scroll when tweening scroll
   const targets = getScrollTargets.call(this);
 
@@ -50,23 +67,35 @@ export function scrollOut() { // prevent scroll when tweening scroll
 }
 
 // Component Functions
+/**
+ * * Sets the scroll target.
+ * * Adds the scroll prevention event listener.
+ * * Sets the property update function.
+ * @param {string} tweenProp the property name
+ */
 export function onStartScroll(tweenProp) {
   // checking 0 will NOT add the render function
-  if (tweenProp in this.valuesEnd && !KUTE[tweenProp]) {
+  if (tweenProp in this.valuesEnd && !KEC[tweenProp]) {
     this.element = ('scroll' in this.valuesEnd) && (!this.element || this.element === window)
       ? scrollContainer : this.element;
     scrollIn.call(this);
-    KUTE[tweenProp] = (elem, a, b, v) => {
+    KEC[tweenProp] = (elem, a, b, v) => {
+      /* eslint-disable */
       elem.scrollTop = (numbers(a, b, v)) >> 0;
+      /* eslint-enable */
     };
   }
 }
+
+/**
+ * Removes the scroll prevention event listener.
+ */
 export function onCompleteScroll(/* tweenProp */) {
   scrollOut.call(this);
 }
 
 // Base Component
-const baseScroll = {
+const ScrollPropertyBase = {
   component: 'baseScroll',
   property: 'scroll',
   // defaultValue: 0,
@@ -77,8 +106,8 @@ const baseScroll = {
   },
   // unfortunatelly scroll needs all them no matter the packaging
   Util: {
-    preventScroll, scrollIn, scrollOut, getScrollTargets, supportPassive,
+    preventScroll, scrollIn, scrollOut, getScrollTargets,
   },
 };
 
-export default baseScroll;
+export default ScrollPropertyBase;

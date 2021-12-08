@@ -1,15 +1,22 @@
 {
   "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Node",
     "declaration": true,
-    // "resolveJsonModule": true,
+    "resolveJsonModule": true,
     "emitDeclarationOnly": true,
-    "maxNodeModuleJsDepth": 2,
+    "maxNodeModuleJsDepth": 3, // allows to incorporate dependency utils
     "strict": true,
     "allowJs": true,
-    "rootDir": "src/",
-    "outDir": "types"
+    "rootDir": "../",
+    // "outFile": "types/kute.d.ts", // UN-comment to generate
+    "outDir": "types",
   },
-  "include": ["src/**/*"],
-  // "exclude": ["node_modules", "dist", "types", "demo"]
-  "exclude": ["dist", "types", "demo"]
+  "files": [
+    "types/index.d.ts",
+    "types/kute.d.ts", // comment to re-generate, delete file
+    "types/more/kute.ts",
+    "types/more/types.d.ts",
+  ],
 }

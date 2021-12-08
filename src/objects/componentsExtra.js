@@ -1,21 +1,21 @@
-import Animation from '../animation/animationDevelopment.js';
+import Animation from '../animation/animationDevelopment';
 
-import BackgroundPosition from '../components/backgroundPosition.js';
-import BorderRadius from '../components/borderRadius.js';
-import BoxModel from '../components/boxModel.js';
-import ClipProperty from '../components/clipProperty.js';
-import ColorProperties from '../components/colorProperties.js';
+import BackgroundPosition from '../components/backgroundPosition';
+import BorderRadius from '../components/borderRadius';
+import BoxModel from '../components/boxModel';
+import ClipProperty from '../components/clipProperty';
+import ColorProperties from '../components/colorProperties';
 import FilterEffects from '../components/filterEffects';
-import HTMLAttributes from '../components/htmlAttributes.js';
-import OpacityProperty from '../components/opacityProperty.js';
-import SVGDraw from '../components/svgDraw.js';
-import SVGCubicMorph from '../components/svgCubicMorph.js';
-import SVGTransform from '../components/svgTransform.js';
-import ScrollProperty from '../components/scrollProperty.js';
-import ShadowProperties from '../components/shadowProperties.js';
-import TextProperties from '../components/textProperties.js';
-import TextWriteProperties from '../components/textWrite.js';
-import MatrixTransform from '../components/transformMatrix.js';
+import HTMLAttributes from '../components/htmlAttributes';
+import OpacityProperty from '../components/opacityProperty';
+import SVGDraw from '../components/svgDraw';
+import SVGCubicMorph from '../components/svgCubicMorph';
+import SVGTransform from '../components/svgTransform';
+import ScrollProperty from '../components/scrollProperty';
+import ShadowProperties from '../components/shadowProperties';
+import TextProperties from '../components/textProperties';
+import TextWriteProperties from '../components/textWrite';
+import MatrixTransform from '../components/transformMatrix';
 
 const Components = {
   BackgroundPosition,

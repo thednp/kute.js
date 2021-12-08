@@ -1,11 +1,11 @@
-import Animation from '../animation/animationBase.js';
+import Animation from '../animation/animationBase';
 
-// kute-base.js supported components
-import baseTransform from '../components/transformFunctionsBase.js';
-import baseBoxModel from '../components/boxModelBase.js';
-import baseOpacity from '../components/opacityPropertyBase.js';
-// import {baseCrossBrowserMove} from '../components/crossBrowserMove.js'
-// support for kute-base.js ends here
+// kute-base supported components
+import baseTransform from '../components/transformFunctionsBase';
+import baseBoxModel from '../components/boxModelBase';
+import baseOpacity from '../components/opacityPropertyBase';
+// import {baseCrossBrowserMove} from '../components/crossBrowserMove'
+// support for kute-base ends here
 
 const Components = {
   Transform: new Animation(baseTransform),

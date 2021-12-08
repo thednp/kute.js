@@ -1,35 +1,40 @@
-import support3DTransform from 'shorter-js/src/boolean/support3DTransform.js';
-import defaultValues from '../objects/defaultValues.js';
-import getInlineStyleLegacy from '../process/getInlineStyleLegacy.js';
-import perspective from '../interpolation/perspective.js';
-import translate3d from '../interpolation/translate3d.js';
-import rotate3d from '../interpolation/rotate3d.js';
-import translate from '../interpolation/translate.js';
-import rotate from '../interpolation/rotate.js';
-import scale from '../interpolation/scale.js';
-import skew from '../interpolation/skew.js';
+import support3DTransform from 'shorter-js/src/boolean/support3DTransform';
+import defaultValues from '../objects/defaultValues';
+import getInlineStyleLegacy from '../process/getInlineStyleLegacy';
+import perspective from '../interpolation/perspective';
+import translate3d from '../interpolation/translate3d';
+import rotate3d from '../interpolation/rotate3d';
+import translate from '../interpolation/translate';
+import rotate from '../interpolation/rotate';
+import scale from '../interpolation/scale';
+import skew from '../interpolation/skew';
 
-import { onStartLegacyTransform } from './transformLegacyBase.js';
-import transformProperty from '../util/transformProperty.js';
-import supportTransform from '../util/supportLegacyTransform.js';
-
-/* transformFunctions = {
-  property : 'transform',
-  subProperties,
-  defaultValues,
-  Interpolate: {translate,rotate,skew,scale},
-  functions } */
+import { onStartLegacyTransform } from './transformLegacyBase';
+import transformProperty from '../util/transformProperty';
+import supportTransform from '../util/supportLegacyTransform';
 
 // same to svg transform, attr
 // the component to handle all kinds of input values and process according to browser supported API,
 // the component that handles all browsers IE9+
 
 // Component Functions
+/**
+ * Returns the current property inline style.
+ * @param {string} tweenProperty the property name
+ * @returns {string} inline style for property
+ */
 function getLegacyTransform(tweenProperty/* , value */) {
   const currentStyle = getInlineStyleLegacy(this.element);
   return currentStyle[tweenProperty] ? currentStyle[tweenProperty] : defaultValues[tweenProperty];
 }
-function prepareLegacyTransform(prop, obj) {
+
+/**
+ * Returns the property tween object.
+ * @param {string} _ the property name
+ * @param {Object<string, string | number | (string | number)[]>} obj the property value
+ * @returns {KUTE.transformFObject} the property tween object
+ */
+function prepareLegacyTransform(/* prop */_, obj) {
   const prepAxis = ['X', 'Y', 'Z']; // coordinates
   const translateArray = []; const rotateArray = []; const skewArray = [];
   const transformObject = {};
@@ -97,6 +102,10 @@ function prepareLegacyTransform(prop, obj) {
   return transformObject;
 }
 
+/**
+ * Prepare tween object in advance for `to()` method.
+ * @param {string} tweenProp the property name
+ */
 function crossCheckLegacyTransform(tweenProp) {
   if (this.valuesEnd[tweenProp]) {
     if (this.valuesEnd[tweenProp] && support3DTransform) {

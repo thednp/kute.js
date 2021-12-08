@@ -36,7 +36,7 @@ const PLUGINS = [
 ]
 
 if (FORMAT!=='esm'){
-  PLUGINS.push(buble());
+  PLUGINS.push(buble({objectAssign: 'Object.assign'}));
 }
 
 if (MIN){

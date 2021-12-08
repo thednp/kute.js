@@ -1,5 +1,14 @@
-import transformProperty from '../util/transformProperty.js';
+import transformProperty from '../util/transformProperty';
 
+/**
+ * getInlineStyle
+ *
+ * Returns the transform style for element from cssText.
+ * Used by for the `.to()` static method on legacy browsers.
+ *
+ * @param {Element} el target element
+ * @returns {object} a transform object
+ */
 export default function getInlineStyleLegacy(el) {
   if (!el.style) return false; // if the scroll applies to `window` it returns as it has no styling
   const css = el.style.cssText.replace(/\s/g, '').split(';'); // the cssText | the resulting transform object

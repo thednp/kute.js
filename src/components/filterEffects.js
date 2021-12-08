@@ -1,9 +1,9 @@
-import getStyleForProperty from '../process/getStyleForProperty.js';
-import defaultValues from '../objects/defaultValues.js';
-import trueColor from '../util/trueColor.js';
-import numbers from '../interpolation/numbers.js';
-import colors from '../interpolation/colors.js';
-import { dropShadow, onStartFilter } from './filterEffectsBase.js';
+import getStyleForProperty from '../process/getStyleForProperty';
+import defaultValues from '../objects/defaultValues';
+import trueColor from '../util/trueColor';
+import numbers from '../interpolation/numbers';
+import colors from '../interpolation/colors';
+import { dropshadow, onStartFilter } from './filterEffectsBase';
 
 /* filterEffects = {
   property: 'filter',
@@ -14,10 +14,20 @@ import { dropShadow, onStartFilter } from './filterEffectsBase.js';
 } */
 
 // Component Util
+/**
+ * Returns camelCase filter sub-property.
+ * @param {string} str source string
+ * @returns {string} camelCase property name
+ */
 function replaceDashNamespace(str) {
   return str.replace('-r', 'R').replace('-s', 'S');
 }
 
+/**
+ * Returns `drop-shadow` sub-property object.
+ * @param {(string | number)[]} shadow and `Array` with `drop-shadow` parameters
+ * @returns {KUTE.filterList['dropShadow']} the expected `drop-shadow` values
+ */
 function parseDropShadow(shadow) {
   let newShadow;
 
@@ -36,6 +46,11 @@ function parseDropShadow(shadow) {
   return newShadow;
 }
 
+/**
+ * Returns an array with current filter sub-properties values.
+ * @param {string} currentStyle the current filter computed style
+ * @returns {{[x: string]: number}} the filter tuple
+ */
 function parseFilterString(currentStyle) {
   const result = {};
   const fnReg = /(([a-z].*?)\(.*?\))(?=\s([a-z].*?)\(.*?\)|\s*$)/g;
@@ -60,6 +75,12 @@ function parseFilterString(currentStyle) {
 }
 
 // Component Functions
+/**
+ * Returns the current property computed style.
+ * @param {string} tweenProp the property name
+ * @param {string} value the property value
+ * @returns {string} computed style for property
+ */
 function getFilter(tweenProp, value) {
   const currentStyle = getStyleForProperty(this.element, tweenProp);
   const filterObject = parseFilterString(currentStyle);
@@ -74,7 +95,14 @@ function getFilter(tweenProp, value) {
 
   return filterObject;
 }
-function prepareFilter(tweenProp, value) {
+
+/**
+ * Returns the property tween object.
+ * @param {string} _ the property name
+ * @param {string} value the property name
+ * @returns {KUTE.filterList} the property tween object
+ */
+function prepareFilter(/* tweenProp, */_, value) {
   const filterObject = {};
   let fnp;
 
@@ -108,6 +136,10 @@ function prepareFilter(tweenProp, value) {
   return filterObject;
 }
 
+/**
+ * Adds missing sub-properties in `valuesEnd` from `valuesStart`.
+ * @param {string} tweenProp the property name
+ */
 function crossCheckFilter(tweenProp) {
   if (this.valuesEnd[tweenProp]) {
     Object.keys(this.valuesStart[tweenProp]).forEach((fn) => {
@@ -158,7 +190,7 @@ const filterEffects = {
     sepia: numbers,
     invert: numbers,
     hueRotate: numbers,
-    dropShadow: { numbers, colors, dropShadow },
+    dropShadow: { numbers, colors, dropshadow },
   },
   functions: filterFunctions,
   Util: {

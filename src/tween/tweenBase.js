@@ -1,29 +1,43 @@
-import KUTE from '../objects/kute.js';
-import connect from '../objects/connect.js';
-import onStart from '../objects/onStart.js';
-import onComplete from '../objects/onComplete.js';
-import defaultOptions from '../objects/defaultOptions.js';
+import KEC from '../objects/kute';
+import connect from '../objects/connect';
+import onStart from '../objects/onStart';
+import onComplete from '../objects/onComplete';
+import defaultOptions from '../objects/defaultOptions';
 
-import { Tick, Ticker, stop } from '../core/render.js';
+import { Tick, Ticker, stop } from '../core/render';
 
-import add from '../core/add.js';
-import remove from '../core/remove.js';
-import queueStart from '../core/queueStart.js';
+import add from '../core/add';
+import remove from '../core/remove';
+import queueStart from '../core/queueStart';
 
-// single Tween object construct
-// TweenBase is meant to be use for pre-processed values
+/**
+ * The `TweenBase` constructor creates a new `Tween` object
+ * for a single `HTMLElement` and returns it.
+ *
+ * `TweenBase` is meant to be used with pre-processed values.
+ */
 export default class TweenBase {
+  /**
+   * @param {Element} targetElement the target element
+   * @param {KUTE.tweenProps} startObject the start values
+   * @param {KUTE.tweenProps} endObject the end values
+   * @param {KUTE.tweenOptions} opsObject the end values
+   * @returns {TweenBase} the resulting Tween object
+   */
   constructor(targetElement, startObject, endObject, opsObject) {
     // element animation is applied to
     this.element = targetElement;
 
+    /** @type {boolean} */
     this.playing = false;
-
+    /** @type {number?} */
     this._startTime = null;
+    /** @type {boolean} */
     this._startFired = false;
 
-    this.valuesEnd = endObject; // valuesEnd
-    this.valuesStart = startObject; // valuesStart
+    // type is set via KUTE.tweenProps
+    this.valuesEnd = endObject;
+    this.valuesStart = startObject;
 
     // OPTIONS
     const options = opsObject || {};
@@ -31,8 +45,11 @@ export default class TweenBase {
     // used by to() method and expects object : {} / false
     this._resetStart = options.resetStart || 0;
     // you can only set a core easing function as default
+    /** @type {KUTE.easingOption} */
     this._easing = typeof (options.easing) === 'function' ? options.easing : connect.processEasing(options.easing);
+    /** @type {number} */
     this._duration = options.duration || defaultOptions.duration; // duration option | default
+    /** @type {number} */
     this._delay = options.delay || defaultOptions.delay; // delay option | default
 
     // set other options
@@ -51,22 +68,24 @@ export default class TweenBase {
     const easingFnName = this._easing.name;
     if (!onStart[easingFnName]) {
       onStart[easingFnName] = function easingFn(prop) {
-        if (!KUTE[prop] && prop === this._easing.name) KUTE[prop] = this._easing;
+        if (!KEC[prop] && prop === this._easing.name) KEC[prop] = this._easing;
       };
     }
 
     return this;
   }
 
-  // tween prototype
-  // queue tween object to main frame update
-  // move functions that use the ticker outside the prototype to be in the same scope with it
+  /**
+   * Starts tweening
+   * @param {number?} time the tween start time
+   * @returns {TweenBase} this instance
+   */
   start(time) {
     // now it's a good time to start
     add(this);
     this.playing = true;
 
-    this._startTime = typeof time !== 'undefined' ? time : KUTE.Time();
+    this._startTime = typeof time !== 'undefined' ? time : KEC.Time();
     this._startTime += this._delay;
 
     if (!this._startFired) {
@@ -83,6 +102,10 @@ export default class TweenBase {
     return this;
   }
 
+  /**
+   * Stops tweening
+   * @returns {TweenBase} this instance
+   */
   stop() {
     if (this.playing) {
       remove(this);
@@ -96,6 +119,9 @@ export default class TweenBase {
     return this;
   }
 
+  /**
+   * Trigger internal completion callbacks.
+   */
   close() {
     // scroll|transformMatrix need this
     Object.keys(onComplete).forEach((component) => {
@@ -108,18 +134,31 @@ export default class TweenBase {
     stop.call(this);
   }
 
+  /**
+   * Schedule another tween instance to start once this one completes.
+   * @param {KUTE.chainOption} args the tween animation start time
+   * @returns {TweenBase} this instance
+   */
   chain(args) {
     this._chain = [];
     this._chain = args.length ? args : this._chain.concat(args);
     return this;
   }
 
+  /**
+   * Stop tweening the chained tween instances.
+   */
   stopChainedTweens() {
     if (this._chain && this._chain.length) this._chain.forEach((tw) => tw.stop());
   }
 
+  /**
+   * Update the tween on each tick.
+   * @param {number} time the tick time
+   * @returns {boolean} this instance
+   */
   update(time) {
-    const T = time !== undefined ? time : KUTE.Time();
+    const T = time !== undefined ? time : KEC.Time();
 
     let elapsed;
 
@@ -133,7 +172,7 @@ export default class TweenBase {
 
     // render the update
     Object.keys(this.valuesEnd).forEach((tweenProp) => {
-      KUTE[tweenProp](this.element,
+      KEC[tweenProp](this.element,
         this.valuesStart[tweenProp],
         this.valuesEnd[tweenProp],
         progress);

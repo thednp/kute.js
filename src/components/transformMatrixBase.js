@@ -1,13 +1,6 @@
-import KUTE from '../objects/kute.js';
-import numbers from '../interpolation/numbers.js';
-import arrays from '../interpolation/arrays.js';
-
-/* transformMatrix = {
-  property : 'transform',
-  defaultValue: {},
-  interpolators: {},
-  functions = { prepareStart, prepareProperty, onStart, crossCheck }
-} */
+import KEC from '../objects/kute';
+import numbers from '../interpolation/numbers';
+import arrays from '../interpolation/arrays';
 
 // Component name
 const matrixComponent = 'transformMatrixBase';
@@ -18,9 +11,13 @@ const CSS3Matrix = typeof (DOMMatrix) !== 'undefined' ? DOMMatrix : null;
 
 // Component Functions
 export const onStartTransform = {
+/**
+ * Sets the property update function.
+ * @param {string} tweenProp the property name
+ */
   transform(tweenProp) {
-    if (CSS3Matrix && this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-      KUTE[tweenProp] = (elem, a, b, v) => {
+    if (CSS3Matrix && this.valuesEnd[tweenProp] && !KEC[tweenProp]) {
+      KEC[tweenProp] = (elem, a, b, v) => {
         let matrix = new CSS3Matrix();
         const tObject = {};
 
@@ -53,19 +50,26 @@ export const onStartTransform = {
           : matrix;
 
         // set element style
+        // eslint-disable-next-line no-param-reassign
         elem.style[tweenProp] = matrix.toString();
       };
     }
   },
+  /**
+   * onStartTransform.CSS3Matrix
+   *
+   * Sets the update function for the property.
+   * @param {string} prop the property name
+   */
   CSS3Matrix(prop) {
     if (CSS3Matrix && this.valuesEnd.transform) {
-      if (!KUTE[prop]) KUTE[prop] = CSS3Matrix;
+      if (!KEC[prop]) KEC[prop] = CSS3Matrix;
     }
   },
 };
 
 // Component Base Object
-export const baseMatrixTransform = {
+export const TransformMatrixBase = {
   component: matrixComponent,
   property: 'transform',
   functions: { onStart: onStartTransform },
@@ -78,4 +82,4 @@ export const baseMatrixTransform = {
   },
 };
 
-export default baseMatrixTransform;
+export default TransformMatrixBase;

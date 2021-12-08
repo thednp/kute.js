@@ -1,17 +1,16 @@
-import numbers from '../interpolation/numbers.js';
-import { svgTransformOnStart } from './svgTransformBase.js';
-
-/* const svgTransform = {
-  property: 'svgTransform',
-  subProperties,
-  defaultValue,
-  Interpolate: {numbers},
-  functions
-} */
+import numbers from '../interpolation/numbers';
+import { svgTransformOnStart } from './svgTransformBase';
 
 // Component Util
-function parseStringOrigin(origin, { x, width }) {
+/**
+ * Returns a correct transform origin consistent with the shape bounding box.
+ * @param {string} origin transform origin string
+ * @param {SVGPathCommander.pathBBox} bbox path bounding box
+ * @returns {number}
+ */
+function parseStringOrigin(origin, bbox) {
   let result;
+  const { x, width } = bbox;
   if (/[a-z]/i.test(origin) && !/px/.test(origin)) {
     result = origin.replace(/top|left/, 0)
       .replace(/right|bottom/, 100)
@@ -22,7 +21,11 @@ function parseStringOrigin(origin, { x, width }) {
   return result;
 }
 
-// helper function that turns transform value from string to object
+/**
+ * Parse SVG transform string and return an object.
+ * @param {string} a transform string
+ * @returns {Object<string, (string | number)>}
+ */
 function parseTransformString(a) {
   const c = {};
   const d = a && /\)/.test(a)
@@ -38,7 +41,14 @@ function parseTransformString(a) {
   return c;
 }
 
-function parseTransformSVG(p, v) {
+/**
+ * Returns the SVG transform tween object.
+ * @param {string} _ property name
+ * @param {Object<string, (string | number)>} v property value object
+ * @returns {KUTE.transformSVGObject} the SVG transform tween object
+ */
+function parseTransformSVG(/* prop */_, v) {
+  /** @type {KUTE.transformSVGObject} */
   const svgTransformObject = {};
 
   // by default the transformOrigin is "50% 50%" of the shape box
@@ -90,12 +100,23 @@ function parseTransformSVG(p, v) {
 }
 
 // Component Functions
-function prepareSvgTransform(p, v) {
-  return parseTransformSVG.call(this, p, v);
+/**
+ * Returns the property tween object.
+ * @param {string} prop the property name
+ * @param {string} value the property value
+ * @returns {KUTE.transformSVGObject} the property tween object
+ */
+function prepareSvgTransform(prop, value) {
+  return parseTransformSVG.call(this, prop, value);
 }
 
-// returns an obect with current transform attribute value
-function getStartSvgTransform(tweenProp, value) {
+/**
+ * Returns an object with the current transform attribute value.
+ * @param {string} _ the property name
+ * @param {string} value the property value
+ * @returns {string} current transform object
+ */
+function getStartSvgTransform(/* tweenProp */_, value) {
   const transformObject = {};
   const currentTransform = parseTransformString(this.element.getAttribute('transform'));
 

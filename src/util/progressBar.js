@@ -1,8 +1,21 @@
-import KUTE from '../objects/kute.js';
-import connect from '../objects/connect.js';
-import selector from './selector.js';
+import KEC from '../objects/kute';
+import connect from '../objects/connect';
+import selector from './selector';
 
+/**
+ * ProgressBar
+ *
+ * @class
+ * A progress bar utility for KUTE.js that will connect
+ * a target `<input type="slider">`. with a Tween instance
+ * allowing it to control the progress of the Tween.
+ */
 export default class ProgressBar {
+  /**
+   * @constructor
+   * @param {HTMLElement} el target or string selector
+   * @param {KUTE.Tween} multi when true returns an array of elements
+   */
   constructor(element, tween) {
     this.element = selector(element);
     this.element.tween = tween;
@@ -30,14 +43,14 @@ export default class ProgressBar {
     const { output } = this.toolbar;
 
     // let progress = this.paused ? this.toolbar.value
-    // : (KUTE.Time() - this._startTime) / this._duration;
+    // : (KEC.Time() - this._startTime) / this._duration;
     // progress = progress > 1 - tick ? 1 : progress < 0.01 ? 0 : progress;
 
     let progress;
     if (this.paused) {
       progress = this.toolbar.value;
     } else {
-      progress = (KUTE.Time() - this._startTime) / this._duration;
+      progress = (KEC.Time() - this._startTime) / this._duration;
     }
 
     // progress = progress > 1 - tick ? 1 : progress < 0.01 ? 0 : progress;
@@ -46,6 +59,7 @@ export default class ProgressBar {
 
     const value = !this._reversed ? progress : 1 - progress;
     this.toolbar.value = value;
+    // eslint-disable-next-line no-bitwise
     if (output) output.value = `${(value * 10000 >> 0) / 100}%`;
   }
 
@@ -77,7 +91,7 @@ export default class ProgressBar {
       this.tween.pause();
       this.toolbar.toggleEvents('add');
 
-      KUTE.Tick = cancelAnimationFrame(KUTE.Ticker);
+      KEC.Tick = cancelAnimationFrame(KEC.Ticker);
     }
   }
 
@@ -85,11 +99,11 @@ export default class ProgressBar {
     if (this.tween.paused) {
       if (this.tween.paused) this.tween.resume();
 
-      this.tween._startTime = KUTE.Time()
+      this.tween._startTime = KEC.Time()
         - (!this.tween._reversed ? this.value : 1 - this.value) * this.tween._duration;
 
       this.toolbar.toggleEvents('remove');
-      KUTE.Tick = requestAnimationFrame(KUTE.Ticker);
+      KEC.Tick = requestAnimationFrame(KEC.Ticker);
     }
   }
 }

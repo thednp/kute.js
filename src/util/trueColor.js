@@ -1,7 +1,14 @@
-import hexToRGB from './hexToRGB.js';
+import hexToRGB from './hexToRGB';
 
-// trueColor - replace transparent and transform any color to rgba()/rgb()
-export default function trueColor(colorString) {
+/**
+ * trueColor
+ *
+ * Transform any color to rgba()/rgb() and return a nice RGB(a) object.
+ *
+ * @param {string} colorString the color input
+ * @returns {KUTE.colorObject} the {r,g,b,a} color object
+ */
+const trueColor = (colorString) => {
   let result;
   if (/rgb|rgba/.test(colorString)) { // first check if it's a rgb string
     const vrgb = colorString.replace(/\s|\)/, '').split('(')[1].split(',');
@@ -23,7 +30,9 @@ export default function trueColor(colorString) {
       r: 0, g: 0, b: 0, a: 0,
     };
   }
-  if (!/^#|^rgb/.test(colorString)) { // maybe we can check for web safe colors
+  // maybe we can check for web safe colors
+  // only works in a browser
+  if (!/^#|^rgb/.test(colorString)) {
     const siteHead = document.getElementsByTagName('head')[0];
     siteHead.style.color = colorString;
     let webColor = getComputedStyle(siteHead, null).color;
@@ -36,4 +45,5 @@ export default function trueColor(colorString) {
     };
   }
   return result;
-}
+};
+export default trueColor;

@@ -1,2 +1,3 @@
 // used in preparePropertiesObject
-export default {};
+const prepareProperty = {};
+export default prepareProperty;

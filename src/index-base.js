@@ -1,22 +1,22 @@
-import Render from './core/render.js';
-import Interpolate from './objects/interpolate.js';
-import Objects from './objects/objectsBase.js';
-import Util from './objects/util.js';
-import Easing from './easing/easing-base.js';
-import Internals from './core/internals.js';
-import Selector from './util/selector.js';
+import Render from './core/render';
+import Interpolate from './objects/interpolate';
+import Objects from './objects/objectsBase';
+import Util from './objects/util';
+import Easing from './easing/easing-base';
+import Internals from './core/internals';
+import Selector from './util/selector';
 
 // Animation
-import Animation from './animation/animationBase.js';
+import Animation from './animation/animationBase';
 // Base Components
-import Components from './objects/componentsBase.js';
+import Components from './objects/componentsBase';
 
 // TweenConstructor
-import Tween from './tween/tweenBase.js';
+import Tween from './tween/tweenBase';
 // Interface only fromTo
-import fromTo from './interface/fromTo.js';
+import fromTo from './interface/fromTo';
 
-import Version from './util/version.js';
+import Version from './util/version';
 
 export default {
   Animation,

@@ -1,5 +1,4 @@
-import supportPassive from 'shorter-js/src/boolean/supportPassive.js';
-import numbers from '../interpolation/numbers.js';
+import numbers from '../interpolation/numbers';
 
 import {
   scrollContainer,
@@ -10,9 +9,13 @@ import {
   getScrollTargets,
   preventScroll,
   toggleScrollEvents,
-} from './scrollPropertyBase.js';
+} from './scrollPropertyBase';
 
 // Component Functions
+/**
+ * Returns the current property computed style.
+ * @returns {number} computed style for property
+ */
 function getScroll() {
   this.element = ('scroll' in this.valuesEnd) && (!this.element || this.element === window)
     ? scrollContainer : this.element;
@@ -22,7 +25,13 @@ function getScroll() {
     : this.element.scrollTop;
 }
 
-function prepareScroll(prop, value) {
+/**
+ * Returns the property tween object.
+ * @param {string} _ the property name
+ * @param {string} value the property value
+ * @returns {number} the property tween object
+ */
+function prepareScroll(/* prop, */_, value) {
   return parseInt(value, 10);
 }
 
@@ -35,7 +44,7 @@ const scrollFunctions = {
 };
 
 // Full Component
-const scrollProperty = {
+const ScrollProperty = {
   component: 'scrollProperty',
   property: 'scroll',
   defaultValue: 0,
@@ -43,8 +52,8 @@ const scrollProperty = {
   functions: scrollFunctions,
   // export stuff to global
   Util: {
-    preventScroll, scrollIn, scrollOut, getScrollTargets, toggleScrollEvents, supportPassive,
+    preventScroll, scrollIn, scrollOut, getScrollTargets, toggleScrollEvents,
   },
 };
 
-export default scrollProperty;
+export default ScrollProperty;

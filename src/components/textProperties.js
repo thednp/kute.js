@@ -1,15 +1,8 @@
-import defaultValues from '../objects/defaultValues.js';
-import getStyleForProperty from '../process/getStyleForProperty.js';
-import trueDimension from '../util/trueDimension.js';
-import units from '../interpolation/units.js';
-import { textPropOnStart } from './textPropertiesBase.js';
-
-/* textProperties = {
-  category: 'textProperties',
-  defaultValues: [],
-  interpolators: {units}
-  functions = { prepareStart, prepareProperty, onStart }
-} */
+import defaultValues from '../objects/defaultValues';
+import getStyleForProperty from '../process/getStyleForProperty';
+import trueDimension from '../util/trueDimension';
+import units from '../interpolation/units';
+import { textPropOnStart } from './textPropertiesBase';
 
 // Component Properties
 const textProps = ['fontSize', 'lineHeight', 'letterSpacing', 'wordSpacing'];
@@ -20,11 +13,22 @@ textProps.forEach((tweenProp) => {
   textOnStart[tweenProp] = textPropOnStart;
 });
 
+/**
+ * Returns the current property computed style.
+ * @param {string} prop the property name
+ * @returns {string} computed style for property
+ */
 export function getTextProp(prop/* , value */) {
   return getStyleForProperty(this.element, prop) || defaultValues[prop];
 }
 
-export function prepareTextProp(prop, value) {
+/**
+ * Returns the property tween object.
+ * @param {string} _ the property name
+ * @param {string} value the property value
+ * @returns {number} the property tween object
+ */
+export function prepareTextProp(/* prop */_, value) {
   return trueDimension(value);
 }
 
@@ -36,7 +40,7 @@ const textPropFunctions = {
 };
 
 // Component Full
-const textProperties = {
+const TextProperties = {
   component: 'textProperties',
   category: 'textProperties',
   properties: textProps,
@@ -48,4 +52,4 @@ const textProperties = {
   Util: { trueDimension },
 };
 
-export default textProperties;
+export default TextProperties;

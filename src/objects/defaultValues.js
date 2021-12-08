@@ -1,1 +1,2 @@
-export default {};
+const defaultValues = {};
+export default defaultValues;

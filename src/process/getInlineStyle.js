@@ -1,4 +1,11 @@
-// getInlineStyle - get transform style for element from cssText for .to() method
+/**
+ * getInlineStyle
+ * Returns the transform style for element from
+ * cssText. Used by for the `.to()` static method.
+ *
+ * @param {Element} el target element
+ * @returns {object}
+ */
 export default function getInlineStyle(el) {
   // if the scroll applies to `window` it returns as it has no styling
   if (!el.style) return false;

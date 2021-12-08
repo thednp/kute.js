@@ -1,20 +1,20 @@
-import Animation from '../animation/animation.js';
+import Animation from '../animation/animation';
 
-import EssentialBoxModel from '../components/boxModelEssential.js';
-import ColorsProperties from '../components/colorProperties.js';
-import HTMLAttributes from '../components/htmlAttributes.js';
-import OpacityProperty from '../components/opacityProperty.js';
-import TextWrite from '../components/textWrite.js';
-import TransformFunctions from '../components/transformFunctions.js';
-import SVGDraw from '../components/svgDraw.js';
-import SVGMorph from '../components/svgMorph.js';
+import EssentialBoxModel from '../components/boxModelEssential';
+import ColorsProperties from '../components/colorProperties';
+import HTMLAttributes from '../components/htmlAttributes';
+import OpacityProperty from '../components/opacityProperty';
+import TextWriteProp from '../components/textWrite';
+import TransformFunctions from '../components/transformFunctions';
+import SVGDraw from '../components/svgDraw';
+import SVGMorph from '../components/svgMorph';
 
 const Components = {
   EssentialBoxModel,
   ColorsProperties,
   HTMLAttributes,
   OpacityProperty,
-  TextWrite,
+  TextWriteProp,
   TransformFunctions,
   SVGDraw,
   SVGMorph,

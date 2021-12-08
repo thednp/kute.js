@@ -1,14 +1,14 @@
-import supportedProperties from './supportedProperties.js';
-import defaultValues from './defaultValues.js';
-import defaultOptions from './defaultOptions.js';
-import prepareProperty from './prepareProperty.js';
-import prepareStart from './prepareStart.js';
-import crossCheck from './crossCheck.js';
-import onStart from './onStart.js';
-import onComplete from './onComplete.js';
-import linkProperty from './linkProperty.js';
+import supportedProperties from './supportedProperties';
+import defaultValues from './defaultValues';
+import defaultOptions from './defaultOptions';
+import prepareProperty from './prepareProperty';
+import prepareStart from './prepareStart';
+import crossCheck from './crossCheck';
+import onStart from './onStart';
+import onComplete from './onComplete';
+import linkProperty from './linkProperty';
 
-export default {
+const Objects = {
   supportedProperties,
   defaultValues,
   defaultOptions,
@@ -19,3 +19,5 @@ export default {
   onComplete,
   linkProperty,
 };
+
+export default Objects;

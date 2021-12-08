@@ -1,18 +1,14 @@
-import KUTE from '../objects/kute.js';
-import numbers from '../interpolation/numbers.js';
-
-/* svgTransform = {
-  property: 'svgTransform',
-  subProperties,
-  defaultValue,
-  Interpolate: {numbers},
-  functions
-} */
+import KEC from '../objects/kute';
+import numbers from '../interpolation/numbers';
 
 // Component Functions
+/**
+ * Sets the property update function.
+ * @param {string} tweenProp the property name
+ */
 export function svgTransformOnStart(tweenProp) {
-  if (!KUTE[tweenProp] && this.valuesEnd[tweenProp]) {
-    KUTE[tweenProp] = (l, a, b, v) => {
+  if (!KEC[tweenProp] && this.valuesEnd[tweenProp]) {
+    KEC[tweenProp] = (l, a, b, v) => {
       let x = 0;
       let y = 0;
       const deg = Math.PI / 180;
@@ -43,6 +39,7 @@ export function svgTransformOnStart(tweenProp) {
       x += complex ? b.origin[0] : 0; y += complex ? b.origin[1] : 0;
 
       // finally we apply the transform attribute value
+      /* eslint no-bitwise: ["error", { "allow": [">>"] }] */
       l.setAttribute('transform', (x || y ? (`translate(${(x * 1000 >> 0) / 1000}${y ? (`,${(y * 1000 >> 0) / 1000}`) : ''})`) : '')
                                  + (rotate ? `rotate(${(rotate * 1000 >> 0) / 1000})` : '')
                                  + (skewX ? `skewX(${(skewX * 1000 >> 0) / 1000})` : '')

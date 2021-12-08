@@ -1,14 +1,18 @@
-import KUTE from '../objects/kute.js';
-import numbers from '../interpolation/numbers.js';
-import colors from '../interpolation/colors.js';
+import KEC from '../objects/kute';
+import numbers from '../interpolation/numbers';
+import colors from '../interpolation/colors';
 
 // Component Properties
 const shadowProps = ['boxShadow', 'textShadow'];
 
 // Component Functions
+/**
+ * Sets the property update function.
+ * @param {string} tweenProp the property name
+ */
 export function onStartShadow(tweenProp) {
-  if (this.valuesEnd[tweenProp] && !KUTE[tweenProp]) {
-    KUTE[tweenProp] = (elem, a, b, v) => {
+  if (this.valuesEnd[tweenProp] && !KEC[tweenProp]) {
+    KEC[tweenProp] = (elem, a, b, v) => {
       // let's start with the numbers | set unit | also determine inset
       const params = [];
       const unit = 'px';
@@ -18,9 +22,11 @@ export function onStartShadow(tweenProp) {
       const inset = (a[5] && a[5] !== 'none') || (b[5] && b[5] !== 'none') ? ' inset' : false;
 
       for (let i = 0; i < sl; i += 1) {
+        /* eslint no-bitwise: ["error", { "allow": [">>"] }] */
         params.push(((numbers(a[i], b[i], v) * 1000 >> 0) / 1000) + unit);
       }
       // the final piece of the puzzle, the DOM update
+      // eslint-disable-next-line no-param-reassign -- impossible to satisfy
       elem.style[tweenProp] = inset
         ? colors(colA, colB, v) + params.join(' ') + inset
         : colors(colA, colB, v) + params.join(' ');
@@ -31,15 +37,10 @@ const shadowPropOnStart = {};
 shadowProps.forEach((x) => { shadowPropOnStart[x] = onStartShadow; });
 
 // Component Base
-const baseShadow = {
+const ShadowPropertiesBase = {
   component: 'baseShadow',
-  // properties: shadowProps,
-  // defaultValues: {
-  //   boxShadow :'0px 0px 0px 0px rgb(0,0,0)',
-  //   textShadow: '0px 0px 0px 0px rgb(0,0,0)'
-  // },
   Interpolate: { numbers, colors },
   functions: { onStart: shadowPropOnStart },
 };
 
-export default baseShadow;
+export default ShadowPropertiesBase;

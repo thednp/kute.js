@@ -1,19 +1,14 @@
-import defaultValues from '../objects/defaultValues.js';
-import getStyleForProperty from '../process/getStyleForProperty.js';
-import trueDimension from '../util/trueDimension.js';
-import units from '../interpolation/units.js';
-import { radiusOnStartFn } from './borderRadiusBase.js';
-
-/* borderRadius = {
-  category: 'borderRadius',
-  properties : [..],
-  defaultValues: {..},
-  interpolation: {units}
-} */
+import defaultValues from '../objects/defaultValues';
+import getStyleForProperty from '../process/getStyleForProperty';
+import trueDimension from '../util/trueDimension';
+import units from '../interpolation/units';
+import { radiusOnStartFn } from './borderRadiusBase';
 
 // Component Properties
-const radiusProps = ['borderRadius',
-  'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'];
+const radiusProps = [
+  'borderRadius',
+  'borderTopLeftRadius', 'borderTopRightRadius',
+  'borderBottomLeftRadius', 'borderBottomRightRadius'];
 
 const radiusValues = {};
 radiusProps.forEach((x) => { radiusValues[x] = 0; });
@@ -24,11 +19,21 @@ radiusProps.forEach((tweenProp) => {
   radiusOnStart[tweenProp] = radiusOnStartFn;
 });
 
+/**
+ * Returns the current property computed style.
+ * @param {string} tweenProp the property name
+ * @returns {string} the property computed style
+ */
 export function getRadius(tweenProp) {
   return getStyleForProperty(this.element, tweenProp) || defaultValues[tweenProp];
 }
 
-export function prepareRadius(tweenProp, value) {
+/**
+ * Returns the property tween object.
+ * @param {string} value the property value
+ * @returns {{v: number, u: string}} the property tween object
+ */
+export function prepareRadius(/* tweenProp, */_, value) {
   return trueDimension(value);
 }
 

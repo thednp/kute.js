@@ -1,3 +1,5 @@
-import transformProperty from './transformProperty.js';
+import transformProperty from './transformProperty';
 
-export default transformProperty in document.head.style;
+/** check if transform is supported via prefixed property */
+const supportTransform = transformProperty in document.head.style;
+export default supportTransform;

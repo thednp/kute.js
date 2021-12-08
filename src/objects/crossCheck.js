@@ -2,4 +2,5 @@
 // can be set to make sure start unit and end unit are same,
 // stack transforms, process SVG paths,
 // any type of post processing the component needs
-export default {};
+const crossCheck = {};
+export default crossCheck;

@@ -1,7 +1,7 @@
-import getInlineStyle from './getInlineStyle.js';
-import getStyleForProperty from './getStyleForProperty.js';
-import getStartValues from './getStartValues.js';
-import prepareObject from './prepareObject.js';
+import getInlineStyle from './getInlineStyle';
+import getStyleForProperty from './getStyleForProperty';
+import getStartValues from './getStartValues';
+import prepareObject from './prepareObject';
 
 export default {
   getInlineStyle,

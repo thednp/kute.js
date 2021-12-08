@@ -1,5 +1,5 @@
-import onStart from '../objects/onStart.js';
-import linkInterpolation from './linkInterpolation.js';
+import onStart from '../objects/onStart';
+import linkInterpolation from './linkInterpolation';
 
 export default function queueStart() {
   // fire onStart actions

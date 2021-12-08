@@ -1,3 +1,10 @@
-import Tweens from '../objects/tweens.js';
+import Tweens from '../objects/tweens';
 
-export default (tw) => Tweens.push(tw);
+/**
+ * KUTE.add(Tween)
+ *
+ * @param {KUTE.Tween} tw a new tween to add
+ */
+const add = (tw) => Tweens.push(tw);
+
+export default add;

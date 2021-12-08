@@ -1,6 +1,6 @@
 # KUTE.js
 
-A modern JavaScript animation engine built on ES6+ standards with most essential features for the web, delivering easy to use methods to set up high performance, cross-browser animations. The focus is code quality, flexibility, performance and size. 
+A modern JavaScript animation engine built on ES6+ standards with strong TypeScript definitions and most essential features for the web with easy to use methods to set up high performance, cross-browser animations. The focus is code quality, flexibility, performance and size. 
 
 [![NPM Version](https://img.shields.io/npm/v/kute.js.svg?style=flat-square)](https://www.npmjs.com/package/kute.js)
 [![NPM Downloads](https://img.shields.io/npm/dm/kute.js.svg?style=flat-square)](http://npm-stat.com/charts.html?package=kute.js)
@@ -42,21 +42,9 @@ All above mentioned components have a BASE version which doesn't include value p
 For a complete developer guide, usage and stuff like npm, visit [the wiki](https://github.com/thednp/kute.js/wiki).
 
 
-# ESLint
-If you include KUTE.js in your project, we recommend using the following ESLint rule:
-
-```js
-rules: {
-  // Disable bitwise for isArcCommand & isPathCommand from SVGPathCommander
-  // as well as the KUTE.js interpolation functions 
-  "no-bitwise": 0,
-}
-```
-Some **SVGPathCommander** as well as **KUTE.js** interpolation functions make use of `|` (OR) and `>>` operators for fastest number operations.
-
-
 # Browser Support
 KUTE.js is redeveloped for maximum performance on modern browsers. Some legacy browsers might some help, so give them a small polyfill set with most essential features required by KUTE.js to work, powered by [minifill](https://github.com/thednp/minifill), try it. For broader projects you might want to consider <a href="https://cdn.polyfill.io/v2/docs/">polyfills</a>. 
+
 
 # Special Thanks
 * [Mike Bostock](https://bost.ocks.org/mike/) for his awesome [D3.js](https://github.com/d3/d3), one of the sources for our reworked [SVGMorph](http://thednp.github.io/kute.js/svgMorph.html) component.
@@ -65,8 +53,10 @@ KUTE.js is redeveloped for maximum performance on modern browsers. Some legacy b
 * [Dmitry Baranovskiy](https://dmitry.baranovskiy.com/) for his awesome [Raphael.js](https://dmitrybaranovskiy.github.io/raphael/), another source for our SVGCubicMorph component.
 * [@dalisoft](https://github.com/dalisoft) contributed a great deal to the performance and functionality of previous versions of KUTE.js.
 
+
 # Contributions
 * [Contributors &amp; Collaborators](https://github.com/thednp/kute.js/graphs/contributors)
+
 
 # License
 [MIT License](https://github.com/thednp/kute.js/blob/master/LICENSE)

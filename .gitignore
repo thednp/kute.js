@@ -1,3 +1,4 @@
 node_modules/
+experiments/
 .npmignore
 package-lock.json

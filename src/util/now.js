@@ -1,12 +1,12 @@
 // Include a performance.now polyfill.
 // source https://github.com/tweenjs/tween.js/blob/master/src/Now.ts
-let now;
+let performanceNow;
 
 // In node.js, use process.hrtime.
 // eslint-disable-next-line
 // @ts-ignore
 if (typeof self === 'undefined' && typeof process !== 'undefined' && process.hrtime) {
-  now = () => {
+  performanceNow = () => {
     // eslint-disable-next-line
 		// @ts-ignore
     const time = process.hrtime();
@@ -18,13 +18,15 @@ if (typeof self === 'undefined' && typeof process !== 'undefined' && process.hrt
   // In a browser, use self.performance.now if it is available.
   // This must be bound, because directly assigning this function
   // leads to an invocation exception in Chrome.
-  now = self.performance.now.bind(self.performance);
+  performanceNow = self.performance.now.bind(self.performance);
 } else if (typeof Date !== 'undefined' && Date.now) {
   // Use Date.now if it is available.
-  now = Date.now;
+  performanceNow = Date.now;
 } else {
   // Otherwise, use 'new Date().getTime()'.
-  now = () => new Date().getTime();
+  performanceNow = () => new Date().getTime();
 }
+
+const now = performanceNow;
 
 export default now;

@@ -1,7 +1,7 @@
-import connect from '../objects/connect.js';
-import numbers from '../interpolation/numbers.js';
+import connect from '../objects/connect';
+import numbers from '../interpolation/numbers';
 
-import { onStartWrite, charSet } from './textWriteBase.js';
+import { onStartWrite, charSet } from './textWriteBase';
 
 // Component Util
 // utility for multi-child targets
@@ -20,8 +20,10 @@ function wrapContentsSpan(el, classNAME) {
     textWriteWrapper = document.createElement('SPAN');
     textWriteWrapper.className = classNAME;
     textWriteWrapper.innerHTML = elementInnerHTML;
+    /* eslint-disable no-param-reassign -- impossible to satisfy */
     el.appendChild(textWriteWrapper);
     el.innerHTML = textWriteWrapper.outerHTML;
+    /* eslint-enable no-param-reassign -- impossible to satisfy */
   } else if (el.children.length && el.children[0].className === classNAME) {
     [textWriteWrapper] = el.children;
   }
@@ -72,9 +74,11 @@ function setSegments(target, newText) {
   const oldTargetSegs = getTextPartsArray(target, 'text-part');
   const newTargetSegs = getTextPartsArray(wrapContentsSpan(newText), 'text-part');
 
+  /* eslint-disable no-param-reassign */
   target.innerHTML = '';
   target.innerHTML += oldTargetSegs.map((s) => { s.className += ' oldText'; return s.outerHTML; }).join('');
   target.innerHTML += newTargetSegs.map((s) => { s.className += ' newText'; return s.outerHTML.replace(s.innerHTML, ''); }).join('');
+  /* eslint-enable no-param-reassign */
 
   return [oldTargetSegs, newTargetSegs];
 }
@@ -113,8 +117,10 @@ export function createTextTweens(target, newText, ops) {
   }));
   textTween = textTween.concat(newTargets.map((el, i) => {
     function onComplete() {
+      /* eslint-disable no-param-reassign */
       target.innerHTML = newText;
       target.playing = false;
+      /* eslint-enable no-param-reassign */
     }
 
     options.duration = options.duration === 'auto' ? newTargetSegs[i].innerHTML.length * 75 : options.duration;
@@ -128,6 +134,7 @@ export function createTextTweens(target, newText, ops) {
   textTween.start = function startTweens() {
     if (!target.playing) {
       textTween.forEach((tw) => tw.start());
+      // eslint-disable-next-line no-param-reassign
       target.playing = true;
     }
   };
@@ -136,10 +143,20 @@ export function createTextTweens(target, newText, ops) {
 }
 
 // Component Functions
+/**
+ * Returns the current element `innerHTML`.
+ * @returns {string} computed style for property
+ */
 function getWrite(/* tweenProp, value */) {
   return this.element.innerHTML;
 }
 
+/**
+ * Returns the property tween object.
+ * @param {string} tweenProp the property name
+ * @param {string} value the property value
+ * @returns {number | string} the property tween object
+ */
 function prepareText(tweenProp, value) {
   if (tweenProp === 'number') {
     return parseFloat(value);
@@ -156,7 +173,7 @@ export const textWriteFunctions = {
 };
 
 // Full Component
-export const textWrite = {
+export const TextWrite = {
   component: 'textWriteProperties',
   category: 'textWrite',
   properties: ['text', 'number'],
@@ -168,4 +185,4 @@ export const textWrite = {
   Util: { charSet, createTextTweens },
 };
 
-export default textWrite;
+export default TextWrite;

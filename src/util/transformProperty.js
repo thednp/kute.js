@@ -1,3 +1,5 @@
-import trueProperty from './trueProperty.js';
+import trueProperty from './trueProperty';
 
-export default trueProperty('transform');
+/** the `transform` string for legacy browsers */
+const transformProperty = trueProperty('transform');
+export default transformProperty;

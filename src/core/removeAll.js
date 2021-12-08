@@ -1,3 +1,8 @@
-import Tweens from '../objects/tweens.js';
+import Tweens from '../objects/tweens';
 
-export default () => { Tweens.length = 0; };
+/**
+ * KUTE.removeAll()
+ */
+const removeAll = () => { Tweens.length = 0; };
+
+export default removeAll;

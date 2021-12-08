@@ -1,8 +1,8 @@
 // IE10+
-import 'minifill/src/Array.from.js';
-import 'minifill/src/Array.prototype.flat.js';
-import 'minifill/src/Array.prototype.includes.js';
-import 'minifill/src/String.prototype.includes.js';
-import 'minifill/src/Number.isFinite.js';
-import 'minifill/src/Number.isInteger.js';
-import 'minifill/src/Number.isNaN.js';
+import 'minifill/src/Array.from';
+import 'minifill/src/Array.prototype.flat';
+import 'minifill/src/Array.prototype.includes';
+import 'minifill/src/String.prototype.includes';
+import 'minifill/src/Number.isFinite';
+import 'minifill/src/Number.isInteger';
+import 'minifill/src/Number.isNaN';

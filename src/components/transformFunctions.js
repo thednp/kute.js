@@ -1,31 +1,35 @@
-import defaultValues from '../objects/defaultValues.js';
-import getInlineStyle from '../process/getInlineStyle.js';
-import perspective from '../interpolation/perspective.js';
-import translate3d from '../interpolation/translate3d.js';
-import rotate3d from '../interpolation/rotate3d.js';
-import translate from '../interpolation/translate.js';
-import rotate from '../interpolation/rotate.js';
-import scale from '../interpolation/scale.js';
-import skew from '../interpolation/skew.js';
-import { onStartTransform } from './transformFunctionsBase.js';
-
-/* transformFunctions = {
-  property: 'transform',
-  subProperties,
-  defaultValues,
-  Interpolate: {translate,rotate,skew,scale},
-  functions } */
+import defaultValues from '../objects/defaultValues';
+import getInlineStyle from '../process/getInlineStyle';
+import perspective from '../interpolation/perspective';
+import translate3d from '../interpolation/translate3d';
+import rotate3d from '../interpolation/rotate3d';
+import translate from '../interpolation/translate';
+import rotate from '../interpolation/rotate';
+import scale from '../interpolation/scale';
+import skew from '../interpolation/skew';
+import { onStartTransform } from './transformFunctionsBase';
 
 // same to svg transform, attr
 // the component developed for modern browsers supporting non-prefixed transform
 
 // Component Functions
-function getTransform(tweenProperty/* , value */) {
+/**
+ * Returns the current property inline style.
+ * @param {string} tweenProp the property name
+ * @returns {string} inline style for property
+ */
+function getTransform(tweenProp/* , value */) {
   const currentStyle = getInlineStyle(this.element);
-  return currentStyle[tweenProperty] ? currentStyle[tweenProperty] : defaultValues[tweenProperty];
+  return currentStyle[tweenProp] ? currentStyle[tweenProp] : defaultValues[tweenProp];
 }
 
-function prepareTransform(prop, obj) {
+/**
+ * Returns the property tween object.
+ * @param {string} _ the property name
+ * @param {Object<string, string | number | (string | number)[]>} obj the property value
+ * @returns {KUTE.transformFObject} the property tween object
+ */
+function prepareTransform(/* prop, */_, obj) {
   const prepAxis = ['X', 'Y', 'Z']; // coordinates
   const transformObject = {};
   const translateArray = []; const rotateArray = []; const skewArray = [];
@@ -79,6 +83,10 @@ function prepareTransform(prop, obj) {
   return transformObject;
 }
 
+/**
+ * Prepare tween object in advance for `to()` method.
+ * @param {string} tweenProp the property name
+ */
 function crossCheckTransform(tweenProp) {
   if (this.valuesEnd[tweenProp]) {
     if (this.valuesEnd[tweenProp]) {
@@ -124,7 +132,7 @@ const defaultTransformValues = {
 };
 
 // Full Component
-const transformFunctionsComponent = {
+const TransformFunctions = {
   component: 'transformFunctions',
   property: 'transform',
   subProperties: supportedTransformProperties,
@@ -141,4 +149,4 @@ const transformFunctionsComponent = {
   },
 };
 
-export default transformFunctionsComponent;
+export default TransformFunctions;
