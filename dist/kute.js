@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Standard v2.2.0alpha3 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.2.0 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -114,6 +114,18 @@
     // Give up
     return t2;
   };
+
+  var version$1 = "1.0.18";
+
+  // @ts-ignore
+
+  /**
+   * A global namespace for library version.
+   * @type {string}
+   */
+  var Version$1 = version$1;
+
+  Object.assign(CubicBezier, { Version: Version$1 });
 
   /**
    * The KUTE.js Execution Context
@@ -4408,7 +4420,7 @@
     Components[component] = new Animation(compOps);
   });
 
-  var version = "2.2.0alpha3";
+  var version = "2.2.0";
 
   // @ts-ignore
 
