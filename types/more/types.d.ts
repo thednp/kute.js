@@ -82,7 +82,7 @@ export interface curveObject {
 
 export type polygonMorph = [number, number][];
 
-export type exactRing = { ring: polygonMorph, skipBisect?: boolean } | false;
+export type exactPolygon = { polygon: polygonMorph, skipBisect?: boolean } | false;
 
 export interface polygonObject {
     polygon: polygonMorph,

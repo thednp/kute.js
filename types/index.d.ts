@@ -1,9 +1,8 @@
 export as namespace KUTE;
 
 // dependencies
-// export * as SVGPathCommander from "svg-path-commander";
+export * as SVGPathCommander from "svg-path-commander";
 
-import './kute'
 export { default as Animation } from "kute.js/src/animation/animation";
 export { default as AnimationBase } from "kute.js/src/animation/animationBase";
 export { default as AnimationDevelopment } from "kute.js/src/animation/animationDevelopment";
@@ -144,7 +143,7 @@ export {
     transformMObject,
     transformFObject,
     transformSVGObject,
-    exactRing,
+    exactPolygon,
     drawObject,
     curveSpecs,
     colorObject,

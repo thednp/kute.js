@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Standard v2.2.0alpha2 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.2.0alpha3 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -4008,9 +4008,9 @@ function polygonLength(polygon) {
 /**
  * Returns an existing polygin and its length or false if not polygon.
  * @param {SVGPathCommander.pathArray} pathArray target polygon
- * @returns {KUTE.exactRing} length
+ * @returns {KUTE.exactPolygon} length
  */
-function exactRing(pathArray) {
+function exactPolygon(pathArray) {
   const polygon = [];
   const pathlen = pathArray.length;
   let segment = [];
@@ -4040,7 +4040,7 @@ function exactRing(pathArray) {
  * Returns polygon length.
  * @param {SVGPathCommander.pathArray} parsed target polygon
  * @param {number} maxLength the maximum segment length
- * @returns {KUTE.exactRing} length
+ * @returns {KUTE.exactPolygon} length
  */
 function approximatePolygon(parsed, maxLength) {
   const ringPath = splitPath(pathToString(parsed))[0];
@@ -4074,11 +4074,11 @@ function approximatePolygon(parsed, maxLength) {
  * Parses a path string and returns a polygon array.
  * @param {string} str path string
  * @param {number} maxLength maximum amount of points
- * @returns {KUTE.exactRing} the polygon array we need
+ * @returns {KUTE.exactPolygon} the polygon array we need
  */
 function pathStringToPolygon(str, maxLength) {
   const parsed = normalizePath(str);
-  return exactRing(parsed) || approximatePolygon(parsed, maxLength);
+  return exactPolygon(parsed) || approximatePolygon(parsed, maxLength);
 }
 
 /**
@@ -4366,7 +4366,7 @@ Object.keys(Components).forEach((component) => {
   Components[component] = new Animation(compOps);
 });
 
-var version = "2.2.0alpha2";
+var version = "2.2.0alpha3";
 
 // @ts-ignore
 

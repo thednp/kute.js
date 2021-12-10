@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Extra v2.2.0alpha2 (http://thednp.github.io/kute.js)
+* KUTE.js Extra v2.2.0alpha3 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -5637,7 +5637,7 @@
     Components[component] = new AnimationDevelopment(compOps);
   });
 
-  var version = "2.2.0alpha2";
+  var version = "2.2.0alpha3";
 
   // @ts-ignore
 

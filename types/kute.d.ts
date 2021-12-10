@@ -1189,13 +1189,13 @@ declare module "kute.js/src/components/svgCubicMorph" {
      * @param {SVGPathCommander.curveArray} b the reference `curveArray`
      * @returns {SVGPathCommander.curveArray} the best `a` rotation
      */
-    function getRotatedCurve(a: import("svg-path-commander").curveArray, b: import("svg-path-commander").curveArray): import("svg-path-commander").curveArray;
+    function getRotatedCurve(a: SVGPathCommander.curveArray, b: SVGPathCommander.curveArray): SVGPathCommander.curveArray;
     /**
      * Returns all possible path rotations for `curveArray`.
      * @param {SVGPathCommander.curveArray} a the source `curveArray`
      * @returns {SVGPathCommander.curveArray[]} all rotations for source
      */
-    function getRotations(a: import("svg-path-commander").curveArray): import("svg-path-commander").curveArray[];
+    function getRotations(a: SVGPathCommander.curveArray): SVGPathCommander.curveArray[];
     /**
      * Returns two `curveArray` with same amount of segments.
      * @param {SVGPathCommander.curveArray} path1 the first `curveArray`
@@ -1203,7 +1203,7 @@ declare module "kute.js/src/components/svgCubicMorph" {
      * @param {number} TL the maximum `curveArray` length
      * @returns {SVGPathCommander.curveArray[]} equalized segments
      */
-    function equalizeSegments(path1: import("svg-path-commander").curveArray, path2: import("svg-path-commander").curveArray, TL: number): import("svg-path-commander").curveArray[];
+    function equalizeSegments(path1: SVGPathCommander.curveArray, path2: SVGPathCommander.curveArray, TL: number): SVGPathCommander.curveArray[];
     import reverseCurve from "svg-path-commander/src/process/reverseCurve";
     import clonePath from "svg-path-commander/src/process/clonePath";
     import getDrawDirection from "svg-path-commander/src/util/getDrawDirection";
@@ -1215,7 +1215,7 @@ declare module "kute.js/src/components/svgCubicMorph" {
      * @param {SVGPathCommander.pathArray | string} source the source `pathArray` or string
      * @returns {KUTE.curveSpecs[]} an `Array` with a custom tuple for `equalizeSegments`
      */
-    function getCurveArray(source: import("svg-path-commander").pathArray | string): KUTE.curveSpecs[];
+    function getCurveArray(source: SVGPathCommander.pathArray | string): KUTE.curveSpecs[];
     /**
      * Returns the current `d` attribute value.
      * @returns {string}
@@ -1404,7 +1404,7 @@ declare module "kute.js/src/components/svgMorph" {
             export { pathStringToPolygon };
             export { distanceSquareRoot };
             export { midPoint };
-            export { approximateRing };
+            export { approximatePolygon };
             export { rotatePolygon };
             export { pathToString };
             export { pathToCurve };
@@ -1459,18 +1459,18 @@ declare module "kute.js/src/components/svgMorph" {
      * Parses a path string and returns a polygon array.
      * @param {string} str path string
      * @param {number} maxLength maximum amount of points
-     * @returns {KUTE.exactRing} the polygon array we need
+     * @returns {KUTE.exactPolygon} the polygon array we need
      */
-    function pathStringToPolygon(str: string, maxLength: number): KUTE.exactRing;
+    function pathStringToPolygon(str: string, maxLength: number): KUTE.exactPolygon;
     import distanceSquareRoot from "svg-path-commander/src/math/distanceSquareRoot";
     import midPoint from "svg-path-commander/src/math/midPoint";
     /**
      * Returns polygon length.
      * @param {SVGPathCommander.pathArray} parsed target polygon
      * @param {number} maxLength the maximum segment length
-     * @returns {KUTE.exactRing} length
+     * @returns {KUTE.exactPolygon} length
      */
-    function approximateRing(parsed: import("svg-path-commander").pathArray, maxLength: number): KUTE.exactRing;
+    function approximatePolygon(parsed: SVGPathCommander.pathArray, maxLength: number): KUTE.exactPolygon;
     /**
      * Rotates a polygon to better match its pair.
      * @param {KUTE.polygonMorph} polygon the target polygon
@@ -1504,9 +1504,9 @@ declare module "kute.js/src/components/svgMorph" {
     /**
      * Returns an existing polygin and its length or false if not polygon.
      * @param {SVGPathCommander.pathArray} pathArray target polygon
-     * @returns {KUTE.exactRing} length
+     * @returns {KUTE.exactPolygon} length
      */
-    function exactRing(pathArray: import("svg-path-commander").pathArray): KUTE.exactRing;
+    function exactPolygon(pathArray: SVGPathCommander.pathArray): KUTE.exactPolygon;
 }
 declare module "kute.js/src/components/svgTransformBase" {
     /**
