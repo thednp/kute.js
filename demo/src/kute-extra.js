@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Extra v2.2.0 (http://thednp.github.io/kute.js)
+* KUTE.js Extra v2.2.2 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -2935,6 +2935,7 @@
 
   /**
    * Segment params length
+   * @type {Record<string, number>}
    */
   var paramsCount = {
     a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0,
@@ -3198,7 +3199,6 @@
     var pathValue = path.pathValue;
     var index = path.index;
     var cmdCode = pathValue.charCodeAt(index);
-    // @ts-ignore
     var reqParams = paramsCount[pathValue[index].toLowerCase()];
 
     path.segmentStart = index;
@@ -3262,7 +3262,8 @@
   }
 
   /**
-   * The `PathParser` used by the parser.
+   * The `PathParser` is used by the `parsePathString` static method
+   * to generate a `pathArray`.
    *
    * @param {string} pathString
    */
@@ -3307,12 +3308,13 @@
    * @returns {SVGPathCommander.pathArray} the resulted `pathArray`
    */
   function parsePathString(pathInput) {
-    if (Array.isArray(pathInput) && isPathArray(pathInput)) {
+    if (isPathArray(pathInput)) {
+      // @ts-ignore -- isPathArray also checks if it's an `Array`
       return clonePath(pathInput);
     }
 
-    // @ts-ignore
-    var path = new PathParser(pathInput); // TS expects string
+    // @ts-ignore -- pathInput is now string
+    var path = new PathParser(pathInput);
 
     skipSpaces(path);
 
@@ -3340,11 +3342,12 @@
    * Iterates an array to check if it's a `pathArray`
    * with all absolute values.
    *
-   * @param {SVGPathCommander.pathArray} path the `pathArray` to be checked
+   * @param {string | SVGPathCommander.pathArray} path the `pathArray` to be checked
    * @returns {boolean} iteration result
    */
   function isAbsoluteArray(path) {
     return isPathArray(path)
+      // @ts-ignore -- `isPathArray` also checks if it's `Array`
       && path.every(function (x) { return x[0] === x[0].toUpperCase(); });
   }
 
@@ -3352,11 +3355,12 @@
    * Parses a path string value or object and returns an array
    * of segments, all converted to absolute values.
    *
-   * @param {SVGPathCommander.pathArray | string} pathInput the path string | object
+   * @param {string | SVGPathCommander.pathArray} pathInput the path string | object
    * @returns {SVGPathCommander.absoluteArray} the resulted `pathArray` with absolute values
    */
   function pathToAbsolute(pathInput) {
-    if (Array.isArray(pathInput) && isAbsoluteArray(pathInput)) {
+    if (isAbsoluteArray(pathInput)) {
+      // @ts-ignore -- `isAbsoluteArray` checks if it's `pathArray`
       return clonePath(pathInput);
     }
 
@@ -3555,10 +3559,11 @@
    * with all segments are in non-shorthand notation
    * with absolute values.
    *
-   * @param {SVGPathCommander.pathArray} path the `pathArray` to be checked
+   * @param {string | SVGPathCommander.pathArray} path the `pathArray` to be checked
    * @returns {boolean} iteration result
    */
   function isNormalizedArray(path) {
+    // @ts-ignore -- `isAbsoluteArray` also checks if it's `Array`
     return isAbsoluteArray(path) && path.every(function (seg) { return 'ACLMQZ'.includes(seg[0]); });
   }
 
@@ -3574,16 +3579,19 @@
    * * convert segments to absolute values
    * * convert shorthand path commands to their non-shorthand notation
    *
-   * @param {SVGPathCommander.pathArray} pathInput the string to be parsed or 'pathArray'
+   * @param {string | SVGPathCommander.pathArray} pathInput the string to be parsed or 'pathArray'
    * @returns {SVGPathCommander.normalArray} the normalized `pathArray`
    */
   function normalizePath(pathInput) {
     var assign;
 
     if (isNormalizedArray(pathInput)) {
+      // @ts-ignore -- `isNormalizedArray` checks if it's `pathArray`
       return clonePath(pathInput);
     }
 
+    /** @type {SVGPathCommander.normalArray} */
+    // @ts-ignore -- `absoluteArray` will become a `normalArray`
     var path = pathToAbsolute(pathInput);
     var params = Object.assign({}, paramsParser);
     var allPathCommands = [];
@@ -3611,7 +3619,6 @@
       params.y2 = +(segment[seglen - 3]) || params.y1;
     }
 
-    // @ts-ignore -- a `normalArray` is absolutely an `absoluteArray`
     return path;
   }
 
@@ -3642,7 +3649,7 @@
     var y = ref$1[1];
 
     if (isClosed && mx === x && my === y) {
-      // @ts-ignore -- `pathSegment[]` is a `pathArray`
+      // @ts-ignore -- `pathSegment[]` is quite a `pathArray`
       return pathArray.slice(0, -1);
     }
     return pathArray;
@@ -3652,10 +3659,11 @@
    * Iterates an array to check if it's a `pathArray`
    * with all C (cubic bezier) segments.
    *
-   * @param {SVGPathCommander.pathArray} path the `Array` to be checked
+   * @param {string | SVGPathCommander.pathArray} path the `Array` to be checked
    * @returns {boolean} iteration result
    */
   function isCurveArray(path) {
+    // @ts-ignore -- `isPathArray` also checks if it's `Array`
     return isPathArray(path) && path.every(function (seg) { return 'MC'.includes(seg[0]); });
   }
 
@@ -3812,35 +3820,6 @@
   }
 
   /**
-   * Returns the {x,y} coordinates of a point at a
-   * given length of a cubic-bezier segment.
-   *
-   * @param {number} p1x the starting point X
-   * @param {number} p1y the starting point Y
-   * @param {number} c1x the first control point X
-   * @param {number} c1y the first control point Y
-   * @param {number} c2x the second control point X
-   * @param {number} c2y the second control point Y
-   * @param {number} p2x the ending point X
-   * @param {number} p2y the ending point Y
-   * @param {number} t a [0-1] ratio
-   * @returns {{x: number, y: number}} the requested {x,y} coordinates
-   */
-  function getPointAtSegLength(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
-    var t1 = 1 - t;
-    return {
-      x: (Math.pow( t1, 3 )) * p1x
-        + t1 * t1 * 3 * t * c1x
-        + t1 * 3 * t * t * c2x
-        + (Math.pow( t, 3 )) * p2x,
-      y: (Math.pow( t1, 3 )) * p1y
-        + t1 * t1 * 3 * t * c1y
-        + t1 * 3 * t * t * c2y
-        + (Math.pow( t, 3 )) * p2y,
-    };
-  }
-
-  /**
    * Returns the coordinates of a specified distance
    * ratio between two points.
    *
@@ -3854,6 +3833,51 @@
     var ay = a[1]; var bx = b[0];
     var by = b[1];
     return [ax + (bx - ax) * t, ay + (by - ay) * t];
+  }
+
+  /**
+   * Returns the square root of the distance
+   * between two given points.
+   *
+   * @param {[number, number]} a the first point coordinates
+   * @param {[number, number]} b the second point coordinates
+   * @returns {number} the distance value
+   */
+  function distanceSquareRoot(a, b) {
+    return Math.sqrt(
+      (a[0] - b[0]) * (a[0] - b[0])
+      + (a[1] - b[1]) * (a[1] - b[1])
+    );
+  }
+
+  /**
+   * Returns the length of a line (L,V,H,Z) segment,
+   * or a point at a given length.
+   *
+   * @param {number} x1 the starting point X
+   * @param {number} y1 the starting point Y
+   * @param {number} x2 the ending point X
+   * @param {number} y2 the ending point Y
+   * @param {number=} distance the distance to point
+   * @returns {{x: number, y: number} | number} the segment length or point
+   */
+  function segmentLineFactory(x1, y1, x2, y2, distance) {
+    var length = distanceSquareRoot([x1, y1], [x2, y2]);
+    var margin = 0.001;
+
+    if (typeof distance === 'number') {
+      if (distance < margin) {
+        return { x: x1, y: y1 };
+      }
+      if (distance > length + margin) {
+        return { x: x2, y: y2 };
+      }
+      var ref = midPoint([x1, y1], [x2, y2], distance / length);
+      var x = ref[0];
+      var y = ref[1];
+      return { x: x, y: y };
+    }
+    return length;
   }
 
   /**
@@ -3876,15 +3900,14 @@
     var p4 = midPoint(p2, p3, t);
     var p5 = midPoint(p3, p4, t);
     var p6 = midPoint(p4, p5, t);
-    // const cp1 = getPointAtSegLength.apply(0, p0.concat(p2, p4, p6, t));
     var seg1 = p0.concat( p2, p4, p6, [t]);
     // @ts-ignore
-    var cp1 = getPointAtSegLength.apply(void 0, seg1);
-    // const cp2 = getPointAtSegLength.apply(0, p6.concat(p5, p3, p1, 0));
+    var cp1 = segmentLineFactory.apply(void 0, seg1);
     var seg2 = p6.concat( p5, p3, p1, [0]);
     // @ts-ignore
-    var cp2 = getPointAtSegLength.apply(void 0, seg2);
+    var cp2 = segmentLineFactory.apply(void 0, seg2);
 
+    // @ts-ignore
     return [cp1.x, cp1.y, cp2.x, cp2.y, x2, y2];
   }
 
@@ -3944,13 +3967,14 @@
    * In addition, un-necessary `Z` segment is removed if previous segment
    * extends to the `M` segment.
    *
-   * @param {SVGPathCommander.pathArray} pathInput the string to be parsed or 'pathArray'
+   * @param {string | SVGPathCommander.pathArray} pathInput the string to be parsed or 'pathArray'
    * @returns {SVGPathCommander.curveArray} the resulted `pathArray` converted to cubic-bezier
    */
   function pathToCurve(pathInput) {
     var assign;
 
     if (isCurveArray(pathInput)) {
+      // @ts-ignore -- `isCurveArray` checks if it's `pathArray`
       return clonePath(pathInput);
     }
 
@@ -4048,38 +4072,38 @@
   }
 
   /**
-   * Returns the area of a single segment shape.
+   * Returns the area of a single cubic-bezier segment.
    *
    * http://objectmix.com/graphics/133553-area-closed-bezier-curve.html
    *
-   * @param {number} x0 the starting point X
-   * @param {number} y0 the starting point Y
-   * @param {number} x1 the first control point X
-   * @param {number} y1 the first control point Y
-   * @param {number} x2 the second control point X
-   * @param {number} y2 the second control point Y
-   * @param {number} x3 the ending point X
-   * @param {number} y3 the ending point Y
+   * @param {number} x1 the starting point X
+   * @param {number} y1 the starting point Y
+   * @param {number} c1x the first control point X
+   * @param {number} c1y the first control point Y
+   * @param {number} c2x the second control point X
+   * @param {number} c2y the second control point Y
+   * @param {number} x2 the ending point X
+   * @param {number} y2 the ending point Y
    * @returns {number} the area of the cubic-bezier segment
    */
-  function getCubicSegArea(x0, y0, x1, y1, x2, y2, x3, y3) {
-    return (3 * ((y3 - y0) * (x1 + x2) - (x3 - x0) * (y1 + y2)
-             + (y1 * (x0 - x2)) - (x1 * (y0 - y2))
-             + (y3 * (x2 + x0 / 3)) - (x3 * (y2 + y0 / 3)))) / 20;
+  function getCubicSegArea(x1, y1, c1x, c1y, c2x, c2y, x2, y2) {
+    return (3 * ((y2 - y1) * (c1x + c2x) - (x2 - x1) * (c1y + c2y)
+             + (c1y * (x1 - c2x)) - (c1x * (y1 - c2y))
+             + (y2 * (c2x + x1 / 3)) - (x2 * (c2y + y1 / 3)))) / 20;
   }
 
   /**
    * Returns the area of a shape.
    * @author Jürg Lehni & Jonathan Puckey
    *
-   * => https://github.com/paperjs/paper.js/blob/develop/src/path/Path.js
+   * @see https://github.com/paperjs/paper.js/blob/develop/src/path/Path.js
    *
    * @param {SVGPathCommander.pathArray} path the shape `pathArray`
    * @returns {number} the length of the cubic-bezier segment
    */
   function getPathArea(path) {
-    var x = 0; var y = 0;
-    var len = 0;
+    var x = 0; var y = 0; var len = 0;
+
     return pathToCurve(path).map(function (seg) {
       var assign, assign$1;
 
@@ -4090,8 +4114,8 @@
         default:
           // @ts-ignore -- the utility will have proper amount of params
           len = getCubicSegArea.apply(void 0, [ x, y ].concat( seg.slice(1) ));
-
-          (assign$1 = seg.slice(-2).map(Number), x = assign$1[0], y = assign$1[1]);
+          // @ts-ignore -- the segment always has numbers
+          (assign$1 = seg.slice(-2), x = assign$1[0], y = assign$1[1]);
           return len;
       }
     }).reduce(function (a, b) { return a + b; }, 0);
@@ -4154,71 +4178,86 @@
   }
 
   /**
-   * @param {number} p1
-   * @param {number} p2
-   * @param {number} p3
-   * @param {number} p4
-   * @param {number} t a [0-1] ratio
-   * @returns {number}
-   */
-  function base3(p1, p2, p3, p4, t) {
-    var t1 = -3 * p1 + 9 * p2 - 9 * p3 + 3 * p4;
-    var t2 = t * t1 + 6 * p1 - 12 * p2 + 6 * p3;
-    return t * t2 - 3 * p1 + 3 * p2;
-  }
-
-  /**
-   * Returns the C (cubic-bezier) segment length.
+   * Returns a point at a given length of a C (cubic-bezier) segment.
    *
    * @param {number} x1 the starting point X
    * @param {number} y1 the starting point Y
-   * @param {number} x2 the first control point X
-   * @param {number} y2 the first control point Y
-   * @param {number} x3 the second control point X
-   * @param {number} y3 the second control point Y
-   * @param {number} x4 the ending point X
-   * @param {number} y4 the ending point Y
-   * @param {number} z a [0-1] ratio
-   * @returns {number} the cubic-bezier segment length
+   * @param {number} c1x the first control point X
+   * @param {number} c1y the first control point Y
+   * @param {number} c2x the second control point X
+   * @param {number} c2y the second control point Y
+   * @param {number} x2 the ending point X
+   * @param {number} y2 the ending point Y
+   * @param {number} t a [0-1] ratio
+   * @returns {{x: number, y: number}} the cubic-bezier segment length
    */
-  function getSegCubicLength(x1, y1, x2, y2, x3, y3, x4, y4, z) {
-    var Z = z;
-    if (z === null || Number.isNaN(+z)) { Z = 1; }
-
-    // Z = Z > 1 ? 1 : Z < 0 ? 0 : Z;
-    if (Z > 1) { Z = 1; }
-    if (Z < 0) { Z = 0; }
-
-    var z2 = Z / 2; var ct = 0; var xbase = 0; var ybase = 0; var sum = 0;
-    var Tvalues = [-0.1252, 0.1252, -0.3678, 0.3678,
-      -0.5873, 0.5873, -0.7699, 0.7699,
-      -0.9041, 0.9041, -0.9816, 0.9816];
-    var Cvalues = [0.2491, 0.2491, 0.2335, 0.2335,
-      0.2032, 0.2032, 0.1601, 0.1601,
-      0.1069, 0.1069, 0.0472, 0.0472];
-
-    Tvalues.forEach(function (T, i) {
-      ct = z2 * T + z2;
-      xbase = base3(x1, x2, x3, x4, ct);
-      ybase = base3(y1, y2, y3, y4, ct);
-      sum += Cvalues[i] * Math.sqrt(xbase * xbase + ybase * ybase);
-    });
-    return z2 * sum;
+  function getPointAtCubicSegmentLength(x1, y1, c1x, c1y, c2x, c2y, x2, y2, t) {
+    var t1 = 1 - t;
+    return {
+      x: (Math.pow( t1, 3 )) * x1
+        + 3 * (Math.pow( t1, 2 )) * t * c1x
+        + 3 * t1 * (Math.pow( t, 2 )) * c2x
+        + (Math.pow( t, 3 )) * x2,
+      y: (Math.pow( t1, 3 )) * y1
+        + 3 * (Math.pow( t1, 2 )) * t * c1y
+        + 3 * t1 * (Math.pow( t, 2 )) * c2y
+        + (Math.pow( t, 3 )) * y2,
+    };
   }
 
   /**
-   * Returns the square root of the distance
-   * between two given points.
+   * Returns the length of a C (cubic-bezier) segment,
+   * or an {x,y} point at a given length.
    *
-   * @param {[number, number]} a the first point coordinates
-   * @param {[number, number]} b the second point coordinates
-   * @returns {number} the distance value
+   * @param {number} x1 the starting point X
+   * @param {number} y1 the starting point Y
+   * @param {number} c1x the first control point X
+   * @param {number} c1y the first control point Y
+   * @param {number} c2x the second control point X
+   * @param {number} c2y the second control point Y
+   * @param {number} x2 the ending point X
+   * @param {number} y2 the ending point Y
+   * @param {number=} distance the point distance
+   * @returns {{x: number, y: number} | number} the segment length or point
    */
-  function distanceSquareRoot(a, b) {
-    return Math.sqrt(
-      (a[0] - b[0]) * (a[0] - b[0])
-      + (a[1] - b[1]) * (a[1] - b[1])
-    );
+  function segmentCubicFactory(x1, y1, c1x, c1y, c2x, c2y, x2, y2, distance) {
+    var assign;
+
+    var x = x1; var y = y1;
+    var lengthMargin = 0.001;
+    var totalLength = 0;
+    var prev = [x1, y1, totalLength];
+    /** @type {[number, number]} */
+    var cur = [x1, y1];
+    var t = 0;
+
+    if (typeof distance === 'number' && distance < lengthMargin) {
+      return { x: x, y: y };
+    }
+
+    var n = 100;
+    for (var j = 0; j <= n; j += 1) {
+      t = j / n;
+
+      ((assign = getPointAtCubicSegmentLength(x1, y1, c1x, c1y, c2x, c2y, x2, y2, t), x = assign.x, y = assign.y));
+      totalLength += distanceSquareRoot(cur, [x, y]);
+      cur = [x, y];
+
+      if (typeof distance === 'number' && totalLength >= distance) {
+        var dv = (totalLength - distance) / (totalLength - prev[2]);
+
+        return {
+          x: cur[0] * (1 - dv) + prev[0] * dv,
+          y: cur[1] * (1 - dv) + prev[1] * dv,
+        };
+      }
+      prev = [x, y, totalLength];
+    }
+
+    if (typeof distance === 'number' && distance >= totalLength) {
+      return { x: x2, y: y2 };
+    }
+    return totalLength;
   }
 
   // Component Functions
@@ -4255,7 +4294,7 @@
     return pathToCurve(splitPath(source)[0])
       .map(function (segment, i, pathArray) {
         var segmentData = i && pathArray[i - 1].slice(-2).concat( segment.slice(1));
-        var curveLength = i ? getSegCubicLength.apply(void 0, segmentData) : 0;
+        var curveLength = i ? segmentCubicFactory.apply(void 0, segmentData) : 0;
 
         var subsegs;
         if (i) {
@@ -4456,6 +4495,7 @@
       reverseCurve: reverseCurve,
       clonePath: clonePath,
       getDrawDirection: getDrawDirection,
+      segmentCubicFactory: segmentCubicFactory,
       splitCubic: splitCubic,
       splitPath: splitPath,
       fixPath: fixPath,
@@ -5649,7 +5689,7 @@
     Components[component] = new AnimationDevelopment(compOps);
   });
 
-  var version = "2.2.0";
+  var version = "2.2.2";
 
   // @ts-ignore
 

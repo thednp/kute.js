@@ -8,7 +8,7 @@ import clonePath from 'svg-path-commander/src/process/clonePath';
 import splitCubic from 'svg-path-commander/src/process/splitCubic';
 import splitPath from 'svg-path-commander/src/process/splitPath';
 import fixPath from 'svg-path-commander/src/process/fixPath';
-import getSegCubicLength from 'svg-path-commander/src/util/getSegCubicLength';
+import segmentCubicFactory from 'svg-path-commander/src/util/segmentCubicFactory';
 import distanceSquareRoot from 'svg-path-commander/src/math/distanceSquareRoot';
 
 import { onStartCubicMorph } from './svgCubicMorphBase';
@@ -25,7 +25,7 @@ function getCurveArray(source) {
   return pathToCurve(splitPath(source)[0])
     .map((segment, i, pathArray) => {
       const segmentData = i && [...pathArray[i - 1].slice(-2), ...segment.slice(1)];
-      const curveLength = i ? getSegCubicLength(...segmentData) : 0;
+      const curveLength = i ? segmentCubicFactory(...segmentData) : 0;
 
       let subsegs;
       if (i) {
@@ -218,6 +218,7 @@ const svgCubicMorph = {
     reverseCurve,
     clonePath,
     getDrawDirection,
+    segmentCubicFactory,
     splitCubic,
     splitPath,
     fixPath,

@@ -3,10 +3,11 @@ import pathToString from 'svg-path-commander/src/convert/pathToString';
 import normalizePath from 'svg-path-commander/src/process/normalizePath';
 import splitPath from 'svg-path-commander/src/process/splitPath';
 import roundPath from 'svg-path-commander/src/process/roundPath';
+import getTotalLength from 'svg-path-commander/src/util/getTotalLength';
 import invalidPathValue from 'svg-path-commander/src/parser/invalidPathValue';
-import getPathLength from 'svg-path-commander/src/util/getPathLength';
 import getPointAtLength from 'svg-path-commander/src/util/getPointAtLength';
-import getDrawDirection from 'svg-path-commander/src/util/getDrawDirection';
+import polygonArea from 'svg-path-commander/src/math/polygonArea';
+import polygonLength from 'svg-path-commander/src/math/polygonLength';
 import epsilon from 'svg-path-commander/src/math/epsilon';
 import midPoint from 'svg-path-commander/src/math/midPoint';
 import distanceSquareRoot from 'svg-path-commander/src/math/distanceSquareRoot';
@@ -18,17 +19,6 @@ import selector from '../util/selector';
 // Component Util
 // original script flubber
 // https://github.com/veltman/flubber
-
-/**
- * Returns polygon length.
- * @param {KUTE.polygonMorph} polygon target polygon
- * @returns {number} length
- */
-function polygonLength(polygon) {
-  return polygon.reduce((length, point, i) => (i
-    ? length + distanceSquareRoot(polygon[i - 1], point)
-    : 0), 0);
-}
 
 /**
  * Returns an existing polygin and its length or false if not polygon.
@@ -69,8 +59,8 @@ function exactPolygon(pathArray) {
  */
 function approximatePolygon(parsed, maxLength) {
   const ringPath = splitPath(pathToString(parsed))[0];
-  const curvePath = pathToCurve(ringPath);
-  const pathLength = getPathLength(curvePath);
+  const normalPath = normalizePath(ringPath);
+  const pathLength = getTotalLength(normalPath);
   const polygon = [];
   let numPoints = 3;
   let point;
@@ -80,12 +70,12 @@ function approximatePolygon(parsed, maxLength) {
   }
 
   for (let i = 0; i < numPoints; i += 1) {
-    point = getPointAtLength(curvePath, (pathLength * i) / numPoints);
+    point = getPointAtLength(normalPath, (pathLength * i) / numPoints);
     polygon.push([point.x, point.y]);
   }
 
   // Make all rings clockwise
-  if (!getDrawDirection(curvePath)) {
+  if (polygonArea(polygon) > 0) {
     polygon.reverse();
   }
 
@@ -367,9 +357,9 @@ const SVGMorph = {
     // svg-path-commander
     pathToString,
     pathToCurve,
-    getPathLength,
+    getTotalLength,
     getPointAtLength,
-    getDrawDirection,
+    polygonArea,
     roundPath,
   },
 };

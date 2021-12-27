@@ -1,6 +1,6 @@
 {
   "name": "kute.js",
-  "version": "2.2.0",
+  "version": "2.2.2",
   "description": "JavaScript animation engine",
   "main": "dist/kute.min.js",
   "module": "dist/kute.esm.js",
@@ -62,7 +62,7 @@
     "cubic-bezier-easing": "^1.0.18",
     "minifill": "^0.0.16",
     "shorter-js": "^0.2.6",
-    "svg-path-commander": "0.1.20"
+    "svg-path-commander": "0.1.23"
   },
   "devDependencies": {
     "@rollup/plugin-buble": "^0.21.3",
