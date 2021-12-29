@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Standard v2.2.2 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.2.3 (http://thednp.github.io/kute.js)
 * Copyright 2015-2021 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -4264,9 +4264,9 @@
   // https://github.com/veltman/flubber
 
   /**
-   * Returns an existing polygin and its length or false if not polygon.
-   * @param {SVGPathCommander.pathArray} pathArray target polygon
-   * @returns {KUTE.exactPolygon} length
+   * Returns an existing polygon or false if it's not a polygon.
+   * @param {SVGPathCommander.pathArray} pathArray target `pathArray`
+   * @returns {KUTE.exactPolygon | false} the resulted polygon
    */
   function exactPolygon(pathArray) {
     var assign;
@@ -4297,10 +4297,10 @@
   }
 
   /**
-   * Returns polygon length.
-   * @param {SVGPathCommander.pathArray} parsed target polygon
+   * Returns a new polygon polygon.
+   * @param {SVGPathCommander.pathArray} parsed target `pathArray`
    * @param {number} maxLength the maximum segment length
-   * @returns {KUTE.exactPolygon} length
+   * @returns {KUTE.exactPolygon} the resulted polygon
    */
   function approximatePolygon(parsed, maxLength) {
     var ringPath = splitPath(pathToString(parsed))[0];
@@ -4632,7 +4632,7 @@
     Components[component] = new Animation(compOps);
   });
 
-  var version = "2.2.2";
+  var version = "2.2.3";
 
   // @ts-ignore
 

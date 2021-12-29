@@ -16,7 +16,7 @@
   "files": [
     "types/index.d.ts",
     // "types/kute.d.ts", // comment to re-generate, delete file
-    // "types/more/kute.ts",
+    "types/more/kute.ts",
     "types/more/types.d.ts",
   ],
 }

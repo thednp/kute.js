@@ -1166,6 +1166,7 @@ declare module "kute.js/src/components/svgCubicMorph" {
             export { reverseCurve };
             export { clonePath };
             export { getDrawDirection };
+            export { segmentCubicFactory };
             export { splitCubic };
             export { splitPath };
             export { fixPath };
@@ -1189,13 +1190,13 @@ declare module "kute.js/src/components/svgCubicMorph" {
      * @param {SVGPathCommander.curveArray} b the reference `curveArray`
      * @returns {SVGPathCommander.curveArray} the best `a` rotation
      */
-    function getRotatedCurve(a: SVGPathCommander.curveArray, b: SVGPathCommander.curveArray): SVGPathCommander.curveArray;
+    function getRotatedCurve(a: import("svg-path-commander").curveArray, b: import("svg-path-commander").curveArray): import("svg-path-commander").curveArray;
     /**
      * Returns all possible path rotations for `curveArray`.
      * @param {SVGPathCommander.curveArray} a the source `curveArray`
      * @returns {SVGPathCommander.curveArray[]} all rotations for source
      */
-    function getRotations(a: SVGPathCommander.curveArray): SVGPathCommander.curveArray[];
+    function getRotations(a: import("svg-path-commander").curveArray): import("svg-path-commander").curveArray[];
     /**
      * Returns two `curveArray` with same amount of segments.
      * @param {SVGPathCommander.curveArray} path1 the first `curveArray`
@@ -1203,10 +1204,11 @@ declare module "kute.js/src/components/svgCubicMorph" {
      * @param {number} TL the maximum `curveArray` length
      * @returns {SVGPathCommander.curveArray[]} equalized segments
      */
-    function equalizeSegments(path1: SVGPathCommander.curveArray, path2: SVGPathCommander.curveArray, TL: number): SVGPathCommander.curveArray[];
+    function equalizeSegments(path1: import("svg-path-commander").curveArray, path2: import("svg-path-commander").curveArray, TL: number): import("svg-path-commander").curveArray[];
     import reverseCurve from "svg-path-commander/src/process/reverseCurve";
     import clonePath from "svg-path-commander/src/process/clonePath";
     import getDrawDirection from "svg-path-commander/src/util/getDrawDirection";
+    import segmentCubicFactory from "svg-path-commander/src/util/segmentCubicFactory";
     import splitCubic from "svg-path-commander/src/process/splitCubic";
     import splitPath from "svg-path-commander/src/process/splitPath";
     import fixPath from "svg-path-commander/src/process/fixPath";
@@ -1215,7 +1217,7 @@ declare module "kute.js/src/components/svgCubicMorph" {
      * @param {SVGPathCommander.pathArray | string} source the source `pathArray` or string
      * @returns {KUTE.curveSpecs[]} an `Array` with a custom tuple for `equalizeSegments`
      */
-    function getCurveArray(source: SVGPathCommander.pathArray | string): KUTE.curveSpecs[];
+    function getCurveArray(source: import("svg-path-commander").pathArray | string): KUTE.curveSpecs[];
     /**
      * Returns the current `d` attribute value.
      * @returns {string}
@@ -1408,9 +1410,9 @@ declare module "kute.js/src/components/svgMorph" {
             export { rotatePolygon };
             export { pathToString };
             export { pathToCurve };
-            export { getPathLength };
+            export { getTotalLength };
             export { getPointAtLength };
-            export { getDrawDirection };
+            export { polygonArea };
             export { roundPath };
         }
     }
@@ -1440,13 +1442,13 @@ declare module "kute.js/src/components/svgMorph" {
      * @param {number} maxSegmentLength the maximum amount of points
      * @returns {KUTE.polygonMorph} normalized polygon
      */
-    function getPolygon(input: KUTE.polygonMorph | string, maxSegmentLength: number): KUTE.polygonMorph;
+    function getPolygon(input: import("kute.js/types").polygonMorph | string, maxSegmentLength: number): import("kute.js/types").polygonMorph;
     /**
      * Checks the validity of a polygon.
      * @param {KUTE.polygonMorph} polygon the target polygon
      * @returns {boolean} the result of the check
      */
-    function validPolygon(polygon: KUTE.polygonMorph): boolean;
+    function validPolygon(polygon: import("kute.js/types").polygonMorph): boolean;
     /**
      * Returns two new polygons ready to tween.
      * @param {string} path1 the first path string
@@ -1454,7 +1456,7 @@ declare module "kute.js/src/components/svgMorph" {
      * @param {number} precision the morphPrecision option value
      * @returns {KUTE.polygonMorph[]} the two polygons
      */
-    function getInterpolationPoints(path1: string, path2: string, precision: number): KUTE.polygonMorph[];
+    function getInterpolationPoints(path1: string, path2: string, precision: number): import("kute.js/types").polygonMorph[];
     /**
      * Parses a path string and returns a polygon array.
      * @param {string} str path string
@@ -1465,23 +1467,23 @@ declare module "kute.js/src/components/svgMorph" {
     import distanceSquareRoot from "svg-path-commander/src/math/distanceSquareRoot";
     import midPoint from "svg-path-commander/src/math/midPoint";
     /**
-     * Returns polygon length.
-     * @param {SVGPathCommander.pathArray} parsed target polygon
+     * Returns a new polygon polygon.
+     * @param {SVGPathCommander.pathArray} parsed target `pathArray`
      * @param {number} maxLength the maximum segment length
-     * @returns {KUTE.exactPolygon} length
+     * @returns {KUTE.exactPolygon} the resulted polygon
      */
-    function approximatePolygon(parsed: SVGPathCommander.pathArray, maxLength: number): KUTE.exactPolygon;
+    function approximatePolygon(parsed: import("svg-path-commander").pathArray, maxLength: number): KUTE.exactPolygon;
     /**
      * Rotates a polygon to better match its pair.
      * @param {KUTE.polygonMorph} polygon the target polygon
      * @param {KUTE.polygonMorph} vs the reference polygon
      */
-    function rotatePolygon(polygon: KUTE.polygonMorph, vs: KUTE.polygonMorph): void;
+    function rotatePolygon(polygon: import("kute.js/types").polygonMorph, vs: import("kute.js/types").polygonMorph): void;
     import pathToString from "svg-path-commander/src/convert/pathToString";
     import pathToCurve from "svg-path-commander/src/convert/pathToCurve";
-    import getPathLength from "svg-path-commander/src/util/getPathLength";
+    import getTotalLength from "svg-path-commander/src/util/getTotalLength";
     import getPointAtLength from "svg-path-commander/src/util/getPointAtLength";
-    import getDrawDirection from "svg-path-commander/src/util/getDrawDirection";
+    import polygonArea from "svg-path-commander/src/math/polygonArea";
     import roundPath from "svg-path-commander/src/process/roundPath";
     /**
      * Returns the current `d` attribute value.
@@ -1502,11 +1504,11 @@ declare module "kute.js/src/components/svgMorph" {
      */
     function crossCheckSVGMorph(prop: string): void;
     /**
-     * Returns an existing polygin and its length or false if not polygon.
-     * @param {SVGPathCommander.pathArray} pathArray target polygon
-     * @returns {KUTE.exactPolygon} length
+     * Returns an existing polygon or false if it's not a polygon.
+     * @param {SVGPathCommander.pathArray} pathArray target `pathArray`
+     * @returns {KUTE.exactPolygon | false} the resulted polygon
      */
-    function exactPolygon(pathArray: SVGPathCommander.pathArray): KUTE.exactPolygon;
+    function exactPolygon(pathArray: import("svg-path-commander").pathArray): KUTE.exactPolygon | false;
 }
 declare module "kute.js/src/components/svgTransformBase" {
     /**
@@ -2428,9 +2430,9 @@ declare module "kute.js/src/tween/tweenCollection" {
          * @param {KUTE.tweenOptions} Options tween options
          * @returns {TweenCollection} the Tween object collection
          */
-        constructor(els: Element[] | HTMLCollection | NodeList, vS: KUTE.tweenProps, vE: KUTE.tweenProps, Options: KUTE.tweenOptions);
+        constructor(els: Element[] | HTMLCollection | NodeList, vS: import("kute.js/types").tweenProps, vE: import("kute.js/types").tweenProps, Options: KUTE.tweenOptions);
         /** @type {KUTE.twCollection[]} */
-        tweens: KUTE.twCollection[];
+        tweens: import("kute.js/types").twCollection[];
         /** @type {number?} */
         length: number | null;
         /**
@@ -2490,7 +2492,7 @@ declare module "kute.js/src/interface/allFromTo" {
      * @param {KUTE.tweenOptions} optionsObj tween options
      * @returns {TweenCollection} the Tween object collection
      */
-    export default function allFromTo(elements: Element[] | HTMLCollection | NodeList, startObject: KUTE.tweenProps, endObject: KUTE.tweenProps, optionsObj: KUTE.tweenOptions): TweenCollection;
+    export default function allFromTo(elements: Element[] | HTMLCollection | NodeList, startObject: import("kute.js/types").tweenProps, endObject: import("kute.js/types").tweenProps, optionsObj: KUTE.tweenOptions): TweenCollection;
     import TweenCollection from "kute.js/src/tween/tweenCollection";
 }
 declare module "kute.js/src/interface/allTo" {
@@ -2504,7 +2506,7 @@ declare module "kute.js/src/interface/allTo" {
      * @param {KUTE.tweenProps} optionsObj progress
      * @returns {TweenCollection} the Tween object collection
      */
-    export default function allTo(elements: Element[] | HTMLCollection | NodeList, endObject: KUTE.tweenProps, optionsObj: KUTE.tweenProps): TweenCollection;
+    export default function allTo(elements: Element[] | HTMLCollection | NodeList, endObject: import("kute.js/types").tweenProps, optionsObj: import("kute.js/types").tweenProps): TweenCollection;
     import TweenCollection from "kute.js/src/tween/tweenCollection";
 }
 declare module "kute.js/src/interface/fromTo" {
@@ -2518,7 +2520,7 @@ declare module "kute.js/src/interface/fromTo" {
      * @param {KUTE.tweenOptions} optionsObj tween options
      * @returns {KUTE.Tween} the resulting Tween object
      */
-    export default function fromTo(element: Element, startObject: KUTE.tweenProps, endObject: KUTE.tweenProps, optionsObj: KUTE.tweenOptions): KUTE.Tween;
+    export default function fromTo(element: Element, startObject: import("kute.js/types").tweenProps, endObject: import("kute.js/types").tweenProps, optionsObj: KUTE.tweenOptions): KUTE.Tween;
 }
 declare module "kute.js/src/interface/to" {
     /**
@@ -2530,7 +2532,7 @@ declare module "kute.js/src/interface/to" {
      * @param {KUTE.tweenOptions} optionsObj tween options
      * @returns {KUTE.Tween} the resulting Tween object
      */
-    export default function to(element: Element, endObject: KUTE.tweenProps, optionsObj: KUTE.tweenOptions): KUTE.Tween;
+    export default function to(element: Element, endObject: import("kute.js/types").tweenProps, optionsObj: KUTE.tweenOptions): KUTE.Tween;
 }
 declare module "kute.js/src/interpolation/skewX" {
     /**
@@ -2712,7 +2714,7 @@ declare module "kute.js/src/tween/tweenBase" {
          * @param {KUTE.tweenOptions} opsObject the end values
          * @returns {TweenBase} the resulting Tween object
          */
-        constructor(targetElement: Element, startObject: KUTE.tweenProps, endObject: KUTE.tweenProps, opsObject: KUTE.tweenOptions);
+        constructor(targetElement: Element, startObject: import("kute.js/types").tweenProps, endObject: import("kute.js/types").tweenProps, opsObject: KUTE.tweenOptions);
         element: Element;
         /** @type {boolean} */
         playing: boolean;
@@ -2720,8 +2722,8 @@ declare module "kute.js/src/tween/tweenBase" {
         _startTime: number | null;
         /** @type {boolean} */
         _startFired: boolean;
-        valuesEnd: KUTE.tweenProps;
-        valuesStart: KUTE.tweenProps;
+        valuesEnd: import("kute.js/types").tweenProps;
+        valuesStart: import("kute.js/types").tweenProps;
         _resetStart: any;
         /** @type {KUTE.easingOption} */
         _easing: KUTE.easingOption;
@@ -2783,7 +2785,7 @@ declare module "kute.js/src/tween/tween" {
         /** @type {number?} */
         _repeatOption: number | null;
         /** @type {KUTE.tweenProps} */
-        valuesRepeat: KUTE.tweenProps;
+        valuesRepeat: import("kute.js/types").tweenProps;
         /** @type {boolean} */
         _yoyo: boolean;
         /** @type {boolean} */

@@ -21,9 +21,9 @@ import selector from '../util/selector';
 // https://github.com/veltman/flubber
 
 /**
- * Returns an existing polygin and its length or false if not polygon.
- * @param {SVGPathCommander.pathArray} pathArray target polygon
- * @returns {KUTE.exactPolygon} length
+ * Returns an existing polygon or false if it's not a polygon.
+ * @param {SVGPathCommander.pathArray} pathArray target `pathArray`
+ * @returns {KUTE.exactPolygon | false} the resulted polygon
  */
 function exactPolygon(pathArray) {
   const polygon = [];
@@ -52,10 +52,10 @@ function exactPolygon(pathArray) {
 }
 
 /**
- * Returns polygon length.
- * @param {SVGPathCommander.pathArray} parsed target polygon
+ * Returns a new polygon polygon.
+ * @param {SVGPathCommander.pathArray} parsed target `pathArray`
  * @param {number} maxLength the maximum segment length
- * @returns {KUTE.exactPolygon} length
+ * @returns {KUTE.exactPolygon} the resulted polygon
  */
 function approximatePolygon(parsed, maxLength) {
   const ringPath = splitPath(pathToString(parsed))[0];
