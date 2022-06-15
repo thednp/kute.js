@@ -1,4 +1,3 @@
-node_modules/
-experiments/
+node_modules
+experiments
 .npmignore
-package-lock.json

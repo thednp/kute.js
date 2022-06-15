@@ -1,5 +1,5 @@
-node_modules/
-demo/
-experiments/
-package-lock.json
 .gitignore
+.github
+node_modules
+docs
+experiments
