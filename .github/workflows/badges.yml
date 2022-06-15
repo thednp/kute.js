@@ -1,0 +1,29 @@
+name: badges
+on:
+  push:
+    # update README badge only if the README file changes
+    # or if the package.json file changes, or this file changes
+    # IMPORTANT: branches must match
+    branches:
+      - master
+    paths:
+      - README.md
+      - package.json
+      - .github/workflows/badges.yml
+
+jobs:
+  badges:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v3
+
+      - name: Update version badges 🏷
+        run: npx -p dependency-version-badge update-badge svg-path-commander @thednp/bezier-easing typescript
+
+      - name: Commit any changed files 💾
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: master
+          file_pattern: README.md
+          commit_message: Updated badges

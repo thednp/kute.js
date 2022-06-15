@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
+<meta name="description" content="KUTE.js performance testing page, in comparison with GSAP and Tween.js">
+<meta name="keywords" content="kute,kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
+<meta name="author" content="dnp_theme">
+<link rel="shortcut icon" href="./assets/img/favicon.ico">
+<link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png">
+
+<title>KUTE.js | Performance Testing Page</title>
+<!-- <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"> -->
+<style>
+  body {
+      background-color: #08263d;
+      color: #999;
+      font-size: 12px;
+      font-family: Helvetica, Arial, Helvetica, sans-serif;
+  }
+
+  .hr { border-color: rgba(255, 255, 255, 0.2); margin: 15px 0; clear:both }
+
+  a {
+      color: #ffd626;
+      text-decoration: none
+  }
+
+  .btn-group { display: inline-block}
+
+  a:hover,
+  a:focus {
+      color: #fff;
+  }
+
+  #container {
+      width: 200px;
+      /*height: 200px;*/
+      margin: 0 auto;
+      position: relative;
+      display: block;
+  }
+
+  iframe {
+      width: 100%;
+      height: 100%;
+      border: 0
+  }
+
+  .line {
+      width: 200px;
+      height: 2px;
+      position: absolute;
+  }
+
+  .box {
+      height: 200px
+  }
+
+  #info {
+      position: absolute;
+      top: 20%;
+      left: 0;
+      width: 350px;
+  }
+
+  .padding {
+      padding: 20px
+  }
+
+  .btn {
+      display: inline-block;
+      padding: 6px 12px;
+      margin-bottom: 0;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.42857143;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      -ms-touch-action: manipulation;
+      touch-action: manipulation;
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      background-image: none;
+      border: 1px solid transparent;
+  }
+  .btn:focus { outline: none }
+
+  .btn-primary {
+      color: #fff;
+      background-color: #337ab7;
+  }
+  .btn-success {
+      color: #fff;
+      background-color: #5cb85c;
+  }
+  .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1000;
+      display: none;
+      float: left;
+      min-width: 160px;
+      padding: 5px 0;
+      margin: 2px 0 0;
+      font-size: 14px;
+      text-align: left;
+      list-style: none;
+      background-color: #fff;
+      background-clip: padding-box;
+      border: 1px solid #ccc;
+      border: 1px solid rgba(0,0,0,.15);
+  }
+  .dropdown-menu>li:hover { background-color: rgba(0,0,0,0.2); }
+  .dropdown-menu>li>a {
+      display: block;
+      padding: 3px 20px;
+      clear: both;
+      font-weight: 400;
+      line-height: 1.42857143;
+      color: #333;
+      white-space: nowrap;
+  }        
+  .dropdown {
+      position:relative
+  }
+  .dropdown.open .dropdown-menu {
+      display: block
+  }
+  .text-note {
+      color: #069
+  }
+
+  .text-danger {
+      font-weight: bold
+  }
+  .list-inline {
+      padding-left: 0;
+      list-style: none;
+      margin-left: -5px;
+  }
+
+  .list-inline>li {
+      display: inline-block;
+      padding-right: 5px;
+      padding-left: 5px;
+  }        
+</style>
+
+</head>
+
+<body>
+
+  <div id="info" class="padding">
+    <ul class="list-inline">
+        <li><a title="Go to KUTE.js homepage" href="index.html">Homepage</a></li>
+        <li><a title="Go to Transform Functions component testing page" href="performance-transform.html">Transform Functions</a></li>
+        <li><a title="Go to Transform Matrix component testing page" href="performance-matrix.html">Transform Matrix</a></li>
+    </ul>
+    <hr class="hr">
+
+    <span id="engine" class="btn-group dropdown">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="0">Engine <span class="caret"></span></button>
+    <ul class="dropdown-menu" role="menu">
+        <li><a id="kute" href="#">KUTE</a></li>
+        <li><a id="gsap" href="#">GSAP</a></li>
+        <li><a id="tween" href="#">Tween.js</a></li>
+    </ul>
+    </span>
+
+    <span id="property" class="btn-group dropdown">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="0">Property <span class="caret"></span></button>
+    <ul class="dropdown-menu" role="menu">
+        <li><a id="left" href="#">left</a></li>
+        <li><a id="translateX" href="#">translateX</a></li>
+    </ul>
+    </span>
+
+    <span id="repeat" class="btn-group dropdown">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="0">Repeat <span class="caret"></span></button>
+    <ul class="dropdown-menu" role="menu">
+        <li><a id="5" href="#">5</a></li>
+        <li><a id="10" href="#">10</a></li>
+        <li><a id="15" href="#">15</a></li>
+        <li><a id="20" href="#">20</a></li>
+    </ul>
+    </span>
+
+
+    <span id="count" class="btn-group dropdown">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false" tabindex="0">Count <span class="caret"></span></button>
+    <ul class="dropdown-menu" role="menu">
+        <li><a id="100" href="#">100</a></li>
+        <li><a id="200" href="#">200</a></li>
+        <li><a id="300" href="#">300</a></li>
+        <li><a id="400" href="#">400</a></li>
+        <li><a id="500" href="#">500</a></li>
+        <li><a id="600" href="#">600</a></li>
+        <li><a id="700" href="#">700</a></li>
+        <li><a id="800" href="#">800</a></li>
+        <li><a id="900" href="#">900</a></li>
+        <li><a id="1000" href="#"><span style="color: red">1000</span></a></li>
+        <li><a id="1500" href="#"><span style="color: red">1500</span></a></li>
+        <li><a id="2000" href="#"><span style="color: red">2000</span></a></li>
+    </ul>
+    </span>
+
+    <hr class="hr">
+
+    <div style="width:100%;clear: both">
+        <button class="btn btn-success" id="start" type="button" style="margin-bottom: 15px">Start</button>
+    </div>
+    <p>These tests are only for modern browsers. In Webkit browsers like Google Chrome and Opera you can enable the FPS metter in developer tools, <a href="https://developer.chrome.com/devtools/docs/rendering-settings" target="_blank">here's how</a>.</p>
+    <p class="text-note">Please know that a local copy of this page will outperform the live site demo on Google Chrome, the reason is unknown.</p>
+
+
+  </div>
+
+  <div id="container"></div>
+
+
+
+
+  <!-- JavaScript =============================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+
+  <!--[if !IE ]><!-->
+  <script src="https://cdn.jsdelivr.net/bootstrap.native/1.0.1/bootstrap-native.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.0.5/gsap.min.js"></script>
+  <script src="./assets/js/tween.min.js"></script>
+  <script src="./src/kute-extra.min.js"></script>
+
+  <script src="./assets/js/perf.js"></script>
+  <!--<![endif]-->
+</body>
+
+</html>

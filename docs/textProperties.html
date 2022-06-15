@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
+  <meta name="description" content="The Text Properties component for KUTE.js allows you to animate CSS properties related to typography on most browsers.">
+  <meta name="keywords" content="text properties,font-size,line-height,letter-spacing,kute.js,animation,javascript animation,tweening engine,animation engine,JavaScript,Native JavaScript,vanilla javascript,jQuery">
+  <meta name="author" content="dnp_theme">
+  <link rel="shortcut icon" href="./assets/img/favicon.ico">
+  <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,800|Roboto+Condensed:400,800" rel="stylesheet">
+
+  <title>KUTE.js Text Properties</title>
+
+  <!-- RESET CSS -->
+  <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
+
+  <!-- DEMO KUTE CSS -->
+  <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
+
+  <!-- Synthax highlighter -->
+  <link href="./assets/css/prism.css" rel="stylesheet">
+
+  <style></style>
+</head>
+
+<body>
+  <div class="site-wrapper">
+
+    <div class="navbar-wrapper">
+      <div class="content-wrap">
+        <nav class="navbar">
+          <a href="index.html"><h1>KUTE.<span>js</span></h1></a>
+          <div class="nav-wrapper d-flex align-items-center justify-content-between">
+            <ul class="nav">
+              <li class="btn-group active"><a href="#" data-function="toggle">Components <span class="caret"></span></a>
+                <ul class="subnav">
+                  <li><a href="transformFunctions.html">Transform Functions</a></li>
+                  <li><a href="transformMatrix.html">Transform Matrix</a></li>
+                  <li><a href="svgTransform.html">SVG Transform</a></li>
+                  <li><a href="svgMorph.html">SVG Morph</a></li>
+                  <li><a href="svgCubicMorph.html">SVG Cubic Morph</a></li>
+                  <li><a href="svgDraw.html">SVG Draw</a></li>
+                  <li><a href="filterEffects.html">Filter Effects</a></li>
+                  <li><a href="borderRadius.html">Border Radius</a></li>
+                  <li><a href="htmlAttributes.html">HTML Attributes</a></li>
+                  <li><a href="shadowProperties.html">Shadow Properties</a></li>
+                  <li><a href="colorProperties.html">Color Properties</a></li>
+                  <li><a href="boxModel.html">Box Model</a></li>
+                  <li><a href="clipProperty.html">Clip Property</a></li>
+                  <li><a href="backgroundPosition.html">Background Position</a></li>
+                  <li class="active"><a href="textProperties.html">Text Properties</a></li>
+                  <li><a href="opacityProperty.html">Opacity Property</a></li>
+                  <li><a href="scrollProperty.html">Scroll Property</a></li>
+                  <li><a href="textWrite.html">Text Write</a></li>
+                </ul>
+              </li>
+              <li><a href="https://github.com/thednp/kute.js/wiki">Wiki</a></li>
+            </ul>
+              <ul id="share">
+                <li>
+                  <a class="facebook-link" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M1008 511.996c0 247.56-181.381 452.76-418.5 490v-346.62h115.561l22-143.381h-137.561v-93.1c0-39.221 19.221-77.461 80.82-77.461h62.561v-122s-56.762-9.68-111.041-9.68c-113.34 0-187.34 68.66-187.34 192.961v109.279h-126v143.381h126v346.62c-237.12-37.24-418.5-242.44-418.5-490 0-274 222-496 496-496s496 222 496 496z" fill="currentColor"></path></svg>
+                  </a>
+                </li>
+                <li>
+                  <a class="twitter-link" target="_blank" href="https://twitter.com/intent/tweet?text=Spread the word about %23KUTEJS animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M886.579 306.995c0.41 8.294 0.563 16.691 0.563 24.986 0 255.488-194.406 549.99-549.888 549.99-109.21 0-210.739-32-296.294-86.886 15.155 1.792 30.515 2.714 46.08 2.714 90.624 0 173.926-30.925 240.026-82.688-84.531-1.587-155.955-57.395-180.531-134.195 11.776 2.202 23.91 3.379 36.352 3.379 17.664 0 34.765-2.304 50.944-6.707-88.422-17.818-155.034-95.898-155.034-189.594 0-0.819 0-1.587 0-2.406 26.061 14.49 55.91 23.194 87.552 24.218-51.866-34.714-86.016-93.798-86.016-160.922 0-35.379 9.523-68.608 26.214-97.178 95.283 116.992 237.773 193.894 398.387 201.984-3.277-14.182-4.966-28.877-4.966-44.083 0-106.701 86.477-193.178 193.229-193.178 55.603 0 105.83 23.398 141.107 60.979 43.981-8.704 85.35-24.781 122.726-46.899-14.438 45.107-45.107 82.995-84.992 106.906 39.117-4.71 76.288-15.002 111.002-30.413-25.907 38.81-58.675 72.806-96.461 99.994z" fill="currentColor"></path></svg>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <div class="content-wrap">
+        <h2 class="head-title">Text Properties</h2>
+        <p class="condensed lead">The component that animates the typographic CSS properties of a target content <b>Element</b> on most browsers.</p>
+      </div>
+
+      <div class="featurettes dark">
+        <div class="content-wrap">
+          <div class="columns">
+            <div class="col3">
+              <h3 class="border text-right">Overview</h3>
+              <p class="condensed text-right">Animate the text size or spacing properties of a target text element.</p>
+            </div>
+            <div class="col9 border">
+              <p class="condensed lead">The KUTE.js <b>Text Properties</b> component enables animation for typography related CSS properties of content element targets
+                  on most browsers.</p>
+              <p>This small and simple component can be used to create various attention seekers for any content elements such as <b>HTMLHeadingElement</b>, 
+                  <b>HTMLParagraphElement</b>, <b>HTMLUListElement</b> or any other, as well as for entire content blocks.</p>
+              <p>You can either animate an entire string or content block or split your string into words or letters and create a simple animation with one or more of
+                  the following properties:</p>                        
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-wrap">
+
+        <h3>Supported Properties</h3>
+
+        <ul>
+          <li><kbd class="bg-olive">fontSize</kbd> allows you to animate the <code>font-size</code> for a target element.</li>
+          <li><kbd class="bg-olive">lineHeight</kbd> allows you to animate the <code>line-height</code> for a target element.</li>
+          <li><kbd class="bg-olive">letterSpacing</kbd> allows you to animate the <code>letter-spacing</code> for a target element.</li>
+          <li><kbd class="bg-olive">wordSpacing</kbd> allows you to animate the <code>word-spacing</code> for a target element.</li>
+        </ul>
+
+        <h3>Example</h3>
+          
+<pre><code class="language-javascript">let tween1 = KUTE.to('selector1',{fontSize:'200%'})
+let tween2 = KUTE.to('selector1',{lineHeight:24})
+let tween3 = KUTE.to('selector1',{letterSpacing:50})
+let tween3 = KUTE.to('selector1',{wordSpacing:50})
+</code></pre>
+
+        <div id="textProperties" class="featurettes" style="height: 152px">
+          <h1 class="example-item">Howdy!</h1>
+          <div class="example-buttons"><a class="btn btn-pink" href="javascript:void(0)">Start</a></div>
+        </div>
+      
+      <h3>Notes</h3>
+      <ul>
+        <li>Be sure to check the <a href="./assets/js/textProperties.js">textProperties.js</a> for a more in-depth review of the above example.</li>
+        <li>Similar to box model properties, the text properties are also layout modifiers, they will push the layout around forcing unwanted re-paint work. To avoid re-paint, you
+            can use a fixed height for the target element's container, as we used in our example here, or set your text to <code>position:absolute</code>.</li>
+        <li>The component is only included in the <i>demo/src/kute-extra.js</i> file.</li>
+      </ul>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="content-wrap">
+        <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+        <p>&copy; 2015 - 2022 &middot; <a href="https://github.com/thednp">thednp</a>.</p>
+      </div>
+    </footer>
+
+  </div>
+  <!-- /.site-wrapper -->
+
+  <!-- JavaScript =============================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+
+  <script src="./src/polyfill.min.js"></script>
+  <script src="./src/kute-extra.min.js"></script>
+  <script src="./assets/js/prism.js"></script>
+
+  <script src="./assets/js/textProperties.js"></script>
+  <script src="./assets/js/scripts.js"></script>
+</body>
+
+</html>

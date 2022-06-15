@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
+  <meta name="description" content="KUTE.js is a fully featured JavaScript animation engine with outstanding performance and supporting 3D transforms, SVG Morph, draw SVG, SVG transform, cross-browser animation, scroll animation, CSS3 properties and many more.">
+  <meta name="keywords" content="kute,kute.js,animation,javascript animation,tweening engine,animation engine,morph svg,draw svg,svg transform,css3,3d transform,scroll,Javascript,Native Javascript,vanilla javascript,jQuery">
+  <meta name="author" content="thednp">
+  <link rel="shortcut icon" href="./assets/img/favicon.ico">
+  <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,800|Roboto+Condensed:400,800" rel="stylesheet">
+
+  <title>KUTE.js | JavaScript Animation Engine</title>
+
+  <!-- RESET CSS -->
+  <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
+
+  <!-- Spicr CSS -->
+  <link type="text/css" href="https://cdn.jsdelivr.net/npm/spicr/dist/css/spicr.min.css" rel="stylesheet">
+
+  <!-- DEMO KUTE CSS -->
+  <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
+  <link type="text/css" href="./assets/css/spicr-theme.css" rel="stylesheet">
+
+</head>
+
+<body>
+  <div class="site-wrapper">
+
+    <div class="navbar-wrapper">
+      <div class="content-wrap">
+        <nav class="navbar">
+          <a href="index.html"><h1 class="active">KUTE.<span>js</span></h1></a>
+          <div class="nav-wrapper d-flex align-items-center justify-content-between">
+            <ul class="nav">
+              <li class="btn-group"><a href="#" data-function="toggle">Components <span class="caret"></span></a>
+                <ul class="subnav">
+                  <li><a href="transformFunctions.html">Transform Functions</a></li>
+                  <li><a href="transformMatrix.html">Transform Matrix</a></li>
+                  <li><a href="svgTransform.html">SVG Transform</a></li>
+                  <li><a href="svgMorph.html">SVG Morph</a></li>
+                  <li><a href="svgCubicMorph.html">SVG Cubic Morph</a></li>
+                  <li><a href="svgDraw.html">SVG Draw</a></li>
+                  <li><a href="filterEffects.html">Filter Effects</a></li>
+                  <li><a href="borderRadius.html">Border Radius</a></li>
+                  <li><a href="htmlAttributes.html">HTML Attributes</a></li>
+                  <li><a href="shadowProperties.html">Shadow Properties</a></li>
+                  <li><a href="colorProperties.html">Color Properties</a></li>
+                  <li><a href="boxModel.html">Box Model</a></li>
+                  <li><a href="clipProperty.html">Clip Property</a></li>
+                  <li><a href="backgroundPosition.html">Background Position</a></li>
+                  <li><a href="textProperties.html">Text Properties</a></li>
+                  <li><a href="opacityProperty.html">Opacity Property</a></li>
+                  <li><a href="scrollProperty.html">Scroll Property</a></li>
+                  <li><a href="textWrite.html">Text Write</a></li>
+                </ul>
+              </li>
+              <li><a href="https://github.com/thednp/kute.js/wiki">Wiki</a></li>
+            </ul>
+            <ul id="share">
+              <li>
+                <a class="facebook-link" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook">
+                  <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M1008 511.996c0 247.56-181.381 452.76-418.5 490v-346.62h115.561l22-143.381h-137.561v-93.1c0-39.221 19.221-77.461 80.82-77.461h62.561v-122s-56.762-9.68-111.041-9.68c-113.34 0-187.34 68.66-187.34 192.961v109.279h-126v143.381h126v346.62c-237.12-37.24-418.5-242.44-418.5-490 0-274 222-496 496-496s496 222 496 496z" fill="currentColor"></path></svg>
+                </a>
+              </li>
+              <li>
+                <a class="twitter-link" target="_blank" href="https://twitter.com/intent/tweet?text=Spread the word about %23KUTEjs animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter">
+                  <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M886.579 306.995c0.41 8.294 0.563 16.691 0.563 24.986 0 255.488-194.406 549.99-549.888 549.99-109.21 0-210.739-32-296.294-86.886 15.155 1.792 30.515 2.714 46.08 2.714 90.624 0 173.926-30.925 240.026-82.688-84.531-1.587-155.955-57.395-180.531-134.195 11.776 2.202 23.91 3.379 36.352 3.379 17.664 0 34.765-2.304 50.944-6.707-88.422-17.818-155.034-95.898-155.034-189.594 0-0.819 0-1.587 0-2.406 26.061 14.49 55.91 23.194 87.552 24.218-51.866-34.714-86.016-93.798-86.016-160.922 0-35.379 9.523-68.608 26.214-97.178 95.283 116.992 237.773 193.894 398.387 201.984-3.277-14.182-4.966-28.877-4.966-44.083 0-106.701 86.477-193.178 193.229-193.178 55.603 0 105.83 23.398 141.107 60.979 43.981-8.704 85.35-24.781 122.726-46.899-14.438 45.107-45.107 82.995-84.992 106.906 39.117-4.71 76.288-15.002 111.002-30.413-25.907 38.81-58.675 72.806-96.461 99.994z" fill="currentColor"></path></svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div id="SpicrDemo" class="spicr spicr-slider" data-interval="false" >
+      <div class="spicr-inner">
+        <div class="item">
+          <div class="item-bg spicr-layer bg-blue background-bottom-center" data-translate="x:-100%" data-duration="700" data-easing="easingCubicInOut" data-src="https://picsum.photos/id/992/1680/720.jpg">
+            <div class="overlay"></div>
+          </div>
+          <div class="content-wrap h-100"> <!-- IE9 fix -->
+            <div class="d-flex align-items-end h-100">
+              <div class="flex-column w-md-50 text-center mb-5" style="margin: 0 auto">
+                <div class="spicr-layer" data-translate="x:-250" data-duration="600" data-easing="easingCubicInOut">
+                  <h1>Welcome to KUTE.js!</h1>
+                </div>
+                <div class="spicr-layer" data-translate="x:-250" data-delay="350" data-duration="700" data-easing="easingCubicInOut">
+                  <p class="lead condensed">The JavaScript animation engine of the future</p> 
+                </div>
+                <div class="spicr-layer" data-translate="x:-250" data-delay="450" data-duration="800" data-easing="easingCubicInOut">
+                  <p>The magic behind <a class="text-light font-weight-bold" href="https://thednp.github.io/spicr/">Spicr</a>, the result of hard work,
+                    the bridge between old and new, the dream and inspiration.</p>
+                </div>
+                <div>
+                  <p class="btns">
+                    <a class="btn btn-red spicr-layer" href="https://github.com/thednp/kute.js/archive/master.zip" data-translate="x:-250" data-delay="750" data-duration="900" data-easing="easingCircularInOut">Download</a>
+                    <a class="btn btn-olive spicr-layer" href="https://thednp.github.io/kute.js" data-translate="x:-250" data-delay="650" data-duration="800" data-easing="easingCircularInOut">Github</a>
+                    <a class="btn btn-indigo spicr-layer" href="https://www.npmjs.com/package/kute.js" data-translate="x:-250" data-delay="550" data-duration="700" data-easing="easingCircularInOut">NPM</a>
+                    <a class="btn btn-blue spicr-layer" href="https://www.jsdelivr.com/package/npm/kute.js" data-translate="x:-250" data-delay="450" data-duration="600" data-easing="easingCircularInOut">CDN</a>
+                  </p>
+                </div> 
+              </div> 
+            </div>
+          </div>
+        </div>
+        <div class="item perspective-1500">
+          <div class="item-bg spicr-layer bg-olive" data-rotate="x:90" data-transform-origin="z:50%v" data-duration="700" data-easing="easingCubicInOut" data-src="https://picsum.photos/id/931/1680/720.jpg">
+            <div class="overlay"></div>
+          </div>
+          <div class="content-wrap h-100"><!-- IE9 fix -->
+            <div class="columns h-100 align-content-center">
+              <div class="col2 h-md-100"><!-- IE9 fix -->
+                <div class="d-flex perspective align-items-end align-items-md-center h-md-100">
+                  <div class="spicr-layer" data-translate="y:10%" data-rotate="x:90" data-transform-origin="z:50%" data-duration="800" data-easing="easingCubicInOut">
+                    <h1>Forward Looking</h1>
+                    <p>The modern JavaScript powering the core functionality, the modular architecture, the solid and complete components are all geared towards the future of web development.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col2 h-md-100">
+                <div class="d-flex perspective align-items-start align-items-md-center h-md-100">
+                  <div class="spicr-layer" data-translate="y:10%" data-rotate="x:90" data-transform-origin="z:50%" data-duration="900" data-delay="350" data-easing="easingCubicInOut">
+                    <h1>Knowing the Past</h1>
+                    <p>While KUTE.js was re-developed to support mainly modern browsers, it also leaves the door open to old browsers with its legacy components, tools and polyfills.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-bg spicr-layer bg-pink" data-translate="y:-100%" data-duration="700" data-easing="easingCubicInOut" data-src="https://picsum.photos/id/668/1680/720.jpg">
+            <div class="overlay"></div>
+          </div>
+          <div class="content-wrap h-100">
+            <div class="columns align-content-center h-100">
+              <div class="col2 h-md-100">
+                <div class="d-flex align-items-start align-items-md-center h-md-100">
+                  <div class="w-100 flex-column"> <!-- IE9 fix -->
+                    <div class="spicr-layer" data-translate="y:-150" data-duration="800" data-delay="550" data-easing="easingCircularOut">
+                      <h1>ES6+ JavaScript</h1>
+                    </div>
+                    <div class="spicr-layer" data-translate="y:-150" data-duration="900" data-delay="650" data-easing="easingCircularOut">
+                      <p>Inside the sources you will find fast &amp; modern JavaScript code with solid build tools. Everything and anything can be done with <b>SVGElement</b>, 
+                        HTML attributes, CSS transform, etc.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>              
+              <div class="col2 h-md-100"> <!-- IE9 fix -->
+                <div class="d-flex align-items-end align-items-md-center h-md-100">
+                  <div class="w-100 flex-column"> <!-- IE9 fix -->
+                    <div class="spicr-layer" data-translate="y:-150" data-duration="700" data-delay="350" data-easing="easingCircularOut">
+                      <h1>Cubic Bezier Easing</h1>
+                    </div>
+                    <div class="spicr-layer" data-translate="y:-150" data-duration="800" data-delay="450" data-easing="easingCircularOut">
+                      <p>While the library includes Robert Penner's <a href="http://robertpenner.com/easing/">easing functions</a>, KUTE.js also includes its own 
+                        <a href="https://github.com/thednp/CubicBezier">CubicBezier Easing</a> class to provide fast and accurate easing for your animation.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>        
+        <div class="item perspective-1500">
+          <div class="item-bg spicr-layer bg-indigo" data-rotate="y:90" data-transform-origin="z:-50%" data-duration="1000" data-easing="easingCubicInOut" data-src="https://picsum.photos/id/581/1680/720.jpg">
+            <div class="overlay"></div>
+          </div>
+          <div class="content-wrap h-100">
+            <div class="d-flex w-md-75 align-items-center text-md-center justify-content-md-center h-100" style="margin: 0 auto">
+              <div class="spicr-layer" data-rotate="y:90" data-transform-origin="z:-50%" data-duration="1200" data-easing="easingCubicInOut">
+                <h1><span>What's not to love about it?</span></h1>
+                <p>Yeah, the open source, modular and fully featured animation engine for the modern web, fully documented and MIT Licensed.</p>
+                <p>Any question? Find answers <a href="https://stackoverflow.com/search?q=kute.js">here</a>, or post them <a href="https://github.com/thednp/kute.js/issues">here</a>!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- pages -->
+      <ol class="spicr-pages d-flex flex-row justify-content-center">
+        <li data-slide-to="0" class=""></li>
+        <li data-slide-to="1"></li>
+        <li data-slide-to="2"></li>
+        <li data-slide-to="3"></li>
+      </ol>
+      <a class="left spicr-control long-shadows" data-slide="prev">
+        <span class="arrow-prev">
+          <svg class="spicr-icon" viewBox="0 0 1024 1024">
+            <path d="M658 686l-60 60-256-256 256-256 60 60-196 196z"></path>
+          </svg>
+        </span>
+      </a>
+      <a class="right spicr-control long-shadows" data-slide="next">
+        <span class="arrow-next">
+          <svg class="spicr-icon" viewBox="0 0 1024 1024">
+            <path d="M366 698l196-196-196-196 60-60 256 256-256 256z"></path>
+          </svg>
+        </span>
+      </a>
+    </div>
+
+    <div class="featurettes dark mt-0">
+      <div class="content-wrap">
+        <div class="columns">
+          <div class="col3">
+            <h2 class="border text-right">Overview</h2>
+            <p class="condensed text-right">If you're looking for that spicy tool to kickstart your animations, developed with latest technology and modular design, you will love KUTE.js.</p>
+          </div>
+          <div class="col9 border">
+
+            <p class="lead condensed">The JavaScript animation engine reimagined for the evolving modern web, the library that keeps track on the changing standards, the modular tool
+              to enable creativity.</p>
+            <p>Built on modern ES6+ JavaScript Standard, packed with utilities, build tools and a wide range of supported properties, <b>KUTE</b>.js is now a fully featured animation engine
+              you can use to create complex animations, with properties or elements that cannot be animated with CSS3 transitions or other animation engines, or attributes that aren't
+              even drafted in the specification yet.</p>
+
+            <p class="lead condensed">The JavaScript animation engine that never stops evolving just like we never stop learning. Instead of becoming more bloated, we make it more modular,
+              instead of compromising we chose innovating. </p>
+            <p>While <b>KUTE</b>.js doesn't activelly support legacy browsers, it provides a wide range of tools and utilities you can use to create a fallback animation for every browser
+              and property.</p>
+            <p>The demo pages use a dedicated polyfill for IE10+ browsers, but today we have <a href="https://polyfill.io/">polyfill services</a> and a wide range of
+              <a href="http://browserhacks.com" target="_blank">browser detection</a> options to handle legacy browsers, our focus here is the highest performance on modern browsers.</p>
+            <p>By the way, <b>KUTE</b>.js is <a href="performance.html">really fast</a>.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="content-wrap">
+
+      <div class="columns">
+        <div class="col2">
+          <h3 class="border">ES6+ JavaScript</h2>
+          <p class="condensed">The entire codebase reworked on the latest standards with flexible <code>rollup</code> based build tools. Most classes are extensible via the ES6 <code>extend</code>
+          or your usual <code>prototype</code>, depending on the class.</p>
+        </div>
+        <div class="col2">
+          <h3 class="border">Lots of Components</h2>
+          <p class="condensed">All your previously supported properties and plugins have been split into components for more modularity. New additions have been added for a broader scope.
+            The official distribution only includes most popular components.</p>
+        </div>
+        <div class="col2">
+          <h3 class="border">Familiar Syntax</h2>
+          <p class="condensed">You can create your tween objects with a familiar syntax with your trusted options, the callback system and other component related options.</p>
+        </div>
+        <div class="col2">
+          <h3 class="border">Tools and Options</h2>
+          <p class="condensed">Along the wide range of options, certain components provide tools for further control over the outcome. Also there's a <a href="progress.html">progress
+             bar</a> somewhere.</p>
+        </div>
+        <div class="col2">
+          <h3 class="border">Well Documented</h2>
+          <p class="condensed">Each component demo page comes packed with tons of guides and tips on how to optimize the performance and visual presentation.</p>
+        </div>
+        <div class="col2">
+          <h3 class="border">MIT License</h2>
+          <p class="condensed">The library is released under the <a href="https://github.com/thednp/kute.js/blob/master/LICENSE">MIT License</a>.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="content-wrap">
+        <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+        <p>&copy; 2015 - 2022 &middot; <a href="https://github.com/thednp">thednp</a>.</p>
+      </div>
+    </footer>
+
+  </div>
+  <!-- /.site-wrapper -->
+
+  <!-- JavaScript =============================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+
+  <script src="./src/polyfill.min.js"></script>
+  <script src="./src/kute.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/spicr/dist/js/spicr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dll.js@1.5.5/dist/dll.min.js"></script>
+  <script src="./assets/js/scripts.js"></script>
+  <script src="./assets/js/home.js"></script>
+
+</body>
+
+</html>

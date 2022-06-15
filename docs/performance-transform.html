@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
+<meta name="description" content="KUTE.js performance testing page, comparing basic transform to matrix transform.">
+<meta name="keywords" content="kute,kute.js,Javascript,Native Javascript,vanilla javascript,jQuery">
+<meta name="author" content="dnp_theme">
+<link rel="shortcut icon" href="./assets/img/favicon.ico">
+<link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png">
+
+<title>KUTE.js | Regular Transform Performance Testing Page</title>
+<style>
+  body {
+      background-color: #08263d;
+      color: #999;
+      font-size: 12px;
+      font-family: Helvetica, Arial, Helvetica, sans-serif;
+  }
+
+  a {
+      color: #ffd626;
+      text-decoration: none
+  }
+
+  .hr { border-color: rgba(255, 255, 255, 0.2); margin: 15px 0 }
+
+  a:hover,
+  a:focus {
+      color: #fff;
+  }
+
+  #container {
+      width: 70%;
+      /*height: 200px;*/
+      margin: 5% auto 0 auto;
+      position: relative;
+      display: none;
+      /* perspective: 1200px; */
+      /* transform-style: preserve-3d; don't overDO the preserve3d */
+  }
+
+  iframe {
+      width: 100%;
+      height: 100%;
+      border: 0
+  }
+
+  .line {
+      width: 200px;
+      height: 2px;
+      position: absolute;
+  }
+
+  .box {
+      height: 200px
+  }
+
+  #info {
+      position: absolute;
+      top: 20%;
+      left: 0;
+      width: 350px;
+  }
+
+  .padding {
+      padding: 20px
+  }
+
+  .btn-group {
+      margin-bottom: 15px;
+  }
+
+  .btn {
+      display: inline-block;
+      padding: 6px 12px;
+      margin-bottom: 0;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.42857143;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      -ms-touch-action: manipulation;
+      touch-action: manipulation;
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      background-image: none;
+      border: 1px solid transparent;
+  }
+  .btn-primary {
+      color: #fff;
+      background-color: #337ab7;
+  }
+  .btn-success {
+      color: #fff;
+      background-color: #5cb85c;
+  }  
+
+  .text-note {
+      color: #069
+  }
+
+  .text-danger {
+      font-weight: bold
+  }
+
+  .list-inline {
+      padding-left: 0;
+      list-style: none;
+      margin-left: -5px;
+  }
+
+  .list-inline>li {
+      display: inline-block;
+      padding-right: 5px;
+      padding-left: 5px;
+  }        
+
+
+  .cube {
+      flex: 0 1 auto;
+      width: 100px;
+      height: 100px;
+      transform-style: preserve-3d;
+      display: inline-flex;
+      margin: 3%
+
+  }
+
+  .cube .cube__side {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(80, 176, 255, 0.1);
+      box-shadow: inset 0 0 0 2px rgb(13, 165, 64);
+  }
+  .cube .cube__side:nth-child(1) {transform: translateZ(50px); }
+  .cube .cube__side:nth-child(2) {transform: translateZ(-50px); }
+  .cube .cube__side:nth-child(3) {transform: translateX(-50px) rotateY(90deg); }
+  .cube .cube__side:nth-child(4) {transform: translateX(50px) rotateY(-90deg); }
+  .cube .cube__side:nth-child(5) {transform: translateY(50px) rotateX(90deg); }
+  .cube .cube__side:nth-child(6) {transform: translateY(-50px) rotateX(-90deg); }
+  .cube .cube__side:nth-child(7),
+  .cube .cube__side:nth-child(8),
+  .cube .cube__side:nth-child(9),
+  .cube .cube__side:nth-child(10),
+  .cube .cube__side:nth-child(11),
+  .cube .cube__side:nth-child(12),
+  .cube .cube__side:nth-child(13),
+  .cube .cube__side:nth-child(14),
+  .cube .cube__side:nth-child(15) {
+      background-color: rgba(129, 11, 109, 0.1) !important;
+      box-shadow: 0 0 1rem #d7ff6a, inset 0 0 0 2px #6aff8f;
+      opacity: 0.2;
+  }
+  .cube.alive .cube__side:nth-child(7),
+  .cube.alive .cube__side:nth-child(8),
+  .cube.alive .cube__side:nth-child(9),
+  .cube.alive .cube__side:nth-child(10),
+  .cube.alive .cube__side:nth-child(11),
+  .cube.alive .cube__side:nth-child(12),
+  .cube.alive .cube__side:nth-child(13),
+  .cube.alive .cube__side:nth-child(14),
+  .cube.alive .cube__side:nth-child(15) {opacity: 0.5; }
+  .cube .cube__side:nth-child(7) {transform: translateY(-25px) rotateX(-90deg); }
+  .cube .cube__side:nth-child(8) {transform: rotateX(-90deg); }
+  .cube .cube__side:nth-child(9) {transform: translateY(25px) rotateX(-90deg); }
+  .cube .cube__side:nth-child(10) {transform: translateZ(25px); }
+  .cube .cube__side:nth-child(11) {transform: none; }
+  .cube .cube__side:nth-child(12) {transform: translateZ(-25px); }
+  .cube .cube__side:nth-child(13) {transform: translateX(-25px) rotateY(90deg); }
+  .cube .cube__side:nth-child(14) {transform: rotateY(90deg); }
+  .cube .cube__side:nth-child(15) {transform: translateX(25px) rotateY(90deg); }
+</style>
+</head>
+
+<body>
+
+  <div id="info" class="padding">
+
+      <ul class="list-inline">
+          <li><a title="Go to KUTE.js homepage" href="index.html">Homepage</a></li>
+          <li><a title="Go to animation engine performance comparison page" href="performance.html">Engine Comparison</a></li>
+          <li><a title="Go to Transform Matrix component testing page" href="performance-matrix.html">Transform Matrix</a></li>
+      </ul>
+      <hr class="hr">
+
+      <div style="width:100%;clear: both">
+          <button class="btn btn-success" id="start" type="button" style="margin-bottom: 15px">Start</button>
+      </div>
+
+      <p>These tests are only for modern browsers. In Webkit browsers like Google Chrome and Opera you can enable the FPS metter in developer tools, <a href="https://developer.chrome.com/devtools/docs/rendering-settings" target="_blank">here's how</a>.</p>
+      <p class="text-note">Please know that a local copy of this page will outperform the live site demo on Google Chrome, the reason is unknown.</p>
+
+  </div>
+
+  <div id="container"></div>
+
+  <!-- JavaScript =============================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.native/1.0.1/bootstrap-native.min.js"></script>
+  <script id="kute" src="./src/kute.min.js"></script>
+  <script src="./assets/js/perf-matrix.js"></script>
+</body>
+
+</html>

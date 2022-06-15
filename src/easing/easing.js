@@ -79,56 +79,31 @@ const Easing = {
     t -= 2; return 0.5 * (t * t * ((s + 1) * t + s) + 2);
   },
   /** @type {KUTE.easingFunction} */
-  easingElasticIn: (t0) => {
-    let s;
-    let k1 = 0.1;
-    const k2 = 0.4;
-    let t = t0;
+  easingElasticIn: (t) => {
     if (t === 0) return 0;
     if (t === 1) return 1;
-    if (!k1 || k1 < 1) {
-      k1 = 1; s = k2 / 4;
-    } else {
-      s = ((k2 * Math.asin(1 / k1)) / Math.PI) * 2;
-    }
-    t -= 1;
-    return -(k1 * (2 ** (10 * t)) * Math.sin(((t - s) * Math.PI * 2) / k2));
+
+    return -(2 ** (10 * (t - 1))) * Math.sin((t - 1.1) * 5 * Math.PI);
   },
   /** @type {KUTE.easingFunction} */
   easingElasticOut: (t) => {
-    let s;
-    let k1 = 0.1;
-    const k2 = 0.4;
     if (t === 0) return 0;
     if (t === 1) return 1;
-    if (!k1 || k1 < 1) {
-      k1 = 1;
-      s = k2 / 4;
-    } else {
-      s = ((k2 * Math.asin(1 / k1)) / Math.PI) * 2;
-    }
-    return k1 * (2 ** (-10 * t)) * Math.sin(((t - s) * Math.PI * 2) / k2) + 1;
+
+    return (2 ** (-10 * t)) * Math.sin((t - 0.1) * 5 * Math.PI) + 1;
   },
   /** @type {KUTE.easingFunction} */
   easingElasticInOut: (t0) => {
-    let t = t0;
-    let s;
-    let k1 = 0.1;
-    const k2 = 0.4;
-    if (t === 0) return 0;
-    if (t === 1) return 1;
-    if (!k1 || k1 < 1) {
-      k1 = 1; s = k2 / 4;
-    } else {
-      s = k2 * (Math.asin(1 / k1) / Math.PI) * 2;
-    }
-    t *= 2;
+    if (t0 === 0) return 0;
+    if (t0 === 1) return 1;
+
+    const t = t0 * 2;
+
     if (t < 1) {
-      return -0.5 * (k1 * (2 ** (10 * (t - 1)))
-      * Math.sin(((t - 1 - s) * Math.PI * 2) / k2));
+      return -0.5 * (2 ** (10 * (t - 1))) * Math.sin((t - 1.1) * 5 * Math.PI);
     }
-    t -= 1;
-    return k1 * (2 ** (-10 * t)) * Math.sin(((t - s) * Math.PI * 2) / k2) * 0.5 + 1;
+
+    return 0.5 * (2 ** (-10 * (t - 1))) * Math.sin((t - 1.1) * 5 * Math.PI) + 1;
   },
   /** @type {KUTE.easingFunction} */
   easingBounceIn: (t) => 1 - Easing.easingBounceOut(1 - t),

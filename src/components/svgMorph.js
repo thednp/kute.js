@@ -22,7 +22,7 @@ import selector from '../util/selector';
 
 /**
  * Returns an existing polygon or false if it's not a polygon.
- * @param {SVGPathCommander.pathArray} pathArray target `pathArray`
+ * @param {SVGPath.pathArray} pathArray target `pathArray`
  * @returns {KUTE.exactPolygon | false} the resulted polygon
  */
 function exactPolygon(pathArray) {
@@ -53,12 +53,12 @@ function exactPolygon(pathArray) {
 
 /**
  * Returns a new polygon polygon.
- * @param {SVGPathCommander.pathArray} parsed target `pathArray`
+ * @param {SVGPath.pathArray} parsed target `pathArray`
  * @param {number} maxLength the maximum segment length
  * @returns {KUTE.exactPolygon} the resulted polygon
  */
 function approximatePolygon(parsed, maxLength) {
-  const ringPath = splitPath(pathToString(parsed))[0];
+  const ringPath = splitPath(parsed)[0];
   const normalPath = normalizePath(ringPath);
   const pathLength = getTotalLength(normalPath);
   const polygon = [];
@@ -309,8 +309,7 @@ function crossCheckSVGMorph(prop) {
     const pathArray2 = this.valuesEnd[prop].polygon;
     // skip already processed paths
     // allow the component to work with pre-processed values
-    if (!pathArray1 || !pathArray2
-      || (pathArray1 && pathArray2 && pathArray1.length !== pathArray2.length)) {
+    if (!pathArray1 || !pathArray2 || (pathArray1.length !== pathArray2.length)) {
       const p1 = this.valuesStart[prop].original;
       const p2 = this.valuesEnd[prop].original;
       // process morphPrecision

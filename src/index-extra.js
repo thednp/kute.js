@@ -1,4 +1,4 @@
-import CubicBezier from 'cubic-bezier-easing';
+import CubicBezier from '@thednp/bezier-easing';
 import Render from './core/render';
 import Interpolate from './objects/interpolate';
 import Objects from './objects/objects';

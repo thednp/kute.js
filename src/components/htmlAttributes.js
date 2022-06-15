@@ -74,7 +74,7 @@ export function prepareAttr(tweenProp, attrObj) { // attr (string),attrObj (obje
         };
         attributesObject[prop + suffix] = trueDimension(attrObj[p]);
       } else if (!regex.test(attrObj[p]) || currentValue === null
-        || (currentValue !== null && !regex.test(currentValue))) {
+        || (currentValue && !regex.test(currentValue))) {
         // most "unknown" attributes cannot register into onStart, so we manually add them
         onStart[ComponentName][prop] = (tp) => {
           if (this.valuesEnd[tweenProp] && this.valuesEnd[tweenProp][tp] && !(tp in attributes)) {

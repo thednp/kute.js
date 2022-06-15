@@ -18,14 +18,14 @@ import selector from '../util/selector';
 // Component Util
 /**
  * Returns first `pathArray` from multi-paths path.
- * @param {SVGPathCommander.pathArray | string} source the source `pathArray` or string
+ * @param {SVGPath.pathArray | string} source the source `pathArray` or string
  * @returns {KUTE.curveSpecs[]} an `Array` with a custom tuple for `equalizeSegments`
  */
 function getCurveArray(source) {
-  return pathToCurve(splitPath(source)[0])
+  return pathToCurve(splitPath(pathToAbsolute(source))[0])
     .map((segment, i, pathArray) => {
       const segmentData = i && [...pathArray[i - 1].slice(-2), ...segment.slice(1)];
-      const curveLength = i ? segmentCubicFactory(...segmentData) : 0;
+      const curveLength = i ? segmentCubicFactory(...segmentData).length : 0;
 
       let subsegs;
       if (i) {
@@ -45,10 +45,10 @@ function getCurveArray(source) {
 
 /**
  * Returns two `curveArray` with same amount of segments.
- * @param {SVGPathCommander.curveArray} path1 the first `curveArray`
- * @param {SVGPathCommander.curveArray} path2 the second `curveArray`
+ * @param {SVGPath.curveArray} path1 the first `curveArray`
+ * @param {SVGPath.curveArray} path2 the second `curveArray`
  * @param {number} TL the maximum `curveArray` length
- * @returns {SVGPathCommander.curveArray[]} equalized segments
+ * @returns {SVGPath.curveArray[]} equalized segments
  */
 function equalizeSegments(path1, path2, TL) {
   const c1 = getCurveArray(path1);
@@ -79,8 +79,8 @@ function equalizeSegments(path1, path2, TL) {
 
 /**
  * Returns all possible path rotations for `curveArray`.
- * @param {SVGPathCommander.curveArray} a the source `curveArray`
- * @returns {SVGPathCommander.curveArray[]} all rotations for source
+ * @param {SVGPath.curveArray} a the source `curveArray`
+ * @returns {SVGPath.curveArray[]} all rotations for source
  */
 function getRotations(a) {
   const segCount = a.length;
@@ -101,9 +101,9 @@ function getRotations(a) {
 
 /**
  * Returns the `curveArray` rotation for the best morphing animation.
- * @param {SVGPathCommander.curveArray} a the target `curveArray`
- * @param {SVGPathCommander.curveArray} b the reference `curveArray`
- * @returns {SVGPathCommander.curveArray} the best `a` rotation
+ * @param {SVGPath.curveArray} a the target `curveArray`
+ * @param {SVGPath.curveArray} b the reference `curveArray`
+ * @returns {SVGPath.curveArray} the best `a` rotation
  */
 function getRotatedCurve(a, b) {
   const segCount = a.length - 1;
@@ -177,7 +177,7 @@ function crossCheckCubicMorph(tweenProp/** , value */) {
     const pathCurve2 = this.valuesEnd[tweenProp].curve;
 
     if (!pathCurve1 || !pathCurve2
-      || (pathCurve1 && pathCurve2 && pathCurve1[0][0] === 'M' && pathCurve1.length !== pathCurve2.length)) {
+      || (pathCurve1[0][0] === 'M' && pathCurve1.length !== pathCurve2.length)) {
       const path1 = this.valuesStart[tweenProp].original;
       const path2 = this.valuesEnd[tweenProp].original;
       const curves = equalizeSegments(path1, path2);

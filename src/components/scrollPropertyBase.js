@@ -1,6 +1,6 @@
-import passiveHandler from 'shorter-js/src/misc/passiveHandler';
-import mouseHoverEvents from 'shorter-js/src/strings/mouseHoverEvents';
-import supportTouch from 'shorter-js/src/boolean/supportTouch';
+import passiveHandler from '@thednp/shorty/src/misc/passiveHandler';
+import mouseHoverEvents from '@thednp/shorty/src/strings/mouseHoverEvents';
+import supportTouch from '@thednp/shorty/src/boolean/supportTouch';
 import numbers from '../interpolation/numbers';
 import KEC from '../objects/kute';
 

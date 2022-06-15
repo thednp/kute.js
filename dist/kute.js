@@ -1,6 +1,6 @@
 /*!
 * KUTE.js Standard v2.2.3 (http://thednp.github.io/kute.js)
-* Copyright 2015-2021 © thednp
+* Copyright 2015-2022 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
 (function (global, factory) {
@@ -10,33 +10,39 @@
 })(this, (function () { 'use strict';
 
   /**
-   * Creates cubic-bezier easing functions.
+   * Creates cubic-bezier easing functions for animation engines.
+   * @see http://svn.webkit.org/repository/webkit/trunk/Source/WebCore/platform/graphics/UnitBezier.h
+   * 
    *
    * @class
    */
-  var CubicBezier = function CubicBezier(p1x, p1y, p2x, p2y, functionName) {
+  var CubicBezier = function CubicBezier(x1, y1, x2, y2, functionName) {
     var this$1$1 = this;
 
     // pre-calculate the polynomial coefficients
-    // First and last control points are implied to be (0,0) and (1.0, 1.0)
+    // First and last control points are implied to be (0.0, 0.0) and (1.0, 1.0)
+    var p1x = x1 || 0;
+    var p1y = y1 || 0;
+    var p2x = x2 || 1;
+    var p2y = y2 || 1;
     
     /** @type {number} */
-    this.cx = 3.0 * p1x;
+    this.cx = 3 * p1x;
     
     /** @type {number} */
-    this.bx = 3.0 * (p2x - p1x) - this.cx;
+    this.bx = 3 * (p2x - p1x) - this.cx;
 
     /** @type {number} */
-    this.ax = 1.0 - this.cx - this.bx;
+    this.ax = 1 - this.cx - this.bx;
       
     /** @type {number} */
-    this.cy = 3.0 * p1y;
+    this.cy = 3 * p1y;
     
     /** @type {number} */
-    this.by = 3.0 * (p2y - p1y) - this.cy;
+    this.by = 3 * (p2y - p1y) - this.cy;
     
     /** @type {number} */
-    this.ay = 1.0 - this.cy - this.by;
+    this.ay = 1 - this.cy - this.by;
       
     /** @type {(t: number) => number} */
     var BezierEasing = function (t) { return this$1$1.sampleCurveY(this$1$1.solveCurveX(t)); };
@@ -69,7 +75,7 @@
    * @return {number} - sampled curve derivative X value
    */
   CubicBezier.prototype.sampleCurveDerivativeX = function sampleCurveDerivativeX (t) {
-    return (3.0 * this.ax * t + 2.0 * this.bx) * t + this.cx;
+    return (3 * this.ax * t + 2 * this.bx) * t + this.cx;
   };
 
   /**
@@ -77,30 +83,32 @@
    * @return {number} - solved curve X value
    */
   CubicBezier.prototype.solveCurveX = function solveCurveX (x) {
-    var t0;
-    var t1;
-    var t2;
-    var x2;
-    var d2;
-    var i;
-    var epsilon = 1e-5; // Precision
+    // Set Precision
+    var epsilon = 1e-6;
 
-    // First try a few iterations of Newton's method -- normally very fast.
-    for (t2 = x, i = 0; i < 32; i += 1) {
+    // Skip values out of range
+    if (x <= 0) { return 0; }
+    if (x >= 1) { return 1; }
+
+    var t2 = x;
+    var x2 = 0;
+    var d2 = 0;
+
+    // First try a few iterations of Newton's method
+    // -- usually very fast.
+    for (var i = 0; i < 8; i += 1) {
       x2 = this.sampleCurveX(t2) - x;
       if (Math.abs(x2) < epsilon) { return t2; }
       d2 = this.sampleCurveDerivativeX(t2);
+      /* istanbul ignore next */
       if (Math.abs(d2) < epsilon) { break; }
       t2 -= x2 / d2;
     }
 
     // No solution found - use bi-section
-    t0 = 0.0;
-    t1 = 1.0;
+    var t0 = 0;
+    var t1 = 1;
     t2 = x;
-
-    if (t2 < t0) { return t0; }
-    if (t2 > t1) { return t1; }
 
     while (t0 < t1) {
       x2 = this.sampleCurveX(t2);
@@ -112,18 +120,19 @@
     }
 
     // Give up
+    /* istanbul ignore next */
     return t2;
   };
 
-  var version$1 = "1.0.18";
-
-  // @ts-ignore
+  var version$1 = "1.0.1";
 
   /**
    * A global namespace for library version.
    * @type {string}
    */
   var Version$1 = version$1;
+
+  /** @typedef {import('../types/index')} */
 
   Object.assign(CubicBezier, { Version: Version$1 });
 
@@ -1472,11 +1481,6 @@
     }
   }
 
-  // Component Base Props
-  var baseBoxProps = ['top', 'left', 'width', 'height'];
-  var baseBoxOnStart = {};
-  baseBoxProps.forEach(function (x) { baseBoxOnStart[x] = boxModelOnStart; });
-
   // Component Functions
   /**
    * Returns the current property computed style.
@@ -1563,13 +1567,14 @@
       var colorAlpha = vrgb[3] ? vrgb[3] : null;
       if (!colorAlpha) {
         result = { r: parseInt(vrgb[0], 10), g: parseInt(vrgb[1], 10), b: parseInt(vrgb[2], 10) };
+      } else {
+        result = {
+          r: parseInt(vrgb[0], 10),
+          g: parseInt(vrgb[1], 10),
+          b: parseInt(vrgb[2], 10),
+          a: parseFloat(colorAlpha),
+        };
       }
-      result = {
-        r: parseInt(vrgb[0], 10),
-        g: parseInt(vrgb[1], 10),
-        b: parseInt(vrgb[2], 10),
-        a: parseFloat(colorAlpha),
-      };
     } if (/^#/.test(colorString)) {
       var fromHex = hexToRGB(colorString);
       result = { r: fromHex.r, g: fromHex.g, b: fromHex.b };
@@ -1623,18 +1628,6 @@
       : rgba + _c.r + cm + _c.g + cm + _c.b + cm + _c.a + ep;
   }
 
-  // Component Interpolation
-  // rgba1, rgba2, progress
-
-  // Component Properties
-  // supported formats
-  // 'hex', 'rgb', 'rgba' '#fff' 'rgb(0,0,0)' / 'rgba(0,0,0,0)' 'red' (IE9+)
-  var supportedColors$1 = [
-    'color', 'backgroundColor', 'outlineColor',
-    'borderColor',
-    'borderTopColor', 'borderRightColor',
-    'borderBottomColor', 'borderLeftColor' ];
-
   // Component Functions
   /**
    * Sets the property update function.
@@ -1648,9 +1641,6 @@
       };
     }
   }
-
-  var colorsOnStart$1 = {};
-  supportedColors$1.forEach(function (x) { colorsOnStart$1[x] = onStartColors; });
 
   // Component Properties
   // supported formats
@@ -1812,7 +1802,7 @@
           };
           attributesObject[prop + suffix] = trueDimension(attrObj[p]);
         } else if (!regex.test(attrObj[p]) || currentValue === null
-          || (currentValue !== null && !regex.test(currentValue))) {
+          || (currentValue && !regex.test(currentValue))) {
           // most "unknown" attributes cannot register into onStart, so we manually add them
           onStart[ComponentName][prop] = function (tp) {
             if (this$1$1.valuesEnd[tweenProp] && this$1$1.valuesEnd[tweenProp][tp] && !(tp in attributes)) {
@@ -2696,7 +2686,7 @@
   /**
    * Splits an extended A (arc-to) segment into two cubic-bezier segments.
    *
-   * @param {SVGPathCommander.pathArray} path the `pathArray` this segment belongs to
+   * @param {SVGPath.pathArray} path the `pathArray` this segment belongs to
    * @param {string[]} allPathCommands all previous path commands
    * @param {number} i the segment index
    */
@@ -2727,59 +2717,56 @@
   /**
    * Breaks the parsing of a pathString once a segment is finalized.
    *
-   * @param {SVGPathCommander.PathParser} path the `PathParser` instance
+   * @param {SVGPath.PathParser} path the `PathParser` instance
    */
   function finalizeSegment(path) {
     var pathCommand = path.pathValue[path.segmentStart];
     var LK = pathCommand.toLowerCase();
     var data = path.data;
 
-    // Process duplicated commands (without comand name)
-    if (LK === 'm' && data.length > 2) {
-      // @ts-ignore
-      path.segments.push([pathCommand, data[0], data[1]]);
-      data = data.slice(2);
-      LK = 'l';
-      pathCommand = pathCommand === 'm' ? 'l' : 'L';
-    }
-
-    // @ts-ignore
     while (data.length >= paramsCount[LK]) {
-      // path.segments.push([pathCommand].concat(data.splice(0, paramsCount[LK])));
-      // @ts-ignore
-      path.segments.push([pathCommand ].concat( data.splice(0, paramsCount[LK])));
-      // @ts-ignore
+      // overloaded `moveTo`
+      // https://github.com/rveciana/svg-path-properties/blob/master/src/parse.ts
+      if (LK === 'm' && data.length > 2) {
+        path.segments.push([pathCommand ].concat( data.splice(0, 2)));
+        LK = 'l';
+        pathCommand = pathCommand === 'm' ? 'l' : 'L';
+      } else {
+        path.segments.push([pathCommand ].concat( data.splice(0, paramsCount[LK])));
+      }
+
       if (!paramsCount[LK]) {
         break;
       }
     }
   }
 
-  var invalidPathValue = 'Invalid path value';
+  var error = 'SVGPathCommander error';
 
   /**
    * Validates an A (arc-to) specific path command value.
    * Usually a `large-arc-flag` or `sweep-flag`.
    *
-   * @param {SVGPathCommander.PathParser} path the `PathParser` instance
+   * @param {SVGPath.PathParser} path the `PathParser` instance
    */
   function scanFlag(path) {
     var index = path.index;
-    var ch = path.pathValue.charCodeAt(index);
+    var pathValue = path.pathValue;
+    var code = pathValue.charCodeAt(index);
 
-    if (ch === 0x30/* 0 */) {
+    if (code === 0x30/* 0 */) {
       path.param = 0;
       path.index += 1;
       return;
     }
 
-    if (ch === 0x31/* 1 */) {
+    if (code === 0x31/* 1 */) {
       path.param = 1;
       path.index += 1;
       return;
     }
 
-    path.err = invalidPathValue + ": invalid Arc flag \"" + ch + "\", expecting 0 or 1 at index " + index;
+    path.err = error + ": invalid Arc flag \"" + (pathValue[index]) + "\", expecting 0 or 1 at index " + index;
   }
 
   /**
@@ -2792,11 +2779,13 @@
     return (code >= 48 && code <= 57); // 0..9
   }
 
+  var invalidPathValue = 'Invalid path value';
+
   /**
    * Validates every character of the path string,
    * every path command, negative numbers or floating point numbers.
    *
-   * @param {SVGPathCommander.PathParser} path the `PathParser` instance
+   * @param {SVGPath.PathParser} path the `PathParser` instance
    */
   function scanParam(path) {
     var max = path.max;
@@ -2811,21 +2800,22 @@
 
     if (index >= max) {
       // path.err = 'SvgPath: missed param (at pos ' + index + ')';
-      path.err = invalidPathValue + " at " + index + ": missing param " + (pathValue[index]);
+      path.err = error + ": " + invalidPathValue + " at index " + index + ", \"pathValue\" is missing param";
       return;
     }
     ch = pathValue.charCodeAt(index);
 
     if (ch === 0x2B/* + */ || ch === 0x2D/* - */) {
       index += 1;
-      ch = (index < max) ? pathValue.charCodeAt(index) : 0;
+      // ch = (index < max) ? pathValue.charCodeAt(index) : 0;
+      ch = pathValue.charCodeAt(index);
     }
 
     // This logic is shamelessly borrowed from Esprima
     // https://github.com/ariya/esprimas
     if (!isDigit(ch) && ch !== 0x2E/* . */) {
       // path.err = 'SvgPath: param should start with 0..9 or `.` (at pos ' + index + ')';
-      path.err = invalidPathValue + " at index " + index + ": " + (pathValue[index]) + " is not a number";
+      path.err = error + ": " + invalidPathValue + " at index " + index + ", \"" + (pathValue[index]) + "\" is not a number";
       return;
     }
 
@@ -2833,14 +2823,14 @@
       zeroFirst = (ch === 0x30/* 0 */);
       index += 1;
 
-      ch = (index < max) ? pathValue.charCodeAt(index) : 0;
+      ch = pathValue.charCodeAt(index);
 
       if (zeroFirst && index < max) {
         // decimal number starts with '0' such as '09' is illegal.
         if (ch && isDigit(ch)) {
           // path.err = 'SvgPath: numbers started with `0` such as `09`
           // are illegal (at pos ' + start + ')';
-          path.err = invalidPathValue + " at index " + start + ": " + (pathValue[start]) + " illegal number";
+          path.err = error + ": " + invalidPathValue + " at index " + start + ", \"" + (pathValue[start]) + "\" illegal number";
           return;
         }
       }
@@ -2849,7 +2839,8 @@
         index += 1;
         hasCeiling = true;
       }
-      ch = (index < max) ? pathValue.charCodeAt(index) : 0;
+
+      ch = pathValue.charCodeAt(index);
     }
 
     if (ch === 0x2E/* . */) {
@@ -2859,18 +2850,20 @@
         index += 1;
         hasDecimal = true;
       }
-      ch = (index < max) ? pathValue.charCodeAt(index) : 0;
+
+      ch = pathValue.charCodeAt(index);
     }
 
     if (ch === 0x65/* e */ || ch === 0x45/* E */) {
       if (hasDot && !hasCeiling && !hasDecimal) {
-        path.err = invalidPathValue + " at index " + index + ": " + (pathValue[index]) + " invalid float exponent";
+        path.err = error + ": " + invalidPathValue + " at index " + index + ", \"" + (pathValue[index]) + "\" invalid float exponent";
         return;
       }
 
       index += 1;
 
-      ch = (index < max) ? pathValue.charCodeAt(index) : 0;
+      ch = pathValue.charCodeAt(index);
+
       if (ch === 0x2B/* + */ || ch === 0x2D/* - */) {
         index += 1;
       }
@@ -2879,8 +2872,7 @@
           index += 1;
         }
       } else {
-        // path.err = 'SvgPath: invalid float exponent (at pos ' + index + ')';
-        path.err = invalidPathValue + " at index " + index + ": " + (pathValue[index]) + " invalid float exponent";
+        path.err = error + ": " + invalidPathValue + " at index " + index + ", \"" + (pathValue[index]) + "\" invalid integer exponent";
         return;
       }
     }
@@ -2899,10 +2891,11 @@
     var specialSpaces = [
       0x1680, 0x180E, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006,
       0x2007, 0x2008, 0x2009, 0x200A, 0x202F, 0x205F, 0x3000, 0xFEFF];
+    /* istanbul ignore next */
     return (ch === 0x0A) || (ch === 0x0D) || (ch === 0x2028) || (ch === 0x2029) // Line terminators
       // White spaces
       || (ch === 0x20) || (ch === 0x09) || (ch === 0x0B) || (ch === 0x0C) || (ch === 0xA0)
-      || (ch >= 0x1680 && specialSpaces.indexOf(ch) >= 0);
+      || (ch >= 0x1680 && specialSpaces.includes(ch));
   }
 
   /**
@@ -2910,7 +2903,7 @@
    * path string every time it encounters any kind of
    * space character.
    *
-   * @param {SVGPathCommander.PathParser} path the `PathParser` instance
+   * @param {SVGPath.PathParser} path the `PathParser` instance
    */
   function skipSpaces(path) {
     var pathValue = path.pathValue;
@@ -2975,7 +2968,7 @@
    * Scans every character in the path string to determine
    * where a segment starts and where it ends.
    *
-   * @param {SVGPathCommander.PathParser} path the `PathParser` instance
+   * @param {SVGPath.PathParser} path the `PathParser` instance
    */
   function scanSegment(path) {
     var max = path.max;
@@ -2987,7 +2980,7 @@
     path.segmentStart = index;
 
     if (!isPathCommand(cmdCode)) {
-      path.err = invalidPathValue + ": " + (pathValue[index]) + " not a path command";
+      path.err = error + ": " + invalidPathValue + " \"" + (pathValue[index]) + "\" is not a path command";
       return;
     }
 
@@ -3037,7 +3030,7 @@
   /**
    * Returns a clone of an existing `pathArray`.
    *
-   * @param {SVGPathCommander.pathArray | SVGPathCommander.pathSegment} path the source `pathArray`
+   * @param {SVGPath.pathArray | SVGPath.pathSegment} path the source `pathArray`
    * @returns {any} the cloned `pathArray`
    */
   function clonePath(path) {
@@ -3051,7 +3044,7 @@
    * @param {string} pathString
    */
   function PathParser(pathString) {
-    /** @type {SVGPathCommander.pathArray} */
+    /** @type {SVGPath.pathArray} */
     // @ts-ignore
     this.segments = [];
     /** @type {string} */
@@ -3073,7 +3066,7 @@
   /**
    * Iterates an array to check if it's an actual `pathArray`.
    *
-   * @param {string | SVGPathCommander.pathArray} path the `pathArray` to be checked
+   * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
    * @returns {boolean} iteration result
    */
   function isPathArray(path) {
@@ -3087,16 +3080,14 @@
    * Parses a path string value and returns an array
    * of segments we like to call `pathArray`.
    *
-   * @param {SVGPathCommander.pathArray | string} pathInput the string to be parsed
-   * @returns {SVGPathCommander.pathArray} the resulted `pathArray`
+   * @param {SVGPath.pathArray | string} pathInput the string to be parsed
+   * @returns {SVGPath.pathArray | string} the resulted `pathArray` or error string
    */
   function parsePathString(pathInput) {
     if (isPathArray(pathInput)) {
-      // @ts-ignore -- isPathArray also checks if it's an `Array`
       return clonePath(pathInput);
     }
 
-    // @ts-ignore -- pathInput is now string
     var path = new PathParser(pathInput);
 
     skipSpaces(path);
@@ -3105,43 +3096,35 @@
       scanSegment(path);
     }
 
-    if (path.err.length) {
-      // @ts-ignore
-      path.segments = [];
-    } else if (path.segments.length) {
-      if (!'mM'.includes(path.segments[0][0])) {
-        path.err = invalidPathValue + ": missing M/m";
-        // @ts-ignore
-        path.segments = [];
-      } else {
-        path.segments[0][0] = 'M';
-      }
-    }
-
-    return path.segments;
+    return path.err ? path.err : path.segments;
   }
 
   /**
    * Iterates an array to check if it's a `pathArray`
    * with all absolute values.
    *
-   * @param {string | SVGPathCommander.pathArray} path the `pathArray` to be checked
+   * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
    * @returns {boolean} iteration result
    */
   function isAbsoluteArray(path) {
     return isPathArray(path)
       // @ts-ignore -- `isPathArray` also checks if it's `Array`
-      && path.every(function (x) { return x[0] === x[0].toUpperCase(); });
+      && path.every(function (ref) {
+        var x = ref[0];
+
+        return x === x.toUpperCase();
+    });
   }
 
   /**
    * Parses a path string value or object and returns an array
    * of segments, all converted to absolute values.
    *
-   * @param {string | SVGPathCommander.pathArray} pathInput the path string | object
-   * @returns {SVGPathCommander.absoluteArray} the resulted `pathArray` with absolute values
+   * @param {string | SVGPath.pathArray} pathInput the path string | object
+   * @returns {SVGPath.absoluteArray} the resulted `pathArray` with absolute values
    */
   function pathToAbsolute(pathInput) {
+    /* istanbul ignore else */
     if (isAbsoluteArray(pathInput)) {
       // @ts-ignore -- `isAbsoluteArray` checks if it's `pathArray`
       return clonePath(pathInput);
@@ -3157,7 +3140,7 @@
 
       var values = segment.slice(1).map(Number);
       var pathCommand = segment[0];
-      /** @type {SVGPathCommander.absoluteCommand} */
+      /** @type {SVGPath.absoluteCommand} */
       // @ts-ignore
       var absCommand = pathCommand.toUpperCase();
 
@@ -3167,7 +3150,7 @@
         my = y;
         return ['M', x, y];
       }
-      /** @type {SVGPathCommander.absoluteSegment} */
+      /** @type {SVGPath.absoluteSegment} */
       // @ts-ignore
       var absoluteSegment = [];
 
@@ -3227,48 +3210,13 @@
   }
 
   /**
-   * Returns the missing control point from an
-   * T (shorthand quadratic bezier) segment.
-   *
-   * @param {number} x1 curve start x
-   * @param {number} y1 curve start y
-   * @param {number} qx control point x
-   * @param {number} qy control point y
-   * @param {string} prevCommand the previous path command
-   * @returns {{qx: number, qy: number}}} the missing control point
-   */
-  function shorthandToQuad(x1, y1, qx, qy, prevCommand) {
-    return 'QT'.includes(prevCommand)
-      ? { qx: x1 * 2 - qx, qy: y1 * 2 - qy }
-      : { qx: x1, qy: y1 };
-  }
-
-  /**
-   * Returns the missing control point from an
-   * S (shorthand cubic bezier) segment.
-   *
-   * @param {number} x1 curve start x
-   * @param {number} y1 curve start y
-   * @param {number} x2 curve end x
-   * @param {number} y2 curve end y
-   * @param {string} prevCommand the previous path command
-   * @returns {{x1: number, y1: number}}} the missing control point
-   */
-  function shorthandToCubic(x1, y1, x2, y2, prevCommand) {
-    return 'CS'.includes(prevCommand)
-      ? { x1: x1 * 2 - x2, y1: y1 * 2 - y2 }
-      : { x1: x1, y1: y1 };
-  }
-
-  /**
    * Normalizes a single segment of a `pathArray` object.
    *
-   * @param {SVGPathCommander.pathSegment} segment the segment object
+   * @param {SVGPath.pathSegment} segment the segment object
    * @param {any} params the coordinates of the previous segment
-   * @param {string} prevCommand the path command of the previous segment
-   * @returns {SVGPathCommander.normalSegment} the normalized segment
+   * @returns {SVGPath.normalSegment} the normalized segment
    */
-  function normalizeSegment(segment, params, prevCommand) {
+  function normalizeSegment(segment, params) {
     var pathCommand = segment[0];
     var px1 = params.x1;
     var py1 = params.y1;
@@ -3288,20 +3236,16 @@
     } else if (pathCommand === 'V') {
       result = ['L', px1, segment[1]];
     } else if (pathCommand === 'S') {
-      var ref = shorthandToCubic(px1, py1, px2, py2, prevCommand);
-      var x1 = ref.x1;
-      var y1 = ref.y1;
+      var x1 = px1 * 2 - px2;
+      var y1 = py1 * 2 - py2;
       params.x1 = x1;
       params.y1 = y1;
-      // @ts-ignore
       result = ['C', x1, y1 ].concat( values);
     } else if (pathCommand === 'T') {
-      var ref$1 = shorthandToQuad(px1, py1, params.qx, params.qy, prevCommand);
-      var qx = ref$1.qx;
-      var qy = ref$1.qy;
+      var qx = px1 * 2 - params.qx;
+      var qy = py1 * 2 - params.qy;
       params.qx = qx;
       params.qy = qy;
-      // @ts-ignore
       result = ['Q', qx, qy ].concat( values);
     } else if (pathCommand === 'Q') {
       var nqx = values[0];
@@ -3310,7 +3254,6 @@
       params.qy = nqy;
     }
 
-    // @ts-ignore -- we-re switching `pathSegment` type
     return result;
   }
 
@@ -3319,16 +3262,20 @@
    * with all segments are in non-shorthand notation
    * with absolute values.
    *
-   * @param {string | SVGPathCommander.pathArray} path the `pathArray` to be checked
+   * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
    * @returns {boolean} iteration result
    */
   function isNormalizedArray(path) {
     // @ts-ignore -- `isAbsoluteArray` also checks if it's `Array`
-    return isAbsoluteArray(path) && path.every(function (seg) { return 'ACLMQZ'.includes(seg[0]); });
+    return isAbsoluteArray(path) && path.every(function (ref) {
+      var pc = ref[0];
+
+      return 'ACLMQZ'.includes(pc);
+    });
   }
 
   /**
-   * @type {SVGPathCommander.parserParams}
+   * @type {SVGPath.parserParams}
    */
   var paramsParser = {
     x1: 0, y1: 0, x2: 0, y2: 0, x: 0, y: 0, qx: null, qy: null,
@@ -3339,36 +3286,24 @@
    * * convert segments to absolute values
    * * convert shorthand path commands to their non-shorthand notation
    *
-   * @param {string | SVGPathCommander.pathArray} pathInput the string to be parsed or 'pathArray'
-   * @returns {SVGPathCommander.normalArray} the normalized `pathArray`
+   * @param {string | SVGPath.pathArray} pathInput the string to be parsed or 'pathArray'
+   * @returns {SVGPath.normalArray} the normalized `pathArray`
    */
   function normalizePath(pathInput) {
     var assign;
 
     if (isNormalizedArray(pathInput)) {
-      // @ts-ignore -- `isNormalizedArray` checks if it's `pathArray`
       return clonePath(pathInput);
     }
 
-    /** @type {SVGPathCommander.normalArray} */
-    // @ts-ignore -- `absoluteArray` will become a `normalArray`
+    /** @type {SVGPath.normalArray} */
     var path = pathToAbsolute(pathInput);
     var params = Object.assign({}, paramsParser);
-    var allPathCommands = [];
     var ii = path.length;
-    var pathCommand = '';
-    var prevCommand = '';
 
     for (var i = 0; i < ii; i += 1) {
-      (assign = path[i], pathCommand = assign[0]);
-
-      // Save current path command
-      allPathCommands[i] = pathCommand;
-      // Get previous path command
-      if (i) { prevCommand = allPathCommands[i - 1]; }
-      // Previous path command is used to normalizeSegment
-      // @ts-ignore -- expected on normalization
-      path[i] = normalizeSegment(path[i], params, prevCommand);
+      (assign = path[i], assign[0]);
+      path[i] = normalizeSegment(path[i], params);
 
       var segment = path[i];
       var seglen = segment.length;
@@ -3391,8 +3326,8 @@
    * use `splitPath` first and apply this utility on each
    * sub-path separately.
    *
-   * @param {SVGPathCommander.pathArray | string} pathInput the `pathArray` source
-   * @return {SVGPathCommander.pathArray} a fixed `pathArray`
+   * @param {SVGPath.pathArray | string} pathInput the `pathArray` source
+   * @return {SVGPath.pathArray} a fixed `pathArray`
    */
   function fixPath(pathInput) {
     var pathArray = parsePathString(pathInput);
@@ -3408,8 +3343,8 @@
     var x = ref$1[0];
     var y = ref$1[1];
 
+    /* istanbul ignore else */
     if (isClosed && mx === x && my === y) {
-      // @ts-ignore -- `pathSegment[]` is quite a `pathArray`
       return pathArray.slice(0, -1);
     }
     return pathArray;
@@ -3419,12 +3354,16 @@
    * Iterates an array to check if it's a `pathArray`
    * with all C (cubic bezier) segments.
    *
-   * @param {string | SVGPathCommander.pathArray} path the `Array` to be checked
+   * @param {string | SVGPath.pathArray} path the `Array` to be checked
    * @returns {boolean} iteration result
    */
   function isCurveArray(path) {
     // @ts-ignore -- `isPathArray` also checks if it's `Array`
-    return isPathArray(path) && path.every(function (seg) { return 'MC'.includes(seg[0]); });
+    return isNormalizedArray(path) && path.every(function (ref) {
+      var pc = ref[0];
+
+      return 'MC'.includes(pc);
+    });
   }
 
   /**
@@ -3611,33 +3550,46 @@
   }
 
   /**
-   * Returns the length of a line (L,V,H,Z) segment,
-   * or a point at a given length.
+   * Returns a {x,y} point at a given length, the total length and
+   * the minimum and maximum {x,y} coordinates of a line (L,V,H,Z) segment.
    *
    * @param {number} x1 the starting point X
    * @param {number} y1 the starting point Y
    * @param {number} x2 the ending point X
    * @param {number} y2 the ending point Y
    * @param {number=} distance the distance to point
-   * @returns {{x: number, y: number} | number} the segment length or point
+   * @returns {SVGPath.lengthFactory} the segment length, point, min & max
    */
   function segmentLineFactory(x1, y1, x2, y2, distance) {
     var length = distanceSquareRoot([x1, y1], [x2, y2]);
-    var margin = 0.001;
+    var point = { x: 0, y: 0 };
 
+    /* istanbul ignore else */
     if (typeof distance === 'number') {
-      if (distance < margin) {
-        return { x: x1, y: y1 };
+      if (distance === 0) {
+        point = { x: x1, y: y1 };
+      } else if (distance >= length) {
+        point = { x: x2, y: y2 };
+      } else {
+        var ref = midPoint([x1, y1], [x2, y2], distance / length);
+        var x = ref[0];
+        var y = ref[1];
+        point = { x: x, y: y };
       }
-      if (distance > length + margin) {
-        return { x: x2, y: y2 };
-      }
-      var ref = midPoint([x1, y1], [x2, y2], distance / length);
-      var x = ref[0];
-      var y = ref[1];
-      return { x: x, y: y };
     }
-    return length;
+
+    return {
+      length: length,
+      point: point,
+      min: {
+        x: Math.min(x1, x2),
+        y: Math.min(y1, y2),
+      },
+      max: {
+        x: Math.max(x1, x2),
+        y: Math.max(y1, y2),
+      },
+    };
   }
 
   /**
@@ -3662,10 +3614,10 @@
     var p6 = midPoint(p4, p5, t);
     var seg1 = p0.concat( p2, p4, p6, [t]);
     // @ts-ignore
-    var cp1 = segmentLineFactory.apply(void 0, seg1);
+    var cp1 = segmentLineFactory.apply(void 0, seg1).point;
     var seg2 = p6.concat( p5, p3, p1, [0]);
     // @ts-ignore
-    var cp2 = segmentLineFactory.apply(void 0, seg2);
+    var cp2 = segmentLineFactory.apply(void 0, seg2).point;
 
     // @ts-ignore
     return [cp1.x, cp1.y, cp2.x, cp2.y, x2, y2];
@@ -3674,13 +3626,13 @@
   /**
    * Converts any segment to C (cubic-bezier).
    *
-   * @param {SVGPathCommander.pathSegment} segment the source segment
-   * @param {SVGPathCommander.parserParams} params the source segment parameters
-   * @returns {SVGPathCommander.cubicSegment | SVGPathCommander.MSegment} the cubic-bezier segment
+   * @param {SVGPath.pathSegment} segment the source segment
+   * @param {SVGPath.parserParams} params the source segment parameters
+   * @returns {SVGPath.cubicSegment | SVGPath.MSegment} the cubic-bezier segment
    */
   function segmentToCubic(segment, params) {
     var pathCommand = segment[0];
-    var values = segment.slice(1).map(function (n) { return +n; });
+    var values = segment.slice(1).map(Number);
     var x = values[0];
     var y = values[1];
     var args;
@@ -3701,22 +3653,17 @@
         return segment;
       case 'A':
         args = [px1, py1 ].concat( values);
-        // @ts-ignore -- relax, the utility will return 6 numbers
         return ['C' ].concat( arcToCubic.apply(void 0, args));
       case 'Q':
         params.qx = x;
         params.qy = y;
         args = [px1, py1 ].concat( values);
-        // @ts-ignore -- also returning 6 numbers
         return ['C' ].concat( quadToCubic.apply(void 0, args));
       case 'L':
-        // @ts-ignore -- also returning 6 numbers
         return ['C' ].concat( lineToCubic(px1, py1, x, y));
       case 'Z':
-        // @ts-ignore -- also returning 6 numbers
         return ['C' ].concat( lineToCubic(px1, py1, px, py));
     }
-    // @ts-ignore -- we're switching `pathSegment` type
     return segment;
   }
 
@@ -3727,12 +3674,13 @@
    * In addition, un-necessary `Z` segment is removed if previous segment
    * extends to the `M` segment.
    *
-   * @param {string | SVGPathCommander.pathArray} pathInput the string to be parsed or 'pathArray'
-   * @returns {SVGPathCommander.curveArray} the resulted `pathArray` converted to cubic-bezier
+   * @param {string | SVGPath.pathArray} pathInput the string to be parsed or 'pathArray'
+   * @returns {SVGPath.curveArray} the resulted `pathArray` converted to cubic-bezier
    */
   function pathToCurve(pathInput) {
     var assign;
 
+    /* istanbul ignore else */
     if (isCurveArray(pathInput)) {
       // @ts-ignore -- `isCurveArray` checks if it's `pathArray`
       return clonePath(pathInput);
@@ -3767,7 +3715,7 @@
 
   /**
    * SVGPathCommander default options
-   * @type {SVGPathCommander.options}
+   * @type {SVGPath.options}
    */
   var defaultOptions = {
     origin: [0, 0, 0],
@@ -3778,23 +3726,23 @@
    * Rounds the values of a `pathArray` instance to
    * a specified amount of decimals and returns it.
    *
-   * @param {SVGPathCommander.pathArray} path the source `pathArray`
-   * @param {number | boolean} roundOption the amount of decimals to round numbers to
-   * @returns {SVGPathCommander.pathArray} the resulted `pathArray` with rounded values
+   * @param {SVGPath.pathArray} path the source `pathArray`
+   * @param {number | 'off'} roundOption the amount of decimals to round numbers to
+   * @returns {SVGPath.pathArray} the resulted `pathArray` with rounded values
    */
   function roundPath(path, roundOption) {
     var round = defaultOptions.round;
-    if (roundOption === false || round === false) { return clonePath(path); }
-    round = roundOption >= 1 ? roundOption : round;
+    if (roundOption === 'off' || round === 'off') { return clonePath(path); }
+    // round = roundOption >= 1 ? roundOption : round;
+    // allow for ZERO decimals
+    round = roundOption >= 0 ? roundOption : round;
     // to round values to the power
     // the `round` value must be integer
-    // @ts-ignore
-    var pow = round >= 1 ? (Math.pow( 10, round )) : 1;
+    var pow = typeof round === 'number' && round >= 1 ? (Math.pow( 10, round )) : 1;
 
-    // @ts-ignore -- `pathSegment[]` is `pathArray`
     return path.map(function (pi) {
       var values = pi.slice(1).map(Number)
-        .map(function (n) { return (n % 1 === 0 ? n : Math.round(n * pow) / pow); });
+        .map(function (n) { return (round ? (Math.round(n * pow) / pow) : Math.round(n)); });
       return [pi[0] ].concat( values);
     });
   }
@@ -3803,8 +3751,8 @@
    * Returns a valid `d` attribute string value created
    * by rounding values and concatenating the `pathArray` segments.
    *
-   * @param {SVGPathCommander.pathArray} path the `pathArray` object
-   * @param {any} round amount of decimals to round values to
+   * @param {SVGPath.pathArray} path the `pathArray` object
+   * @param {number | 'off'} round amount of decimals to round values to
    * @returns {string} the concatenated path string
    */
   function pathToString(path, round) {
@@ -3818,19 +3766,239 @@
    * In the process, values are converted to absolute
    * for visual consistency.
    *
-   * @param {SVGPathCommander.pathArray | string} pathInput the source `pathArray`
-   * @return {string[]} an array with all sub-path strings
+   * @param {SVGPath.pathArray} pathInput the source `pathArray`
+   * @return {SVGPath.pathArray[]} an array with all sub-path strings
    */
   function splitPath(pathInput) {
-    return pathToString(pathToAbsolute(pathInput), 0)
-      .replace(/(m|M)/g, '|$1')
-      .split('|')
-      .map(function (s) { return s.trim(); })
-      .filter(function (s) { return s; });
+    /** @type {SVGPath.pathArray[]} */
+    var composite = [];
+    /** @type {SVGPath.pathArray} */
+    var path;
+    var pi = -1;
+
+    pathInput.forEach(function (seg) {
+      if (seg[0] === 'M') {
+        path = [seg];
+        pi += 1;
+      } else {
+        path = path.concat( [seg]);
+      }
+      composite[pi] = path;
+    });
+
+    return composite;
   }
 
   /**
-   * Returns a point at a given length of a C (cubic-bezier) segment.
+   *
+   * @param {{x: number, y: number}} v0
+   * @param {{x: number, y: number}} v1
+   * @returns {{x: number, y: number}}
+   */
+  function angleBetween(v0, v1) {
+    var v0x = v0.x;
+    var v0y = v0.y;
+    var v1x = v1.x;
+    var v1y = v1.y;
+    var p = v0x * v1x + v0y * v1y;
+    var n = Math.sqrt((Math.pow( v0x, 2 ) + Math.pow( v0y, 2 )) * (Math.pow( v1x, 2 ) + Math.pow( v1y, 2 )));
+    var sign = v0x * v1y - v0y * v1x < 0 ? -1 : 1;
+    var angle = sign * Math.acos(p / n);
+
+    return angle;
+  }
+
+  /**
+   * Returns a {x,y} point at a given length, the total length and
+   * the minimum and maximum {x,y} coordinates of a C (cubic-bezier) segment.
+   * @see https://github.com/MadLittleMods/svg-curve-lib/blob/master/src/js/svg-curve-lib.js
+   *
+   * @param {number} x1 the starting x position
+   * @param {number} y1 the starting y position
+   * @param {number} RX x-radius of the arc
+   * @param {number} RY y-radius of the arc
+   * @param {number} angle x-axis-rotation of the arc
+   * @param {number} LAF large-arc-flag of the arc
+   * @param {number} SF sweep-flag of the arc
+   * @param {number} x the ending x position
+   * @param {number} y the ending y position
+   * @param {number} t the point distance
+   * @returns {{x: number, y: number}} the requested point
+   */
+  function getPointAtArcSegmentLength(x1, y1, RX, RY, angle, LAF, SF, x, y, t) {
+    var abs = Math.abs;
+    var sin = Math.sin;
+    var cos = Math.cos;
+    var sqrt = Math.sqrt;
+    var PI = Math.PI;
+    var rx = abs(RX);
+    var ry = abs(RY);
+    var xRot = ((angle % 360) + 360) % 360;
+    var xRotRad = xRot * (PI / 180);
+
+    if (x1 === x && y1 === y) {
+      return { x: x1, y: y1 };
+    }
+
+    if (rx === 0 || ry === 0) {
+      return segmentLineFactory(x1, y1, x, y, t).point;
+    }
+
+    var dx = (x1 - x) / 2;
+    var dy = (y1 - y) / 2;
+
+    var transformedPoint = {
+      x: cos(xRotRad) * dx + sin(xRotRad) * dy,
+      y: -sin(xRotRad) * dx + cos(xRotRad) * dy,
+    };
+
+    var radiiCheck = Math.pow( transformedPoint.x, 2 ) / Math.pow( rx, 2 ) + Math.pow( transformedPoint.y, 2 ) / Math.pow( ry, 2 );
+
+    if (radiiCheck > 1) {
+      rx *= sqrt(radiiCheck);
+      ry *= sqrt(radiiCheck);
+    }
+
+    var cSquareNumerator = Math.pow( rx, 2 ) * Math.pow( ry, 2 )
+      - Math.pow( rx, 2 ) * Math.pow( transformedPoint.y, 2 )
+      - Math.pow( ry, 2 ) * Math.pow( transformedPoint.x, 2 );
+
+    var cSquareRootDenom = Math.pow( rx, 2 ) * Math.pow( transformedPoint.y, 2 )
+      + Math.pow( ry, 2 ) * Math.pow( transformedPoint.x, 2 );
+
+    var cRadicand = cSquareNumerator / cSquareRootDenom;
+    cRadicand = cRadicand < 0 ? 0 : cRadicand;
+    var cCoef = (LAF !== SF ? 1 : -1) * sqrt(cRadicand);
+    var transformedCenter = {
+      x: cCoef * ((rx * transformedPoint.y) / ry),
+      y: cCoef * (-(ry * transformedPoint.x) / rx),
+    };
+
+    var center = {
+      x: cos(xRotRad) * transformedCenter.x
+        - sin(xRotRad) * transformedCenter.y + (x1 + x) / 2,
+      y: sin(xRotRad) * transformedCenter.x
+        + cos(xRotRad) * transformedCenter.y + (y1 + y) / 2,
+    };
+
+    var startVector = {
+      x: (transformedPoint.x - transformedCenter.x) / rx,
+      y: (transformedPoint.y - transformedCenter.y) / ry,
+    };
+
+    var startAngle = angleBetween({ x: 1, y: 0 }, startVector);
+
+    var endVector = {
+      x: (-transformedPoint.x - transformedCenter.x) / rx,
+      y: (-transformedPoint.y - transformedCenter.y) / ry,
+    };
+
+    var sweepAngle = angleBetween(startVector, endVector);
+    if (!SF && sweepAngle > 0) {
+      sweepAngle -= 2 * PI;
+    } else if (SF && sweepAngle < 0) {
+      sweepAngle += 2 * PI;
+    }
+    sweepAngle %= 2 * PI;
+
+    var alpha = startAngle + sweepAngle * t;
+    var ellipseComponentX = rx * cos(alpha);
+    var ellipseComponentY = ry * sin(alpha);
+
+    var point = {
+      x: cos(xRotRad) * ellipseComponentX
+        - sin(xRotRad) * ellipseComponentY
+        + center.x,
+      y: sin(xRotRad) * ellipseComponentX
+        + cos(xRotRad) * ellipseComponentY
+        + center.y,
+    };
+
+    // to be used later
+    // point.ellipticalArcStartAngle = startAngle;
+    // point.ellipticalArcEndAngle = startAngle + sweepAngle;
+    // point.ellipticalArcAngle = alpha;
+
+    // point.ellipticalArcCenter = center;
+    // point.resultantRx = rx;
+    // point.resultantRy = ry;
+
+    return point;
+  }
+
+  /**
+   * Returns a {x,y} point at a given length, the total length and
+   * the shape minimum and maximum {x,y} coordinates of an A (arc-to) segment.
+   *
+   * @param {number} X1 the starting x position
+   * @param {number} Y1 the starting y position
+   * @param {number} RX x-radius of the arc
+   * @param {number} RY y-radius of the arc
+   * @param {number} angle x-axis-rotation of the arc
+   * @param {number} LAF large-arc-flag of the arc
+   * @param {number} SF sweep-flag of the arc
+   * @param {number} X2 the ending x position
+   * @param {number} Y2 the ending y position
+   * @param {number} distance the point distance
+   * @returns {SVGPath.lengthFactory} the segment length, point, min & max
+   */
+  function segmentArcFactory(X1, Y1, RX, RY, angle, LAF, SF, X2, Y2, distance) {
+    var assign;
+
+    var distanceIsNumber = typeof distance === 'number';
+    var x = X1; var y = Y1;
+    var LENGTH = 0;
+    var prev = [x, y, LENGTH];
+    var cur = [x, y];
+    var t = 0;
+    var POINT = { x: 0, y: 0 };
+    var POINTS = [{ x: x, y: y }];
+
+    if (distanceIsNumber && distance === 0) {
+      POINT = { x: x, y: y };
+    }
+
+    var sampleSize = 300;
+    for (var j = 0; j <= sampleSize; j += 1) {
+      t = j / sampleSize;
+
+      ((assign = getPointAtArcSegmentLength(X1, Y1, RX, RY, angle, LAF, SF, X2, Y2, t), x = assign.x, y = assign.y));
+      POINTS = POINTS.concat( [{ x: x, y: y }]);
+      LENGTH += distanceSquareRoot(cur, [x, y]);
+      cur = [x, y];
+
+      if (distanceIsNumber && LENGTH > distance && distance > prev[2]) {
+        var dv = (LENGTH - distance) / (LENGTH - prev[2]);
+
+        POINT = {
+          x: cur[0] * (1 - dv) + prev[0] * dv,
+          y: cur[1] * (1 - dv) + prev[1] * dv,
+        };
+      }
+      prev = [x, y, LENGTH];
+    }
+
+    if (distanceIsNumber && distance >= LENGTH) {
+      POINT = { x: X2, y: Y2 };
+    }
+
+    return {
+      length: LENGTH,
+      point: POINT,
+      min: {
+        x: Math.min.apply(Math, POINTS.map(function (n) { return n.x; })),
+        y: Math.min.apply(Math, POINTS.map(function (n) { return n.y; })),
+      },
+      max: {
+        x: Math.max.apply(Math, POINTS.map(function (n) { return n.x; })),
+        y: Math.max.apply(Math, POINTS.map(function (n) { return n.y; })),
+      },
+    };
+  }
+
+  /**
+   * Returns a {x,y} point at a given length, the total length and
+   * the minimum and maximum {x,y} coordinates of a C (cubic-bezier) segment.
    *
    * @param {number} x1 the starting point X
    * @param {number} y1 the starting point Y
@@ -3858,7 +4026,7 @@
   }
 
   /**
-   * Returns the length of a C (cubic-bezier) segment,
+   * Returns the length of a C (cubic-bezier) segment
    * or an {x,y} point at a given length.
    *
    * @param {number} x1 the starting point X
@@ -3870,104 +4038,65 @@
    * @param {number} x2 the ending point X
    * @param {number} y2 the ending point Y
    * @param {number=} distance the point distance
-   * @returns {{x: number, y: number} | number} the segment length or point
+   * @returns {SVGPath.lengthFactory} the segment length, point, min & max
    */
   function segmentCubicFactory(x1, y1, c1x, c1y, c2x, c2y, x2, y2, distance) {
     var assign;
 
+    var distanceIsNumber = typeof distance === 'number';
     var x = x1; var y = y1;
-    var lengthMargin = 0.001;
-    var totalLength = 0;
-    var prev = [x1, y1, totalLength];
-    /** @type {[number, number]} */
-    var cur = [x1, y1];
+    var LENGTH = 0;
+    var prev = [x, y, LENGTH];
+    var cur = [x, y];
     var t = 0;
+    var POINT = { x: 0, y: 0 };
+    var POINTS = [{ x: x, y: y }];
 
-    if (typeof distance === 'number' && distance < lengthMargin) {
-      return { x: x, y: y };
+    if (distanceIsNumber && distance === 0) {
+      POINT = { x: x, y: y };
     }
 
-    var n = 100;
-    for (var j = 0; j <= n; j += 1) {
-      t = j / n;
+    var sampleSize = 300;
+    for (var j = 0; j <= sampleSize; j += 1) {
+      t = j / sampleSize;
 
       ((assign = getPointAtCubicSegmentLength(x1, y1, c1x, c1y, c2x, c2y, x2, y2, t), x = assign.x, y = assign.y));
-      totalLength += distanceSquareRoot(cur, [x, y]);
+      POINTS = POINTS.concat( [{ x: x, y: y }]);
+      LENGTH += distanceSquareRoot(cur, [x, y]);
       cur = [x, y];
 
-      if (typeof distance === 'number' && totalLength >= distance) {
-        var dv = (totalLength - distance) / (totalLength - prev[2]);
+      if (distanceIsNumber && LENGTH > distance && distance > prev[2]) {
+        var dv = (LENGTH - distance) / (LENGTH - prev[2]);
 
-        return {
+        POINT = {
           x: cur[0] * (1 - dv) + prev[0] * dv,
           y: cur[1] * (1 - dv) + prev[1] * dv,
         };
       }
-      prev = [x, y, totalLength];
+      prev = [x, y, LENGTH];
     }
 
-    if (typeof distance === 'number' && distance >= totalLength) {
-      return { x: x2, y: y2 };
-    }
-    return totalLength;
-  }
-
-  /**
-   * Returns the length of a A (arc-to) segment,
-   * or an {x,y} point at a given length.
-   *
-   * @param {number} X1 the starting x position
-   * @param {number} Y1 the starting y position
-   * @param {number} RX x-radius of the arc
-   * @param {number} RY y-radius of the arc
-   * @param {number} angle x-axis-rotation of the arc
-   * @param {number} LAF large-arc-flag of the arc
-   * @param {number} SF sweep-flag of the arc
-   * @param {number} X2 the ending x position
-   * @param {number} Y2 the ending y position
-   * @param {number} distance the point distance
-   * @returns {{x: number, y: number} | number} the segment length or point
-   */
-  function segmentArcFactory(X1, Y1, RX, RY, angle, LAF, SF, X2, Y2, distance) {
-    var assign;
-
-    var ref = [X1, Y1];
-    var x = ref[0];
-    var y = ref[1];
-    var cubicSeg = arcToCubic(X1, Y1, RX, RY, angle, LAF, SF, X2, Y2);
-    var lengthMargin = 0.001;
-    var totalLength = 0;
-    var cubicSubseg = [];
-    var argsc = [];
-    var segLen = 0;
-
-    if (typeof distance === 'number' && distance < lengthMargin) {
-      return { x: x, y: y };
+    if (distanceIsNumber && distance >= LENGTH) {
+      POINT = { x: x2, y: y2 };
     }
 
-    for (var i = 0, ii = cubicSeg.length; i < ii; i += 6) {
-      cubicSubseg = cubicSeg.slice(i, i + 6);
-      argsc = [x, y ].concat( cubicSubseg);
-      // @ts-ignore
-      segLen = segmentCubicFactory.apply(void 0, argsc);
-      if (typeof distance === 'number' && totalLength + segLen >= distance) {
-        // @ts-ignore -- this is a `cubicSegment`
-        return segmentCubicFactory.apply(void 0, argsc.concat( [distance - totalLength] ));
-      }
-      totalLength += segLen;
-      (assign = cubicSubseg.slice(-2), x = assign[0], y = assign[1]);
-    }
-
-    if (typeof distance === 'number' && distance >= totalLength) {
-      return { x: X2, y: Y2 };
-    }
-
-    return totalLength;
+    return {
+      length: LENGTH,
+      point: POINT,
+      min: {
+        x: Math.min.apply(Math, POINTS.map(function (n) { return n.x; })),
+        y: Math.min.apply(Math, POINTS.map(function (n) { return n.y; })),
+      },
+      max: {
+        x: Math.max.apply(Math, POINTS.map(function (n) { return n.x; })),
+        y: Math.max.apply(Math, POINTS.map(function (n) { return n.y; })),
+      },
+    };
   }
 
   /**
    * Returns the {x,y} coordinates of a point at a
-   * given length of a quad-bezier segment.
+   * given length of a quadratic-bezier segment.
    *
    * @see https://github.com/substack/point-at-length
    *
@@ -3993,8 +4122,8 @@
   }
 
   /**
-   * Returns the Q (quadratic-bezier) segment length,
-   * or an {x,y} point at a given length.
+   * Returns a {x,y} point at a given length, the total length and
+   * the minimum and maximum {x,y} coordinates of a Q (quadratic-bezier) segment.
    *
    * @param {number} x1 the starting point X
    * @param {number} y1 the starting point Y
@@ -4003,139 +4132,154 @@
    * @param {number} x2 the ending point X
    * @param {number} y2 the ending point Y
    * @param {number=} distance the distance to point
-   * @returns {{x: number, y: number} | number} the segment length or point
+   * @returns {SVGPath.lengthFactory} the segment length, point, min & max
    */
   function segmentQuadFactory(x1, y1, qx, qy, x2, y2, distance) {
     var assign;
 
+    var distanceIsNumber = typeof distance === 'number';
     var x = x1; var y = y1;
-    var lengthMargin = 0.001;
-    var totalLength = 0;
-    var prev = [x1, y1, totalLength];
-    /** @type {[number, number]} */
-    var cur = [x1, y1];
+    var LENGTH = 0;
+    var prev = [x, y, LENGTH];
+    var cur = [x, y];
     var t = 0;
+    var POINT = { x: 0, y: 0 };
+    var POINTS = [{ x: x, y: y }];
 
-    if (typeof distance === 'number' && distance < lengthMargin) {
-      return { x: x, y: y };
+    if (distanceIsNumber && distance === 0) {
+      POINT = { x: x, y: y };
     }
 
-    var n = 100;
-    for (var j = 0; j <= n; j += 1) {
-      t = j / n;
+    var sampleSize = 300;
+    for (var j = 0; j <= sampleSize; j += 1) {
+      t = j / sampleSize;
 
       ((assign = getPointAtQuadSegmentLength(x1, y1, qx, qy, x2, y2, t), x = assign.x, y = assign.y));
-      totalLength += distanceSquareRoot(cur, [x, y]);
+      POINTS = POINTS.concat( [{ x: x, y: y }]);
+      LENGTH += distanceSquareRoot(cur, [x, y]);
       cur = [x, y];
 
-      if (typeof distance === 'number' && totalLength >= distance) {
-        var dv = (totalLength - distance) / (totalLength - prev[2]);
+      if (distanceIsNumber && LENGTH > distance && distance > prev[2]) {
+        var dv = (LENGTH - distance) / (LENGTH - prev[2]);
 
-        return {
+        POINT = {
           x: cur[0] * (1 - dv) + prev[0] * dv,
           y: cur[1] * (1 - dv) + prev[1] * dv,
         };
       }
-      prev = [x, y, totalLength];
+      prev = [x, y, LENGTH];
     }
-    if (typeof distance === 'number' && distance >= totalLength) {
-      return { x: x2, y: y2 };
+
+    /* istanbul ignore else */
+    if (distanceIsNumber && distance >= LENGTH) {
+      POINT = { x: x2, y: y2 };
     }
-    return totalLength;
+
+    return {
+      length: LENGTH,
+      point: POINT,
+      min: {
+        x: Math.min.apply(Math, POINTS.map(function (n) { return n.x; })),
+        y: Math.min.apply(Math, POINTS.map(function (n) { return n.y; })),
+      },
+      max: {
+        x: Math.max.apply(Math, POINTS.map(function (n) { return n.x; })),
+        y: Math.max.apply(Math, POINTS.map(function (n) { return n.y; })),
+      },
+    };
   }
 
   /**
-   * Returns a {x,y} point at a given length of a shape or the shape total length.
+   * Returns a {x,y} point at a given length
+   * of a shape, the shape total length and
+   * the shape minimum and maximum {x,y} coordinates.
    *
-   * @param {string | SVGPathCommander.pathArray} pathInput the `pathArray` to look into
+   * @param {string | SVGPath.pathArray} pathInput the `pathArray` to look into
    * @param {number=} distance the length of the shape to look at
-   * @returns {{x: number, y: number} | number} the total length or point
+   * @returns {SVGPath.lengthFactory} the path length, point, min & max
    */
   function pathLengthFactory(pathInput, distance) {
-    var assign, assign$1, assign$2;
+    var assign, assign$1, assign$2, assign$3, assign$4, assign$5, assign$6, assign$7;
 
-    var totalLength = 0;
-    var isM = true;
-    /** @type {number[]} */
+    var path = normalizePath(pathInput);
+    var distanceIsNumber = typeof distance === 'number';
+    var isM;
     var data = [];
-    var pathCommand = 'M';
-    var segLen = 0;
+    var pathCommand;
     var x = 0;
     var y = 0;
     var mx = 0;
     var my = 0;
     var seg;
-    var path = fixPath(normalizePath(pathInput));
+    var MIN = [];
+    var MAX = [];
+    var length = 0;
+    var min = { x: 0, y: 0 };
+    var max = min;
+    var point = min;
+    var POINT = min;
+    var LENGTH = 0;
 
     for (var i = 0, ll = path.length; i < ll; i += 1) {
       seg = path[i];
       (assign = seg, pathCommand = assign[0]);
       isM = pathCommand === 'M';
-      // @ts-ignore
       data = !isM ? [x, y ].concat( seg.slice(1)) : data;
 
       // this segment is always ZERO
+      /* istanbul ignore else */
       if (isM) {
         // remember mx, my for Z
-        // @ts-ignore
         (assign$1 = seg, mx = assign$1[1], my = assign$1[2]);
-        if (typeof distance === 'number' && distance < 0.001) {
-          return { x: mx, y: my };
+        min = { x: mx, y: my };
+        max = min;
+        length = 0;
+
+        if (distanceIsNumber && distance < 0.001) {
+          POINT = min;
         }
       } else if (pathCommand === 'L') {
-        // @ts-ignore
-        segLen = segmentLineFactory.apply(void 0, data);
-        if (distance && totalLength + segLen >= distance) {
-          // @ts-ignore
-          return segmentLineFactory.apply(void 0, data.concat( [distance - totalLength] ));
-        }
-        totalLength += segLen;
+        ((assign$2 = segmentLineFactory.apply(void 0, data.concat( [(distance || 0) - LENGTH] )), length = assign$2.length, min = assign$2.min, max = assign$2.max, point = assign$2.point));
       } else if (pathCommand === 'A') {
-        // @ts-ignore
-        segLen = segmentArcFactory.apply(void 0, data);
-        if (distance && totalLength + segLen >= distance) {
-          // @ts-ignore
-          return segmentArcFactory.apply(void 0, data.concat( [distance - totalLength] ));
-        }
-        totalLength += segLen;
+        ((assign$3 = segmentArcFactory.apply(void 0, data.concat( [(distance || 0) - LENGTH] )), length = assign$3.length, min = assign$3.min, max = assign$3.max, point = assign$3.point));
       } else if (pathCommand === 'C') {
-        // @ts-ignore
-        segLen = segmentCubicFactory.apply(void 0, data);
-        if (distance && totalLength + segLen >= distance) {
-          // @ts-ignore
-          return segmentCubicFactory.apply(void 0, data.concat( [distance - totalLength] ));
-        }
-        totalLength += segLen;
+        ((assign$4 = segmentCubicFactory.apply(void 0, data.concat( [(distance || 0) - LENGTH] )), length = assign$4.length, min = assign$4.min, max = assign$4.max, point = assign$4.point));
       } else if (pathCommand === 'Q') {
-        // @ts-ignore
-        segLen = segmentQuadFactory.apply(void 0, data);
-        if (distance && totalLength + segLen >= distance) {
-          // @ts-ignore
-          return segmentQuadFactory.apply(void 0, data.concat( [distance - totalLength] ));
-        }
-        totalLength += segLen;
+        ((assign$5 = segmentQuadFactory.apply(void 0, data.concat( [(distance || 0) - LENGTH] )), length = assign$5.length, min = assign$5.min, max = assign$5.max, point = assign$5.point));
       } else if (pathCommand === 'Z') {
         data = [x, y, mx, my];
-        // @ts-ignore
-        segLen = segmentLineFactory.apply(void 0, data);
-        if (distance && totalLength + segLen >= distance) {
-          // @ts-ignore
-          return segmentLineFactory.apply(void 0, data.concat( [distance - totalLength] ));
-        }
-        totalLength += segLen;
+        ((assign$6 = segmentLineFactory.apply(void 0, data.concat( [(distance || 0) - LENGTH] )), length = assign$6.length, min = assign$6.min, max = assign$6.max, point = assign$6.point));
       }
 
-      // @ts-ignore -- needed for the below
-      (assign$2 = pathCommand !== 'Z' ? seg.slice(-2) : [mx, my], x = assign$2[0], y = assign$2[1]);
+      if (distanceIsNumber && LENGTH < distance && LENGTH + length >= distance) {
+        POINT = point;
+      }
+
+      MAX = MAX.concat( [max]);
+      MIN = MIN.concat( [min]);
+      LENGTH += length;
+
+      (assign$7 = pathCommand !== 'Z' ? seg.slice(-2) : [mx, my], x = assign$7[0], y = assign$7[1]);
     }
 
     // native `getPointAtLength` behavior when the given distance
     // is higher than total length
-    if (distance && distance >= totalLength) {
-      return { x: x, y: y };
+    if (distanceIsNumber && distance >= LENGTH) {
+      POINT = { x: x, y: y };
     }
 
-    return totalLength;
+    return {
+      length: LENGTH,
+      point: POINT,
+      min: {
+        x: Math.min.apply(Math, MIN.map(function (n) { return n.x; })),
+        y: Math.min.apply(Math, MIN.map(function (n) { return n.y; })),
+      },
+      max: {
+        x: Math.max.apply(Math, MAX.map(function (n) { return n.x; })),
+        y: Math.max.apply(Math, MAX.map(function (n) { return n.y; })),
+      },
+    };
   }
 
   /**
@@ -4144,24 +4288,22 @@
    * The `normalizePath` version is lighter, faster, more efficient and more accurate
    * with paths that are not `curveArray`.
    *
-   * @param {string | SVGPathCommander.pathArray} pathInput the target `pathArray`
+   * @param {string | SVGPath.pathArray} pathInput the target `pathArray`
    * @returns {number} the shape total length
    */
   function getTotalLength(pathInput) {
-    // @ts-ignore - it's fine
-    return pathLengthFactory(pathInput);
+    return pathLengthFactory(pathInput).length;
   }
 
   /**
    * Returns [x,y] coordinates of a point at a given length of a shape.
    *
-   * @param {string | SVGPathCommander.pathArray} pathInput the `pathArray` to look into
+   * @param {string | SVGPath.pathArray} pathInput the `pathArray` to look into
    * @param {number} distance the length of the shape to look at
    * @returns {{x: number, y: number}} the requested {x, y} point coordinates
    */
   function getPointAtLength(pathInput, distance) {
-    // @ts-ignore
-    return pathLengthFactory(pathInput, distance);
+    return pathLengthFactory(pathInput, distance).point;
   }
 
   /**
@@ -4196,13 +4338,12 @@
    *
    * Returns the perimeter of a polygon.
    *
-   * @param {number[][]} polygon an array of coordinates
+   * @param {[number,number][]} polygon an array of coordinates
    * @returns {number} the polygon length
    */
   function polygonLength(polygon) {
     return polygon.reduce(function (length, point, i) {
       if (i) {
-        // @ts-ignore
         return length + distanceSquareRoot(polygon[i - 1], point);
       }
       return 0;
@@ -4265,7 +4406,7 @@
 
   /**
    * Returns an existing polygon or false if it's not a polygon.
-   * @param {SVGPathCommander.pathArray} pathArray target `pathArray`
+   * @param {SVGPath.pathArray} pathArray target `pathArray`
    * @returns {KUTE.exactPolygon | false} the resulted polygon
    */
   function exactPolygon(pathArray) {
@@ -4298,12 +4439,12 @@
 
   /**
    * Returns a new polygon polygon.
-   * @param {SVGPathCommander.pathArray} parsed target `pathArray`
+   * @param {SVGPath.pathArray} parsed target `pathArray`
    * @param {number} maxLength the maximum segment length
    * @returns {KUTE.exactPolygon} the resulted polygon
    */
   function approximatePolygon(parsed, maxLength) {
-    var ringPath = splitPath(pathToString(parsed))[0];
+    var ringPath = splitPath(parsed)[0];
     var normalPath = normalizePath(ringPath);
     var pathLength = getTotalLength(normalPath);
     var polygon = [];
@@ -4558,8 +4699,7 @@
       var pathArray2 = this.valuesEnd[prop].polygon;
       // skip already processed paths
       // allow the component to work with pre-processed values
-      if (!pathArray1 || !pathArray2
-        || (pathArray1 && pathArray2 && pathArray1.length !== pathArray2.length)) {
+      if (!pathArray1 || !pathArray2 || (pathArray1.length !== pathArray2.length)) {
         var p1 = this.valuesStart[prop].original;
         var p2 = this.valuesEnd[prop].original;
         // process morphPrecision

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
+  <meta name="description" content="The Scroll Property component for KUTE.js allows you to animate the vertical scrolling for a target element or window on most browsers.">
+  <meta name="keywords" content="scroll,vertical scroll,kute.js,animation,javascript animation,tweening engine,animation engine,JavaScript,Native JavaScript,vanilla javascript,jQuery">
+  <meta name="author" content="dnp_theme">
+  <link rel="shortcut icon" href="./assets/img/favicon.ico">
+  <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,800|Roboto+Condensed:400,800" rel="stylesheet">
+
+  <title>KUTE.js Scroll Property</title>
+
+  <!-- RESET CSS -->
+  <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
+
+  <!-- DEMO KUTE CSS -->
+  <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
+
+  <!-- Synthax highlighter -->
+  <link href="./assets/css/prism.css" rel="stylesheet">
+
+  <style>
+    html {scroll-behavior: auto;}
+  </style>
+
+</head>
+
+<body>
+  <div class="site-wrapper">
+
+    <div class="navbar-wrapper">
+      <div class="content-wrap">
+        <nav class="navbar">
+          <a href="index.html"><h1>KUTE.<span>js</span></h1></a>
+          <div class="nav-wrapper d-flex align-items-center justify-content-between">
+            <ul class="nav">
+              <li class="btn-group active"><a href="#" data-function="toggle">Components <span class="caret"></span></a>
+                <ul class="subnav">
+                  <li><a href="transformFunctions.html">Transform Functions</a></li>
+                  <li><a href="transformMatrix.html">Transform Matrix</a></li>
+                  <li><a href="svgTransform.html">SVG Transform</a></li>
+                  <li><a href="svgMorph.html">SVG Morph</a></li>
+                  <li><a href="svgCubicMorph.html">SVG Cubic Morph</a></li>
+                  <li><a href="svgDraw.html">SVG Draw</a></li>
+                  <li><a href="filterEffects.html">Filter Effects</a></li>
+                  <li><a href="borderRadius.html">Border Radius</a></li>
+                  <li><a href="htmlAttributes.html">HTML Attributes</a></li>
+                  <li><a href="shadowProperties.html">Shadow Properties</a></li>
+                  <li><a href="colorProperties.html">Color Properties</a></li>
+                  <li><a href="boxModel.html">Box Model</a></li>
+                  <li><a href="clipProperty.html">Clip Property</a></li>
+                  <li><a href="backgroundPosition.html">Background Position</a></li>
+                  <li><a href="textProperties.html">Text Properties</a></li>
+                  <li><a href="opacityProperty.html">Opacity Property</a></li>
+                  <li class="active"><a href="scrollProperty.html">Scroll Property</a></li>
+                  <li><a href="textWrite.html">Text Write</a></li>
+                </ul>
+              </li>
+              <li><a href="https://github.com/thednp/kute.js/wiki">Wiki</a></li>
+            </ul>
+            <ul id="share">
+              <li>
+                <a class="facebook-link" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook">
+                  <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M1008 511.996c0 247.56-181.381 452.76-418.5 490v-346.62h115.561l22-143.381h-137.561v-93.1c0-39.221 19.221-77.461 80.82-77.461h62.561v-122s-56.762-9.68-111.041-9.68c-113.34 0-187.34 68.66-187.34 192.961v109.279h-126v143.381h126v346.62c-237.12-37.24-418.5-242.44-418.5-490 0-274 222-496 496-496s496 222 496 496z" fill="currentColor"></path></svg>
+                </a>
+              </li>
+              <li>
+                <a class="twitter-link" target="_blank" href="https://twitter.com/intent/tweet?text=Spread the word about %23KUTEJS animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter">
+                  <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M886.579 306.995c0.41 8.294 0.563 16.691 0.563 24.986 0 255.488-194.406 549.99-549.888 549.99-109.21 0-210.739-32-296.294-86.886 15.155 1.792 30.515 2.714 46.08 2.714 90.624 0 173.926-30.925 240.026-82.688-84.531-1.587-155.955-57.395-180.531-134.195 11.776 2.202 23.91 3.379 36.352 3.379 17.664 0 34.765-2.304 50.944-6.707-88.422-17.818-155.034-95.898-155.034-189.594 0-0.819 0-1.587 0-2.406 26.061 14.49 55.91 23.194 87.552 24.218-51.866-34.714-86.016-93.798-86.016-160.922 0-35.379 9.523-68.608 26.214-97.178 95.283 116.992 237.773 193.894 398.387 201.984-3.277-14.182-4.966-28.877-4.966-44.083 0-106.701 86.477-193.178 193.229-193.178 55.603 0 105.83 23.398 141.107 60.979 43.981-8.704 85.35-24.781 122.726-46.899-14.438 45.107-45.107 82.995-84.992 106.906 39.117-4.71 76.288-15.002 111.002-30.413-25.907 38.81-58.675 72.806-96.461 99.994z" fill="currentColor"></path></svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div class="content-wrap">
+      <h2 class="head-title">Scroll Property</h2>
+      <p class="condensed lead">The component that animates the <i>vertical scrolling</i> of a target <b>Element</b> as well as the <b>&lt;window&gt;</b> on most browsers.</p>
+    </div>
+
+    <div class="featurettes dark">
+      <div class="content-wrap">
+        <div class="columns">
+          <div class="col3">
+            <h3 class="border text-right">Overview</h3>
+            <p class="condensed text-right">The fully reworked component for <b>vertical scrolling</b> animation is an essential part of <b>KUTE</b>.js.</p>
+          </div>
+          <div class="col9 border">
+            <p class="condensed lead">The KUTE.js <b>Scroll Property</b> component enables animation for the vertical scroll of a target <b>Element</b> or the 
+              <b>&lt;window&gt;</b> on most browsers.</p>
+            <p>The vertical scrollling animation is a popular choice to spice up the in-page navigation, and most websites use a <i>Back To Top</i> button for 
+              scrolling all the way back to top. For this reason, our component doesn't support horizontal scrolling animation.</p>
+            <p>The component also uses <b>passive</b> event option for best possible performance along with other improvements like removed the need to use 
+              additional CSS or the use of <b>data-scrolling</b> attribute on the <b>&lt;body&gt;</b> element.</p>
+            <p>On animation start, the component will lock down all possible pointer events of the animation target to 
+              avoid any unwanted animation glitches.</p>            
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-wrap">
+
+      <h3>Example</h3>
+      
+<pre><code class="language-javascript">// all websites to top button
+KUTE.to(window,{scroll:0}).start()
+
+// scroll to a certain element
+KUTE.to(window,{scroll: document.getElementById('myElement').offsetTop }).start()
+
+// scroll to top an overflowing target element
+KUTE.to('#myElement',{scroll: 0 }).start()
+</code></pre>
+
+      <div id="scrollProperty" class="featurettes">
+        <div class="example-item" style="height:170px; overflow:hidden; max-width: calc(100% - 60px);">
+          <h4 class="text-dark" style="margin-top:10px">KUTE.js Scroll Property</h4>
+          <p>Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy 
+            foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive 
+            innovation via workplace diversity and empowerment.</p>
+
+          <p>Bring to the table win-win survival strategies to ensure proactive domination. At the end of the day, going forward, a new normal 
+            that has evolved from generation X is on the runway heading towards a streamlined cloud solution. User generated content in 
+            real-time will have multiple touchpoints for offshoring.</p>
+          
+          <p>Capitalize on low hanging fruit to identify a ballpark value added activity to beta test. Override the digital divide with 
+            additional clickthroughs from DevOps. Nanotechnology immersion along the information highway will close the loop on focusing 
+            solely on the bottom line.</p>
+
+          <h4 class="text-dark">Second Sample Heading</h4>
+          
+          <p>Podcasting operational change management inside of workflows to establish a framework. Taking seamless key performance indicators 
+            offline to maximise the long tail. Keeping your eye on the ball while performing a deep dive on the start-up mentality to derive 
+            convergence on cross-platform integration.</p>
+          
+          <p>Collaboratively administrate empowered markets via plug-and-play networks. Dynamically procrastinate B2C users after installed 
+            base benefits. Dramatically visualize customer directed convergence without revolutionary ROI.</p>
+        </div>
+        <div class="example-buttons"><a class="btn btn-olive" href="javascript:void(0)">Toggle</a></div>
+      </div>
+
+      <div class="featurettes">
+        <div class="example-item" style="height:170px; overflow:auto; max-width: calc(100% - 80px); scroll-behavior: smooth;">
+          <h4 id="sample-title" class="text-dark" style="margin-top:10px">scroll-behavior: smooth</h4>
+          <p>Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy 
+            foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive 
+            innovation via workplace diversity and empowerment.</p>
+
+          <p>Bring to the table win-win survival strategies to ensure proactive domination. At the end of the day, going forward, a new normal 
+            that has evolved from generation X is on the runway heading towards a streamlined cloud solution. User generated content in 
+            real-time will have multiple touchpoints for offshoring.</p>
+          
+          <p>Capitalize on low hanging fruit to identify a ballpark value added activity to beta test. Override the digital divide with 
+            additional clickthroughs from DevOps. Nanotechnology immersion along the information highway will close the loop on focusing 
+            solely on the bottom line.</p>
+
+          <h4 id="sample-title2" class="text-dark">Second Sample Heading</h4>
+          
+          <p>Podcasting operational change management inside of workflows to establish a framework. Taking seamless key performance indicators 
+            offline to maximise the long tail. Keeping your eye on the ball while performing a deep dive on the start-up mentality to derive 
+            convergence on cross-platform integration.</p>
+          
+          <p>Collaboratively administrate empowered markets via plug-and-play networks. Dynamically procrastinate B2C users after installed 
+            base benefits. Dramatically visualize customer directed convergence without revolutionary ROI.</p>
+        </div>
+        <div class="example-buttons">
+          <a class="btn btn-indigo" onclick="function kickScroll(e){e.preventDefault}" href="#sample-title2">Bottom</a>
+        </div>
+        <div class="example-buttons">
+          <a class="btn btn-olive" onclick="function kickScroll(e){e.preventDefault}" href="#sample-title">Top</a>
+        </div>
+      </div>
+      <p>The above shows a comparison of the <b>Scroll Property</b> component with the <code>scroll-behavior: smooth</code> CSS; while this browser 
+        feature shows excellent performance it lacks the flexibility and support for legacy browsers.</p>
+      
+      <h3>Notes</h3>
+      <ul>
+        <li>The <b>Scroll Property</b> component will lock down any pointer event such as <i>click</i>, <i>touch</i>, or any other event of the target on 
+          animation start to prevent any kind of animation glitches, so make sure to filter your tweens, perhaps you can take a look at the
+          <a href="./assets/js/scrollProperty.js">scrollProperty.js</a> sample code.</li>
+        <li>The scroll animation is not as smooth as with transform animations, it has no access at sub-pixel level, but you can play around
+          with various easing functions and durations to find the best possible outcome.</li>
+        <li>All pages in this documentation have a <code>&lt;a&gt;Back to top&lt;/a&gt;</code> button at the bottom, just in case you didn't notice, but 
+          only on this page <code>scrollProperty</code> component is used.</li>
+        <li>The component is only bundled with the <i>demo/src/kute-extra.js</i> file and not in the official build. That is thanks to 
+          <code>scroll-behavior</code>, but you can include this component in your custom builds to enable scrolling for legacy browsers.</li>
+      </ul>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="content-wrap">
+        <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+        <p>&copy; 2015 - 2022 &middot; <a href="https://github.com/thednp">thednp</a>.</p>
+      </div>
+    </footer>
+
+  </div>
+  <!-- /.site-wrapper -->
+
+  <!-- JavaScript =============================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+
+  <script src="./src/polyfill.min.js"></script>
+  <script src="./src/kute-extra.min.js"></script>
+  <script src="./assets/js/prism.js"></script>
+
+  <script src="./assets/js/scrollProperty.js"></script>
+  <script src="./assets/js/scripts.js"></script>
+</body>
+
+</html>

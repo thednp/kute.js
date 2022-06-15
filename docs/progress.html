@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
+  <meta name="description" content="A simple tool to showcase control KUTE.js tween objects progress.">
+  <meta name="keywords" content="kute,kute.js,animation,javascript animation,tweening engine,animation engine,progress,Javascript,Native Javascript,vanilla javascript,jQuery">
+  <meta name="author" content="dnp_theme">
+  <link rel="shortcut icon" href="./assets/img/favicon.ico">
+  <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,800|Roboto+Condensed:400,800" rel="stylesheet">
+
+  <title>KUTE.js Using Update Functions | Javascript Animation Engine</title>
+
+  <!-- RESET CSS -->
+  <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
+
+  <!-- DEMO KUTE CSS -->
+  <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
+
+  <!-- Synthax highlighter -->
+  <link href="./assets/css/prism.css" rel="stylesheet">
+
+  <style>
+      .text-example {
+          margin: 0 0 20px;
+          font-size: 28px
+      }
+
+      .red {
+          color: red
+      }
+      .slider {
+          margin-right: 20px;
+      }
+      input[type="range"] {
+          -webkit-appearance: none !important;
+          width: 100%;
+          height: 12px;
+          background-color: #b0cde4;
+          border: 0;
+          border-radius: 5px;
+          margin: auto;
+          transition: all 0.3s ease;
+      }
+      input[type="range"]:hover {
+          background-color: #a3bdd2;
+      }
+      input[type="range"]:focus {
+          outline: none;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+          -webkit-appearance: none !important;
+          width: 20px;
+          height: 20px;
+          background-color: #2196F3;
+          border-radius: 30px;
+          transition: all 0.5s ease;
+      }
+      input[type="range"]::-webkit-slider-thumb:hover {
+          background-color: #1b7bc7;
+      }
+      input[type="range"]::-webkit-slider-thumb:active {
+          box-shadow: 0px 0px 1px #1b7bc7;
+      }
+
+      #rangevalue {
+          position: absolute; bottom: 20px; right: 20px;
+      }
+
+  </style>
+</head>
+
+<body>
+  <div class="site-wrapper">
+
+    <div class="navbar-wrapper">
+      <div class="content-wrap">
+        <nav class="navbar">
+          <a href="index.html"><h1 class="active">KUTE.<span>js</span></h1></a>
+          <div class="nav-wrapper d-flex align-items-center justify-content-between">
+            <ul class="nav">
+              <li class="btn-group"><a href="#" data-function="toggle">Components <span class="caret"></span></a>
+                <ul class="subnav">
+                  <li><a href="transformFunctions.html">Transform Functions</a></li>
+                  <li><a href="transformMatrix.html">Transform Matrix</a></li>
+                  <li><a href="svgTransform.html">SVG Transform</a></li>
+                  <li><a href="svgMorph.html">SVG Morph</a></li>
+                  <li><a href="svgCubicMorph.html">SVG Cubic Morph</a></li>
+                  <li><a href="svgDraw.html">SVG Draw</a></li>
+                  <li><a href="filterEffects.html">Filter Effects</a></li>
+                  <li><a href="borderRadius.html">Border Radius</a></li>
+                  <li><a href="htmlAttributes.html">HTML Attributes</a></li>
+                  <li><a href="shadowProperties.html">Shadow Properties</a></li>
+                  <li><a href="colorProperties.html">Color Properties</a></li>
+                  <li><a href="boxModel.html">Box Model</a></li>
+                  <li><a href="clipProperty.html">Clip Property</a></li>
+                  <li><a href="backgroundPosition.html">Background Position</a></li>
+                  <li><a href="textProperties.html">Text Properties</a></li>
+                  <li><a href="opacityProperty.html">Opacity Property</a></li>
+                  <li><a href="scrollProperty.html">Scroll Property</a></li>
+                  <li><a href="textWrite.html">Text Write</a></li>
+                </ul>
+              </li>
+              <li><a href="https://github.com/thednp/kute.js/wiki">Wiki</a></li>
+            </ul>
+            <ul id="share">
+              <li>
+                <a class="facebook-link" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M1008 511.996c0 247.56-181.381 452.76-418.5 490v-346.62h115.561l22-143.381h-137.561v-93.1c0-39.221 19.221-77.461 80.82-77.461h62.561v-122s-56.762-9.68-111.041-9.68c-113.34 0-187.34 68.66-187.34 192.961v109.279h-126v143.381h126v346.62c-237.12-37.24-418.5-242.44-418.5-490 0-274 222-496 496-496s496 222 496 496z" fill="currentColor"></path></svg>
+                </a>
+              </li>
+              <li>
+                  <a class="twitter-link" target="_blank" href="https://twitter.com/intent/tweet?text=Spread the word about %23KUTEJS animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter">
+                  <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M886.579 306.995c0.41 8.294 0.563 16.691 0.563 24.986 0 255.488-194.406 549.99-549.888 549.99-109.21 0-210.739-32-296.294-86.886 15.155 1.792 30.515 2.714 46.08 2.714 90.624 0 173.926-30.925 240.026-82.688-84.531-1.587-155.955-57.395-180.531-134.195 11.776 2.202 23.91 3.379 36.352 3.379 17.664 0 34.765-2.304 50.944-6.707-88.422-17.818-155.034-95.898-155.034-189.594 0-0.819 0-1.587 0-2.406 26.061 14.49 55.91 23.194 87.552 24.218-51.866-34.714-86.016-93.798-86.016-160.922 0-35.379 9.523-68.608 26.214-97.178 95.283 116.992 237.773 193.894 398.387 201.984-3.277-14.182-4.966-28.877-4.966-44.083 0-106.701 86.477-193.178 193.229-193.178 55.603 0 105.83 23.398 141.107 60.979 43.981-8.704 85.35-24.781 122.726-46.899-14.438 45.107-45.107 82.995-84.992 106.906 39.117-4.71 76.288-15.002 111.002-30.413-25.907 38.81-58.675 72.806-96.461 99.994z" fill="currentColor"></path></svg>
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div class="content-wrap">
+      <h2 class="head-title">Tween Progress Control</h2>
+      <p class="condensed lead">The handy tool to manually update a tween via an <b>Input</b> slider.</p>
+    </div>
+
+    <div class="featurettes dark">
+      <div class="content-wrap">
+        <div class="columns">
+          <div class="col3">
+            <h3 class="border text-right">Overview</h3>
+            <p class="condensed text-right">Create a tween object and link it to a range slider <b>Input</b>. Some stuff happening.</p>
+          </div>
+          <div class="col9 border">
+            <p class="lead condensed">The <b>Progress Bar</b> can be a handy tool that enables you to manually update your tween animation, just in case there is a little
+              detail you want to make it right.</p>
+            <p>KUTE.js object exposes all required methods in order for it to work, so why not try to do something fun? How about control tween progress? So let's make a quick tool:</p>
+            <ul>
+              <li>We need an <code>&lt;input type="range" min="0" max="1" step="0.00001" /&gt;</code> with these exact <code>min</code>, <code>max</code> and <code>step</code> attributes</li>
+              <li>Now we need a tween object, let's just do a svg morph for instance, but make sure you use <code>KUTE.fromTo()</code> method, the others don't prepare start values for the tween object</li>
+              <li>We also need to make sure nothing controls the progress except the range input, so don't use <code>start()</code> or <code>pause()</code> methods at all, as well as <code>repeat</code> and / or <code>yoyo</code> options</li>
+              <li>Next we attach an <code>input</code> event handler to update the tween progress by using the <code>KUTE.update</code> function, which is the step function triggered on every <code>requestAnimationFrame</code> tick</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="content-wrap">
+
+
+      <p>A very basic code sample will look like this:</p>
+
+
+<pre><code class="language-javascript">// the range slider
+var rangeSlider = document.querySelector('input[type="range"');
+
+// basic morph, only fromTo and allFromTo should work
+var morphTween = KUTE.to('#rectangle', { path: '#star' } );  
+
+// initialize a progressBar for your tween
+var progressBar = new KUTE.ProgressBar(rangeSlider,morphTween)
+
+// also start animation when Element is clicked
+document.getElementById('rectangle').addEventListener('click',function(){
+!morphTween.playing && morphTween.start()
+})
+</code></pre>
+
+        <p>And now let's see the code in action:</p>
+        <div class="featurettes">
+          <div class="slider">
+            <input type="range" min="0" max="1" value="0" step="0.0001" />
+            <output id="rangevalue">0%</output>
+          </div>
+          <svg class="example-box-model example-box" id="morph-example1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+            <path id="rectangle" class="bg-blue" d="M559,597.4H302.1H43.6c-21,0-38-17-38-38V408.8V223.6V44c0-21,17-38,38-38h105.6H300h160.3H559
+                c21,0,38,17,38,38v184v331.4C597,580.4,580,597.4,559,597.4z"/>
+            <path id="star" style="visibility:hidden" d="M302.1,17.9c16,29,81.4,147.7,98.2,178.2c31.1,6,62.3,11.9,93.4,17.9c35.5,6.8,71,13.6,106.5,20.4
+                c-46.4,49.5-92.7,99-139.1,148.5c1.1,8.5,6.7,53.4,12.4,99.1c5.7,45.3,11.4,91.4,12.9,102.9c-36-16.9-158.8-74.5-184.2-86.4
+                c-28.5,13.4-151.3,71-184.2,86.4c0.4-3.2,13.3-106.6,13.3-106.6s10.1-81,11.9-95.3C96.8,333.5,50.4,284,4,234.5
+                c34.4-6.6,68.8-13.2,103.3-19.8c32.2-6.2,64.4-12.3,96.5-18.5C221,165.1,286.5,46.2,302.1,17.9z"/>
+          </svg>
+        </div>
+
+        <p>We might argue that we want to use other methods in combination with this method, or use this method while animations are running, but there are other libraries out there that can do that already. This example here is just to showcase KUTE.js can do this too.</p>
+        <p>Note that this tool is not included in the official distribution file.</p>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="content-wrap">
+        <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+        <p>&copy; 2015 - 2022 &middot; <a href="https://github.com/thednp">thednp</a>.</p>
+      </div>
+    </footer>
+
+  </div>
+  <!-- /.site-wrapper -->
+
+  <!-- JavaScript =============================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="./src/polyfill.min.js"></script>
+  <script src="./src/kute-extra.min.js"></script>
+  <script src="./assets/js/prism.js"></script>
+
+  <script src="./assets/js/scripts.js"></script>
+  <script src="./assets/js/progress.js"></script>
+</body>
+
+</html>

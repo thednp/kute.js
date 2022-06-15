@@ -15,13 +15,14 @@ const trueColor = (colorString) => {
     const colorAlpha = vrgb[3] ? vrgb[3] : null;
     if (!colorAlpha) {
       result = { r: parseInt(vrgb[0], 10), g: parseInt(vrgb[1], 10), b: parseInt(vrgb[2], 10) };
+    } else {
+      result = {
+        r: parseInt(vrgb[0], 10),
+        g: parseInt(vrgb[1], 10),
+        b: parseInt(vrgb[2], 10),
+        a: parseFloat(colorAlpha),
+      };
     }
-    result = {
-      r: parseInt(vrgb[0], 10),
-      g: parseInt(vrgb[1], 10),
-      b: parseInt(vrgb[2], 10),
-      a: parseFloat(colorAlpha),
-    };
   } if (/^#/.test(colorString)) {
     const fromHex = hexToRGB(colorString);
     result = { r: fromHex.r, g: fromHex.g, b: fromHex.b };

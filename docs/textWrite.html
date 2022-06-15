@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
+  <meta name="description" content="The Text Write component for KUTE.js enables animation via string manipulation.">
+  <meta name="keywords" content="text write,number increase,number,number decrease,kute,kute.js,animation,javascript animation,tweening engine,animation engine,Javascript,Native Javascript,vanilla javascript,jQuery">
+  <meta name="author" content="dnp_theme">
+  <link rel="shortcut icon" href="./assets/img/favicon.ico">
+  <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,800|Roboto+Condensed:400,800" rel="stylesheet">
+
+  <title>KUTE.js TextWrite</title>
+
+  <!-- RESET CSS -->
+  <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
+
+  <!-- DEMO KUTE CSS -->
+  <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
+
+  <!-- Synthax highlighter -->
+  <link href="./assets/css/prism.css" rel="stylesheet">
+
+  <style>
+    .text-example {
+      margin: 0 0 20px;
+      font-size: 28px;
+      line-height: 1.5;
+      white-space: nowrap;
+    }
+
+    .red {
+      color: red
+    }
+  </style>
+</head>
+
+<body>
+  <div class="site-wrapper">
+
+    <div class="navbar-wrapper">
+      <div class="content-wrap">
+        <nav class="navbar">
+          <a href="index.html"><h1>KUTE.<span>js</span></h1></a>
+          <div class="nav-wrapper d-flex align-items-center justify-content-between">
+            <ul class="nav">
+              <li class="btn-group active"><a href="#" data-function="toggle">Components <span class="caret"></span></a>
+                <ul class="subnav">
+                  <li><a href="transformFunctions.html">Transform Functions</a></li>
+                  <li><a href="transformMatrix.html">Transform Matrix</a></li>
+                  <li><a href="svgTransform.html">SVG Transform</a></li>
+                  <li><a href="svgMorph.html">SVG Morph</a></li>
+                  <li><a href="svgCubicMorph.html">SVG Cubic Morph</a></li>
+                  <li><a href="svgDraw.html">SVG Draw</a></li>
+                  <li><a href="filterEffects.html">Filter Effects</a></li>
+                  <li><a href="borderRadius.html">Border Radius</a></li>
+                  <li><a href="htmlAttributes.html">HTML Attributes</a></li>
+                  <li><a href="shadowProperties.html">Shadow Properties</a></li>
+                  <li><a href="colorProperties.html">Color Properties</a></li>
+                  <li><a href="boxModel.html">Box Model</a></li>
+                  <li><a href="clipProperty.html">Clip Property</a></li>
+                  <li><a href="backgroundPosition.html">Background Position</a></li>
+                  <li><a href="textProperties.html">Text Properties</a></li>
+                  <li><a href="opacityProperty.html">Opacity Property</a></li>
+                  <li><a href="scrollProperty.html">Scroll Property</a></li>
+                  <li class="active"><a href="textWrite.html">Text Write</a></li>
+                </ul>
+              </li>
+              <li><a href="https://github.com/thednp/kute.js/wiki">Wiki</a></li>
+            </ul>
+            <ul id="share">
+              <li>
+                <a class="facebook-link" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook">
+                  <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M1008 511.996c0 247.56-181.381 452.76-418.5 490v-346.62h115.561l22-143.381h-137.561v-93.1c0-39.221 19.221-77.461 80.82-77.461h62.561v-122s-56.762-9.68-111.041-9.68c-113.34 0-187.34 68.66-187.34 192.961v109.279h-126v143.381h126v346.62c-237.12-37.24-418.5-242.44-418.5-490 0-274 222-496 496-496s496 222 496 496z" fill="currentColor"></path></svg>
+                </a>
+              </li>
+              <li>
+                <a class="twitter-link" target="_blank" href="https://twitter.com/intent/tweet?text=Spread the word about %23KUTEJS animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter">
+                  <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M886.579 306.995c0.41 8.294 0.563 16.691 0.563 24.986 0 255.488-194.406 549.99-549.888 549.99-109.21 0-210.739-32-296.294-86.886 15.155 1.792 30.515 2.714 46.08 2.714 90.624 0 173.926-30.925 240.026-82.688-84.531-1.587-155.955-57.395-180.531-134.195 11.776 2.202 23.91 3.379 36.352 3.379 17.664 0 34.765-2.304 50.944-6.707-88.422-17.818-155.034-95.898-155.034-189.594 0-0.819 0-1.587 0-2.406 26.061 14.49 55.91 23.194 87.552 24.218-51.866-34.714-86.016-93.798-86.016-160.922 0-35.379 9.523-68.608 26.214-97.178 95.283 116.992 237.773 193.894 398.387 201.984-3.277-14.182-4.966-28.877-4.966-44.083 0-106.701 86.477-193.178 193.229-193.178 55.603 0 105.83 23.398 141.107 60.979 43.981-8.704 85.35-24.781 122.726-46.899-14.438 45.107-45.107 82.995-84.992 106.906 39.117-4.71 76.288-15.002 111.002-30.413-25.907 38.81-58.675 72.806-96.461 99.994z" fill="currentColor"></path></svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div class="content-wrap">
+      <h2 class="head-title">Text Write</h2>
+      <p class="condensed lead">The component that enables a unique animation by manipulating the string content of <b>Element</b> targets on most browsers.</p>
+    </div>
+
+    <div class="featurettes dark">
+      <div class="content-wrap">
+        <div class="columns">
+          <div class="col3">
+            <h3 class="border text-right">Overview</h3>
+            <p class="condensed text-right">Manipulate string contents with ease.</p>
+          </div>
+          <div class="col9 border">
+            <p class="lead condensed">The KUTE.js <b>Text Write</b> component enables animation for content <b>Element</b> targets by manipulating their string contents.</p>
+            <p><b>The component provides two properties:</b></p>
+            <ul>
+              <li><b>number: NUMBER</b> - interpolate the string numbers by increasing or decreasing their values</li>
+              <li><b>text: STRING</b> - will add/remove a content string one character at a time</li>
+            </ul>
+            <p>This <b>text</b> property comes with an additional tween option called <b>textChars</b> for the scrambling text character, with the following expected values:</p>
+            <ul>
+              <li><b>alpha</b> use lowercase alphabetical characters, the default value</li>
+              <li><b>upper</b> use UPPERCASE alphabetical characters</li>
+              <li><b>numeric</b> use numerical characters</li>
+              <li><b>symbols</b> use symbols such as #, $, %, etc.</li>
+              <li><b>all</b> use all alpha numeric and symbols.</li>
+              <li><b>YOUR CUSTOM STRING</b> use your own custom characters; eg: <b>'KUTE.JS IS #AWESOME'</b>.</li>
+            </ul>            
+            <p>It's always best to wrap your target number in a <b>&lt;span id="uniqueID"&gt;</b> for the <b>number</b> property and content targets should be split into 
+              multiple parts for the <b>text</b> property if the target has child contents, as we will see in the examples below.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="content-wrap">
+
+      <h2>Examples</h2>
+
+      <p>The effect of these two properties is very popular, so let's go through some quick examples to explain the workflow for the best possible outcome. We will try to focus 
+        on the <b>text</b> property a bit more because we can optimize the content targets for a great visual experience.</p>
+
+      <h3>Number Property</h3>
+      <p>As discussed above, the target number need to be wrapped in a tag of choice with a unique ID so we can target it.</p>
+
+<pre><code class="language-markup">// the target number is wrapped in a &lt;span&gt; tag with a unique ID
+&lt;p class="text-example">Total number of lines: &lt;span id="myNumber"&gt;0&lt;/span&gt;&lt;/p&gt;
+</code></pre>
+
+<pre><code class="language-javascript">// sample tween object with "number" property
+// this assumes it will start from current number which is different from 1550
+var myNumberTween = KUTE.to('#myNumber', {number: 1550}); 
+</code></pre>
+
+      <p>The above should work like this:</p>
+      <div class="featurettes">
+        <p class="text-example">Total number of lines: <span id="numText">0</span></p>
+
+        <div class="example-buttons">
+          <a id="numBtn" class="btn btn-orange" href="javascript:void(0)">Start</a>
+        </div>
+      </div>
+      <p>The button action will toggle the <code>valuesEnd</code> value for the <code>number</code> property, because tweening a number to itself would produce no effect.</p>
+
+      <h3>Text Property</h3>
+      <p>Let's try a quick example and analyze the current outcome. Be aware that the example involves using child contents for the values, which is something we need to 
+        handle in a special way to optimize the visual experience.</p>
+
+<pre><code class="language-javascript">// sample tween object with "text" property
+var myTextTween = KUTE.to('selector', {text: 'A text string with &lt;span&gt;child content&lt;/span&gt; should do.'});
+</code></pre>
+
+      <div class="featurettes">
+        <p class="text-example" id="headText">Click the <strong>Start</strong> button on the right.</p>
+        <div class="example-buttons">
+          <a id="headBtn" class="btn btn-blue" href="javascript:void(0)">Start</a>
+        </div>
+      </div>
+
+      <p>So targets with child elements don't animate very well it seems. We could probably split the starting content and end content into multiple parts, set a tween object 
+        for each parth with delays and other settings, but <b>Text Write</b> component comes with a powerful utility you can use to ease your work in these instances.</p>
+      <p>The <b>createTextTweens()</b> utility will do it all for you: split text strings, set tween objects, but let's see some sample code:</p>
+
+<pre><code class="language-javascript">// grab the parent of the content segments
+var textTarget = document.getElementById('textExample');
+
+// make a reversed array with its child contents
+var tweenObjects = KUTE.Util.createTextTweens(
+  textTarget,
+  'This text has a &lt;a href="index.html"&gt;link to homepage&lt;/a&gt; inside.',
+  options
+);
+
+// start whenever you want
+tweenObjects.start();
+</code></pre>
+
+      <p>Now let's see how we doin:</p>
+
+      <div class="featurettes">
+        <p class="text-example" id="textExample">Click the <strong>Start</strong> button on the right.</p>
+        <div class="example-buttons">
+          <a id="textExampleBtn" class="btn btn-blue" href="javascript:void(0)">Start</a>
+        </div>
+      </div>
+
+      <p>There are some <b>considerations</b> for the <b>createTextTweens(target,newText,options)</b> utility:</p>
+      <ul>
+        <li>The utility will replace the target content with <b>&lt;span&gt;</b> parts or the children's <b>tagName</b>s, then for the <b>newText</b> content will 
+          create similar parts but empty. Also the number of the parts of the target content doesn't have to be the same as for the new content.</li>
+        <li>The utility returns an <b>Array</b> of tween objects, which is similar but independent from <a href="tweenCollection.html">tweenCollection</a> objects.</li>
+        <li>The returned <b>Array</b> itself has a <b>start()</b> "method" you can call on all the tweens inside.</li>
+        <li>The utility will assign <b>playing: <i>boolean</i></b> property to the target content <b>Element</b> to prevent unwanted animation interruptions or glitches.</li>
+        <li>While you can set various tween options like <b>easing</b>, <b>duration</b> or the component specific <b>textChars</b> option, the <b>delay</b> option is handled
+          by the utility automatically.</li>
+        <li>The utility has a special handling for the <b>duration</b> tween option. You can either set a fixed duration like <b>1000</b>, which isn't recommended, or <b>auto</b>
+          which will allow the utility the ability to determine a duration for each text part</li>
+        <li>When the animation of the last text part is complete, the target content <b>Element</b>.innerHTML will be set to the original un-split <b>newText</b>.</li>
+        <li>Using <b>yoyo</b> tween option is not recommended because it doesn't produce a desirable effect.</li>
+        <li>The utility will not work properly with targets that have a deeper structure than level 1, which means that for instance 
+          <i>&lt;span&gt;Text &lt;span&gt;sample&lt;/span&gt;&lt;/span&gt;</i> may not be processed properly.</li>
+      </ul>
+
+      <h3>Combining Both</h3>
+      <div class="featurettes">
+        <div class="columns">
+          <div class="col">
+            <p class="text-example" id="comNum">0</p>
+          </div>
+          <div class="col9" style="text-align: left">
+            <p class="text-example" id="comText">Clicks so far</p>
+          </div>
+        </div>
+        <div class="example-buttons">
+          <a id="comBtn" class="btn btn-olive" href="javascript:void(0)">Start</a>
+        </div>
+      </div>
+      <p>In this example we've used the <code>textChars</code> option with <code>symbols</code> and <code>all</code> values respectively, but combining the two text properties and some other KUTE.js 
+        features can really spice up some content. Have fun!</p>
+
+      <h2>Notes</h2>
+      <ul>
+        <li>Keep in mind that the <code>yoyo</code> tween option will NOT un-write / delete the string character by character for the <b>text</b> property, but will write the previous text instead.</li>
+        <li>For a full code review, check out the <a href="./assets/js/textWrite.js">./assets/js/textWrite.js</a> example source code.</li>
+        <li>The component is only included in the <i>demo/src/kute-extra.js</i> file.</li>
+      </ul>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="content-wrap">
+        <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+        <p>&copy; 2015 - 2022 &middot; <a href="https://github.com/thednp">thednp</a>.</p>
+      </div>
+    </footer>
+
+  </div>
+  <!-- /.site-wrapper -->
+
+  <!-- JavaScript =============================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+
+  <script src="./src/polyfill.min.js"></script>
+  <script src="./src/kute-extra.min.js"></script>
+  <script src="./assets/js/prism.js"></script>
+  <script src="./assets/js/scripts.js"></script>
+  <script src="./assets/js/textWrite.js"></script>
+
+</body>
+
+</html>

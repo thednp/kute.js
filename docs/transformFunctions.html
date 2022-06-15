@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
+  <meta name="description" content="The Transform Functions component for KUTE.js enable regular transform animations.">
+  <meta name="keywords" content="css3 transform,transform functions,transform,kute,kute.js,animation,javascript animation,tweening engine,animation engine,JavaScript,Native JavaScript,vanilla javascript,jQuery">
+  <meta name="author" content="dnp_theme">
+  <link rel="shortcut icon" href="./assets/img/favicon.ico">
+  <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,800|Roboto+Condensed:400,800" rel="stylesheet">
+
+  <title>KUTE.js Transform Functions</title>
+
+  <!-- RESET CSS -->
+  <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
+
+  <!-- DEMO KUTE CSS -->
+  <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
+
+  <!-- Synthax highlighter -->
+  <link href="./assets/css/prism.css" rel="stylesheet">
+
+</head>
+
+<body>
+  <div class="site-wrapper">
+
+    <div class="navbar-wrapper">
+      <div class="content-wrap">
+        <nav class="navbar">
+          <a href="index.html"><h1>KUTE.<span>js</span></h1></a>
+          <div class="nav-wrapper d-flex align-items-center justify-content-between">
+            <ul class="nav">
+              <li class="btn-group active"><a href="#" data-function="toggle">Components <span class="caret"></span></a>
+                <ul class="subnav">
+                  <li class="active"><a href="transformFunctions.html">Transform Functions</a></li>
+                  <li><a href="transformMatrix.html">Transform Matrix</a></li>
+                  <li><a href="svgTransform.html">SVG Transform</a></li>
+                  <li><a href="svgMorph.html">SVG Morph</a></li>
+                  <li><a href="svgCubicMorph.html">SVG Cubic Morph</a></li>
+                  <li><a href="svgDraw.html">SVG Draw</a></li>
+                  <li><a href="filterEffects.html">Filter Effects</a></li>
+                  <li><a href="borderRadius.html">Border Radius</a></li>
+                  <li><a href="htmlAttributes.html">HTML Attributes</a></li>
+                  <li><a href="shadowProperties.html">Shadow Properties</a></li>
+                  <li><a href="colorProperties.html">Color Properties</a></li>
+                  <li><a href="boxModel.html">Box Model</a></li>
+                  <li><a href="clipProperty.html">Clip Property</a></li>
+                  <li><a href="backgroundPosition.html">Background Position</a></li>
+                  <li><a href="textProperties.html">Text Properties</a></li>
+                  <li><a href="opacityProperty.html">Opacity Property</a></li>
+                  <li><a href="scrollProperty.html">Scroll Property</a></li>
+                  <li><a href="textWrite.html">Text Write</a></li>
+                </ul>
+              </li>
+              <li><a href="https://github.com/thednp/kute.js/wiki">Wiki</a></li>
+            </ul>
+              <ul id="share">
+                <li>
+                  <a class="facebook-link" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M1008 511.996c0 247.56-181.381 452.76-418.5 490v-346.62h115.561l22-143.381h-137.561v-93.1c0-39.221 19.221-77.461 80.82-77.461h62.561v-122s-56.762-9.68-111.041-9.68c-113.34 0-187.34 68.66-187.34 192.961v109.279h-126v143.381h126v346.62c-237.12-37.24-418.5-242.44-418.5-490 0-274 222-496 496-496s496 222 496 496z" fill="currentColor"></path></svg>
+                  </a>
+                </li>
+                <li>
+                  <a class="twitter-link" target="_blank" href="https://twitter.com/intent/tweet?text=Spread the word about %23KUTEJS animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M886.579 306.995c0.41 8.294 0.563 16.691 0.563 24.986 0 255.488-194.406 549.99-549.888 549.99-109.21 0-210.739-32-296.294-86.886 15.155 1.792 30.515 2.714 46.08 2.714 90.624 0 173.926-30.925 240.026-82.688-84.531-1.587-155.955-57.395-180.531-134.195 11.776 2.202 23.91 3.379 36.352 3.379 17.664 0 34.765-2.304 50.944-6.707-88.422-17.818-155.034-95.898-155.034-189.594 0-0.819 0-1.587 0-2.406 26.061 14.49 55.91 23.194 87.552 24.218-51.866-34.714-86.016-93.798-86.016-160.922 0-35.379 9.523-68.608 26.214-97.178 95.283 116.992 237.773 193.894 398.387 201.984-3.277-14.182-4.966-28.877-4.966-44.083 0-106.701 86.477-193.178 193.229-193.178 55.603 0 105.83 23.398 141.107 60.979 43.981-8.704 85.35-24.781 122.726-46.899-14.438 45.107-45.107 82.995-84.992 106.906 39.117-4.71 76.288-15.002 111.002-30.413-25.907 38.81-58.675 72.806-96.461 99.994z" fill="currentColor"></path></svg>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <div class="content-wrap">
+        <h2 class="head-title">Transform Functions</h2>
+        <p class="condensed lead">The component covers most important 2D and 3D <i>transform</i> functions as described in the <a href="http://www.w3.org/TR/css3-transforms/" target="_blank">W3 specification</a>,
+          completelly reworked for improved performance and faster value processing.</p>            
+      </div>
+
+      <div class="featurettes dark">
+
+        <div class="content-wrap">
+
+          <div class="columns">
+            <div class="col3">
+              <h3 class="border text-right">Overview</h3>
+              <p class="condensed text-right">The component to cover animation for most <b>transform</b> functions with improved performance and faster value processing.</p>
+            </div>
+            <div class="col9 border">
+              <p class="lead condensed">The KUTE.js <b>Transform Functions</b> enables animation for the CSS3 <b>transform</b> style on <b>Element</b> targets on modern browsers. For specific legacy browsers there is another
+                component called <b>Transform Legacy</b> you will find in the source folders.</p>
+              <p>Starting with KUTE.js version 2.0, you can set the <b>perspective</b> function as a tween property, while you can still rely on a parent's perspective but for less performance.</p>
+              <p>All the previous perspective related options have been removed. The <b>transform</b> CSS3 property itself no longer uses preffixes like <b>webkit</b>, <b>moz</b> or <b>ms</b> since all major 
+                browsers are standardized.</p>
+              <p>In comparison with previous versions, the component expects that input values are already <b>px</b> and <b>deg</b> based and no longer transforms <b>%</b> percent based values into <b>px</b> based or <b>rad</b> 
+                based angles into <b>deg</b> based. This makes the execution faster and more consistent.</p>
+              <p>The component will stack all transform functions for translations, rotations and skews to shorthand functions to optimize performance and minimize value processing.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-wrap">
+
+          <h3>3D Transform</h3>
+          <ul>
+            <li><kbd class="bg-blue">perspective</kbd> function creates a 3D perspective for a target element transformation. EG. <code>perspective:400</code> to apply a 400px perspective. <kbd class="bg-lime">IE10+</kbd></li>
+            <li><kbd class="bg-blue">translateX</kbd> function is for horizontal translation. EG. <code>translateX:150</code> to translate an element 150px to the right. <kbd class="bg-lime">IE10+</kbd></li>
+            <li><kbd class="bg-blue">translateY</kbd> function is for vertical translation. EG. <code>translateY:-250</code> to translate an element 250px towards the top. <kbd class="bg-lime">IE10+</kbd></li>
+            <li><kbd class="bg-blue">translateZ</kbd> function is for translation on the Z axis in a given 3D field. EG. <code>translateZ:-250</code> to translate an element 250px away from the viewer, making it 
+              appear smaller. This function can be combined with the <code>perspective</code> function to take effect or the parent's perspective; the smaller perspective value, the deeper translation. <kbd class="bg-lime">IE10+</kbd></li>
+            <li><kbd class="bg-blue">translate3d</kbd> function is for movement on all axes in a given 3D field. EG. <code>translate3d:[-150,200,150]</code> to translate an element 150px to the left, 200px 
+              to the bottom and 150px closer to the viewer, making it larger. When third value is used, it requires using a <code>perspective</code>. <kbd class="bg-lime">IE10+</kbd></li>
+            <li><kbd class="bg-blue">rotateX</kbd> function rotates an element on the X axis in a given 3D field. Eg. <code>rotateX:250</code> will rotate an element clockwise by 250 degrees. Requires perspective. 
+              <kbd class="bg-lime">IE10+</kbd></li>
+            <li><kbd class="bg-blue">rotateY</kbd> function rotates an element on the Y axis in a given 3D field. Eg. <code>rotateY:-150</code> will rotate an element counter-clockwise by 150 degrees. 
+              Requires perspective. <kbd class="bg-lime">IE10+</kbd></li>
+            <li><kbd class="bg-blue">rotateZ</kbd> function rotates an element on the Z axis and is the equivalent of the 2D rotation. Eg. <code>rotateZ:-150</code> will rotate an element counter-clockwise by 150 degrees on X axis. 
+              <kbd class="bg-lime">IE10+</kbd></li>
+            <li><kbd class="bg-blue">rotate3d</kbd> is a <b>tween property</b>, which combines the above <code>rotateX</code>, <code>rotateY</code>, and <code>rotateZ</code> functions and rotates an element on all axes. Obviously this is NOT
+              equivalent with the <code>rotate3d(vectorX,vectorY,vectorZ,angle)</code> shorthand function, this is only an optimization implemented for performance reasons and hopefully for your convenience.
+              Eg. <code>rotate3d:[-150,80,90]</code> will rotate an element counter-clockwise by 150 degrees on X axis, 80 degrees on Y axis and 90 degrees on Z axis. The X and Y axis require a <code>perspective</code>. 
+              <kbd class="bg-lime">IE10+</kbd></li>
+            <li><kbd class="bg-red">matrix3d</kbd> and <kbd class="bg-red">scale3d</kbd> functions are not supported by this component, but they are implemented in the <a href="transformMatrix.html">transformMatrix</a> component.</li>
+          </ul>
+
+          <h3>2D Transform</h3>
+          <ul>
+            <li><kbd class="bg-blue">translate</kbd> function is for movement on X and Y axis. EG. <code>translate:[-150,200]</code> to translate an element 150px to the left, 200px to the bottom. <kbd class="bg-lime">IE9+</kbd></li>
+            <li><kbd class="bg-blue">rotate</kbd> function rotates an element on the Z axis. Eg. <code>rotate:250</code> will rotate an element clockwise by 250 degrees. <kbd class="bg-lime">IE9+</kbd></li>
+            <li><kbd class="bg-blue">skewX</kbd> function will apply a shear on X axis to a target element. Eg. <code>skewX:50</code> will skew a target element on X axis by 50 degrees. <kbd class="bg-lime">IE9+</kbd></li>
+            <li><kbd class="bg-blue">skewY</kbd> function will apply a shear on X axis to a target element. Eg. <code>skewX:50</code> will skew a target element on X axis by 50 degrees. <kbd class="bg-lime">IE9+</kbd></li>
+            <li><kbd class="bg-blue">skew</kbd> function will apply a shear on both X and Y axes to a target element. Eg. <code>skew:[50,50]</code> will skew a target element on X axis by 50 degrees and 50 degrees on Y axis. 
+                <kbd class="bg-lime">IE9+</kbd></li>
+            <li><kbd class="bg-blue">scale</kbd> function will scale a target element on all axes. Eg. <code>scale:1.5</code> will scale up a target element by 50%. <kbd class="bg-lime">IE9+</kbd></li>
+            <li><kbd class="bg-red">matrix</kbd> is not supported by this component, but is implemented in the <a href="transformMatrix.html">transformMatrix</a> component.</li>
+          </ul>
+          <p>As a quick note, all input values for <kbd class="bg-blue">translate</kbd>, <kbd class="bg-blue">rotate</kbd> or single axis translation, skew or rotation will be all stacked into <kbd class="bg-blue">translate3d</kbd>,
+            <kbd class="bg-blue">skew</kbd> and <kbd class="bg-blue">rotate3d</kbd> respectivelly; this is to further improve performance on modern browsers.</p>
+
+          <h3>Translations</h3>
+
+<pre><code class="language-javascript">var tween1 = KUTE.fromTo('selector1',{translate:0},{translate:250}); // or translate:[x,y] for both axes
+var tween2 = KUTE.fromTo('selector2',{translateX:0},{translateX:-250});
+var tween3 = KUTE.fromTo('selector3',{translate3d:[0,0,0]},{translate3d:[0,250,0]});
+var tween4 = KUTE.fromTo('selector4',{perspective:400,translateY:0},{perspective:200,translateY:-100});
+</code></pre>
+
+        <div id="translate-examples" class="featurettes">
+          <div class="example-item example-box bg-indigo">2D</div>
+          <div class="example-item example-box bg-olive">X</div>
+          <div class="example-item example-box bg-pink">Y</div>
+          <div class="example-item example-box bg-red">Z</div>
+
+          <div class="example-buttons">
+              <a class="btn btn-blue" href="javascript:void(0)">Start</a>
+          </div>
+        </div>
+
+        <p>As you can see in your browsers console, for all animations <code>translate3d</code> is used, as explained above. Also the first example that's using the 2D <code>translate</code> for both vertical
+            and horizontal axis even if we only set X axis.</p>
+
+        <h3>Rotations</h3>
+
+<pre><code class="language-javascript">var tween1 = KUTE.fromTo('selector1',{rotate:0},{rotate:-720});
+var tween2 = KUTE.fromTo('selector2',{rotateX:0},{rotateX:200});
+var tween3 = KUTE.fromTo('selector3',{perspective:100,rotate3d:[0,0,0]},{perspective:100,rotate3d:[0,160,0]});
+var tween4 = KUTE.fromTo('selector4',{rotateZ:0},{rotateZ:360});
+</code></pre>
+
+        <div id="rotExamples" class="featurettes">
+          <div class="example-item example-box bg-blue">2D</div>
+          <div class="example-item example-box bg-indigo">X</div>
+          <div class="example-item example-box bg-olive">Y</div>
+          <div class="example-item example-box bg-pink">Z</div>
+          <div class="example-buttons">
+            <a class="btn btn-green" href="javascript:void(0)">Start</a>
+          </div>
+        </div>
+        <p>The <code>rotateX</code> and <code>rotateY</code> are 3D based rotations, so they require a perspective in order to make the browser render proper 3D layers, but in the example they animate different because only the second, Y axis, uses the
+            <code>perspective</code> function. The rotation on Z axis does not require a perspective. Unlike translations, you can stack all axis rotation for your animation, but we will see that in a later example.</p>
+
+        <h3>Skews</h3>
+
+<pre><code class="language-javascript">var tween1 = KUTE.fromTo('selector1',{skewX:0},{skewX:20});
+var tween2 = KUTE.fromTo('selector2',{skew:[0,0]},{skew:[0,45]});
+</code></pre>
+
+        <div id="skewExamples" class="featurettes">
+          <div class="example-item example-box bg-teal">X</div>
+          <div class="example-item example-box bg-green">Y</div>
+
+          <div class="example-buttons">
+            <a class="btn btn-yellow" href="javascript:void(0)">Start</a>
+          </div>
+        </div>
+
+        <h3>Mixed Transformations</h3>
+        <p>The current specification does not support animating different transform properties with multiple tween objects at the same time, you must stack them all together into a single object. See the example below:</p>
+
+          <pre><code class="language-javascript">var tween1 = KUTE.fromTo('selector1',{rotateX:0},{rotateX:20}).start();
+var tween2 = KUTE.fromTo('selector1',{skewY:0},{skewY:45}).start();
+</code></pre>
+          <p>If you check the <a href="http://codepen.io/thednp/pen/avZrYo" target="_blank">test here</a>, you will notice that only the <code>skewY</code> is going to work and no rotation. Now let's do this properly.</p>
+
+<pre><code class="language-javascript">var tween1 = KUTE.fromTo(
+'selector1', // element
+{pespective:200,translateX:0, rotateX:0, rotateY:0, rotateZ:0}, // from
+{pespective:200,translateX:250, rotateX:360, rotateY:15, rotateZ:5} // to
+);
+var tween2 = KUTE.fromTo(
+'selector2', // element
+{translateX:0, rotateX:0, rotateY:0, rotateZ:0}, // from
+{translateX:-250, rotateX:360, rotateY:15, rotateZ:5} // to
+);
+</code></pre>
+
+        <div id="mixTransforms" class="featurettes" style="perspective: 400px;">
+          <div class="example-item example-box bg-pink" style="line-height: 50px; font-size: 25px;">self perspective 200px</div>
+          <div class="example-item example-box bg-orange" style="line-height: 50px; font-size: 25px;">parent perspective 400px</div>
+
+          <div class="example-buttons">
+              <a class="btn btn-olive" href="javascript:void(0)">Start</a>
+          </div>
+        </div>
+        <p>Note in this example, the first tween object uses the element's <code>perspective</code> while the second relies on the parent's perspective.</p>
+
+        <h3>Chained Transformations</h3>
+        <p>KUTE.js has the ability to stack transform functions in a way to improve performance and optimize your workflow. In that idea the <code>.to()</code> method can be the right choice for most of your 
+            animation needs and especially to link animations together because it has the ability to check the current values of the transform functions found in the element's inline styling, mostly from previous 
+            tween animation, and use them as start values for the next animation. OK now, let's see a side by side comparison with 4 elements:</p>
+
+        <div id="chainedTweens" class="featurettes">
+          <div class="example-item example-box bg-gray" style="font-size: 30px">FROMTO</div>
+          <div class="example-item example-box bg-olive" style="font-size: 30px">FROMTO</div>
+          <div class="example-item example-box bg-gray" style="font-size: 30px">TO</div>
+          <div class="example-item example-box bg-blue" style="font-size: 30px">TO</div>
+
+          <div class="example-buttons">
+            <a class="btn btn-blue" href="#">Start</a>
+          </div>
+        </div>
+        <h4>Observations</h4>
+        <ul>
+          <li>The example hopefully demostrates what the animation looks like with different combinations of transform functions and how to combine them to optimize your workflow, size on disk as well as to how
+              to link animations together in a smooth continuous animation.</li>
+          <li>No matter the input values, the component will always stack translations into <code>translate3d</code> and rotations into <code>rotate3d</code>.</li>
+          <li>The first box uses a regular <code class="bg-gray">.fromTo()</code> object, from point A to B and back to A, with the exact coordinates we want.</li>
+          <li>The second box is also using <code class="bg-olive">.fromTo()</code> object, but using all values for all tweens at all times, so we gave the animation a sense of continuity.</li>
+          <li>The third box uses the <code class="bg-gray">.to()</code> method, and will try and continue animation from last animation, but we "forgot" to keep track on the rotation of the X axis.</li>
+          <li>The last box also uses the <code class="bg-blue">.to()</code> method, and uses all values and reproduce the animation of the second box exactly, but with nearly half the code.</li>
+        </ul>
+
+        <h3>Notes</h3>
+        <ul>
+          <li>This demo page should work with IE10+ browsers.</li>
+          <li>The order of the transform functions/properties is always the same: <code>perspective</code>, <code>translation</code>, <code>rotation</code>, <code>skew</code>, <code>scale</code>, this way we can prevent 
+              jumpy/janky animations; one of the reasons is consistency in all transform based components and another reason is the order of execution from the draft for 
+              <a href="https://drafts.csswg.org/css-transforms-2/#recomposing-to-a-3d-matrix">matrix3d recomposition</a>.</li>
+          <li>Tests reveal that an element's own perspective produce better performance than using the parent's perspective. Also having both will severelly punish the animation performance, so keep that in mind 
+              when you work on optimizing your code. </li>    
+          <li>Use single axis transform functions like <code>translateX</code> when you want to animate the Y and Z axes back to ZERO, but in a convenient way.</li>
+          <li>Use shorthand functions like <code>translate3d</code> when you want to animate / keep multiple axes.</li>
+          <li>Shorthand functions like <code>translate3d</code> or <code>rotate3d</code> tween property generally not only improve performance, but will also minimize the code size. Eg. <code>translateX:150</code>,
+              <code>translateY:200</code>, <code>translateZ:50</code> => <code>translate3d:[150,200,50]</code> is quite the difference.</li>
+          <li>On larger amount of elements animating chains, the <code>.fromTo()</code> method is fastest, and you will have more work to do as well, but will eliminate any delay / syncronization issue that may occur.</li> 
+          <li>This component is bundled with the <i>demo/src/kute-base.js</i> and the standard <i>kute.js</i> distribution files.</li>
+        </ul>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="content-wrap">
+        <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+        <p>&copy; 2015 - 2022 &middot; <a href="https://github.com/thednp">thednp</a>.</p>
+      </div>
+    </footer>
+
+  </div>
+  <!-- /.site-wrapper -->
+
+  <!-- JavaScript =============================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+
+  <!-- <script src="./src/polyfill-legacy.min.js"></script> -->
+  <script src="./src/polyfill.min.js"></script>
+  <script src="./src/kute.min.js"></script>
+  <!-- <script src="../dist/kute.js"></script> -->
+  <script src="./assets/js/prism.js"></script>
+
+  <script src="./assets/js/transformFunctions.js"></script>
+  <script src="./assets/js/scripts.js"></script>
+</body>
+
+</html>

@@ -1,4 +1,4 @@
-import CubicBezier from 'cubic-bezier-easing';
+import CubicBezier from '@thednp/bezier-easing';
 import connect from '../objects/connect';
 
 const Easing = {

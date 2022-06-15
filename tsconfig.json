@@ -10,13 +10,13 @@
     "strict": true,
     "allowJs": true,
     "rootDir": "../",
-    "outFile": "types/kute.d.ts", // UN-comment to generate
+    // "outFile": "types/kute.d.ts", // UN-comment to generate
     "outDir": "types",
   },
   "files": [
     "types/index.d.ts",
-    // "types/kute.d.ts", // comment to re-generate, delete file
-    "types/more/kute.ts",
+    "types/kute.d.ts", // comment to re-generate, delete file
+    // "types/more/kute.ts", // un-comment to regenerate
     "types/more/types.d.ts",
   ],
 }

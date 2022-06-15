@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
+  <meta name="description" content="The SVG Cubic Morph component for KUTE.js enables animation for the d presentation attribute of path and glyph shapes.">
+  <meta name="keywords" content="svg morph,svg cubic morph,cross-browser svg morph,svg animation,kute,kute.js,tweening engine,animation engine,animation,javascript animation,Javascript,Native Javascript,vanilla javascript,jQuery">
+  <meta name="author" content="dnp_theme">
+  <link rel="shortcut icon" href="./assets/img/favicon.ico">
+  <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,800|Roboto+Condensed:400,800" rel="stylesheet">
+
+  <title>KUTE.js SVG Cubic Morph</title>
+
+  <!-- RESET CSS -->
+  <link type="text/css" href="./assets/css/reset.css" rel="stylesheet">
+
+  <!-- DEMO KUTE CSS -->
+  <link type="text/css" href="./assets/css/kute.css" rel="stylesheet">
+
+  <!-- Synthax highlighter -->
+  <link href="./assets/css/prism.css" rel="stylesheet">
+
+</head>
+
+<body>
+  <div class="site-wrapper">
+
+    <div class="navbar-wrapper">
+      <div class="content-wrap">
+        <nav class="navbar">
+          <a href="index.html"><h1>KUTE.<span>js</span></h1></a>
+          <div class="nav-wrapper d-flex align-items-center justify-content-between">
+            <ul class="nav">
+              <li class="btn-group active"><a href="#" data-function="toggle">Components <span class="caret"></span></a>
+                <ul class="subnav">
+                  <li><a href="transformFunctions.html">Transform Functions</a></li>
+                  <li><a href="transformMatrix.html">Transform Matrix</a></li>
+                  <li><a href="svgTransform.html">SVG Transform</a></li>
+                  <li><a href="svgMorph.html">SVG Morph</a></li>
+                  <li class="active"><a href="svgCubicMorph.html">SVG Cubic Morph</a></li>
+                  <li><a href="svgDraw.html">SVG Draw</a></li>
+                  <li><a href="filterEffects.html">Filter Effects</a></li>
+                  <li><a href="borderRadius.html">Border Radius</a></li>
+                  <li><a href="htmlAttributes.html">HTML Attributes</a></li>
+                  <li><a href="shadowProperties.html">Shadow Properties</a></li>
+                  <li><a href="colorProperties.html">Color Properties</a></li>
+                  <li><a href="boxModel.html">Box Model</a></li>
+                  <li><a href="clipProperty.html">Clip Property</a></li>
+                  <li><a href="backgroundPosition.html">Background Position</a></li>
+                  <li><a href="textProperties.html">Text Properties</a></li>
+                  <li><a href="opacityProperty.html">Opacity Property</a></li>
+                  <li><a href="scrollProperty.html">Scroll Property</a></li>
+                  <li><a href="textWrite.html">Text Write</a></li>
+                </ul>
+              </li>
+              <li><a href="https://github.com/thednp/kute.js/wiki">Wiki</a></li>
+            </ul>
+              <ul id="share">
+                <li>
+                  <a class="facebook-link" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Facebook">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M1008 511.996c0 247.56-181.381 452.76-418.5 490v-346.62h115.561l22-143.381h-137.561v-93.1c0-39.221 19.221-77.461 80.82-77.461h62.561v-122s-56.762-9.68-111.041-9.68c-113.34 0-187.34 68.66-187.34 192.961v109.279h-126v143.381h126v346.62c-237.12-37.24-418.5-242.44-418.5-490 0-274 222-496 496-496s496 222 496 496z" fill="currentColor"></path></svg>
+                  </a>
+                </li>
+                <li>
+                  <a class="twitter-link" target="_blank" href="https://twitter.com/intent/tweet?text=Spread the word about %23KUTEJS animation engine by @dnp_theme and download here http://thednp.github.io/kute.js/index.html" title="Share KUTE.js on Twitter">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path class="icon-demo" d="M886.579 306.995c0.41 8.294 0.563 16.691 0.563 24.986 0 255.488-194.406 549.99-549.888 549.99-109.21 0-210.739-32-296.294-86.886 15.155 1.792 30.515 2.714 46.08 2.714 90.624 0 173.926-30.925 240.026-82.688-84.531-1.587-155.955-57.395-180.531-134.195 11.776 2.202 23.91 3.379 36.352 3.379 17.664 0 34.765-2.304 50.944-6.707-88.422-17.818-155.034-95.898-155.034-189.594 0-0.819 0-1.587 0-2.406 26.061 14.49 55.91 23.194 87.552 24.218-51.866-34.714-86.016-93.798-86.016-160.922 0-35.379 9.523-68.608 26.214-97.178 95.283 116.992 237.773 193.894 398.387 201.984-3.277-14.182-4.966-28.877-4.966-44.083 0-106.701 86.477-193.178 193.229-193.178 55.603 0 105.83 23.398 141.107 60.979 43.981-8.704 85.35-24.781 122.726-46.899-14.438 45.107-45.107 82.995-84.992 106.906 39.117-4.71 76.288-15.002 111.002-30.413-25.907 38.81-58.675 72.806-96.461 99.994z" fill="currentColor"></path></svg>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <div class="content-wrap">
+        <h2 class="head-title">SVG Cubic Morph</h2>
+        <p class="condensed lead">The component that also covers <i>SVG morphing</i>, with similar functionality as for the <a href="svgMorph.html">SVG Morph</a> component, but with a different 
+          implementation for value processing and animation setup.</p>
+      </div>
+
+      <div class="featurettes dark">
+        <div class="content-wrap">
+          <div class="columns">
+            <div class="col3">
+              <h3 class="border text-right">Overview</h3>
+              <p class="condensed text-right">Animate SVG paths with <b>cubic-bezier</b> path commands and improved performance.</p>
+            </div>
+            <div class="col9 border">
+              <p class="lead condensed">The KUTE.js <b>SVG Cubic Morph</b> component enables animation for the <b>d</b> (description) presentation attribute and is the latest in all the SVG 
+                components.</p>
+                <p>The component will process paths and out of the box will provide the closest possible interpolation by default. It also implements a series of solutions from 
+                  <a href="https://github.com/paperjs/paper.js/">Paper.js</a> to determine paths draw direction and automatically reverse one of them for most accurate presentation and as a result
+                  the previously featured options <kbd>reverseFirstPath</kbd> and <kbd>reverseSecondPath</kbd> have been deprecated.</p>  
+              <p>The main difference with the <a href="svgMorph.html">SVG Morph</a> component is the fact that this components is converting all path commands to <i>cubicBezierTo</i>, giving it
+                the upper hand over the original morph component in many regards. While the other component will spend time to process the path data and create polygons, this component should
+                deliver the animation faster and using considerably less power.</p>
+              <p>All path processing is powered by our <a href="https://github.com/thednp/svg-path-commander">SVGPathCommander</a> starting KUTE.js version 2.0.14, which aims to modernize and 
+                improve the path processing and enable transition from closed to and from un-closed shapes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="content-wrap">
+          <h3>Basic Example</h3>
+          <p>The first morphing animation example is a transition from a rectangle into a star, just like for the other component.</p>
+
+<pre><code class="language-markup">&lt;svg id="morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+&lt;path id="rectangle" class="bg-lime" d="M38.01,5.653h526.531c17.905,0,32.422,14.516,32.422,32.422v526.531 c0,17.905-14.517,32.422-32.422,32.422H38.01c-17.906,0-32.422-14.517-32.422-32.422V38.075C5.588,20.169,20.104,5.653,38.01,5.653z"/>
+&lt;path id="star" style="visibility:hidden" d="M301.113,12.011l99.25,179.996l201.864,38.778L461.706,380.808 l25.508,203.958l-186.101-87.287L115.01,584.766l25.507-203.958L0,230.785l201.86-38.778L301.113,12.011"/>
+&lt;/svg>
+</code></pre>
+
+          <p>Now we can apply both <code>.to()</code> and <code>fromTo()</code> methods:</p>
+
+<pre><code class="language-javascript">// the fromTo() method
+var tween = KUTE.fromTo('#rectangle', {path: '#rectangle' }, { path: '#star' }).start();
+// OR
+// the to() method will take the path's d attribute value and use it as start value
+var tween = KUTE.to('#rectangle', { path: '#star' }).start();
+// OR
+// simply pass in a valid path string without the need to have two paths in your SVG
+var tween = KUTE.to('#rectangle', { path: 'M301.113,12.011l99.25,179.996l201.864,38.778L461.706,380.808l25.508,203.958l-186.101-87.287L115.01,584.766l25.507-203.958L0,230.785l201.86-38.778L301.113,12.011' }).start();
+</code></pre>
+
+          <p>By default, the component will process the paths as authored and deliver its best without any option required, like for the first red rectangle below which applies to any of the above invocations:</p>
+
+          <div class="featurettes">
+            <svg class="example-box-model example-box" id="morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+                <path id="rectangle" class="bg-olive" d="M559,597.4H43.6c-21,0-38-17-38-38V44c0-21,17-38,38-38H559c21,0,38,17,38,38v515.4 C597,580.4,580,597.4,559,597.4z"/>
+                <path id="star" style="visibility:hidden" d="M301.113,12.011l99.25,179.996l201.864,38.778L461.706,380.808 l25.508,203.958l-186.101-87.287L115.01,584.766l25.507-203.958L0,230.785l201.86-38.778L301.113,12.011z"/>
+            </svg>
+            <svg class="example-box-model example-box" id="morph-example2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+                <path id="rectangle2" class="bg-blue" d="M559,597.4H302.1H43.6c-21,0-38-17-38-38V300V44c0-21,17-38,38-38H300h259c21,0,38,17,38,38
+                v257.7v257.7C597,580.4,580,597.4,559,597.4"/>
+                <path id="star2" style="visibility:hidden" d="M302.1,17.9c16,29,81.4,147.7,98.2,178.2c13.7,2.6,47.3,9.1,83.5,16c46.1,8.8,96.5,18.5,116.4,22.3
+                c-25.1,26.7-117.8,125.7-139.1,148.5c1.1,8.5,23.8,190.5,25.3,202c-36-16.9-158.8-74.5-184.2-86.4c-28.5,13.4-151.3,71-184.2,86.4
+                c0.4-3.2,23.4-187.6,25.2-201.9C122.8,361.3,30,262.3,4,234.5c17.3-3.3,59.5-11.4,101.3-19.4c41.4-7.9,82.5-15.8,98.5-18.9
+                C221,165.1,286.5,46.2,302.1,17.9"/>
+            </svg>
+            <div class="example-buttons">
+                <a id="morphBtn" class="btn btn-green" href="javascript:void(0)">Start</a>
+            </div>
+          </div>
+
+          <p><b>Some takeaways:</b></p>
+          <ul>
+            <li>The <b class="text-olive">olive shape</b> and its corresponding end shape are both the originals, un-edited shapes.</li>
+            <li>The <b class="text-blue">blue shape</b> and its corresponding end shape have been edited by removing their <code>Z</code> path commands and by adding additional curve points using a vector graphics editor to match 
+              the amount of points in both shapes.</li> 
+          </ul>
+          <p>In this example we focus on experimentation to discover ways to optimize the morph animation so that the points travel optimal distance. Keep in mind that the <code>Z</code> path command is actually a shorthand 
+            for <code>L</code> (line path command), sometimes it's required to close the shape, however the path processing tools will remove it or replace it when converting path segments to <code>C</code> cubic-bezier.</p>
+          <p>Each morph animation as well as each pair of shapes can have its own quirks. You can use the technique on your shapes to optimize the animation to your style. Chris Coyier wrote 
+            <a href="https://css-tricks.com/svg-shape-morphing-works/">an excelent article</a> in which he explains the terminology and workflow on how SVG morphing animation works with simple examples.</p>
+
+
+          <h3>Morphing Unclosed Shapes To Closed Shapes</h3>
+          <p>The next set of morphing animations is a transition from a line into a circle and showcases the component's behavior when both shapes are closed (they have the <code>Z</code> path command) or one or another is not, 
+            but first let's create the necessary markup and scripting:</p>
+
+<pre><code class="language-markup">&lt;svg id="morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+&lt;path id="line" fill="transparent" stroke="orange" stroke-linejoin="round" stroke-width="10" d="M10 300 L580 300"/>
+&lt;path id="star" style="visibility:hidden" d="M10,300a290,290 0 1,0 580,0a290,290 0 1,0 -580,0z"/>
+&lt;/svg>
+</code></pre>
+
+<pre><code class="language-javascript">// the fromTo() method
+var tween = KUTE.fromTo('#line', {path: '#line' }, { path: '#circle' }).start();
+// OR
+// the to() method will take the path's d attribute value and use it as start value
+var tween = KUTE.to('#line', { path: '#circle' }).start();
+</code></pre>
+
+          <div class="featurettes">
+            <svg class="example-box-model example-box" id="morph-example-closed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+              <path id="line" fill="transparent" stroke="#FF5722" stroke-linejoin="round" stroke-width="15" d="M10 300 L580 300z"/>
+              <path id="circle" style="visibility:hidden" d="M10,300a290,290 0 1,1 580,0a290,290 0 1,1 -580,0z"/>
+            </svg>
+            <svg class="example-box-model example-box" id="morph-example-closed1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+              <path id="line1" fill="transparent" stroke="#4CAF50" stroke-linejoin="round" stroke-width="15" d="M10 300 L580 300"/>
+              <path id="circle1" style="visibility:hidden" d="M10,300a290,290 0 1,1 580,0a290,290 0 1,1 -580,0z"/>
+            </svg>
+            <div class="example-buttons">
+              <a id="morphBtnClosed" class="btn btn-green" href="javascript:void(0)">Start</a>
+            </div>
+          </div>
+
+          <p>As you can see, the functionality of this component is very different from the <a href="svgMorph.html">svgMorph</a> component in the sense that it will 
+            morph shapes as authored. If you replay the above animations, here are a few takeaways:</p>
+          <ul>
+            <li>the <b class="text-orange">orange</b> line is <b>closed</b>, this makes the last <code>Z</code> path command behave like a regular line;</li>
+            <li>the <b class="text-green">green</b> line is <b>not closed</b>, and the presentation looks quite different compared to the other example as well as
+              the other <a href="./cubicMorph.html">cubicMorph</a> component.</li>
+          </ul>
+          <p>This is the visual presentation you can expect with this component. Keep in mind that stroke attributes like <code>stroke-linejoin</code> such can have
+            a small impact on your animation, particularly on start and end points.</p>
+
+
+          <h3>Subpath Example</h3>
+          <p>In other cases, you may want to morph paths that have subpaths. Let's have a look at the following SVG:</p>
+
+<pre><code class="language-markup">&lt;svg id="multi-morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+&lt;path id="w1" d="M412.23 511.914c-47.708-24.518-94.086-36.958-137.88-36.958-5.956 0-11.952 0.18-17.948 0.708-55.88 4.624-106.922 19.368-139.75 30.828-8.708 3.198-17.634 6.576-26.83 10.306l-89.822 311.394c61.702-22.832 116.292-33.938 166.27-33.938 80.846 0 139.528 30.208 187.992 61.304 22.962-77.918 78.044-266.09 94.482-322.324-11.95-7.284-24.076-14.57-36.514-21.32z 
+  m116.118 79.156l-90.446 314.148c26.832 15.372 117.098 64.05 186.212 64.05 55.792 0 118.252-14.296 190.834-43.792l86.356-301.976c-58.632 18.922-114.876 28.52-167.464 28.52-95.95 0-163.114-31.098-205.492-60.95z 
+  m-235.526-222.28c77.118 0.798 134.152 30.208 181.416 60.502l92.752-317.344c-19.546-11.196-70.806-39.094-107.858-48.6-24.386-5.684-50.02-8.616-77.204-8.616-51.796 0.976-108.388 13.946-172.888 39.8l-88.44 310.596c64.808-24.436 120.644-36.34 172.086-36.34 0.046 0.002 0.136 0.002 0.136 0.002z 
+  m731.178-170.666c-58.814 22.832-116.208 34.466-171.028 34.466-91.686 0-159.292-31.802-203.094-62.366l-91.95 318.236c61.746 39.708 128.29 59.878 198.122 59.878 56.948 0 115.94-13.68 175.462-40.688l-0.182-2.222 3.734-0.886 88.936-306.418z"/>
+&lt;path id="w2" d="M0 187.396l367.2-50.6v354.798h-367.2v-304.2z 
+  m0 649.2v-299.798h367.2v350.398z 
+  m407.6 56v-355.798h488.4v423.2z 
+  m0-761.2l488.4-67.4v427.6h-488.4v-360.2z"/>
+&lt;/svg>
+</code></pre>
+
+        <p>Similar to the <a href="svgMorph.html">svgMorph</a> component, this component doesn't provide multipath processing so we should split the sub-paths into multiple <b>&lt;path&gt;</b> shapes, analyze and associate them
+            in a way that corresponding shapes are close and their points travel the least possible distance.</p>
+
+        <p>Now since we've worked with these paths before, the first example below showcases how the <b>svgCubicMorph</b> component handles it by default. The following example was made possible by editing the shapes with a vector 
+          graphics editor. The last example showcases a creative use of association between starting and end shapes. Let's have a look:</p>
+
+        <div class="featurettes">
+            <svg class="example-box-model example-box" id="multi-morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 550 550">
+                <path id="w11" fill="#e91b1f" d="M206.115,255.957c-23.854-12.259-47.043-18.479-68.94-18.479c-2.978,0-5.976,0.09-8.974,0.354 c-27.94,2.312-53.461,9.684-69.875,15.414c-4.354,1.599-8.817,3.288-13.415,5.152L0,414.096 c30.851-11.416,58.146-16.969,83.135-16.969c40.423,0,69.764,15.104,93.996,30.652c11.481-38.959,39.022-133.045,47.241-161.162 C218.397,262.975,212.334,259.332,206.115,255.957z"/>
+                <path id="w12" fill="#FF5722" d="M264.174,295.535l-45.223,157.074c13.416,7.686,58.549,32.024,93.105,32.024 c27.896,0,59.127-7.147,95.417-21.896l43.179-150.988c-29.316,9.461-57.438,14.26-83.732,14.26 C318.945,326.01,285.363,310.461,264.174,295.535z"/>
+                <path id="w13" fill="#4CAF50" d="M146.411,184.395c38.559,0.399,67.076,15.104,90.708,30.251l46.376-158.672c-9.772-5.598-35.403-19.547-53.929-24.3c-12.193-2.842-25.01-4.308-38.602-4.308c-25.898,0.488-54.194,6.973-86.444,19.9 L60.3,202.564c32.404-12.218,60.322-18.17,86.043-18.17C146.366,184.395,146.411,184.395,146.411,184.395L146.411,184.395z"/>
+                <path id="w14" fill="#2196F3" d="M512,99.062c-29.407,11.416-58.104,17.233-85.514,17.233c-45.844,0-79.646-15.901-101.547-31.183L278.964,244.23 c30.873,19.854,64.146,29.939,99.062,29.939c28.474,0,57.97-6.84,87.73-20.344l-0.091-1.111l1.867-0.443L512,99.062z"/>
+                
+                <path id="w21" style="visibility:hidden" d="M192 471.918l-191.844-26.297-0.010-157.621h191.854z"/>
+                <path id="w22" style="visibility:hidden" d="M479.999 288l-0.063 224-255.936-36.008v-187.992z"/>
+                <path id="w23" style="visibility:hidden" d="M0.175 256l-0.175-156.037 192-26.072v182.109z"/>
+                <path id="w24" style="visibility:hidden" d="M224 69.241l255.936-37.241v224h-255.936z"/>
+            </svg>
+            <svg class="example-box-model example-box" id="multi-morph-example1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 550 550">
+                <path id="w111" fill="#e91b1f" d="M128.2,237.8c-44.1,0-78.7,18.7-83.3,20.6L0,414.1c30.9-11.4,58.1-17,83.1-17
+                c40.4,0,69.8,15.1,94,30.7c11.5-39,39-133,47.2-161.2C205.7,254.8,176.7,237.8,128.2,237.8z"/>
+                <path id="w121" fill="#FF5722" d="M264.2,295.5L219,452.6c13.4,7.7,58.5,32,93.1,32c27.9,0,59.1-7.1,95.4-21.9l43.2-151
+                c-29.3,9.5-57.4,14.3-83.7,14.3C318.9,326,285.4,310.5,264.2,295.5z"/>
+                <path id="w131" fill="#4CAF50" d="M146.4,184.4c38.6,0.4,67.1,15.1,90.7,30.3L283.5,56c-9.8-5.6-41.4-27.7-92.5-28.6
+                c-25.9,0.5-54.2,7-86.4,19.9L60.3,202.6C92.7,190.3,120.6,184.4,146.4,184.4C146.4,184.4,146.4,184.4,146.4,184.4L146.4,184.4z"/>
+                <path id="w141" fill="#2196F3" d="M512,99.1c-29.4,11.4-58.1,17.2-85.5,17.2c-45.8,0-79.6-15.9-101.5-31.2l-46,159.1
+                c30.9,19.9,64.1,29.9,99.1,29.9c43.1,0,89.5-21.9,89.5-21.9L512,99.1z"/>
+                
+                <path id="w211" style="visibility:hidden" d="M192,470.9L0.2,444.6l0-98.7l0-58.9h107.8H192L192,470.9z"/>
+                <path id="w221" style="visibility:hidden" d="M480,288l-0.1,224l-138.7-19.5L224,476V288h128H480z"/>
+                <path id="w231" style="visibility:hidden" d="M0.2,256L0,100l99.5-13.5L192,73.9V256H87H0.2z"/>
+                <path id="w241" style="visibility:hidden" d="M224,69.2l147.7-21.5L479.9,32v224H352H224V69.2z"/>
+            </svg>
+            <svg class="example-box-model example-box" id="multi-morph-example2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 550 550">
+                <path id="s11" fill="#e91b1f" d="M128.2,237.8c-44.1,0-78.7,18.7-83.3,20.6L0,414.1c30.9-11.4,58.1-17,83.1-17
+                c40.4,0,69.8,15.1,94,30.7c11.5-39,39-133,47.2-161.2C205.7,254.8,176.7,237.8,128.2,237.8z"/>
+                <path id="s12" fill="#FF5722" d="M264.2,295.5L219,452.6c13.4,7.7,58.5,32,93.1,32c27.9,0,59.1-7.1,95.4-21.9l43.2-151
+                c-29.3,9.5-57.4,14.4-83.7,14.3C310.6,325.9,276,303.9,264.2,295.5z"/>
+                <path id="s13" fill="#4CAF50" d="M146.4,184.4c38.6,0.4,67.1,15.1,90.7,30.3L283.5,56c-6.6-3.7-45.7-28.6-92.5-28.6
+                c-25.9,0.5-54.2,7-86.4,19.9L60.3,202.6C92.7,190.3,120.6,184.4,146.4,184.4z"/>
+                <path id="s14" fill="#2196F3" d="M512,99.1c-29.4,11.4-58.1,17.2-85.5,17.2c-45.8,0-79.6-15.9-101.5-31.2l-46,159.1
+                c30.9,19.9,64.1,29.9,99.1,29.9c43.1,0,89.5-21.9,89.5-21.9L512,99.1z"/>
+                
+                <path id="s21" style="visibility:hidden" d="M192,471.9L0.2,445.6V288h87.3h52.3H192V471.9z"/>
+                <path id="s22" style="visibility:hidden" d="M479.999 288l-0.063 224-255.936-36.008v-187.992z"/>
+                <path id="s23" style="visibility:hidden" d="M0.2,256L0,100l88.7-12.1l103.3-14V256H0.2z"/>
+                <path id="s24" style="visibility:hidden" d="M224,69.2L479.9,32v224H354.7h-69.4H224V69.2z"/>
+            </svg>
+
+            <div class="example-buttons">
+                <a id="multiMorphBtn" class="btn btn-indigo" href="javascript:void(0)">Start</a>
+            </div>
+        </div>
+        <p>Make sure to check the markup here as well as the <a href="assets/js/svgCubicMorph.js" target="_blank">svgCubicMorph.js</a> for a full code review.</p>
+
+        <h3>Intersecting Paths Example</h3>
+        <p>The same preparation apply here, however the outcome is a bit different with cubic-bezier path commands, as shown in the first example. For the next two examples, the shapes have been edited for a better outcome.
+            Let's have a look:</p>
+
+        <div class="featurettes">
+            <svg class="example-box-model example-box" id="complex-morph-example" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 513">
+                <defs>
+                    <mask id="symbol">
+                        <rect width="100%" height="100%" fill="#fff"></rect>
+                        <path id="symbol-left" fill="#000" d="M155.889 333.394h-55.632c-3.351 0-5.854-1.504-7.271-3.792-1.467-2.379-1.542-5.464 0-8.534l59.11-104.313c0.063-0.114 0.063-0.19 0-0.316l-37.615-65.116c-1.556-3.098-1.783-6.157-0.316-8.534 1.417-2.301 4.235-3.477 7.586-3.477h55.632c8.535 0 12.72 5.499 15.489 10.431 0 0 38.020 66.33 38.249 66.696-2.252 3.97-60.059 106.21-60.059 106.21-2.844 5.131-6.852 10.745-15.173 10.745z"></path>
+                        <path id="symbol-left-clone" fill="#000" d="M155.889 333.394h-55.632c-3.351 0-5.854-1.504-7.271-3.792-1.467-2.379-1.542-5.464 0-8.534l59.11-104.313c0.063-0.114 0.063-0.19 0-0.316l-37.615-65.116c-1.556-3.098-1.783-6.157-0.316-8.534 1.417-2.301 4.235-3.477 7.586-3.477h55.632c8.535 0 12.72 5.499 15.489 10.431 0 0 38.020 66.33 38.249 66.696-2.252 3.97-60.059 106.21-60.059 106.21-2.844 5.131-6.852 10.745-15.173 10.745z"></path>
+                        <path id="symbol-right" fill="#000" d="M418.956 75.269l-123.176 217.79c-0.075 0.115-0.075 0.255 0 0.367l78.431 143.295c1.556 3.084 1.593 6.221 0.113 8.597-1.415 2.288-4.033 3.552-7.383 3.552h-55.57c-8.522 0-12.783-5.663-15.54-10.596 0 0-78.848-144.646-79.050-145.023 3.944-6.98 123.797-219.523 123.797-219.523 2.984-5.362 6.587-10.596 14.894-10.596h56.203c3.351 0 5.981 1.265 7.396 3.553 1.466 2.376 1.428 5.511-0.115 8.584z"></path>
+                        <path id="eye-right" style="visibility: hidden;" d="M352 128c17.673 0 32 21.49 32 48s-14.327 48-32 48-32-21.49-32-48 14.327-48 32-48z"></path>
+                        <path id="eye-left" style="visibility: hidden;" d="M176 156.031c29.823 0 51 11.166 51 28.641 0 3.699 1.906 21.497-0.085 24.797-7.414-12.288-27.405-21.094-50.915-21.094s-43.501 8.806-50.915 21.094c-1.991-3.3-0.085-21.098-0.085-24.797 0-17.475 21.177-28.641 51-28.641z"></path>
+                        <path id="mouth" style="visibility: hidden;" d="M250.172 416c-59.621 0-111.929-32.14-141.446-80.476 35.205 27.53 97.267 32.905 162.644 19.989 70.124-13.853 124.555-45.771 144.227-88.297-10.827 83.98-80.759 148.784-165.425 148.784z"></path>
+                    </mask>
+                </defs>
+                <path id="rectangle-container" fill="#2196F3" mask="url(#symbol)" d="M426.671 0h-341.328c-46.937 0-85.343 38.405-85.343 85.345v341.311c0 46.969 38.406 85.344 85.343 85.344h341.328c46.938 0 85.329-38.375 85.329-85.345v-341.31c0-46.94-38.391-85.345-85.329-85.345z"></path>
+                <path id="circle-container" style="visibility: hidden;" d="M0,256a256,256 0 1,0 512,0a256,256 0 1,0 -512,0z"></path>
+            </svg>
+            <svg class="example-box-model example-box" id="complex-morph-example2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513 513">
+                <defs>
+                    <mask id="symbol2">
+                        <rect width="100%" height="100%" fill="#fff"></rect>
+                        <path id="symbol-left2" fill="#000" d="M155.889 333.394h-55.632c-3.351 0-5.854-1.504-7.271-3.792-1.467-2.379-1.542-5.464 0-8.534l59.11-104.313c0.063-0.114 0.063-0.19 0-0.316l-37.615-65.116c-1.556-3.098-1.783-6.157-0.316-8.534 1.417-2.301 4.235-3.477 7.586-3.477h55.632c8.535 0 12.72 5.499 15.489 10.431 0 0 38.020 66.33 38.249 66.696-2.252 3.97-60.059 106.21-60.059 106.21-2.844 5.131-6.852 10.745-15.173 10.745"></path>
+                        <path id="sample-shape2" fill="#000" d="M250 450 L250 450"></path>
+                        <path id="symbol-right2" fill="#000" d="M418.956 75.269l-123.176 217.79c-0.075 0.115-0.075 0.255 0 0.367l78.431 143.295c1.556 3.084 1.593 6.221 0.113 8.597-1.415 2.288-4.033 3.552-7.383 3.552h-55.57c-8.522 0-12.783-5.663-15.54-10.596 0 0-78.848-144.646-79.050-145.023 3.944-6.98 123.797-219.523 123.797-219.523 2.984-5.362 6.587-10.596 14.894-10.596h56.203c3.351 0 5.981 1.265 7.396 3.553 1.466 2.376 1.428 5.511-0.115 8.584"></path>
+                        <path id="eye-right2" style="visibility: hidden;" d="M352,128c2.6,0,5,0.5,7.4,1.3c2.3,0.8,4.5,2,6.6,3.6c10.6,7.8,18,24.2,18,43.1c0,16.2-5.3,30.5-13.5,39.2
+                        c-3.1,3.3-6.6,5.8-10.5,7.3c-2.6,1-5.3,1.5-8,1.5c-4,0-7.8-1.1-11.3-3.1c-2.7-1.6-5.3-3.7-7.6-6.2c-7.9-8.7-13-22.8-13-38.7
+                        c0-19.2,7.5-35.7,18.4-43.4c1.9-1.4,4-2.5,6.1-3.2C346.9,128.5,349.4,128,352,128"></path>
+                        <path id="eye-left2" style="visibility: hidden;" d="M176,156c10.4,0,19.7,1.4,27.5,3.9c14.5,4.7,23.5,13.4,23.5,24.8c0,3.7,1.9,21.5-0.1,24.8
+                        c-3.3-5.5-9.2-10.3-16.7-13.9c-5.6-2.7-12.2-4.8-19.4-6c-4.7-0.8-9.6-1.2-14.7-1.2c-8.9,0-17.3,1.3-24.7,3.5
+                        c-12.2,3.7-21.6,10-26.3,17.6c-2-3.3-0.1-21.1-0.1-24.8c0-11.3,8.8-19.9,23-24.6c3.7-1.2,7.8-2.2,12.2-2.9
+                        C165.1,156.4,170.4,156,176,156"></path>
+                        <path id="mouth2" style="visibility: hidden;" d="M250.172 416c-59.621 0-111.929-32.14-141.446-80.476 35.205 27.53 97.267 32.905 162.644 19.989 70.124-13.853 124.555-45.771 144.227-88.297-10.827 83.98-80.759 148.784-165.425 148.784"></path>
+                    </mask>
+                </defs>
+                <path id="rectangle-container2" fill="#e91b1f" mask="url(#symbol2)" d="M426.7,0H85.3C38.4,0,0,38.4,0,85.3v341.3c0,47,38.4,85.3,85.3,85.3h341.3
+                c46.9,0,85.3-38.4,85.3-85.3V85.3C512,38.4,473.6,0,426.7,0"></path>
+                <path id="circle-container2" style="visibility: hidden;" d="M0,256c0,100.9,59.8,165.3,72,177.9c9.1,9.4,34.7,34.4,75.6,53.5c50.6,23.7,95,24.6,108.4,24.6
+                c10.9,0,61.3-0.9,117.6-30c42.1-21.8,67.4-49,73.1-55.3c64-70.6,65.3-157,65.3-170.7c0-18.9-2.1-96.7-61-165.9
+                c-8.6-10.2-37.3-42-86-65C313.6,0.9,268.6,0,256,0c-11,0-61.8,0.8-118.2,30.1C97.1,51.3,72.4,77.3,66.6,83.7C1.3,154.7,0,243,0,256"></path>
+            </svg>
+            <div class="example-buttons">
+                <a id="compliMorphBtn" class="btn btn-green" href="javascript:void(0)">Start</a>
+            </div>
+        </div>
+
+        <p>So the technique involves creating <code>&lt;mask></code> elements, splitting multipath shapes into multiple <code>&lt;path></code> shapes, matching the amount of starting and ending shapes by duplicating 
+            an existing shape or by sampling another shape for the same purpose, editing shapes for more accurate point-to-point animation, as well as various options to optimize the visual presentation.</p>
+
+        <p>That's it, you now mastered the <b>SVG Cubic Morph</b> component.</p>
+
+        <h3>Notes</h3>
+        <ul>
+          <li>Starting with KUTE.js version 2.0.14 the component implements <a href="https://github.com/thednp/svg-path-commander">SVGPathCommander</a> for path processing, solving previous issues with over-optimized 
+              path strings among other issues. You can try the <a href="https://thednp.github.io/svg-path-commander/">SVGPathCommander demo page</a> to prepare your path strings.</li>
+          <li>Since animation works only with <code>path</code> <b>SVGElement</b>s, you might need a <a href="https://thednp.github.io/svg-path-commander/convert.html" target="_blank">shapeToPath</a> utility.</li>
+          <li>Both SVG morph components will always animate first sub-path from both starting and ending shapes, and for any case hopefully this demo will guide you in mastering the technique.</li>
+          <li>In some cases your start and end shapes don't have a very close size, you can use your vector graphics editor of choice or <a href="https://github.com/Waest/SVGPathConverter">SVGPathCommander</a> 
+              to apply a scale transformation to your shapes' path commands.</li>
+          <li>The <b>SVG Cubic Morph</b> component WILL NOT animate paths with sub-paths as of KUTE.js version 2.0.14, hopefuly this guide will help you break the ice.</li>
+          <li>Compared to <a href="svgMorph.html">svgMorph</a>, this component can be more memory efficient, as we're dealing with significantly less interpolation points which translates directly 
+              into better performance and the shapes never show any sign of "polygon artifacts".</li>
+          <li>Some shapes can be broken even if the browser won't throw any error so make sure you double check with your SVG editor of choice.</li>
+          <li>In some cases the duplicated curve bezier points don't produce the best morphing animation, but you can edit the shapes and add your own additional path commands between the existing ones
+              so that the component will work with actual points that travel less and produce a much more "natural" morphing animation.</li>
+          <li>The edited shapes can be found in the <b>assets/img</b> folder of this demo, make sure to check them out.</li>
+          <li>Make sure to check the <a href="assets/js/svgCubicMorph.js" target="_blank">svgCubicMorph.js</a> for a full code review.</li>
+          <li>This component is affected by the the <code>fill-rule="evenodd"</code> specific SVG attribute, you must make sure you check your shapes in that regard as well.</li>
+          <li>This component is bundled with the <i>demo/src/kute-extra.js</i> file.</li>
+        </ul>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="content-wrap">
+        <p class="pull-right"><a id="toTop" href="#">Back to top</a></p>
+        <p>&copy; 2015 - 2022 &middot; <a href="https://github.com/thednp">thednp</a>.</p>
+      </div>
+    </footer>
+
+  </div>
+  <!-- /.site-wrapper -->
+
+  <!-- JavaScript =============================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="./src/polyfill.min.js"></script>
+  <script src="./src/kute-extra.js"></script>
+  <script src="./assets/js/svgCubicMorph.js"></script>
+  <script src="./assets/js/prism.js"></script>
+  <script src="./assets/js/scripts.js"></script>
+
+</body>
+
+</html>

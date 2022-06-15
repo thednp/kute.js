@@ -1,4 +1,4 @@
-import support3DTransform from 'shorter-js/src/boolean/support3DTransform';
+import support3DTransform from '@thednp/shorty/src/boolean/support3DTransform';
 import defaultValues from '../objects/defaultValues';
 import getInlineStyleLegacy from '../process/getInlineStyleLegacy';
 import perspective from '../interpolation/perspective';

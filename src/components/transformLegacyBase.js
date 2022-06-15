@@ -1,4 +1,4 @@
-import support3DTransform from 'shorter-js/src/boolean/support3DTransform';
+import support3DTransform from '@thednp/shorty/src/boolean/support3DTransform';
 import KEC from '../objects/kute';
 import perspective from '../interpolation/perspective';
 import translate3d from '../interpolation/translate3d';
