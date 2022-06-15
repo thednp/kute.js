@@ -1,4 +1,4 @@
-# KUTE.js
+# KUTE.js ![svg-path-commander version](https://img.shields.io/badge/svg--path--commander-1.0.4-brightgreen) ![@thednp/bezier-easing version](https://img.shields.io/badge/@thednp/bezier--easing-1.0.1-brightgreen) ![typescript version](https://img.shields.io/badge/typescript-4.5.2-brightgreen)
 
 A modern JavaScript animation engine built on ES6+ standards with strong TypeScript definitions and most essential features for the web with easy to use methods to set up high performance, cross-browser animations. The focus is code quality, flexibility, performance and size. 
 
