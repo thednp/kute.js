@@ -1,11 +1,16 @@
-# KUTE.js ![svg-path-commander version](https://img.shields.io/badge/svg--path--commander-1.0.4-brightgreen) ![@thednp/bezier-easing version](https://img.shields.io/badge/@thednp/bezier--easing-1.0.1-brightgreen) ![typescript version](https://img.shields.io/badge/typescript-4.5.2-brightgreen)
+# KUTE.js
+[![ci](https://github.com/thednp/kute.js/actions/workflows/ci.yml/badge.svg)](https://github.com/thednp/kute.js/actions/workflows/ci.yml)
+[![NPM Version](https://img.shields.io/npm/v/kute.js.svg)](https://www.npmjs.com/package/kute.js)
+[![NPM Downloads](https://img.shields.io/npm/dm/kute.js.svg)](http://npm-stat.com/charts.html?package=kute.js)
+[![jsDeliver](https://img.shields.io/jsdelivr/npm/hw/kute.js)](https://www.jsdelivr.com/package/npm/kute.js)
+[![CDNJS](https://img.shields.io/cdnjs/v/kute.js.svg)](https://cdnjs.com/libraries/kute.js)
+![svg-path-commander version](https://img.shields.io/badge/svg--path--commander-1.0.4-brightgreen)
+![@thednp/bezier-easing version](https://img.shields.io/badge/@thednp/bezier--easing-1.0.1-brightgreen)
+![typescript version](https://img.shields.io/badge/typescript-4.5.2-brightgreen)
 
 A modern JavaScript animation engine built on ES6+ standards with strong TypeScript definitions and most essential features for the web with easy to use methods to set up high performance, cross-browser animations. The focus is code quality, flexibility, performance and size. 
 
-[![NPM Version](https://img.shields.io/npm/v/kute.js.svg?style=flat-square)](https://www.npmjs.com/package/kute.js)
-[![NPM Downloads](https://img.shields.io/npm/dm/kute.js.svg?style=flat-square)](http://npm-stat.com/charts.html?package=kute.js)
-[![jsDeliver](https://data.jsdelivr.com/v1/package/npm/kute.js/badge)](https://www.jsdelivr.com/package/npm/kute.js)
-[![CDNJS](https://img.shields.io/cdnjs/v/kute.js.svg?style=flat-square)](https://cdnjs.com/libraries/kute.js)
+
 
 KUTE.js packs a series of components for presentation attributes, SVG transform, draw SVG strokes and path morphing, text string write up or number countdowns, plus additional CSS properties like colors, border-radius or typographic properties.
 
