@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Standard v2.2.3 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.2.4 (http://thednp.github.io/kute.js)
 * Copyright 2015-2022 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -2692,7 +2692,6 @@ function fixArc(path, allPathCommands, i) {
     while (segment.length) {
       // if created multiple C:s, their original seg is saved
       allPathCommands[i] = 'A';
-      // @ts-ignore
       path.splice(ni += 1, 0, ['C', ...segment.splice(0, 6)]);
     }
     path.splice(i, 1);
@@ -2706,6 +2705,67 @@ function fixArc(path, allPathCommands, i) {
 const paramsCount = {
   a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0,
 };
+
+/**
+ * Iterates an array to check if it's an actual `pathArray`.
+ *
+ * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
+ * @returns {boolean} iteration result
+ */
+function isPathArray(path) {
+  return Array.isArray(path) && path.every((seg) => {
+    const lk = seg[0].toLowerCase();
+    return paramsCount[lk] === seg.length - 1 && 'achlmqstvz'.includes(lk);
+  });
+}
+
+/**
+ * Iterates an array to check if it's a `pathArray`
+ * with all absolute values.
+ *
+ * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
+ * @returns {boolean} iteration result
+ */
+function isAbsoluteArray(path) {
+  return isPathArray(path)
+    // `isPathArray` also checks if it's `Array`
+    && path.every(([x]) => x === x.toUpperCase());
+}
+
+/**
+ * Iterates an array to check if it's a `pathArray`
+ * with all segments are in non-shorthand notation
+ * with absolute values.
+ *
+ * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
+ * @returns {boolean} iteration result
+ */
+function isNormalizedArray(path) {
+  // `isAbsoluteArray` also checks if it's `Array`
+  return isAbsoluteArray(path) && path.every(([pc]) => 'ACLMQZ'.includes(pc));
+}
+
+/**
+ * Iterates an array to check if it's a `pathArray`
+ * with all C (cubic bezier) segments.
+ *
+ * @param {string | SVGPath.pathArray} path the `Array` to be checked
+ * @returns {boolean} iteration result
+ */
+function isCurveArray(path) {
+  // `isPathArray` also checks if it's `Array`
+  return isNormalizedArray(path) && path.every(([pc]) => 'MC'.includes(pc));
+}
+
+/**
+ * Returns a clone of an existing `pathArray`.
+ *
+ * @param {SVGPath.pathArray | SVGPath.pathSegment} path the source `pathArray`
+ * @returns {any} the cloned `pathArray`
+ */
+function clonePath(path) {
+  return path.map((x) => (Array.isArray(x) ? [...x] : x));
+}
 
 /**
  * Breaks the parsing of a pathString once a segment is finalized.
@@ -3015,16 +3075,6 @@ function scanSegment(path) {
 }
 
 /**
- * Returns a clone of an existing `pathArray`.
- *
- * @param {SVGPath.pathArray | SVGPath.pathSegment} path the source `pathArray`
- * @returns {any} the cloned `pathArray`
- */
-function clonePath(path) {
-  return path.map((x) => (Array.isArray(x) ? [...x] : x));
-}
-
-/**
  * The `PathParser` is used by the `parsePathString` static method
  * to generate a `pathArray`.
  *
@@ -3032,7 +3082,6 @@ function clonePath(path) {
  */
 function PathParser(pathString) {
   /** @type {SVGPath.pathArray} */
-  // @ts-ignore
   this.segments = [];
   /** @type {string} */
   this.pathValue = pathString;
@@ -3048,19 +3097,6 @@ function PathParser(pathString) {
   this.data = [];
   /** @type {string} */
   this.err = '';
-}
-
-/**
- * Iterates an array to check if it's an actual `pathArray`.
- *
- * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
- * @returns {boolean} iteration result
- */
-function isPathArray(path) {
-  return Array.isArray(path) && path.every((seg) => {
-    const lk = seg[0].toLowerCase();
-    return paramsCount[lk] === seg.length - 1 && 'achlmqstvz'.includes(lk);
-  });
 }
 
 /**
@@ -3087,19 +3123,6 @@ function parsePathString(pathInput) {
 }
 
 /**
- * Iterates an array to check if it's a `pathArray`
- * with all absolute values.
- *
- * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
- * @returns {boolean} iteration result
- */
-function isAbsoluteArray(path) {
-  return isPathArray(path)
-    // @ts-ignore -- `isPathArray` also checks if it's `Array`
-    && path.every(([x]) => x === x.toUpperCase());
-}
-
-/**
  * Parses a path string value or object and returns an array
  * of segments, all converted to absolute values.
  *
@@ -3109,7 +3132,7 @@ function isAbsoluteArray(path) {
 function pathToAbsolute(pathInput) {
   /* istanbul ignore else */
   if (isAbsoluteArray(pathInput)) {
-    // @ts-ignore -- `isAbsoluteArray` checks if it's `pathArray`
+    // `isAbsoluteArray` checks if it's `pathArray`
     return clonePath(pathInput);
   }
 
@@ -3117,12 +3140,11 @@ function pathToAbsolute(pathInput) {
   let x = 0; let y = 0;
   let mx = 0; let my = 0;
 
-  // @ts-ignore -- the `absoluteSegment[]` is for sure an `absolutePath`
+  // the `absoluteSegment[]` is for sure an `absolutePath`
   return path.map((segment) => {
     const values = segment.slice(1).map(Number);
     const [pathCommand] = segment;
     /** @type {SVGPath.absoluteCommand} */
-    // @ts-ignore
     const absCommand = pathCommand.toUpperCase();
 
     if (pathCommand === 'M') {
@@ -3132,7 +3154,6 @@ function pathToAbsolute(pathInput) {
       return ['M', x, y];
     }
     /** @type {SVGPath.absoluteSegment} */
-    // @ts-ignore
     let absoluteSegment = [];
 
     if (pathCommand !== absCommand) {
@@ -3152,12 +3173,11 @@ function pathToAbsolute(pathInput) {
           // use brakets for `eslint: no-case-declaration`
           // https://stackoverflow.com/a/50753272/803358
           const absValues = values.map((n, j) => n + (j % 2 ? y : x));
-          // @ts-ignore for n, l, c, s, q, t
+          // for n, l, c, s, q, t
           absoluteSegment = [absCommand, ...absValues];
         }
       }
     } else {
-      // @ts-ignore
       absoluteSegment = [absCommand, ...values];
     }
 
@@ -3168,17 +3188,13 @@ function pathToAbsolute(pathInput) {
         y = my;
         break;
       case 'H':
-        // @ts-ignore
         [, x] = absoluteSegment;
         break;
       case 'V':
-        // @ts-ignore
         [, y] = absoluteSegment;
         break;
       default:
-        // @ts-ignore
         x = absoluteSegment[segLength - 2];
-        // @ts-ignore
         y = absoluteSegment[segLength - 1];
 
         if (absCommand === 'M') {
@@ -3237,19 +3253,6 @@ function normalizeSegment(segment, params) {
 }
 
 /**
- * Iterates an array to check if it's a `pathArray`
- * with all segments are in non-shorthand notation
- * with absolute values.
- *
- * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
- * @returns {boolean} iteration result
- */
-function isNormalizedArray(path) {
-  // @ts-ignore -- `isAbsoluteArray` also checks if it's `Array`
-  return isAbsoluteArray(path) && path.every(([pc]) => 'ACLMQZ'.includes(pc));
-}
-
-/**
  * @type {SVGPath.parserParams}
  */
 const paramsParser = {
@@ -3288,47 +3291,6 @@ function normalizePath(pathInput) {
   }
 
   return path;
-}
-
-/**
- * Checks a `pathArray` for an unnecessary `Z` segment
- * and returns a new `pathArray` without it.
- *
- * The `pathInput` must be a single path, without
- * sub-paths. For multi-path `<path>` elements,
- * use `splitPath` first and apply this utility on each
- * sub-path separately.
- *
- * @param {SVGPath.pathArray | string} pathInput the `pathArray` source
- * @return {SVGPath.pathArray} a fixed `pathArray`
- */
-function fixPath(pathInput) {
-  const pathArray = parsePathString(pathInput);
-  const normalArray = normalizePath(pathArray);
-  const { length } = pathArray;
-  const isClosed = normalArray.slice(-1)[0][0] === 'Z';
-  const segBeforeZ = isClosed ? length - 2 : length - 1;
-
-  const [mx, my] = normalArray[0].slice(1);
-  const [x, y] = normalArray[segBeforeZ].slice(-2);
-
-  /* istanbul ignore else */
-  if (isClosed && mx === x && my === y) {
-    return pathArray.slice(0, -1);
-  }
-  return pathArray;
-}
-
-/**
- * Iterates an array to check if it's a `pathArray`
- * with all C (cubic bezier) segments.
- *
- * @param {string | SVGPath.pathArray} path the `Array` to be checked
- * @returns {boolean} iteration result
- */
-function isCurveArray(path) {
-  // @ts-ignore -- `isPathArray` also checks if it's `Array`
-  return isNormalizedArray(path) && path.every(([pc]) => 'MC'.includes(pc));
 }
 
 /**
@@ -3405,9 +3367,9 @@ function arcToCubic(X1, Y1, RX, RY, angle, LAF, SF, X2, Y2, recursive) {
     cx = ((k * rx * y) / ry) + ((x1 + x2) / 2);
     cy = ((k * -ry * x) / rx) + ((y1 + y2) / 2);
     // eslint-disable-next-line no-bitwise -- Impossible to satisfy no-bitwise
-    f1 = (Math.asin((((y1 - cy) / ry))) * (10 ** 9) >> 0) / (10 ** 9);
+    f1 = Math.asin((((y1 - cy) / ry) * (10 ** 9) >> 0) / (10 ** 9));
     // eslint-disable-next-line no-bitwise -- Impossible to satisfy no-bitwise
-    f2 = (Math.asin((((y2 - cy) / ry))) * (10 ** 9) >> 0) / (10 ** 9);
+    f2 = Math.asin((((y2 - cy) / ry) * (10 ** 9) >> 0) / (10 ** 9));
 
     f1 = x1 < cx ? Math.PI - f1 : f1;
     f2 = x2 < cx ? Math.PI - f2 : f2;
@@ -3528,7 +3490,7 @@ function segmentLineFactory(x1, y1, x2, y2, distance) {
 
   /* istanbul ignore else */
   if (typeof distance === 'number') {
-    if (distance === 0) {
+    if (distance <= 0) {
       point = { x: x1, y: y1 };
     } else if (distance >= length) {
       point = { x: x2, y: y2 };
@@ -3573,13 +3535,10 @@ function lineToCubic(x1, y1, x2, y2) {
   const p5 = midPoint(p3, p4, t);
   const p6 = midPoint(p4, p5, t);
   const seg1 = [...p0, ...p2, ...p4, ...p6, t];
-  // @ts-ignore
   const cp1 = segmentLineFactory(...seg1).point;
   const seg2 = [...p6, ...p5, ...p3, ...p1, 0];
-  // @ts-ignore
   const cp2 = segmentLineFactory(...seg2).point;
 
-  // @ts-ignore
   return [cp1.x, cp1.y, cp2.x, cp2.y, x2, y2];
 }
 
@@ -3638,11 +3597,12 @@ function segmentToCubic(segment, params) {
 function pathToCurve(pathInput) {
   /* istanbul ignore else */
   if (isCurveArray(pathInput)) {
-    // @ts-ignore -- `isCurveArray` checks if it's `pathArray`
+    // `isCurveArray` checks if it's `pathArray`
     return clonePath(pathInput);
   }
 
-  const path = fixPath(normalizePath(pathInput));
+  // const path = fixPath(normalizePath(pathInput));
+  const path = normalizePath(pathInput);
   const params = { ...paramsParser };
   const allPathCommands = [];
   let pathCommand = ''; // ts-lint
@@ -3665,7 +3625,6 @@ function pathToCurve(pathInput) {
     params.y2 = +(segment[seglen - 3]) || params.y1;
   }
 
-  // @ts-ignore
   return path;
 }
 
@@ -3904,7 +3863,7 @@ function segmentArcFactory(X1, Y1, RX, RY, angle, LAF, SF, X2, Y2, distance) {
   let POINT = { x: 0, y: 0 };
   let POINTS = [{ x, y }];
 
-  if (distanceIsNumber && distance === 0) {
+  if (distanceIsNumber && distance <= 0) {
     POINT = { x, y };
   }
 
@@ -4000,7 +3959,7 @@ function segmentCubicFactory(x1, y1, c1x, c1y, c2x, c2y, x2, y2, distance) {
   let POINT = { x: 0, y: 0 };
   let POINTS = [{ x, y }];
 
-  if (distanceIsNumber && distance === 0) {
+  if (distanceIsNumber && distance <= 0) {
     POINT = { x, y };
   }
 
@@ -4092,7 +4051,7 @@ function segmentQuadFactory(x1, y1, qx, qy, x2, y2, distance) {
   let POINT = { x: 0, y: 0 };
   let POINTS = [{ x, y }];
 
-  if (distanceIsNumber && distance === 0) {
+  if (distanceIsNumber && distance <= 0) {
     POINT = { x, y };
   }
 
@@ -4718,7 +4677,7 @@ Object.keys(Components).forEach((component) => {
   Components[component] = new Animation(compOps);
 });
 
-var version = "2.2.3";
+var version = "2.2.4";
 
 // @ts-ignore
 

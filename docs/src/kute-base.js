@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Base v2.2.3 (http://thednp.github.io/kute.js)
+* KUTE.js Base v2.2.4 (http://thednp.github.io/kute.js)
 * Copyright 2015-2022 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -876,7 +876,7 @@
     return new TweenConstructor(selector(element), startObject, endObject, options);
   }
 
-  var version = "2.2.3";
+  var version = "2.2.4";
 
   // @ts-ignore
 

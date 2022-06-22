@@ -1,5 +1,5 @@
 /*!
-* KUTE.js Standard v2.2.3 (http://thednp.github.io/kute.js)
+* KUTE.js Standard v2.2.4 (http://thednp.github.io/kute.js)
 * Copyright 2015-2022 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
@@ -2699,7 +2699,6 @@
       while (segment.length) {
         // if created multiple C:s, their original seg is saved
         allPathCommands[i] = 'A';
-        // @ts-ignore
         path.splice(ni += 1, 0, ['C' ].concat( segment.splice(0, 6)));
       }
       path.splice(i, 1);
@@ -2713,6 +2712,79 @@
   var paramsCount = {
     a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0,
   };
+
+  /**
+   * Iterates an array to check if it's an actual `pathArray`.
+   *
+   * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
+   * @returns {boolean} iteration result
+   */
+  function isPathArray(path) {
+    return Array.isArray(path) && path.every(function (seg) {
+      var lk = seg[0].toLowerCase();
+      return paramsCount[lk] === seg.length - 1 && 'achlmqstvz'.includes(lk);
+    });
+  }
+
+  /**
+   * Iterates an array to check if it's a `pathArray`
+   * with all absolute values.
+   *
+   * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
+   * @returns {boolean} iteration result
+   */
+  function isAbsoluteArray(path) {
+    return isPathArray(path)
+      // `isPathArray` also checks if it's `Array`
+      && path.every(function (ref) {
+        var x = ref[0];
+
+        return x === x.toUpperCase();
+    });
+  }
+
+  /**
+   * Iterates an array to check if it's a `pathArray`
+   * with all segments are in non-shorthand notation
+   * with absolute values.
+   *
+   * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
+   * @returns {boolean} iteration result
+   */
+  function isNormalizedArray(path) {
+    // `isAbsoluteArray` also checks if it's `Array`
+    return isAbsoluteArray(path) && path.every(function (ref) {
+      var pc = ref[0];
+
+      return 'ACLMQZ'.includes(pc);
+    });
+  }
+
+  /**
+   * Iterates an array to check if it's a `pathArray`
+   * with all C (cubic bezier) segments.
+   *
+   * @param {string | SVGPath.pathArray} path the `Array` to be checked
+   * @returns {boolean} iteration result
+   */
+  function isCurveArray(path) {
+    // `isPathArray` also checks if it's `Array`
+    return isNormalizedArray(path) && path.every(function (ref) {
+      var pc = ref[0];
+
+      return 'MC'.includes(pc);
+    });
+  }
+
+  /**
+   * Returns a clone of an existing `pathArray`.
+   *
+   * @param {SVGPath.pathArray | SVGPath.pathSegment} path the source `pathArray`
+   * @returns {any} the cloned `pathArray`
+   */
+  function clonePath(path) {
+    return path.map(function (x) { return (Array.isArray(x) ? [].concat( x ) : x); });
+  }
 
   /**
    * Breaks the parsing of a pathString once a segment is finalized.
@@ -3028,16 +3100,6 @@
   }
 
   /**
-   * Returns a clone of an existing `pathArray`.
-   *
-   * @param {SVGPath.pathArray | SVGPath.pathSegment} path the source `pathArray`
-   * @returns {any} the cloned `pathArray`
-   */
-  function clonePath(path) {
-    return path.map(function (x) { return (Array.isArray(x) ? [].concat( x ) : x); });
-  }
-
-  /**
    * The `PathParser` is used by the `parsePathString` static method
    * to generate a `pathArray`.
    *
@@ -3045,7 +3107,6 @@
    */
   function PathParser(pathString) {
     /** @type {SVGPath.pathArray} */
-    // @ts-ignore
     this.segments = [];
     /** @type {string} */
     this.pathValue = pathString;
@@ -3061,19 +3122,6 @@
     this.data = [];
     /** @type {string} */
     this.err = '';
-  }
-
-  /**
-   * Iterates an array to check if it's an actual `pathArray`.
-   *
-   * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
-   * @returns {boolean} iteration result
-   */
-  function isPathArray(path) {
-    return Array.isArray(path) && path.every(function (seg) {
-      var lk = seg[0].toLowerCase();
-      return paramsCount[lk] === seg.length - 1 && 'achlmqstvz'.includes(lk);
-    });
   }
 
   /**
@@ -3100,23 +3148,6 @@
   }
 
   /**
-   * Iterates an array to check if it's a `pathArray`
-   * with all absolute values.
-   *
-   * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
-   * @returns {boolean} iteration result
-   */
-  function isAbsoluteArray(path) {
-    return isPathArray(path)
-      // @ts-ignore -- `isPathArray` also checks if it's `Array`
-      && path.every(function (ref) {
-        var x = ref[0];
-
-        return x === x.toUpperCase();
-    });
-  }
-
-  /**
    * Parses a path string value or object and returns an array
    * of segments, all converted to absolute values.
    *
@@ -3126,7 +3157,7 @@
   function pathToAbsolute(pathInput) {
     /* istanbul ignore else */
     if (isAbsoluteArray(pathInput)) {
-      // @ts-ignore -- `isAbsoluteArray` checks if it's `pathArray`
+      // `isAbsoluteArray` checks if it's `pathArray`
       return clonePath(pathInput);
     }
 
@@ -3134,14 +3165,13 @@
     var x = 0; var y = 0;
     var mx = 0; var my = 0;
 
-    // @ts-ignore -- the `absoluteSegment[]` is for sure an `absolutePath`
+    // the `absoluteSegment[]` is for sure an `absolutePath`
     return path.map(function (segment) {
       var assign, assign$1, assign$2;
 
       var values = segment.slice(1).map(Number);
       var pathCommand = segment[0];
       /** @type {SVGPath.absoluteCommand} */
-      // @ts-ignore
       var absCommand = pathCommand.toUpperCase();
 
       if (pathCommand === 'M') {
@@ -3151,7 +3181,6 @@
         return ['M', x, y];
       }
       /** @type {SVGPath.absoluteSegment} */
-      // @ts-ignore
       var absoluteSegment = [];
 
       if (pathCommand !== absCommand) {
@@ -3171,12 +3200,11 @@
             // use brakets for `eslint: no-case-declaration`
             // https://stackoverflow.com/a/50753272/803358
             var absValues = values.map(function (n, j) { return n + (j % 2 ? y : x); });
-            // @ts-ignore for n, l, c, s, q, t
+            // for n, l, c, s, q, t
             absoluteSegment = [absCommand ].concat( absValues);
           }
         }
       } else {
-        // @ts-ignore
         absoluteSegment = [absCommand ].concat( values);
       }
 
@@ -3187,17 +3215,13 @@
           y = my;
           break;
         case 'H':
-          // @ts-ignore
           (assign$1 = absoluteSegment, x = assign$1[1]);
           break;
         case 'V':
-          // @ts-ignore
           (assign$2 = absoluteSegment, y = assign$2[1]);
           break;
         default:
-          // @ts-ignore
           x = absoluteSegment[segLength - 2];
-          // @ts-ignore
           y = absoluteSegment[segLength - 1];
 
           if (absCommand === 'M') {
@@ -3258,23 +3282,6 @@
   }
 
   /**
-   * Iterates an array to check if it's a `pathArray`
-   * with all segments are in non-shorthand notation
-   * with absolute values.
-   *
-   * @param {string | SVGPath.pathArray} path the `pathArray` to be checked
-   * @returns {boolean} iteration result
-   */
-  function isNormalizedArray(path) {
-    // @ts-ignore -- `isAbsoluteArray` also checks if it's `Array`
-    return isAbsoluteArray(path) && path.every(function (ref) {
-      var pc = ref[0];
-
-      return 'ACLMQZ'.includes(pc);
-    });
-  }
-
-  /**
    * @type {SVGPath.parserParams}
    */
   var paramsParser = {
@@ -3315,55 +3322,6 @@
     }
 
     return path;
-  }
-
-  /**
-   * Checks a `pathArray` for an unnecessary `Z` segment
-   * and returns a new `pathArray` without it.
-   *
-   * The `pathInput` must be a single path, without
-   * sub-paths. For multi-path `<path>` elements,
-   * use `splitPath` first and apply this utility on each
-   * sub-path separately.
-   *
-   * @param {SVGPath.pathArray | string} pathInput the `pathArray` source
-   * @return {SVGPath.pathArray} a fixed `pathArray`
-   */
-  function fixPath(pathInput) {
-    var pathArray = parsePathString(pathInput);
-    var normalArray = normalizePath(pathArray);
-    var length = pathArray.length;
-    var isClosed = normalArray.slice(-1)[0][0] === 'Z';
-    var segBeforeZ = isClosed ? length - 2 : length - 1;
-
-    var ref = normalArray[0].slice(1);
-    var mx = ref[0];
-    var my = ref[1];
-    var ref$1 = normalArray[segBeforeZ].slice(-2);
-    var x = ref$1[0];
-    var y = ref$1[1];
-
-    /* istanbul ignore else */
-    if (isClosed && mx === x && my === y) {
-      return pathArray.slice(0, -1);
-    }
-    return pathArray;
-  }
-
-  /**
-   * Iterates an array to check if it's a `pathArray`
-   * with all C (cubic bezier) segments.
-   *
-   * @param {string | SVGPath.pathArray} path the `Array` to be checked
-   * @returns {boolean} iteration result
-   */
-  function isCurveArray(path) {
-    // @ts-ignore -- `isPathArray` also checks if it's `Array`
-    return isNormalizedArray(path) && path.every(function (ref) {
-      var pc = ref[0];
-
-      return 'MC'.includes(pc);
-    });
   }
 
   /**
@@ -3442,9 +3400,9 @@
       cx = ((k * rx * y) / ry) + ((x1 + x2) / 2);
       cy = ((k * -ry * x) / rx) + ((y1 + y2) / 2);
       // eslint-disable-next-line no-bitwise -- Impossible to satisfy no-bitwise
-      f1 = (Math.asin((((y1 - cy) / ry))) * (Math.pow( 10, 9 )) >> 0) / (Math.pow( 10, 9 ));
+      f1 = Math.asin((((y1 - cy) / ry) * (Math.pow( 10, 9 )) >> 0) / (Math.pow( 10, 9 )));
       // eslint-disable-next-line no-bitwise -- Impossible to satisfy no-bitwise
-      f2 = (Math.asin((((y2 - cy) / ry))) * (Math.pow( 10, 9 )) >> 0) / (Math.pow( 10, 9 ));
+      f2 = Math.asin((((y2 - cy) / ry) * (Math.pow( 10, 9 )) >> 0) / (Math.pow( 10, 9 )));
 
       f1 = x1 < cx ? Math.PI - f1 : f1;
       f2 = x2 < cx ? Math.PI - f2 : f2;
@@ -3566,7 +3524,7 @@
 
     /* istanbul ignore else */
     if (typeof distance === 'number') {
-      if (distance === 0) {
+      if (distance <= 0) {
         point = { x: x1, y: y1 };
       } else if (distance >= length) {
         point = { x: x2, y: y2 };
@@ -3613,13 +3571,10 @@
     var p5 = midPoint(p3, p4, t);
     var p6 = midPoint(p4, p5, t);
     var seg1 = p0.concat( p2, p4, p6, [t]);
-    // @ts-ignore
     var cp1 = segmentLineFactory.apply(void 0, seg1).point;
     var seg2 = p6.concat( p5, p3, p1, [0]);
-    // @ts-ignore
     var cp2 = segmentLineFactory.apply(void 0, seg2).point;
 
-    // @ts-ignore
     return [cp1.x, cp1.y, cp2.x, cp2.y, x2, y2];
   }
 
@@ -3682,11 +3637,12 @@
 
     /* istanbul ignore else */
     if (isCurveArray(pathInput)) {
-      // @ts-ignore -- `isCurveArray` checks if it's `pathArray`
+      // `isCurveArray` checks if it's `pathArray`
       return clonePath(pathInput);
     }
 
-    var path = fixPath(normalizePath(pathInput));
+    // const path = fixPath(normalizePath(pathInput));
+    var path = normalizePath(pathInput);
     var params = Object.assign({}, paramsParser);
     var allPathCommands = [];
     var pathCommand = ''; // ts-lint
@@ -3709,7 +3665,6 @@
       params.y2 = +(segment[seglen - 3]) || params.y1;
     }
 
-    // @ts-ignore
     return path;
   }
 
@@ -3954,7 +3909,7 @@
     var POINT = { x: 0, y: 0 };
     var POINTS = [{ x: x, y: y }];
 
-    if (distanceIsNumber && distance === 0) {
+    if (distanceIsNumber && distance <= 0) {
       POINT = { x: x, y: y };
     }
 
@@ -4052,7 +4007,7 @@
     var POINT = { x: 0, y: 0 };
     var POINTS = [{ x: x, y: y }];
 
-    if (distanceIsNumber && distance === 0) {
+    if (distanceIsNumber && distance <= 0) {
       POINT = { x: x, y: y };
     }
 
@@ -4146,7 +4101,7 @@
     var POINT = { x: 0, y: 0 };
     var POINTS = [{ x: x, y: y }];
 
-    if (distanceIsNumber && distance === 0) {
+    if (distanceIsNumber && distance <= 0) {
       POINT = { x: x, y: y };
     }
 
@@ -4772,7 +4727,7 @@
     Components[component] = new Animation(compOps);
   });
 
-  var version = "2.2.3";
+  var version = "2.2.4";
 
   // @ts-ignore
 
