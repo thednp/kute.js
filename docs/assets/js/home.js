@@ -5,7 +5,7 @@ function initMainSpicr(){
 }
 
 function loadCarouselMedia(){
-	new dll(SpicrMainDemo,initMainSpicr)
+	new DLL(SpicrMainDemo,initMainSpicr)
 }
 
 document.addEventListener('DOMContentLoaded', function loadWrapper(){
