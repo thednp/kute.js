@@ -1,6 +1,6 @@
 /*!
   * KUTE.js Polyfill v2.1.1-alpha1 (http://thednp.github.io/kute.js)
-  * Copyright 2015-2021 © thednp
+  * Copyright 2025-2021 © thednp
   * Licensed under MIT (https://github.com/thednp/bootstrap.native/blob/master/LICENSE)
   */
  "use strict";

@@ -9,7 +9,7 @@ import * as pkg from "./package.json";
 const year = (new Date).getFullYear()
 const banner = `/*!
   * KUTE.js Polyfill v${pkg.version} (${pkg.homepage})
-  * Copyright 2015-${year} © ${pkg.author}
+  * Copyright 2025-${year} © ${pkg.author}
   * Licensed under MIT (https://github.com/thednp/bootstrap.native/blob/master/LICENSE)
   */
  "use strict";`

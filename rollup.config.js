@@ -17,7 +17,7 @@ const year = (new Date).getFullYear()
 const banner = 
 `/*!
 * KUTE.js ${NAME} v${pkg.version} (${pkg.homepage})
-* Copyright 2015-${year} © ${pkg.author}
+* Copyright 2025-${year} © ${pkg.author}
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */`
 const miniBanner = `// KUTE.js ${NAME} v${pkg.version} | ${pkg.author} © ${year} | ${pkg.license}-License`

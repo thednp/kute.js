@@ -1,6 +1,6 @@
 /*!
 * KUTE.js Standard v2.2.4 (http://thednp.github.io/kute.js)
-* Copyright 2015-2022 © thednp
+* Copyright 2025-2022 © thednp
 * Licensed under MIT (https://github.com/thednp/kute.js/blob/master/LICENSE)
 */
 /**
