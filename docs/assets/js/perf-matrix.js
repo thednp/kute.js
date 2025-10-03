@@ -1,47 +1,36 @@
 // testing grounds
 "use strict";
 
-var mobileType = '',
-	isMobile = {
-		Windows: function() {
-			var checkW = /IEMobile|Windows Mobile/i.test(navigator.userAgent);
-			mobileType += checkW ? 'Windows Phones.' : '';
-			return checkW;
-		},
-		Android: function() {
-			var checkA = /Android/i.test(navigator.userAgent);
-			mobileType += checkA ? 'Android Phones.' : '';
-			return checkA;
-		},
-		BlackBerry: function() {
-			var checkB = /BlackBerry/i.test(navigator.userAgent);
-			mobileType += checkB ? 'BlackBerry.' : '';
-			return checkB;
-		},
-		iOS: function() {
-			var checkI = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-			mobileType += checkI ? 'Apple iPhone, iPad or iPod.' : '';
-			return checkI;
-		},
-		any: function() {
-			return ( isMobile.Windows() || isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() );
-		}
-	},
-	checkMOBS = isMobile.any();
+function isMobile() {
+	// Primary check: User-Agent Client Hints (supported in modern Chromium browsers)
+	if (navigator.userAgentData && navigator.userAgentData.mobile) {
+		return navigator.userAgentData.mobile;
+	}
+
+	// Fallback 1: Feature detection for touch/coarse pointers and small screens
+	const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+	const isSmallScreen = window.matchMedia('(max-width: 768px)').matches;
+	if (hasTouch && isSmallScreen) {
+		return true;
+	}
+
+	// Fallback 2: Legacy UA regex (use sparingly, as it's not future-proof)
+	const ua = navigator.userAgent;
+	return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+}
 
 // protect phones, older / low end devices
-if (document.body.offsetWidth < 1200 || checkMOBS) {
+if (isMobile()) {
 	var explain = '';
-		explain += checkMOBS && mobileType !== '' ? ('For safety reasons, this page does not work with ' + mobileType) : '';
-		explain += !checkMOBS && document.body.offsetWidth < 1200 && mobileType === '' ? 'For safety reasons this page does not work on your machine because it might be very old. In other cases the browser window size is not enough for the animation to work properly, so if that\'s the case, maximize the window, refresh and proceed with the tests.' : '';
+	explain += 'For safety reasons this page does not work on your machine because it might be very old. In other cases the browser window size is not enough for the animation to work properly, so if that\'s the case, maximize the window, refresh and proceed with the tests.';
 	var warning = '<div style="padding: 20px;">';
-		warning +='<h1 class="text-danger">Warning!</h1>';
-		warning +='<p class="lead text-danger">This web page is only for high-end desktop computers.</p>';
-		warning +='<p class="text-danger">We do not take any responsibility and we are not liable for any damage caused through use of this website, be it indirect, special, incidental or consequential damages to your devices.</p>';
-		warning +='<p class="text-info">'+explain+'</p>';
-		warning +='</div>';
+	warning += '<h1 class="text-danger">Warning!</h1>';
+	warning += '<p class="lead text-danger">This web page is only for high-end desktop computers.</p>';
+	warning += '<p class="text-danger">We do not take any responsibility and we are not liable for any damage caused through use of this website, be it indirect, special, incidental or consequential damages to your devices.</p>';
+	warning += '<p class="text-info">' + explain + '</p>';
+	warning += '</div>';
 	document.body.innerHTML = warning;
-	throw new Error('This page is only for high-end desktop computers. ' + explain); 
+	throw new Error('This page is only for high-end desktop computers. ' + explain);
 }
 
 // the variables
