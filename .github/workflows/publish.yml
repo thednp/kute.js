@@ -34,3 +34,8 @@ jobs:
 
       - name: Build (if needed)
         run: pnpm build # Optional
+
+      - name: Publish to npm
+        run: pnpm publish --provenance --access public --no-git-checks # --access public for new/public packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # Only needed if NOT using trusted publishing
