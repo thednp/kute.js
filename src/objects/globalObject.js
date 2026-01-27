@@ -1,7 +1,7 @@
 let gl0bal;
 
-if (typeof global !== 'undefined') gl0bal = global;
-else if (typeof window !== 'undefined') gl0bal = window.self;
+if (typeof globalThis !== "undefined") gl0bal = globalThis;
+else if (typeof window !== "undefined") gl0bal = globalThis.self;
 else gl0bal = {};
 
 const globalObject = gl0bal;

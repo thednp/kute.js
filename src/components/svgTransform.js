@@ -1,5 +1,5 @@
-import numbers from '../interpolation/numbers';
-import { svgTransformOnStart } from './svgTransformBase';
+import numbers from "../interpolation/numbers";
+import { svgTransformOnStart } from "./svgTransformBase";
 
 // Component Util
 /**
@@ -16,7 +16,9 @@ function parseStringOrigin(origin, bbox) {
       .replace(/right|bottom/, 100)
       .replace(/center|middle/, 50);
   } else {
-    result = /%/.test(origin) ? (x + (parseFloat(origin) * width) / 100) : parseFloat(origin);
+    result = /%/.test(origin)
+      ? (x + (parseFloat(origin) * width) / 100)
+      : parseFloat(origin);
   }
   return result;
 }
@@ -30,11 +32,11 @@ function parseTransformString(a) {
   const c = {};
   const d = a && /\)/.test(a)
     ? a.substring(0, a.length - 1).split(/\)\s|\)/)
-    : 'none';
+    : "none";
 
   if (d instanceof Array) {
     for (let j = 0, jl = d.length; j < jl; j += 1) {
-      const [prop, val] = d[j].trim().split('(');
+      const [prop, val] = d[j].trim().split("(");
       c[prop] = val;
     }
   }
@@ -47,7 +49,7 @@ function parseTransformString(a) {
  * @param {Object<string, (string | number)>} v property value object
  * @returns {KUTE.transformSVGObject} the SVG transform tween object
  */
-function parseTransformSVG(/* prop */_, v) {
+function parseTransformSVG(/* prop */ _, v) {
   /** @type {KUTE.transformSVGObject} */
   const svgTransformObject = {};
 
@@ -59,39 +61,46 @@ function parseTransformSVG(/* prop */_, v) {
   let origin = this._transformOrigin;
   let translation;
 
-  if (typeof (origin) !== 'undefined') {
+  if (typeof origin !== "undefined") {
     origin = origin instanceof Array ? origin : origin.split(/\s/);
   } else {
     origin = [cx, cy];
   }
 
-  origin[0] = typeof origin[0] === 'number' ? origin[0] : parseStringOrigin(origin[0], bb);
-  origin[1] = typeof origin[1] === 'number' ? origin[1] : parseStringOrigin(origin[1], bb);
+  origin[0] = typeof origin[0] === "number"
+    ? origin[0]
+    : parseStringOrigin(origin[0], bb);
+  origin[1] = typeof origin[1] === "number"
+    ? origin[1]
+    : parseStringOrigin(origin[1], bb);
 
   svgTransformObject.origin = origin;
 
   // populate the valuesStart and / or valuesEnd
   Object.keys(v).forEach((i) => {
-    if (i === 'rotate') {
-      if (typeof v[i] === 'number') {
+    if (i === "rotate") {
+      if (typeof v[i] === "number") {
         svgTransformObject[i] = v[i];
       } else if (v[i] instanceof Array) {
         [svgTransformObject[i]] = v[i];
       } else {
         svgTransformObject[i] = v[i].split(/\s/)[0] * 1;
       }
-    } else if (i === 'translate') {
+    } else if (i === "translate") {
       if (v[i] instanceof Array) {
         translation = v[i];
       } else if (/,|\s/.test(v[i])) {
-        translation = v[i].split(',');
+        translation = v[i].split(",");
       } else {
         translation = [v[i], 0];
       }
-      svgTransformObject[i] = [translation[0] * 1 || 0, translation[1] * 1 || 0];
+      svgTransformObject[i] = [
+        translation[0] * 1 || 0,
+        translation[1] * 1 || 0,
+      ];
     } else if (/skew/.test(i)) {
       svgTransformObject[i] = v[i] * 1 || 0;
-    } else if (i === 'scale') {
+    } else if (i === "scale") {
       svgTransformObject[i] = parseFloat(v[i]) || 1;
     }
   });
@@ -116,14 +125,18 @@ function prepareSvgTransform(prop, value) {
  * @param {string} value the property value
  * @returns {string} current transform object
  */
-function getStartSvgTransform(/* tweenProp */_, value) {
+function getStartSvgTransform(/* tweenProp */ _, value) {
   const transformObject = {};
-  const currentTransform = parseTransformString(this.element.getAttribute('transform'));
+  const currentTransform = parseTransformString(
+    this.element.getAttribute("transform"),
+  );
 
   // find a value in current attribute value or add a default value
   Object.keys(value).forEach((j) => {
-    const scaleValue = j === 'scale' ? 1 : 0;
-    transformObject[j] = j in currentTransform ? currentTransform[j] : scaleValue;
+    const scaleValue = j === "scale" ? 1 : 0;
+    transformObject[j] = j in currentTransform
+      ? currentTransform[j]
+      : scaleValue;
   });
 
   return transformObject;
@@ -135,8 +148,11 @@ function svgTransformCrossCheck(prop) {
   if (this.valuesEnd[prop]) {
     const valuesStart = this.valuesStart[prop];
     const valuesEnd = this.valuesEnd[prop];
-    const currentTransform = parseTransformSVG.call(this, prop,
-      parseTransformString(this.element.getAttribute('transform')));
+    const currentTransform = parseTransformSVG.call(
+      this,
+      prop,
+      parseTransformString(this.element.getAttribute("transform")),
+    );
 
     // populate the valuesStart first
     Object.keys(currentTransform).forEach((tp) => {
@@ -148,13 +164,16 @@ function svgTransformCrossCheck(prop) {
     const startMatrix = parentSVG.createSVGTransformFromMatrix(
       parentSVG.createSVGMatrix()
         .translate(-valuesStart.origin[0], -valuesStart.origin[1]) // - origin
-        .translate('translate' in valuesStart // the current translate
-          ? valuesStart.translate[0] : 0, 'translate' in valuesStart ? valuesStart.translate[1]
-          : 0)
+        .translate(
+          "translate" in valuesStart // the current translate
+            ? valuesStart.translate[0]
+            : 0,
+          "translate" in valuesStart ? valuesStart.translate[1] : 0,
+        )
         .rotate(valuesStart.rotate || 0)
         .skewX(valuesStart.skewX || 0)
         .skewY(valuesStart.skewY || 0)
-        .scale(valuesStart.scale || 1)// the other functions
+        .scale(valuesStart.scale || 1) // the other functions
         .translate(+valuesStart.origin[0], +valuesStart.origin[1]), // + origin
     );
     // finally the translate we're looking for
@@ -162,7 +181,7 @@ function svgTransformCrossCheck(prop) {
 
     // copy existing and unused properties to the valuesEnd
     Object.keys(valuesStart).forEach((s) => {
-      if (!(s in valuesEnd) || s === 'origin') {
+      if (!(s in valuesEnd) || s === "origin") {
         valuesEnd[s] = valuesStart[s];
       }
     });
@@ -179,12 +198,16 @@ export const svgTransformFunctions = {
 
 // Component Full
 export const svgTransform = {
-  component: 'svgTransformProperty',
-  property: 'svgTransform',
+  component: "svgTransformProperty",
+  property: "svgTransform",
   // subProperties: ['translate','rotate','skewX','skewY','scale'],
-  defaultOptions: { transformOrigin: '50% 50%' },
+  defaultOptions: { transformOrigin: "50% 50%" },
   defaultValue: {
-    translate: 0, rotate: 0, skewX: 0, skewY: 0, scale: 1,
+    translate: 0,
+    rotate: 0,
+    skewX: 0,
+    skewY: 0,
+    scale: 1,
   },
   Interpolate: { numbers },
   functions: svgTransformFunctions,

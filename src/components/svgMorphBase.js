@@ -1,5 +1,5 @@
-import KEC from '../objects/kute';
-import coords from '../interpolation/coords';
+import KEC from "../objects/kute";
+import coords from "../interpolation/coords";
 
 /* SVGMorph = {
   property: 'path',
@@ -16,17 +16,21 @@ import coords from '../interpolation/coords';
 export function onStartSVGMorph(tweenProp) {
   if (!KEC[tweenProp] && this.valuesEnd[tweenProp]) {
     KEC[tweenProp] = (elem, a, b, v) => {
-      const path1 = a.polygon; const path2 = b.polygon;
+      const path1 = a.polygon;
+      const path2 = b.polygon;
       const len = path2.length;
-      elem.setAttribute('d', (v === 1 ? b.original : `M${coords(path1, path2, len, v).join('L')}Z`));
+      elem.setAttribute(
+        "d",
+        v === 1 ? b.original : `M${coords(path1, path2, len, v).join("L")}Z`,
+      );
     };
   }
 }
 
 // Component Base
 const SVGMorphBase = {
-  component: 'baseSVGMorph',
-  property: 'path',
+  component: "baseSVGMorph",
+  property: "path",
   Interpolate: coords,
   functions: { onStart: onStartSVGMorph },
 };

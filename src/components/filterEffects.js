@@ -1,9 +1,9 @@
-import getStyleForProperty from '../process/getStyleForProperty';
-import defaultValues from '../objects/defaultValues';
-import trueColor from '../util/trueColor';
-import numbers from '../interpolation/numbers';
-import colors from '../interpolation/colors';
-import { dropshadow, onStartFilter } from './filterEffectsBase';
+import getStyleForProperty from "../process/getStyleForProperty";
+import defaultValues from "../objects/defaultValues";
+import trueColor from "../util/trueColor";
+import numbers from "../interpolation/numbers";
+import colors from "../interpolation/colors";
+import { dropshadow, onStartFilter } from "./filterEffectsBase";
 
 /* filterEffects = {
   property: 'filter',
@@ -20,7 +20,7 @@ import { dropshadow, onStartFilter } from './filterEffectsBase';
  * @returns {string} camelCase property name
  */
 function replaceDashNamespace(str) {
-  return str.replace('-r', 'R').replace('-s', 'S');
+  return str.replace("-r", "R").replace("-s", "S");
 }
 
 /**
@@ -55,18 +55,22 @@ function parseFilterString(currentStyle) {
   const result = {};
   const fnReg = /(([a-z].*?)\(.*?\))(?=\s([a-z].*?)\(.*?\)|\s*$)/g;
   const matches = currentStyle.match(fnReg);
-  const fnArray = currentStyle !== 'none' ? matches : 'none';
+  const fnArray = currentStyle !== "none" ? matches : "none";
 
   if (fnArray instanceof Array) {
     for (let j = 0, jl = fnArray.length; j < jl; j += 1) {
       const p = fnArray[j].trim().split(/\((.+)/);
       const pp = replaceDashNamespace(p[0]);
-      if (pp === 'dropShadow') {
+      if (pp === "dropShadow") {
         const shadowColor = p[1].match(/(([a-z].*?)\(.*?\))(?=\s(.*?))/)[0];
-        const params = p[1].replace(shadowColor, '').split(/\s/).map(parseFloat);
-        result[pp] = params.filter((el) => !Number.isNaN(el)).concat(shadowColor);
+        const params = p[1].replace(shadowColor, "").split(/\s/).map(
+          parseFloat,
+        );
+        result[pp] = params.filter((el) => !Number.isNaN(el)).concat(
+          shadowColor,
+        );
       } else {
-        result[pp] = p[1].replace(/'|"|\)/g, '');
+        result[pp] = p[1].replace(/'|"|\)/g, "");
       }
     }
   }
@@ -102,7 +106,7 @@ function getFilter(tweenProp, value) {
  * @param {string} value the property name
  * @returns {KUTE.filterList} the property tween object
  */
-function prepareFilter(/* tweenProp, */_, value) {
+function prepareFilter(/* tweenProp, */ _, value) {
   const filterObject = {};
   let fnp;
 
@@ -125,9 +129,9 @@ function prepareFilter(/* tweenProp, */_, value) {
       filterObject[fnp] = parseFloat(value[fn]);
     } else if (/drop/.test(fn)) {
       filterObject[fnp] = parseDropShadow(value[fn]);
-    } else if (fn === 'url') {
+    } else if (fn === "url") {
       filterObject[fn] = value[fn];
-    // } else if ( /blur|opacity|grayscale|sepia/.test(fn) ) {
+      // } else if ( /blur|opacity|grayscale|sepia/.test(fn) ) {
     } else {
       filterObject[fn] = parseFloat(value[fn]);
     }
@@ -160,8 +164,8 @@ const filterFunctions = {
 
 // Full Component
 const filterEffects = {
-  component: 'filterEffects',
-  property: 'filter',
+  component: "filterEffects",
+  property: "filter",
   // opacity function interfere with opacityProperty
   // subProperties: [
   //   'blur', 'brightness','contrast','dropShadow',
@@ -178,7 +182,7 @@ const filterEffects = {
     invert: 0,
     hueRotate: 0,
     dropShadow: [0, 0, 0, { r: 0, g: 0, b: 0 }],
-    url: '',
+    url: "",
   },
   Interpolate: {
     opacity: numbers,
@@ -194,7 +198,10 @@ const filterEffects = {
   },
   functions: filterFunctions,
   Util: {
-    parseDropShadow, parseFilterString, replaceDashNamespace, trueColor,
+    parseDropShadow,
+    parseFilterString,
+    replaceDashNamespace,
+    trueColor,
   },
 };
 

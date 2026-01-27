@@ -1,5 +1,5 @@
-import selector from '../util/selector';
-import connect from '../objects/connect';
+import selector from "../util/selector";
+import connect from "../objects/connect";
 
 const { tween: TweenConstructor } = connect;
 
@@ -15,5 +15,10 @@ const { tween: TweenConstructor } = connect;
  */
 export default function fromTo(element, startObject, endObject, optionsObj) {
   const options = optionsObj || {};
-  return new TweenConstructor(selector(element), startObject, endObject, options);
+  return new TweenConstructor(
+    selector(element),
+    startObject,
+    endObject,
+    options,
+  );
 }

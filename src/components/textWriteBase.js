@@ -1,12 +1,14 @@
-import KEC from '../objects/kute';
-import numbers from '../interpolation/numbers';
-import defaultOptions from '../objects/defaultOptions';
+import KEC from "../objects/kute";
+import numbers from "../interpolation/numbers";
+import defaultOptions from "../objects/defaultOptions";
 
 // Component Values
-const lowerCaseAlpha = String('abcdefghijklmnopqrstuvwxyz').split(''); // lowercase
-const upperCaseAlpha = String('abcdefghijklmnopqrstuvwxyz').toUpperCase().split(''); // uppercase
-const nonAlpha = String("~!@#$%^&*()_+{}[];'<>,./?=-").split(''); // symbols
-const numeric = String('0123456789').split(''); // numeric
+const lowerCaseAlpha = String("abcdefghijklmnopqrstuvwxyz").split(""); // lowercase
+const upperCaseAlpha = String("abcdefghijklmnopqrstuvwxyz").toUpperCase().split(
+  "",
+); // uppercase
+const nonAlpha = String("~!@#$%^&*()_+{}[];'<>,./?=-").split(""); // symbols
+const numeric = String("0123456789").split(""); // numeric
 const alphaNumeric = lowerCaseAlpha.concat(upperCaseAlpha, numeric); // alpha numeric
 const allTypes = alphaNumeric.concat(nonAlpha); // all caracters
 
@@ -41,29 +43,42 @@ export const onStartWrite = {
       }
 
       KEC[tweenProp] = (elem, a, b, v) => {
-        let initialText = '';
-        let endText = '';
-        const finalText = b === '' ? ' ' : b;
+        let initialText = "";
+        let endText = "";
+        const finalText = b === "" ? " " : b;
         const firstLetterA = a.substring(0);
         const firstLetterB = b.substring(0);
         /* eslint-disable */
         const pointer = charsets[(Math.random() * charsets.length) >> 0];
 
-        if (a === ' ') {
+        if (a === " ") {
           endText = firstLetterB
-            .substring(Math.min(v * firstLetterB.length, firstLetterB.length) >> 0, 0);
-          elem.innerHTML = v < 1 ? ((endText + pointer)) : finalText;
-        } else if (b === ' ') {
+            .substring(
+              Math.min(v * firstLetterB.length, firstLetterB.length) >> 0,
+              0,
+            );
+          elem.innerHTML = v < 1 ? (endText + pointer) : finalText;
+        } else if (b === " ") {
           initialText = firstLetterA
-            .substring(0, Math.min((1 - v) * firstLetterA.length, firstLetterA.length) >> 0);
-          elem.innerHTML = v < 1 ? ((initialText + pointer)) : finalText;
+            .substring(
+              0,
+              Math.min((1 - v) * firstLetterA.length, firstLetterA.length) >> 0,
+            );
+          elem.innerHTML = v < 1 ? (initialText + pointer) : finalText;
         } else {
           initialText = firstLetterA
-            .substring(firstLetterA.length,
-              Math.min(v * firstLetterA.length, firstLetterA.length) >> 0);
+            .substring(
+              firstLetterA.length,
+              Math.min(v * firstLetterA.length, firstLetterA.length) >> 0,
+            );
           endText = firstLetterB
-            .substring(0, Math.min(v * firstLetterB.length, firstLetterB.length) >> 0);
-          elem.innerHTML = v < 1 ? ((endText + pointer + initialText)) : finalText;
+            .substring(
+              0,
+              Math.min(v * firstLetterB.length, firstLetterB.length) >> 0,
+            );
+          elem.innerHTML = v < 1
+            ? (endText + pointer + initialText)
+            : finalText;
         }
         /* eslint-enable */
       };
@@ -88,11 +103,11 @@ export const onStartWrite = {
 
 // Base Component
 export const TextWriteBase = {
-  component: 'baseTextWrite',
-  category: 'textWrite',
+  component: "baseTextWrite",
+  category: "textWrite",
   // properties: ['text','number'],
   // defaultValues: {text: ' ',numbers:'0'},
-  defaultOptions: { textChars: 'alpha' },
+  defaultOptions: { textChars: "alpha" },
   Interpolate: { numbers },
   functions: { onStart: onStartWrite },
   // export to global for faster execution

@@ -1,5 +1,5 @@
-import KEC from '../objects/kute';
-import numbers from '../interpolation/numbers';
+import KEC from "../objects/kute";
+import numbers from "../interpolation/numbers";
 
 // Component Functions
 /**
@@ -10,7 +10,9 @@ export function onStartBgPos(prop) {
   if (this.valuesEnd[prop] && !KEC[prop]) {
     KEC[prop] = (elem, a, b, v) => {
       /* eslint-disable -- no-bitwise & no-param-reassign impossible to satisfy */
-      elem.style[prop] = `${(numbers(a[0], b[0], v) * 100 >> 0) / 100}%  ${((numbers(a[1], b[1], v) * 100 >> 0) / 100)}%`;
+      elem.style[prop] = `${
+        (numbers(a[0], b[0], v) * 100 >> 0) / 100
+      }%  ${((numbers(a[1], b[1], v) * 100 >> 0) / 100)}%`;
       /* eslint-enable -- no-bitwise & no-param-reassign impossible to satisfy */
     };
   }
@@ -18,8 +20,8 @@ export function onStartBgPos(prop) {
 
 // Component Base Object
 const BackgroundPositionBase = {
-  component: 'baseBackgroundPosition',
-  property: 'backgroundPosition',
+  component: "baseBackgroundPosition",
+  property: "backgroundPosition",
   Interpolate: { numbers },
   functions: { onStart: onStartBgPos },
 };

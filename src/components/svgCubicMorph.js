@@ -1,19 +1,35 @@
-import parsePathString from 'svg-path-commander/src/parser/parsePathString';
-import pathToAbsolute from 'svg-path-commander/src/convert/pathToAbsolute';
-import pathToCurve from 'svg-path-commander/src/convert/pathToCurve';
-import pathToString from 'svg-path-commander/src/convert/pathToString';
-import reverseCurve from 'svg-path-commander/src/process/reverseCurve';
-import getDrawDirection from 'svg-path-commander/src/util/getDrawDirection';
-import clonePath from 'svg-path-commander/src/process/clonePath';
-import splitCubic from 'svg-path-commander/src/process/splitCubic';
-import splitPath from 'svg-path-commander/src/process/splitPath';
-import fixPath from 'svg-path-commander/src/process/fixPath';
-import segmentCubicFactory from 'svg-path-commander/src/util/segmentCubicFactory';
-import distanceSquareRoot from 'svg-path-commander/src/math/distanceSquareRoot';
+// import parsePathString from 'svg-path-commander/src/parser/parsePathString';
+// import pathToAbsolute from 'svg-path-commander/src/convert/pathToAbsolute';
+// import pathToCurve from 'svg-path-commander/src/convert/pathToCurve';
+// import pathToString from 'svg-path-commander/src/convert/pathToString';
+// import reverseCurve from 'svg-path-commander/src/process/reverseCurve';
+// import getDrawDirection from 'svg-path-commander/src/util/getDrawDirection';
+// import clonePath from 'svg-path-commander/src/process/clonePath';
+// import splitCubic from 'svg-path-commander/src/process/splitCubic';
+// import splitPath from 'svg-path-commander/src/process/splitPath';
+// import fixPath from 'svg-path-commander/src/process/fixPath';
+// import segmentCubicFactory from 'svg-path-commander/src/util/segmentCubicFactory';
+// import distanceSquareRoot from 'svg-path-commander/src/math/distanceSquareRoot';
+import {
+  // segmentCubicFactory,
+  cubicTools,
+  // fixPath,
+  distanceSquareRoot,
+  getDrawDirection,
+  parsePathString,
+  pathToAbsolute,
+  pathToCurve,
+  pathToString,
+  reverseCurve,
+  // clonePath,
+  splitCubic,
+  splitPath,
+} from "svg-path-commander";
 
-import { onStartCubicMorph } from './svgCubicMorphBase';
-import numbers from '../interpolation/numbers';
-import selector from '../util/selector';
+import fixPath from "../util/fixPath";
+import { onStartCubicMorph } from "./svgCubicMorphBase";
+import numbers from "../interpolation/numbers";
+import selector from "../util/selector";
 
 // Component Util
 /**
@@ -24,8 +40,9 @@ import selector from '../util/selector';
 function getCurveArray(source) {
   return pathToCurve(splitPath(pathToAbsolute(source))[0])
     .map((segment, i, pathArray) => {
-      const segmentData = i && [...pathArray[i - 1].slice(-2), ...segment.slice(1)];
-      const curveLength = i ? segmentCubicFactory(...segmentData).length : 0;
+      const segmentData = i &&
+        [...pathArray[i - 1].slice(-2), ...segment.slice(1)];
+      const curveLength = i ? cubicTools.getCubicLength(...segmentData) : 0;
 
       let subsegs;
       if (i) {
@@ -64,13 +81,11 @@ function equalizeSegments(path1, path2, TL) {
   const dif = [tl - L1, tl - L2];
   let canSplit = 0;
   const result = [c1, c2]
-    .map((x, i) => (x.l === tl
-      ? x.map((y) => y.s)
-      : x.map((y, j) => {
-        canSplit = j && dif[i] && y.l >= mm[i];
-        dif[i] -= canSplit ? 1 : 0;
-        return canSplit ? y.ss : [y.s];
-      }).flat()));
+    .map((x, i) => (x.l === tl ? x.map((y) => y.s) : x.map((y, j) => {
+      canSplit = j && dif[i] && y.l >= mm[i];
+      dif[i] -= canSplit ? 1 : 0;
+      return canSplit ? y.ss : [y.s];
+    }).flat()));
 
   return result[0].length === result[1].length
     ? result
@@ -86,17 +101,19 @@ function getRotations(a) {
   const segCount = a.length;
   const pointCount = segCount - 1;
 
-  return a.map((_, idx) => a.map((__, i) => {
-    let oldSegIdx = idx + i;
-    let seg;
+  return a.map((_, idx) =>
+    a.map((__, i) => {
+      let oldSegIdx = idx + i;
+      let seg;
 
-    if (i === 0 || (a[oldSegIdx] && a[oldSegIdx][0] === 'M')) {
-      seg = a[oldSegIdx];
-      return ['M', ...seg.slice(-2)];
-    }
-    if (oldSegIdx >= segCount) oldSegIdx -= pointCount;
-    return a[oldSegIdx];
-  }));
+      if (i === 0 || (a[oldSegIdx] && a[oldSegIdx][0] === "M")) {
+        seg = a[oldSegIdx];
+        return ["M", ...seg.slice(-2)];
+      }
+      if (oldSegIdx >= segCount) oldSegIdx -= pointCount;
+      return a[oldSegIdx];
+    })
+  );
 }
 
 /**
@@ -114,7 +131,10 @@ function getRotatedCurve(a, b) {
 
   rotations.forEach((_, i) => {
     a.slice(1).forEach((__, j) => {
-      sumLensSqrd += distanceSquareRoot(a[(i + j) % segCount].slice(-2), b[j % segCount].slice(-2));
+      sumLensSqrd += distanceSquareRoot(
+        a[(i + j) % segCount].slice(-2),
+        b[j % segCount].slice(-2),
+      );
     });
     lineLengths[i] = sumLensSqrd;
     sumLensSqrd = 0;
@@ -131,7 +151,7 @@ function getRotatedCurve(a, b) {
  * @returns {string}
  */
 function getCubicMorph(/* tweenProp, value */) {
-  return this.element.getAttribute('d');
+  return this.element.getAttribute("d");
 }
 
 /**
@@ -142,11 +162,11 @@ function getCubicMorph(/* tweenProp, value */) {
  * @param {string | KUTE.curveObject} value the `path` property value
  * @returns {KUTE.curveObject}
  */
-function prepareCubicMorph(/* tweenProp, */_, value) {
+function prepareCubicMorph(/* tweenProp, */ _, value) {
   // get path d attribute or create a path from string value
   const pathObject = {};
   // remove newlines, they break some JSON strings
-  const pathReg = new RegExp('\\n', 'ig');
+  const pathReg = new RegExp("\\n", "ig");
 
   let el = null;
   if (value instanceof SVGElement) {
@@ -156,13 +176,14 @@ function prepareCubicMorph(/* tweenProp, */_, value) {
   }
 
   // make sure to return pre-processed values
-  if (typeof (value) === 'object' && value.curve) {
+  if (typeof value === "object" && value.curve) {
     return value;
-  } if (el && /path|glyph/.test(el.tagName)) {
-    pathObject.original = el.getAttribute('d').replace(pathReg, '');
-  // maybe it's a string path already
-  } else if (!el && typeof (value) === 'string') {
-    pathObject.original = value.replace(pathReg, '');
+  }
+  if (el && /path|glyph/.test(el.tagName)) {
+    pathObject.original = el.getAttribute("d").replace(pathReg, "");
+    // maybe it's a string path already
+  } else if (!el && typeof value === "string") {
+    pathObject.original = value.replace(pathReg, "");
   }
   return pathObject;
 }
@@ -171,19 +192,21 @@ function prepareCubicMorph(/* tweenProp, */_, value) {
  * Enables the `to()` method by preparing the tween object in advance.
  * @param {string} tweenProp is `path` tween property, but it's not needed
  */
-function crossCheckCubicMorph(tweenProp/** , value */) {
+function crossCheckCubicMorph(tweenProp /** , value */) {
   if (this.valuesEnd[tweenProp]) {
     const pathCurve1 = this.valuesStart[tweenProp].curve;
     const pathCurve2 = this.valuesEnd[tweenProp].curve;
 
-    if (!pathCurve1 || !pathCurve2
-      || (pathCurve1[0][0] === 'M' && pathCurve1.length !== pathCurve2.length)) {
+    if (
+      !pathCurve1 || !pathCurve2 ||
+      (pathCurve1[0][0] === "M" && pathCurve1.length !== pathCurve2.length)
+    ) {
       const path1 = this.valuesStart[tweenProp].original;
       const path2 = this.valuesEnd[tweenProp].original;
       const curves = equalizeSegments(path1, path2);
       const curve0 = getDrawDirection(curves[0]) !== getDrawDirection(curves[1])
         ? reverseCurve(curves[0])
-        : clonePath(curves[0]);
+        : curves[0].slice(0);
 
       this.valuesStart[tweenProp].curve = curve0;
       this.valuesEnd[tweenProp].curve = getRotatedCurve(curves[1], curve0);
@@ -201,8 +224,8 @@ const svgCubicMorphFunctions = {
 
 // Component Full
 const svgCubicMorph = {
-  component: 'svgCubicMorph',
-  property: 'path',
+  component: "svgCubicMorph",
+  property: "path",
   defaultValue: [],
   Interpolate: { numbers, pathToString },
   functions: svgCubicMorphFunctions,
@@ -216,9 +239,10 @@ const svgCubicMorph = {
     getRotations,
     equalizeSegments,
     reverseCurve,
-    clonePath,
+    // clonePath,
     getDrawDirection,
-    segmentCubicFactory,
+    // segmentCubicFactory,
+    cubicTools,
     splitCubic,
     splitPath,
     fixPath,

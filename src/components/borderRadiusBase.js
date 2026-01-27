@@ -1,5 +1,5 @@
-import KEC from '../objects/kute';
-import units from '../interpolation/units';
+import KEC from "../objects/kute";
+import units from "../interpolation/units";
 
 /* borderRadius = {
   category: 'borderRadius',
@@ -10,9 +10,11 @@ import units from '../interpolation/units';
 
 // Component Properties
 const radiusProps = [
-  'borderRadius',
-  'borderTopLeftRadius', 'borderTopRightRadius',
-  'borderBottomLeftRadius', 'borderBottomRightRadius',
+  "borderRadius",
+  "borderTopLeftRadius",
+  "borderTopRightRadius",
+  "borderBottomLeftRadius",
+  "borderBottomRightRadius",
 ];
 
 // Component Functions
@@ -35,8 +37,8 @@ radiusProps.forEach((tweenProp) => {
 
 // Base Component
 const BorderRadiusBase = {
-  component: 'baseBorderRadius',
-  category: 'borderRadius',
+  component: "baseBorderRadius",
+  category: "borderRadius",
   Interpolate: { units },
   functions: { onStart: radiusOnStart },
 };

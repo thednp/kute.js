@@ -1,9 +1,9 @@
-import KEC from '../objects/kute';
-import Tweens from '../objects/tweens';
-import globalObject from '../objects/globalObject';
-import Interpolate from '../objects/interpolate';
-import onStart from '../objects/onStart';
-import now from '../util/now';
+import KEC from "../objects/kute";
+import Tweens from "../objects/tweens";
+import globalObject from "../objects/globalObject";
+import Interpolate from "../objects/interpolate";
+import onStart from "../objects/onStart";
+import now from "../util/now";
 
 const Time = {};
 Time.now = now;
@@ -13,7 +13,6 @@ let Tick = 0;
 export { Tick };
 
 /**
- *
  * @param {number | Date} time
  */
 const Ticker = (time) => {
@@ -36,7 +35,7 @@ export function stop() {
       cancelAnimationFrame(Tick);
       Tick = null;
       Object.keys(onStart).forEach((obj) => {
-        if (typeof (onStart[obj]) === 'function') {
+        if (typeof (onStart[obj]) === "function") {
           if (KEC[obj]) delete KEC[obj];
         } else {
           Object.keys(onStart[obj]).forEach((prop) => {
@@ -55,11 +54,14 @@ export function stop() {
 // render update functions
 // =======================
 const Render = {
-  Tick, Ticker, Tweens, Time,
+  Tick,
+  Ticker,
+  Tweens,
+  Time,
 };
 Object.keys(Render).forEach((blob) => {
   if (!KEC[blob]) {
-    KEC[blob] = blob === 'Time' ? Time.now : Render[blob];
+    KEC[blob] = blob === "Time" ? Time.now : Render[blob];
   }
 });
 

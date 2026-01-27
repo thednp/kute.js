@@ -1,6 +1,6 @@
-import KEC from '../objects/kute';
-import connect from '../objects/connect';
-import selector from './selector';
+import KEC from "../objects/kute";
+import connect from "../objects/connect";
+import selector from "./selector";
 
 /**
  * ProgressBar
@@ -21,21 +21,29 @@ export default class ProgressBar {
     this.element.tween = tween;
     this.element.tween.toolbar = this.element;
     this.element.toolbar = this;
-    [this.element.output] = this.element.parentNode.getElementsByTagName('OUTPUT');
+    [this.element.output] = this.element.parentNode.getElementsByTagName(
+      "OUTPUT",
+    );
 
     // invalidate
-    if (!(this.element instanceof HTMLInputElement)) throw TypeError('Target element is not [HTMLInputElement]');
-    if (this.element.type !== 'range') throw TypeError('Target element is not a range input');
-    if (!(tween instanceof connect.tween)) throw TypeError(`tween parameter is not [${connect.tween}]`);
+    if (!(this.element instanceof HTMLInputElement)) {
+      throw TypeError("Target element is not [HTMLInputElement]");
+    }
+    if (this.element.type !== "range") {
+      throw TypeError("Target element is not a range input");
+    }
+    if (!(tween instanceof connect.tween)) {
+      throw TypeError(`tween parameter is not [${connect.tween}]`);
+    }
 
-    this.element.setAttribute('value', 0);
-    this.element.setAttribute('min', 0);
-    this.element.setAttribute('max', 1);
-    this.element.setAttribute('step', 0.0001);
+    this.element.setAttribute("value", 0);
+    this.element.setAttribute("min", 0);
+    this.element.setAttribute("max", 1);
+    this.element.setAttribute("step", 0.0001);
 
     this.element.tween._onUpdate = this.updateBar;
 
-    this.element.addEventListener('mousedown', this.downAction, false);
+    this.element.addEventListener("mousedown", this.downAction, false);
   }
 
   updateBar() {
@@ -65,14 +73,14 @@ export default class ProgressBar {
 
   toggleEvents(action) {
     // add passive handler ?
-    this.element[`${action}EventListener`]('mousemove', this.moveAction, false);
-    this.element[`${action}EventListener`]('mouseup', this.upAction, false);
+    this.element[`${action}EventListener`]("mousemove", this.moveAction, false);
+    this.element[`${action}EventListener`]("mouseup", this.upAction, false);
   }
 
   updateTween() {
     // make sure we never complete the tween
-    const progress = (!this.tween._reversed ? this.value : 1 - this.value)
-      * this.tween._duration - 0.0001;
+    const progress = (!this.tween._reversed ? this.value : 1 - this.value) *
+        this.tween._duration - 0.0001;
 
     this.tween._startTime = 0;
     this.tween.update(progress);
@@ -89,7 +97,7 @@ export default class ProgressBar {
 
     if (!this.tween.paused) {
       this.tween.pause();
-      this.toolbar.toggleEvents('add');
+      this.toolbar.toggleEvents("add");
 
       KEC.Tick = cancelAnimationFrame(KEC.Ticker);
     }
@@ -99,10 +107,11 @@ export default class ProgressBar {
     if (this.tween.paused) {
       if (this.tween.paused) this.tween.resume();
 
-      this.tween._startTime = KEC.Time()
-        - (!this.tween._reversed ? this.value : 1 - this.value) * this.tween._duration;
+      this.tween._startTime = KEC.Time() -
+        (!this.tween._reversed ? this.value : 1 - this.value) *
+          this.tween._duration;
 
-      this.toolbar.toggleEvents('remove');
+      this.toolbar.toggleEvents("remove");
       KEC.Tick = requestAnimationFrame(KEC.Ticker);
     }
   }

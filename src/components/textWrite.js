@@ -1,7 +1,7 @@
-import connect from '../objects/connect';
-import numbers from '../interpolation/numbers';
+import connect from "../objects/connect";
+import numbers from "../interpolation/numbers";
 
-import { onStartWrite, charSet } from './textWriteBase';
+import { charSet, onStartWrite } from "./textWriteBase";
 
 // Component Util
 // utility for multi-child targets
@@ -9,15 +9,18 @@ import { onStartWrite, charSet } from './textWriteBase';
 function wrapContentsSpan(el, classNAME) {
   let textWriteWrapper;
   let newElem;
-  if (typeof (el) === 'string') {
-    newElem = document.createElement('SPAN');
+  if (typeof el === "string") {
+    newElem = document.createElement("SPAN");
     newElem.innerHTML = el;
     newElem.className = classNAME;
     return newElem;
   }
-  if (!el.children.length || (el.children.length && el.children[0].className !== classNAME)) {
+  if (
+    !el.children.length ||
+    (el.children.length && el.children[0].className !== classNAME)
+  ) {
     const elementInnerHTML = el.innerHTML;
-    textWriteWrapper = document.createElement('SPAN');
+    textWriteWrapper = document.createElement("SPAN");
     textWriteWrapper.className = classNAME;
     textWriteWrapper.innerHTML = elementInnerHTML;
     /* eslint-disable no-param-reassign -- impossible to satisfy */
@@ -38,27 +41,39 @@ function getTextPartsArray(el, classNAME) {
     let remainingMarkup = el.innerHTML;
     let wrapperParts;
 
-    for (let i = 0, currentChild, childOuter, unTaggedContent; i < len; i += 1) {
+    for (
+      let i = 0, currentChild, childOuter, unTaggedContent;
+      i < len;
+      i += 1
+    ) {
       currentChild = el.children[i];
       childOuter = currentChild.outerHTML;
       wrapperParts = remainingMarkup.split(childOuter);
 
-      if (wrapperParts[0] !== '') {
+      if (wrapperParts[0] !== "") {
         unTaggedContent = wrapContentsSpan(wrapperParts[0], classNAME);
         textParts.push(unTaggedContent);
-        remainingMarkup = remainingMarkup.replace(wrapperParts[0], '');
-      } else if (wrapperParts[1] !== '') {
-        unTaggedContent = wrapContentsSpan(wrapperParts[1].split('<')[0], classNAME);
+        remainingMarkup = remainingMarkup.replace(wrapperParts[0], "");
+      } else if (wrapperParts[1] !== "") {
+        unTaggedContent = wrapContentsSpan(
+          wrapperParts[1].split("<")[0],
+          classNAME,
+        );
         textParts.push(unTaggedContent);
-        remainingMarkup = remainingMarkup.replace(wrapperParts[0].split('<')[0], '');
+        remainingMarkup = remainingMarkup.replace(
+          wrapperParts[0].split("<")[0],
+          "",
+        );
       }
 
-      if (!currentChild.classList.contains(classNAME)) currentChild.classList.add(classNAME);
+      if (!currentChild.classList.contains(classNAME)) {
+        currentChild.classList.add(classNAME);
+      }
       textParts.push(currentChild);
-      remainingMarkup = remainingMarkup.replace(childOuter, '');
+      remainingMarkup = remainingMarkup.replace(childOuter, "");
     }
 
-    if (remainingMarkup !== '') {
+    if (remainingMarkup !== "") {
       const unTaggedRemaining = wrapContentsSpan(remainingMarkup, classNAME);
       textParts.push(unTaggedRemaining);
     }
@@ -71,13 +86,22 @@ function getTextPartsArray(el, classNAME) {
 }
 
 function setSegments(target, newText) {
-  const oldTargetSegs = getTextPartsArray(target, 'text-part');
-  const newTargetSegs = getTextPartsArray(wrapContentsSpan(newText), 'text-part');
+  const oldTargetSegs = getTextPartsArray(target, "text-part");
+  const newTargetSegs = getTextPartsArray(
+    wrapContentsSpan(newText),
+    "text-part",
+  );
 
   /* eslint-disable no-param-reassign */
-  target.innerHTML = '';
-  target.innerHTML += oldTargetSegs.map((s) => { s.className += ' oldText'; return s.outerHTML; }).join('');
-  target.innerHTML += newTargetSegs.map((s) => { s.className += ' newText'; return s.outerHTML.replace(s.innerHTML, ''); }).join('');
+  target.innerHTML = "";
+  target.innerHTML += oldTargetSegs.map((s) => {
+    s.className += " oldText";
+    return s.outerHTML;
+  }).join("");
+  target.innerHTML += newTargetSegs.map((s) => {
+    s.className += " newText";
+    return s.outerHTML.replace(s.innerHTML, "");
+  }).join("");
   /* eslint-enable no-param-reassign */
 
   return [oldTargetSegs, newTargetSegs];
@@ -89,8 +113,8 @@ export function createTextTweens(target, newText, ops) {
   const options = ops || {};
   options.duration = 1000;
 
-  if (ops.duration === 'auto') {
-    options.duration = 'auto';
+  if (ops.duration === "auto") {
+    options.duration = "auto";
   } else if (Number.isFinite(ops.duration * 1)) {
     options.duration = ops.duration * 1;
   }
@@ -99,21 +123,27 @@ export function createTextTweens(target, newText, ops) {
   const segs = setSegments(target, newText);
   const oldTargetSegs = segs[0];
   const newTargetSegs = segs[1];
-  const oldTargets = [].slice.call(target.getElementsByClassName('oldText')).reverse();
-  const newTargets = [].slice.call(target.getElementsByClassName('newText'));
+  const oldTargets = [].slice.call(target.getElementsByClassName("oldText"))
+    .reverse();
+  const newTargets = [].slice.call(target.getElementsByClassName("newText"));
 
   let textTween = [];
   let totalDelay = 0;
 
   textTween = textTween.concat(oldTargets.map((el, i) => {
-    options.duration = options.duration === 'auto'
+    options.duration = options.duration === "auto"
       ? oldTargetSegs[i].innerHTML.length * 75
       : options.duration;
     options.delay = totalDelay;
     options.onComplete = null;
 
     totalDelay += options.duration;
-    return new TweenContructor(el, { text: el.innerHTML }, { text: '' }, options);
+    return new TweenContructor(
+      el,
+      { text: el.innerHTML },
+      { text: "" },
+      options,
+    );
   }));
   textTween = textTween.concat(newTargets.map((el, i) => {
     function onComplete() {
@@ -123,12 +153,16 @@ export function createTextTweens(target, newText, ops) {
       /* eslint-enable no-param-reassign */
     }
 
-    options.duration = options.duration === 'auto' ? newTargetSegs[i].innerHTML.length * 75 : options.duration;
+    options.duration = options.duration === "auto"
+      ? newTargetSegs[i].innerHTML.length * 75
+      : options.duration;
     options.delay = totalDelay;
     options.onComplete = i === newTargetSegs.length - 1 ? onComplete : null;
     totalDelay += options.duration;
 
-    return new TweenContructor(el, { text: '' }, { text: newTargetSegs[i].innerHTML }, options);
+    return new TweenContructor(el, { text: "" }, {
+      text: newTargetSegs[i].innerHTML,
+    }, options);
   }));
 
   textTween.start = function startTweens() {
@@ -158,11 +192,11 @@ function getWrite(/* tweenProp, value */) {
  * @returns {number | string} the property tween object
  */
 function prepareText(tweenProp, value) {
-  if (tweenProp === 'number') {
+  if (tweenProp === "number") {
     return parseFloat(value);
   }
   // empty strings crash the update function
-  return value === '' ? ' ' : value;
+  return value === "" ? " " : value;
 }
 
 // All Component Functions
@@ -174,11 +208,11 @@ export const textWriteFunctions = {
 
 // Full Component
 export const TextWrite = {
-  component: 'textWriteProperties',
-  category: 'textWrite',
-  properties: ['text', 'number'],
-  defaultValues: { text: ' ', number: '0' },
-  defaultOptions: { textChars: 'alpha' },
+  component: "textWriteProperties",
+  category: "textWrite",
+  properties: ["text", "number"],
+  defaultValues: { text: " ", number: "0" },
+  defaultOptions: { textChars: "alpha" },
   Interpolate: { numbers },
   functions: textWriteFunctions,
   // export to global for faster execution

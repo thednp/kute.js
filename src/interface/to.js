@@ -1,5 +1,5 @@
-import selector from '../util/selector';
-import connect from '../objects/connect';
+import selector from "../util/selector";
+import connect from "../objects/connect";
 
 const { tween: TweenConstructor } = connect;
 

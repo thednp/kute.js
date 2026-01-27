@@ -1,7 +1,0 @@
-extraction:
-  javascript:
-    index:
-      exclude:
-        - node_modules
-        - docs
-        - dist

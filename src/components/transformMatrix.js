@@ -1,10 +1,10 @@
-import defaultValues from '../objects/defaultValues';
-import numbers from '../interpolation/numbers';
-import arrays from '../interpolation/arrays';
-import { onStartTransform } from './transformMatrixBase';
+import defaultValues from "../objects/defaultValues";
+import numbers from "../interpolation/numbers";
+import arrays from "../interpolation/arrays";
+import { onStartTransform } from "./transformMatrixBase";
 
 // Component name
-const matrixComponent = 'transformMatrix';
+const matrixComponent = "transformMatrix";
 
 // Component Functions
 /**
@@ -13,7 +13,7 @@ const matrixComponent = 'transformMatrix';
  * @param {string} value the property value
  * @returns {KUTE.transformMObject} transform object
  */
-function getTransform(/* tweenProp, */_, value) {
+function getTransform(/* tweenProp, */ _, value) {
   const transformObject = {};
   const currentValue = this.element[matrixComponent];
 
@@ -23,7 +23,9 @@ function getTransform(/* tweenProp, */_, value) {
     });
   } else {
     Object.keys(value).forEach((vE) => {
-      transformObject[vE] = vE === 'perspective' ? value[vE] : defaultValues.transform[vE];
+      transformObject[vE] = vE === "perspective"
+        ? value[vE]
+        : defaultValues.transform[vE];
     });
   }
   return transformObject;
@@ -35,23 +37,29 @@ function getTransform(/* tweenProp, */_, value) {
  * @param {Object<string, string | number | (string | number)[]>} obj the property value
  * @returns {KUTE.transformMObject} the property tween object
  */
-function prepareTransform(/* tweenProp, */_, value) {
-  if (typeof (value) === 'object' && !value.length) {
+function prepareTransform(/* tweenProp, */ _, value) {
+  if (typeof value === "object" && !value.length) {
     let pv;
     const transformObject = {};
     const translate3dObj = {};
     const rotate3dObj = {};
     const scale3dObj = {};
     const skewObj = {};
-    const axis = [{ translate3d: translate3dObj },
-      { rotate3d: rotate3dObj },
-      { skew: skewObj },
-      { scale3d: scale3dObj }];
+    const axis = [{ translate3d: translate3dObj }, { rotate3d: rotate3dObj }, {
+      skew: skewObj,
+    }, { scale3d: scale3dObj }];
 
     Object.keys(value).forEach((prop) => {
-      if (/3d/.test(prop) && typeof (value[prop]) === 'object' && value[prop].length) {
-        pv = value[prop].map((v) => (prop === 'scale3d' ? parseFloat(v) : parseInt(v, 10)));
-        transformObject[prop] = prop === 'scale3d' ? [pv[0] || 1, pv[1] || 1, pv[2] || 1] : [pv[0] || 0, pv[1] || 0, pv[2] || 0];
+      if (
+        /3d/.test(prop) && typeof (value[prop]) === "object" &&
+        value[prop].length
+      ) {
+        pv = value[prop].map((
+          v,
+        ) => (prop === "scale3d" ? parseFloat(v) : parseInt(v, 10)));
+        transformObject[prop] = prop === "scale3d"
+          ? [pv[0] || 1, pv[1] || 1, pv[2] || 1]
+          : [pv[0] || 0, pv[1] || 0, pv[2] || 0];
       } else if (/[XYZ]/.test(prop)) {
         let obj = {};
         if (/translate/.test(prop)) {
@@ -63,9 +71,12 @@ function prepareTransform(/* tweenProp, */_, value) {
         } else if (/skew/.test(prop)) {
           obj = skewObj;
         }
-        const idx = prop.replace(/translate|rotate|scale|skew/, '').toLowerCase();
-        obj[idx] = /scale/.test(prop) ? parseFloat(value[prop]) : parseInt(value[prop], 10);
-      } else if (prop === 'skew') {
+        const idx = prop.replace(/translate|rotate|scale|skew/, "")
+          .toLowerCase();
+        obj[idx] = /scale/.test(prop)
+          ? parseFloat(value[prop])
+          : parseInt(value[prop], 10);
+      } else if (prop === "skew") {
         pv = value[prop].map((v) => parseInt(v, 10) || 0);
         transformObject[prop] = [pv[0] || 0, pv[1] || 0];
       } else { // perspective
@@ -77,9 +88,9 @@ function prepareTransform(/* tweenProp, */_, value) {
       const tp = Object.keys(o)[0];
       const tv = o[tp];
       if (Object.keys(tv).length && !transformObject[tp]) {
-        if (tp === 'scale3d') {
+        if (tp === "scale3d") {
           transformObject[tp] = [tv.x || 1, tv.y || 1, tv.z || 1];
-        } else if (tp === 'skew') {
+        } else if (tp === "skew") {
           transformObject[tp] = [tv.x || 0, tv.y || 0];
         } else { // translate | rotate
           transformObject[tp] = [tv.x || 0, tv.y || 0, tv.z || 0];
@@ -110,8 +121,12 @@ function onCompleteTransform(tweenProp) {
  */
 function crossCheckTransform(tweenProp) {
   if (this.valuesEnd[tweenProp]) {
-    if (this.valuesEnd[tweenProp].perspective && !this.valuesStart[tweenProp].perspective) {
-      this.valuesStart[tweenProp].perspective = this.valuesEnd[tweenProp].perspective;
+    if (
+      this.valuesEnd[tweenProp].perspective &&
+      !this.valuesStart[tweenProp].perspective
+    ) {
+      this.valuesStart[tweenProp].perspective =
+        this.valuesEnd[tweenProp].perspective;
     }
   }
 }
@@ -128,7 +143,7 @@ const matrixFunctions = {
 // Component Full Object
 const matrixTransform = {
   component: matrixComponent,
-  property: 'transform',
+  property: "transform",
   /* subProperties: [
     'perspective', 'translate3d', 'translateX', 'translateY', 'translateZ',
     'rotate3d', 'rotateX', 'rotateY', 'rotateZ',

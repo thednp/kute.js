@@ -1,9 +1,9 @@
-import Animation from '../animation/animationBase';
+import Animation from "../animation/animationBase";
 
 // kute-base supported components
-import baseTransform from '../components/transformFunctionsBase';
-import baseBoxModel from '../components/boxModelBase';
-import baseOpacity from '../components/opacityPropertyBase';
+import baseTransform from "../components/transformFunctionsBase";
+import baseBoxModel from "../components/boxModelBase";
+import baseOpacity from "../components/opacityPropertyBase";
 // import {baseCrossBrowserMove} from '../components/crossBrowserMove'
 // support for kute-base ends here
 

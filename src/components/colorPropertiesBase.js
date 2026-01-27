@@ -1,6 +1,6 @@
-import KEC from '../objects/kute';
-import numbers from '../interpolation/numbers';
-import colors from '../interpolation/colors';
+import KEC from "../objects/kute";
+import numbers from "../interpolation/numbers";
+import colors from "../interpolation/colors";
 
 // Component Interpolation
 // rgba1, rgba2, progress
@@ -9,10 +9,14 @@ import colors from '../interpolation/colors';
 // supported formats
 // 'hex', 'rgb', 'rgba' '#fff' 'rgb(0,0,0)' / 'rgba(0,0,0,0)' 'red' (IE9+)
 const supportedColors = [
-  'color', 'backgroundColor', 'outlineColor',
-  'borderColor',
-  'borderTopColor', 'borderRightColor',
-  'borderBottomColor', 'borderLeftColor',
+  "color",
+  "backgroundColor",
+  "outlineColor",
+  "borderColor",
+  "borderTopColor",
+  "borderRightColor",
+  "borderBottomColor",
+  "borderLeftColor",
 ];
 
 // Component Functions
@@ -30,12 +34,14 @@ export function onStartColors(tweenProp) {
 }
 
 const colorsOnStart = {};
-supportedColors.forEach((x) => { colorsOnStart[x] = onStartColors; });
+supportedColors.forEach((x) => {
+  colorsOnStart[x] = onStartColors;
+});
 
 // Component Base
 export const baseColors = {
-  component: 'baseColors',
-  category: 'colors',
+  component: "baseColors",
+  category: "colors",
   // properties: supportedColors,
   // defaultValues: defaultColors,
   Interpolate: { numbers, colors },

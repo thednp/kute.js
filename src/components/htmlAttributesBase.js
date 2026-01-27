@@ -1,9 +1,9 @@
-import KEC from '../objects/kute';
-import numbers from '../interpolation/numbers';
-import colors from '../interpolation/colors';
+import KEC from "../objects/kute";
+import numbers from "../interpolation/numbers";
+import colors from "../interpolation/colors";
 
 // Component Name
-const ComponentName = 'baseHTMLAttributes';
+const ComponentName = "baseHTMLAttributes";
 
 // Component Special
 const attributes = {};
@@ -41,7 +41,7 @@ export const onStartAttr = {
 // Component Base
 const baseAttributes = {
   component: ComponentName,
-  property: 'attr',
+  property: "attr",
   // the Animation class will need some values to validate this Object attribute
   // subProperties: ['fill','stroke','stop-color','fill-opacity','stroke-opacity'],
   // defaultValue:

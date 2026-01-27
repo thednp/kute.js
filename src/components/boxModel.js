@@ -1,17 +1,43 @@
-import defaultValues from '../objects/defaultValues';
-import getStyleForProperty from '../process/getStyleForProperty';
-import trueDimension from '../util/trueDimension';
-import numbers from '../interpolation/numbers';
-import { boxModelOnStart } from './boxModelBase';
+import defaultValues from "../objects/defaultValues";
+import getStyleForProperty from "../process/getStyleForProperty";
+import trueDimension from "../util/trueDimension";
+import numbers from "../interpolation/numbers";
+import { boxModelOnStart } from "./boxModelBase";
 
 // Component Properties
-const boxModelProperties = ['top', 'left', 'width', 'height', 'right', 'bottom', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight',
-  'padding', 'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight',
-  'margin', 'marginTop', 'marginBottom', 'marginLeft', 'marginRight',
-  'borderWidth', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'outlineWidth'];
+const boxModelProperties = [
+  "top",
+  "left",
+  "width",
+  "height",
+  "right",
+  "bottom",
+  "minWidth",
+  "minHeight",
+  "maxWidth",
+  "maxHeight",
+  "padding",
+  "paddingTop",
+  "paddingBottom",
+  "paddingLeft",
+  "paddingRight",
+  "margin",
+  "marginTop",
+  "marginBottom",
+  "marginLeft",
+  "marginRight",
+  "borderWidth",
+  "borderTopWidth",
+  "borderRightWidth",
+  "borderBottomWidth",
+  "borderLeftWidth",
+  "outlineWidth",
+];
 
 const boxModelValues = {};
-boxModelProperties.forEach((x) => { boxModelValues[x] = 0; });
+boxModelProperties.forEach((x) => {
+  boxModelValues[x] = 0;
+});
 
 // Component Functions
 /**
@@ -20,7 +46,8 @@ boxModelProperties.forEach((x) => { boxModelValues[x] = 0; });
  * @returns {string} computed style for property
  */
 function getBoxModel(tweenProp) {
-  return getStyleForProperty(this.element, tweenProp) || defaultValues[tweenProp];
+  return getStyleForProperty(this.element, tweenProp) ||
+    defaultValues[tweenProp];
 }
 
 /**
@@ -30,12 +57,16 @@ function getBoxModel(tweenProp) {
  * @returns {number} the property tween object
  */
 function prepareBoxModel(tweenProp, value) {
-  const boxValue = trueDimension(value); const
-    offsetProp = tweenProp === 'height' ? 'offsetHeight' : 'offsetWidth';
-  return boxValue.u === '%' ? (boxValue.v * this.element[offsetProp]) / 100 : boxValue.v;
+  const boxValue = trueDimension(value);
+  const offsetProp = tweenProp === "height" ? "offsetHeight" : "offsetWidth";
+  return boxValue.u === "%"
+    ? (boxValue.v * this.element[offsetProp]) / 100
+    : boxValue.v;
 }
 const boxPropsOnStart = {};
-boxModelProperties.forEach((x) => { boxPropsOnStart[x] = boxModelOnStart; });
+boxModelProperties.forEach((x) => {
+  boxPropsOnStart[x] = boxModelOnStart;
+});
 
 // All Component Functions
 const boxModelFunctions = {
@@ -46,8 +77,8 @@ const boxModelFunctions = {
 
 // Component Full Component
 const BoxModel = {
-  component: 'boxModelProperties',
-  category: 'boxModel',
+  component: "boxModelProperties",
+  category: "boxModel",
   properties: boxModelProperties,
   defaultValues: boxModelValues,
   Interpolate: { numbers },

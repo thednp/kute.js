@@ -1,0 +1,36 @@
+name: Publish to npm
+
+on:
+  release:
+    types: [published] # Triggers on GitHub Release creation (with tag)
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # For checkout
+      id-token: write # Required for provenance / trusted publishing
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22" # Or 'lts/*'
+          registry-url: "https://registry.npmjs.org" # Optional if using trusted publishing
+
+      - name: PNPM setup
+        uses: pnpm/action-setup@v3
+
+      - name: Deno Setup
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build (if needed)
+        run: pnpm build # Optional

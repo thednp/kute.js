@@ -1,4 +1,4 @@
-import numbers from './numbers';
+import numbers from "./numbers";
 /**
  * Color Interpolation Function.
  *
@@ -9,13 +9,13 @@ import numbers from './numbers';
  */
 export default function colors(a, b, v) {
   const _c = {};
-  const ep = ')';
-  const cm = ',';
-  const rgb = 'rgb(';
-  const rgba = 'rgba(';
+  const ep = ")";
+  const cm = ",";
+  const rgb = "rgb(";
+  const rgba = "rgba(";
 
   Object.keys(b).forEach((c) => {
-    if (c !== 'a') {
+    if (c !== "a") {
       _c[c] = numbers(a[c], b[c], v) >> 0 || 0; // eslint-disable-line no-bitwise
     } else if (a[c] && b[c]) {
       _c[c] = (numbers(a[c], b[c], v) * 100 >> 0) / 100; // eslint-disable-line no-bitwise

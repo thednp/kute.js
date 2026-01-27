@@ -1,14 +1,14 @@
-import KEC from '../objects/kute';
-import connect from '../objects/connect';
-import onStart from '../objects/onStart';
-import onComplete from '../objects/onComplete';
-import defaultOptions from '../objects/defaultOptions';
+import KEC from "../objects/kute";
+import connect from "../objects/connect";
+import onStart from "../objects/onStart";
+import onComplete from "../objects/onComplete";
+import defaultOptions from "../objects/defaultOptions";
 
-import { Tick, Ticker, stop } from '../core/render';
+import { stop, Tick, Ticker } from "../core/render";
 
-import add from '../core/add';
-import remove from '../core/remove';
-import queueStart from '../core/queueStart';
+import add from "../core/add";
+import remove from "../core/remove";
+import queueStart from "../core/queueStart";
 
 /**
  * The `TweenBase` constructor creates a new `Tween` object
@@ -46,7 +46,9 @@ export default class TweenBase {
     this._resetStart = options.resetStart || 0;
     // you can only set a core easing function as default
     /** @type {KUTE.easingOption} */
-    this._easing = typeof (options.easing) === 'function' ? options.easing : connect.processEasing(options.easing);
+    this._easing = typeof (options.easing) === "function"
+      ? options.easing
+      : connect.processEasing(options.easing);
     /** @type {number} */
     this._duration = options.duration || defaultOptions.duration; // duration option | default
     /** @type {number} */
@@ -85,7 +87,7 @@ export default class TweenBase {
     add(this);
     this.playing = true;
 
-    this._startTime = typeof time !== 'undefined' ? time : KEC.Time();
+    this._startTime = typeof time !== "undefined" ? time : KEC.Time();
     this._startTime += this._delay;
 
     if (!this._startFired) {
@@ -149,7 +151,9 @@ export default class TweenBase {
    * Stop tweening the chained tween instances.
    */
   stopChainedTweens() {
-    if (this._chain && this._chain.length) this._chain.forEach((tw) => tw.stop());
+    if (this._chain && this._chain.length) {
+      this._chain.forEach((tw) => tw.stop());
+    }
   }
 
   /**
@@ -162,7 +166,7 @@ export default class TweenBase {
 
     let elapsed;
 
-    if (T < this._startTime && this.playing) { return true; }
+    if (T < this._startTime && this.playing) return true;
 
     elapsed = (T - this._startTime) / this._duration;
     elapsed = (this._duration === 0 || elapsed > 1) ? 1 : elapsed;
@@ -172,10 +176,12 @@ export default class TweenBase {
 
     // render the update
     Object.keys(this.valuesEnd).forEach((tweenProp) => {
-      KEC[tweenProp](this.element,
+      KEC[tweenProp](
+        this.element,
         this.valuesStart[tweenProp],
         this.valuesEnd[tweenProp],
-        progress);
+        progress,
+      );
     });
 
     // fire the updateCallback

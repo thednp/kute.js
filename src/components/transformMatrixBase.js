@@ -1,20 +1,20 @@
-import KEC from '../objects/kute';
-import numbers from '../interpolation/numbers';
-import arrays from '../interpolation/arrays';
+import KEC from "../objects/kute";
+import numbers from "../interpolation/numbers";
+import arrays from "../interpolation/arrays";
 
 // Component name
-const matrixComponent = 'transformMatrixBase';
+const matrixComponent = "transformMatrixBase";
 
 // Component special
 // this component is restricted to modern browsers only
-const CSS3Matrix = typeof (DOMMatrix) !== 'undefined' ? DOMMatrix : null;
+const CSS3Matrix = typeof DOMMatrix !== "undefined" ? DOMMatrix : null;
 
 // Component Functions
 export const onStartTransform = {
-/**
- * Sets the property update function.
- * @param {string} tweenProp the property name
- */
+  /**
+   * Sets the property update function.
+   * @param {string} tweenProp the property name
+   */
   transform(tweenProp) {
     if (CSS3Matrix && this.valuesEnd[tweenProp] && !KEC[tweenProp]) {
       KEC[tweenProp] = (elem, a, b, v) => {
@@ -22,7 +22,9 @@ export const onStartTransform = {
         const tObject = {};
 
         Object.keys(b).forEach((p) => {
-          tObject[p] = p === 'perspective' ? numbers(a[p], b[p], v) : arrays(a[p], b[p], v);
+          tObject[p] = p === "perspective"
+            ? numbers(a[p], b[p], v)
+            : arrays(a[p], b[p], v);
         });
 
         // set perspective
@@ -30,12 +32,20 @@ export const onStartTransform = {
 
         // set translate
         matrix = tObject.translate3d
-          ? matrix.translate(tObject.translate3d[0], tObject.translate3d[1], tObject.translate3d[2])
+          ? matrix.translate(
+            tObject.translate3d[0],
+            tObject.translate3d[1],
+            tObject.translate3d[2],
+          )
           : matrix;
 
         // set rotation
         matrix = tObject.rotate3d
-          ? matrix.rotate(tObject.rotate3d[0], tObject.rotate3d[1], tObject.rotate3d[2])
+          ? matrix.rotate(
+            tObject.rotate3d[0],
+            tObject.rotate3d[1],
+            tObject.rotate3d[2],
+          )
           : matrix;
 
         // set skew
@@ -46,7 +56,11 @@ export const onStartTransform = {
 
         // set scale
         matrix = tObject.scale3d
-          ? matrix.scale(tObject.scale3d[0], tObject.scale3d[1], tObject.scale3d[2])
+          ? matrix.scale(
+            tObject.scale3d[0],
+            tObject.scale3d[1],
+            tObject.scale3d[2],
+          )
           : matrix;
 
         // set element style
@@ -71,7 +85,7 @@ export const onStartTransform = {
 // Component Base Object
 export const TransformMatrixBase = {
   component: matrixComponent,
-  property: 'transform',
+  property: "transform",
   functions: { onStart: onStartTransform },
   Interpolate: {
     perspective: numbers,

@@ -1,4 +1,4 @@
-import Tweens from '../objects/tweens';
+import Tweens from "../objects/tweens";
 
 /**
  * KUTE.add(Tween)

@@ -1,4 +1,4 @@
-import connect from '../objects/connect';
+import connect from "../objects/connect";
 
 // Robert Penner's Easing Functions
 // updated for ESLint
@@ -20,38 +20,55 @@ const Easing = {
   /** @type {KUTE.easingFunction} */
   easingCubicIn: (t) => t * t * t,
   /** @type {KUTE.easingFunction} */
-  easingCubicOut: (t0) => { const t = t0 - 1; return t * t * t + 1; },
+  easingCubicOut: (t0) => {
+    const t = t0 - 1;
+    return t * t * t + 1;
+  },
   /** @type {KUTE.easingFunction} */
-  easingCubicInOut: (t) => (t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1),
+  easingCubicInOut: (
+    t,
+  ) => (t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1),
   /** @type {KUTE.easingFunction} */
   easingQuarticIn: (t) => t * t * t * t,
   /** @type {KUTE.easingFunction} */
-  easingQuarticOut: (t0) => { const t = t0 - 1; return 1 - t * t * t * t; },
+  easingQuarticOut: (t0) => {
+    const t = t0 - 1;
+    return 1 - t * t * t * t;
+  },
   /** @type {KUTE.easingFunction} */
   easingQuarticInOut: (t0) => {
     let t = t0;
     if (t < 0.5) return 8 * t * t * t * t;
-    t -= 1; return 1 - 8 * t * t * t * t;
+    t -= 1;
+    return 1 - 8 * t * t * t * t;
   },
   /** @type {KUTE.easingFunction} */
   easingQuinticIn: (t) => t * t * t * t * t,
   /** @type {KUTE.easingFunction} */
-  easingQuinticOut: (t0) => { const t = t0 - 1; return 1 + t * t * t * t * t; },
+  easingQuinticOut: (t0) => {
+    const t = t0 - 1;
+    return 1 + t * t * t * t * t;
+  },
   /** @type {KUTE.easingFunction} */
   easingQuinticInOut: (t0) => {
     let t = t0;
     if (t < 0.5) return 16 * t * t * t * t * t;
-    t -= 1; return 1 + 16 * t * t * t * t * t;
+    t -= 1;
+    return 1 + 16 * t * t * t * t * t;
   },
   /** @type {KUTE.easingFunction} */
   easingCircularIn: (t) => -(Math.sqrt(1 - (t * t)) - 1),
   /** @type {KUTE.easingFunction} */
-  easingCircularOut: (t0) => { const t = t0 - 1; return Math.sqrt(1 - t * t); },
+  easingCircularOut: (t0) => {
+    const t = t0 - 1;
+    return Math.sqrt(1 - t * t);
+  },
   /** @type {KUTE.easingFunction} */
   easingCircularInOut: (t0) => {
     let t = t0 * 2;
     if (t < 1) return -0.5 * (Math.sqrt(1 - t * t) - 1);
-    t -= 2; return 0.5 * (Math.sqrt(1 - t * t) + 1);
+    t -= 2;
+    return 0.5 * (Math.sqrt(1 - t * t) + 1);
   },
   /** @type {KUTE.easingFunction} */
   easingExponentialIn: (t) => 2 ** (10 * (t - 1)) - 0.001,
@@ -64,7 +81,10 @@ const Easing = {
     return 0.5 * (2 - 2 ** (-10 * (t - 1)));
   },
   /** @type {KUTE.easingFunction} */
-  easingBackIn: (t) => { const s = 1.70158; return t * t * ((s + 1) * t - s); },
+  easingBackIn: (t) => {
+    const s = 1.70158;
+    return t * t * ((s + 1) * t - s);
+  },
   /** @type {KUTE.easingFunction} */
   easingBackOut: (t0) => {
     const s = 1.70158;
@@ -76,7 +96,8 @@ const Easing = {
     const s = 1.70158 * 1.525;
     let t = t0 * 2;
     if (t < 1) return 0.5 * (t * t * ((s + 1) * t - s));
-    t -= 2; return 0.5 * (t * t * ((s + 1) * t + s) + 2);
+    t -= 2;
+    return 0.5 * (t * t * ((s + 1) * t + s) + 2);
   },
   /** @type {KUTE.easingFunction} */
   easingElasticIn: (t) => {
@@ -110,10 +131,16 @@ const Easing = {
   /** @type {KUTE.easingFunction} */
   easingBounceOut: (t0) => {
     let t = t0;
-    if (t < (1 / 2.75)) { return 7.5625 * t * t; }
-    if (t < (2 / 2.75)) { t -= (1.5 / 2.75); return 7.5625 * t * t + 0.75; }
-    if (t < (2.5 / 2.75)) { t -= (2.25 / 2.75); return 7.5625 * t * t + 0.9375; }
-    t -= (2.625 / 2.75);
+    if (t < (1 / 2.75)) return 7.5625 * t * t;
+    if (t < (2 / 2.75)) {
+      t -= 1.5 / 2.75;
+      return 7.5625 * t * t + 0.75;
+    }
+    if (t < (2.5 / 2.75)) {
+      t -= 2.25 / 2.75;
+      return 7.5625 * t * t + 0.9375;
+    }
+    t -= 2.625 / 2.75;
     return 7.5625 * t * t + 0.984375;
   },
   /** @type {KUTE.easingFunction} */
@@ -130,9 +157,10 @@ const Easing = {
  * @returns {KUTE.easingFunction} a valid easing function
  */
 function processEasing(fn) {
-  if (typeof fn === 'function') {
+  if (typeof fn === "function") {
     return fn;
-  } if (typeof Easing[fn] === 'function') {
+  }
+  if (typeof Easing[fn] === "function") {
     return Easing[fn]; // regular Robert Penner Easing Functions
   }
   return Easing.linear;

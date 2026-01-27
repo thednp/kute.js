@@ -1,5 +1,5 @@
-import connect from '../objects/connect';
-import Tween from './tween';
+import connect from "../objects/connect";
+import Tween from "./tween";
 
 // to do
 // * per property easing
@@ -49,7 +49,10 @@ export default class TweenExtra extends Tween {
    * @returns {TweenExtra}
    */
   on(name, fn) {
-    if (['start', 'stop', 'update', 'complete', 'pause', 'resume'].indexOf(name) > -1) {
+    if (
+      ["start", "stop", "update", "complete", "pause", "resume"].indexOf(name) >
+        -1
+    ) {
       this[`_on${name.charAt(0).toUpperCase() + name.slice(1)}`] = fn;
     }
     return this;

@@ -12,7 +12,8 @@ export default function translate3d(a, b, u, v) {
   for (let ax = 0; ax < 3; ax += 1) {
     translateArray[ax] = (a[ax] || b[ax]
       // eslint-disable-next-line no-bitwise
-      ? ((a[ax] + (b[ax] - a[ax]) * v) * 1000 >> 0) / 1000 : 0) + u;
+      ? ((a[ax] + (b[ax] - a[ax]) * v) * 1000 >> 0) / 1000
+      : 0) + u;
   }
-  return `translate3d(${translateArray.join(',')})`;
+  return `translate3d(${translateArray.join(",")})`;
 }

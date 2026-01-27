@@ -1,10 +1,10 @@
-import onStart from '../objects/onStart';
-import linkInterpolation from './linkInterpolation';
+import onStart from "../objects/onStart";
+import linkInterpolation from "./linkInterpolation";
 
 export default function queueStart() {
   // fire onStart actions
   Object.keys(onStart).forEach((obj) => {
-    if (typeof (onStart[obj]) === 'function') {
+    if (typeof (onStart[obj]) === "function") {
       onStart[obj].call(this, obj); // easing functions
     } else {
       Object.keys(onStart[obj]).forEach((prop) => {

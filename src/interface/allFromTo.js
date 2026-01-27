@@ -1,5 +1,5 @@
-import selector from '../util/selector';
-import TweenCollection from '../tween/tweenCollection';
+import selector from "../util/selector";
+import TweenCollection from "../tween/tweenCollection";
 
 /**
  * The `KUTE.allFromTo()` static method creates a new Tween object
@@ -12,7 +12,17 @@ import TweenCollection from '../tween/tweenCollection';
  * @param {KUTE.tweenOptions} optionsObj tween options
  * @returns {TweenCollection} the Tween object collection
  */
-export default function allFromTo(elements, startObject, endObject, optionsObj) {
+export default function allFromTo(
+  elements,
+  startObject,
+  endObject,
+  optionsObj,
+) {
   const options = optionsObj || {};
-  return new TweenCollection(selector(elements, true), startObject, endObject, options);
+  return new TweenCollection(
+    selector(elements, true),
+    startObject,
+    endObject,
+    options,
+  );
 }

@@ -1,18 +1,21 @@
-import passiveHandler from '@thednp/shorty/src/misc/passiveHandler';
-import mouseHoverEvents from '@thednp/shorty/src/strings/mouseHoverEvents';
-import supportTouch from '@thednp/shorty/src/boolean/supportTouch';
-import numbers from '../interpolation/numbers';
-import KEC from '../objects/kute';
+// import passiveHandler from '@thednp/shorty/src/misc/passiveHandler';
+// import mouseHoverEvents from '@thednp/shorty/src/strings/mouseHoverEvents';
+// import supportTouch from '@thednp/shorty/src/boolean/supportTouch';
+import { mouseHoverEvents, passiveHandler, supportTouch } from "@thednp/shorty";
+
+import numbers from "../interpolation/numbers";
+import KEC from "../objects/kute";
 
 // Component Util
 // events preventing scroll
-const touchOrWheel = supportTouch ? 'touchstart' : 'mousewheel';
+const touchOrWheel = supportTouch ? "touchstart" : "mousewheel";
 
 // true scroll container
 // very important and specific to the component
-export const scrollContainer = navigator && /(EDGE|Mac)/i.test(navigator.userAgent)
-  ? document.body
-  : document.documentElement;
+export const scrollContainer =
+  navigator && /(EDGE|Mac)/i.test(navigator.userAgent)
+    ? document.body
+    : document.documentElement;
 
 /**
  * Prevent further scroll events until scroll animation is over.
@@ -28,7 +31,9 @@ export function preventScroll(e) {
  */
 export function getScrollTargets() {
   const el = this.element;
-  return el === scrollContainer ? { el: document, st: document.body } : { el, st: el };
+  return el === scrollContainer
+    ? { el: document, st: document.body }
+    : { el, st: el };
 }
 
 /**
@@ -47,10 +52,10 @@ export function toggleScrollEvents(action, element) {
 export function scrollIn() {
   const targets = getScrollTargets.call(this);
 
-  if ('scroll' in this.valuesEnd && !targets.el.scrolling) {
+  if ("scroll" in this.valuesEnd && !targets.el.scrolling) {
     targets.el.scrolling = 1;
-    toggleScrollEvents('addEventListener', targets.el);
-    targets.st.style.pointerEvents = 'none';
+    toggleScrollEvents("addEventListener", targets.el);
+    targets.st.style.pointerEvents = "none";
   }
 }
 /**
@@ -59,10 +64,10 @@ export function scrollIn() {
 export function scrollOut() { // prevent scroll when tweening scroll
   const targets = getScrollTargets.call(this);
 
-  if ('scroll' in this.valuesEnd && targets.el.scrolling) {
+  if ("scroll" in this.valuesEnd && targets.el.scrolling) {
     targets.el.scrolling = 0;
-    toggleScrollEvents('removeEventListener', targets.el);
-    targets.st.style.pointerEvents = '';
+    toggleScrollEvents("removeEventListener", targets.el);
+    targets.st.style.pointerEvents = "";
   }
 }
 
@@ -76,8 +81,10 @@ export function scrollOut() { // prevent scroll when tweening scroll
 export function onStartScroll(tweenProp) {
   // checking 0 will NOT add the render function
   if (tweenProp in this.valuesEnd && !KEC[tweenProp]) {
-    this.element = ('scroll' in this.valuesEnd) && (!this.element || this.element === window)
-      ? scrollContainer : this.element;
+    this.element =
+      ("scroll" in this.valuesEnd) && (!this.element || this.element === window)
+        ? scrollContainer
+        : this.element;
     scrollIn.call(this);
     KEC[tweenProp] = (elem, a, b, v) => {
       /* eslint-disable */
@@ -96,8 +103,8 @@ export function onCompleteScroll(/* tweenProp */) {
 
 // Base Component
 const ScrollPropertyBase = {
-  component: 'baseScroll',
-  property: 'scroll',
+  component: "baseScroll",
+  property: "scroll",
   // defaultValue: 0,
   Interpolate: { numbers },
   functions: {
@@ -106,7 +113,10 @@ const ScrollPropertyBase = {
   },
   // unfortunatelly scroll needs all them no matter the packaging
   Util: {
-    preventScroll, scrollIn, scrollOut, getScrollTargets,
+    preventScroll,
+    scrollIn,
+    scrollOut,
+    getScrollTargets,
   },
 };
 

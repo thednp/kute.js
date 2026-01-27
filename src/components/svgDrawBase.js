@@ -1,5 +1,5 @@
-import KEC from '../objects/kute';
-import numbers from '../interpolation/numbers';
+import KEC from "../objects/kute";
+import numbers from "../interpolation/numbers";
 
 // Component Functions
 /**
@@ -18,7 +18,9 @@ export function onStartDraw(tweenProp) {
       // eslint-disable-next-line no-param-reassign -- impossible to satisfy
       elem.style.strokeDashoffset = `${offset}px`;
       // eslint-disable-next-line no-param-reassign -- impossible to satisfy
-      elem.style.strokeDasharray = `${((dashOne < 1 ? 0 : dashOne) * 100 >> 0) / 100}px, ${pathLength}px`;
+      elem.style.strokeDasharray = `${
+        ((dashOne < 1 ? 0 : dashOne) * 100 >> 0) / 100
+      }px, ${pathLength}px`;
       /* eslint-disable no-bitwise -- impossible to satisfy */
     };
   }
@@ -26,8 +28,8 @@ export function onStartDraw(tweenProp) {
 
 // Component Base
 const SvgDrawBase = {
-  component: 'baseSVGDraw',
-  property: 'draw',
+  component: "baseSVGDraw",
+  property: "draw",
   Interpolate: { numbers },
   functions: { onStart: onStartDraw },
 };

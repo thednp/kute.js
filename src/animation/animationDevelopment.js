@@ -1,11 +1,11 @@
-import prepareProperty from '../objects/prepareProperty';
-import prepareStart from '../objects/prepareStart';
-import onStart from '../objects/onStart';
-import onComplete from '../objects/onComplete';
-import crossCheck from '../objects/crossCheck';
-import Interpolate from '../objects/interpolate';
+import prepareProperty from "../objects/prepareProperty";
+import prepareStart from "../objects/prepareStart";
+import onStart from "../objects/onStart";
+import onComplete from "../objects/onComplete";
+import crossCheck from "../objects/crossCheck";
+import Interpolate from "../objects/interpolate";
 
-import Animation from './animation';
+import Animation from "./animation";
 
 /**
  * Animation Development Class
@@ -18,120 +18,135 @@ import Animation from './animation';
  */
 export default class AnimationDevelopment extends Animation {
   /**
-   *
    * @param  {KUTE.fullComponent} args
    */
   constructor(Component) {
     super(Component);
 
-    const propertyInfo = this;
     // const Objects = { defaultValues, defaultOptions, Interpolate, linkProperty, Util }
     const Functions = {
-      prepareProperty, prepareStart, onStart, onComplete, crossCheck,
+      prepareProperty,
+      prepareStart,
+      onStart,
+      onComplete,
+      crossCheck,
     };
     const Category = Component.category;
     const Property = Component.property;
-    const Length = (Component.properties && Component.properties.length)
-      || (Component.subProperties && Component.subProperties.length);
+    const Length = (Component.properties && Component.properties.length) ||
+      (Component.subProperties && Component.subProperties.length);
 
     // set defaultValues
-    if ('defaultValue' in Component) { // value 0 will invalidate
-      propertyInfo.supports = `${Property} property`;
-      propertyInfo.defaultValue = `${(`${Component.defaultValue}`).length ? 'YES' : 'not set or incorrect'}`;
+    if ("defaultValue" in Component) { // value 0 will invalidate
+      this.supports = `${Property} property`;
+      this.defaultValue = `${
+        (`${Component.defaultValue}`).length ? "YES" : "not set or incorrect"
+      }`;
     } else if (Component.defaultValues) {
-      propertyInfo.supports = `${Length || Property} ${Property || Category} properties`;
-      propertyInfo.defaultValues = Object.keys(Component.defaultValues).length === Length ? 'YES' : 'Not set or incomplete';
+      this.supports = `${Length || Property} ${
+        Property || Category
+      } properties`;
+      this.defaultValues =
+        Object.keys(Component.defaultValues).length === Length
+          ? "YES"
+          : "Not set or incomplete";
     }
 
     // set additional options
     if (Component.defaultOptions) {
-      propertyInfo.extends = [];
+      this.extends = [];
 
       Object.keys(Component.defaultOptions).forEach((op) => {
-        propertyInfo.extends.push(op);
+        this.extends.push(op);
       });
 
-      if (propertyInfo.extends.length) {
-        propertyInfo.extends = `with <${propertyInfo.extends.join(', ')}> new option(s)`;
+      if (this.extends.length) {
+        this.extends = `with <${this.extends.join(", ")}> new option(s)`;
       } else {
-        delete propertyInfo.extends;
+        delete this.extends;
       }
     }
 
     // set functions
     if (Component.functions) {
-      propertyInfo.interface = [];
-      propertyInfo.render = [];
-      propertyInfo.warning = [];
+      this.interface = [];
+      this.render = [];
+      this.warning = [];
 
       Object.keys(Functions).forEach((fnf) => {
         if (fnf in Component.functions) {
-          if (fnf === 'prepareProperty') propertyInfo.interface.push('fromTo()');
-          if (fnf === 'prepareStart') propertyInfo.interface.push('to()');
-          if (fnf === 'onStart') propertyInfo.render = 'can render update';
+          if (fnf === "prepareProperty") this.interface.push("fromTo()");
+          if (fnf === "prepareStart") this.interface.push("to()");
+          if (fnf === "onStart") this.render = "can render update";
         } else {
-          if (fnf === 'prepareProperty') propertyInfo.warning.push('fromTo()');
-          if (fnf === 'prepareStart') propertyInfo.warning.push('to()');
-          if (fnf === 'onStart') propertyInfo.render = 'no function to render update';
+          if (fnf === "prepareProperty") this.warning.push("fromTo()");
+          if (fnf === "prepareStart") this.warning.push("to()");
+          if (fnf === "onStart") this.render = "no function to render update";
         }
       });
 
-      if (propertyInfo.interface.length) {
-        propertyInfo.interface = `${Category || Property} can use [${propertyInfo.interface.join(', ')}] method(s)`;
+      if (this.interface.length) {
+        this.interface = `${Category || Property} can use [${
+          this.interface.join(", ")
+        }] method(s)`;
       } else {
-        delete propertyInfo.uses;
+        delete this.uses;
       }
 
-      if (propertyInfo.warning.length) {
-        propertyInfo.warning = `${Category || Property} can't use [${propertyInfo.warning.join(', ')}] method(s) because values aren't processed`;
+      if (this.warning.length) {
+        this.warning = `${Category || Property} can't use [${
+          this.warning.join(", ")
+        }] method(s) because values aren't processed`;
       } else {
-        delete propertyInfo.warning;
+        delete this.warning;
       }
     }
 
     // register Interpolation functions
     if (Component.Interpolate) {
-      propertyInfo.uses = [];
-      propertyInfo.adds = [];
+      this.uses = [];
+      this.adds = [];
 
       Object.keys(Component.Interpolate).forEach((fni) => {
         const compIntObj = Component.Interpolate[fni];
         // register new Interpolation functions
-        if (typeof (compIntObj) === 'function') {
+        if (typeof compIntObj === "function") {
           if (!Interpolate[fni]) {
-            propertyInfo.adds.push(`${fni}`);
+            this.adds.push(`${fni}`);
           }
-          propertyInfo.uses.push(`${fni}`);
+          this.uses.push(`${fni}`);
         } else {
           Object.keys(compIntObj).forEach((sfn) => {
-            if (typeof (compIntObj[sfn]) === 'function' && !Interpolate[fni]) {
-              propertyInfo.adds.push(`${sfn}`);
+            if (typeof (compIntObj[sfn]) === "function" && !Interpolate[fni]) {
+              this.adds.push(`${sfn}`);
             }
-            propertyInfo.uses.push(`${sfn}`);
+            this.uses.push(`${sfn}`);
           });
         }
       });
 
-      if (propertyInfo.uses.length) {
-        propertyInfo.uses = `[${propertyInfo.uses.join(', ')}] interpolation function(s)`;
+      if (this.uses.length) {
+        this.uses = `[${this.uses.join(", ")}] interpolation function(s)`;
       } else {
-        delete propertyInfo.uses;
+        delete this.uses;
       }
 
-      if (propertyInfo.adds.length) {
-        propertyInfo.adds = `new [${propertyInfo.adds.join(', ')}] interpolation function(s)`;
+      if (this.adds.length) {
+        this.adds = `new [${this.adds.join(", ")}] interpolation function(s)`;
       } else {
-        delete propertyInfo.adds;
+        delete this.adds;
       }
     } else {
-      propertyInfo.critical = `For ${Property || Category} no interpolation function[s] is set`;
+      this.critical = `For ${
+        Property || Category
+      } no interpolation function[s] is set`;
     }
 
     // set component util
     if (Component.Util) {
-      propertyInfo.hasUtil = Object.keys(Component.Util).join(',');
+      this.hasUtil = Object.keys(Component.Util).join(",");
     }
 
-    return propertyInfo;
+    return this;
   }
 }

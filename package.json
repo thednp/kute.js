@@ -1,7 +1,8 @@
 {
   "name": "kute.js",
-  "version": "2.2.4",
+  "version": "2.2.5",
   "description": "JavaScript animation engine",
+  "type": "module",
   "main": "dist/kute.min.js",
   "module": "dist/kute.esm.js",
   "jsnext": "src/index.js",
@@ -9,31 +10,31 @@
   "files": [
     "dist",
     "types",
-    "src"
+    "src",
+    "package.json",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "help": "rollup --help",
-    "build1": "npm-run-all --parallel copy-build build-*",
-    "build": "npm run lint:js && npm-run-all --parallel copy-build build-*",
-    "custom": "rollup -c --environment",
-    "fix:js": "eslint src/ --config .eslintrc --fix",
-    "lint:js": "eslint src/ --config .eslintrc",
-    "copy-build": "rollup --environment OUTPUTFILE:docs/src/kute.min.js,DIST:standard,MIN:true,FORMAT:umd -c",
-    "build-standard": "rollup --environment DIST:standard,MIN:false,FORMAT:umd -c",
+    "help": "rolldown --help",
+    "build": "pnpm lint:js && pnpm run \"/^(copy-build|build-.*)$/\"",
+    "custom": "rolldown -c --environment",
+    "format": "deno fmt src docs/*html",
+    "fix:js": "deno lint src --fix",
+    "lint:js": "deno lint src",
+    "badges": "npx -p dependency-version-badge update-badge typescript @thednp/bezier-easing svg-path-commander",
+    "copy-build": "rolldown --environment OUTPUTFILE:docs/src/kute.min.js,DIST:standard,MIN:true,FORMAT:umd -c",
+    "build-standard": "rolldown --environment DIST:standard,MIN:false,FORMAT:umd -c",
     "build:ts": "tsc -d",
-    "build-standard-min": "rollup --environment DIST:standard,MIN:true,FORMAT:umd -c",
-    "build-standard-esm": "rollup --environment DIST:standard,MIN:false,FORMAT:esm -c",
-    "build-standard-esm-min": "rollup --environment DIST:standard,MIN:true,FORMAT:esm -c",
-    "build-base": "rollup --environment OUTPUTFILE:docs/src/kute-base.js,DIST:base,MIN:false,FORMAT:umd -c",
-    "build-base-min": "rollup --environment OUTPUTFILE:docs/src/kute-base.min.js,DIST:base,MIN:true,FORMAT:umd -c",
-    "build-extra": "rollup --environment OUTPUTFILE:docs/src/kute-extra.js,DIST:extra,MIN:false,FORMAT:umd -c",
-    "build-extra-min": "rollup --environment OUTPUTFILE:docs/src/kute-extra.min.js,DIST:extra,MIN:true,FORMAT:umd -c",
-    "polyfill": "npm-run-all --parallel polyfill-unminified polyfill-minified copy-polyfill copy-polyfill-legacy",
-    "copy-polyfill-legacy": "rollup --environment INPUTFILE:src/util/polyfill-legacy.js,OUTPUTFILE:docs/src/polyfill-legacy.min.js,MIN:true -c rollup.polyfill.js",
-    "copy-polyfill": "rollup --environment OUTPUTFILE:docs/src/polyfill.min.js,MIN:true -c rollup.polyfill.js",
-    "polyfill-unminified": "rollup --environment MIN:false -c rollup.polyfill.js",
-    "polyfill-minified": "rollup --environment MIN:true -c rollup.polyfill.js"
+    "build-standard-min": "rolldown --environment DIST:standard,MIN:true,FORMAT:umd -c",
+    "build-standard-esm": "rolldown --environment DIST:standard,MIN:false,FORMAT:esm -c",
+    "build-standard-esm-min": "rolldown --environment DIST:standard,MIN:true,FORMAT:esm -c",
+    "build-base": "rolldown --environment OUTPUTFILE:docs/src/kute-base.js,DIST:base,MIN:false,FORMAT:umd -c",
+    "build-base-min": "rolldown --environment OUTPUTFILE:docs/src/kute-base.min.js,DIST:base,MIN:true,FORMAT:umd -c",
+    "build-extra": "rolldown --environment OUTPUTFILE:docs/src/kute-extra.js,DIST:extra,MIN:false,FORMAT:umd -c",
+    "build-extra-min": "rolldown --environment OUTPUTFILE:docs/src/kute-extra.min.js,DIST:extra,MIN:true,FORMAT:umd -c",
+    "prepublishOnly": "pnpm update --latest && pnpm badges && pnpm build"
   },
   "repository": {
     "type": "git",
@@ -59,22 +60,18 @@
   },
   "homepage": "http://thednp.github.io/kute.js",
   "dependencies": {
-    "@thednp/bezier-easing": "^1.0.1",
-    "@thednp/shorty": "^1.0.3",
+    "@thednp/bezier-easing": "^1.0.11",
+    "@thednp/shorty": "^2.0.11",
     "minifill": "^0.0.17",
-    "svg-path-commander": "1.0.5"
+    "svg-path-commander": "^2.1.11"
   },
   "devDependencies": {
-    "@rollup/plugin-buble": "^0.21.3",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^9.0.0",
-    "eslint": "^9.39.1",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-vue": "^7.7.0",
-    "npm-run-all": "^4.1.5",
-    "rollup": "^3.29.5",
-    "rollup-plugin-terser": "^7.0.2",
-    "typescript": "^4.5.2"
+    "rolldown": "1.0.0-rc.1",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "pnpm@8.6.12",
+  "engines": {
+    "node": ">=16",
+    "pnpm": ">=8.6.0"
   }
 }

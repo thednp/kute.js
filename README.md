@@ -4,13 +4,11 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/kute.js.svg)](http://npm-stat.com/charts.html?package=kute.js)
 [![jsDeliver](https://img.shields.io/jsdelivr/npm/hw/kute.js)](https://www.jsdelivr.com/package/npm/kute.js)
 [![CDNJS](https://img.shields.io/cdnjs/v/kute.js.svg)](https://cdnjs.com/libraries/kute.js)
-![svg-path-commander version](https://img.shields.io/badge/svg--path--commander-1.0.5-brightgreen)
-![@thednp/bezier-easing version](https://img.shields.io/badge/@thednp/bezier--easing-1.0.1-brightgreen)
-![typescript version](https://img.shields.io/badge/typescript-4.5.2-brightgreen)
+![svg-path-commander version](https://img.shields.io/badge/svg--path--commander-2.1.11-brightgreen)
+![@thednp/bezier-easing version](https://img.shields.io/badge/@thednp/bezier--easing-1.0.11-brightgreen)
+![typescript version](https://img.shields.io/badge/typescript-5.9.3-brightgreen)
 
 A modern JavaScript animation engine built on ES6+ standards with strong TypeScript definitions and most essential features for the web with easy to use methods to set up high performance, cross-browser animations. The focus is code quality, flexibility, performance and size. 
-
-
 
 KUTE.js packs a series of components for presentation attributes, SVG transform, draw SVG strokes and path morphing, text string write up or number countdowns, plus additional CSS properties like colors, border-radius or typographic properties.
 
@@ -45,10 +43,6 @@ All above mentioned components have a BASE version which doesn't include value p
 
 # Wiki
 For a complete developer guide, usage and stuff like npm, visit [the wiki](https://github.com/thednp/kute.js/wiki).
-
-
-# Browser Support
-KUTE.js is redeveloped for maximum performance on modern browsers. Some legacy browsers might some help, so give them a small polyfill set with most essential features required by KUTE.js to work, powered by [minifill](https://github.com/thednp/minifill), try it. For broader projects you might want to consider <a href="https://cdn.polyfill.io/v2/docs/">polyfills</a>. 
 
 
 # Special Thanks

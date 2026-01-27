@@ -1,6 +1,6 @@
-import prepareProperty from '../objects/prepareProperty';
-import supportedProperties from '../objects/supportedProperties';
-import defaultValues from '../objects/defaultValues';
+import prepareProperty from "../objects/prepareProperty";
+import supportedProperties from "../objects/supportedProperties";
+import defaultValues from "../objects/defaultValues";
 
 /**
  * prepareObject
@@ -11,7 +11,7 @@ import defaultValues from '../objects/defaultValues';
  * @param {string} fn toggles between the two
  */
 export default function prepareObject(obj, fn) { // this, props object, type: start/end
-  const propertiesObject = fn === 'start' ? this.valuesStart : this.valuesEnd;
+  const propertiesObject = fn === "start" ? this.valuesStart : this.valuesEnd;
 
   Object.keys(prepareProperty).forEach((component) => {
     const prepareComponent = prepareProperty[component];
@@ -26,18 +26,22 @@ export default function prepareObject(obj, fn) { // this, props object, type: st
           propertiesObject[tweenProp] = prepareComponent[tweenProp]
             .call(this, tweenProp, obj[tweenProp]);
 
-        // transform
-        } else if (!defaultValues[tweenCategory] && tweenCategory === 'transform'
-          && supportComponent.includes(tweenProp)) {
+          // transform
+        } else if (
+          !defaultValues[tweenCategory] && tweenCategory === "transform" &&
+          supportComponent.includes(tweenProp)
+        ) {
           transformObject[tweenProp] = obj[tweenProp];
 
-        // allow transformFunctions to work with preprocessed input values
-        } else if (!defaultValues[tweenProp] && tweenProp === 'transform') {
+          // allow transformFunctions to work with preprocessed input values
+        } else if (!defaultValues[tweenProp] && tweenProp === "transform") {
           propertiesObject[tweenProp] = obj[tweenProp];
 
-        // colors, boxModel, category
-        } else if (!defaultValues[tweenCategory]
-          && supportComponent && supportComponent.includes(tweenProp)) {
+          // colors, boxModel, category
+        } else if (
+          !defaultValues[tweenCategory] &&
+          supportComponent && supportComponent.includes(tweenProp)
+        ) {
           propertiesObject[tweenProp] = prepareComponent[tweenCategory]
             .call(this, tweenProp, obj[tweenProp]);
         }

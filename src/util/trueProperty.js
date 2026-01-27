@@ -1,4 +1,4 @@
-import getPrefix from './getPrefix';
+import getPrefix from "./getPrefix";
 
 /**
  * trueProperty
@@ -11,7 +11,7 @@ import getPrefix from './getPrefix';
  */
 const trueProperty = (property) => {
   const prop = !(property in document.head.style)
-    ? getPrefix() + (property.charAt(0).toUpperCase() + property.slice(1))
+    ? getPrefix() + (property.charAt(0)?.toUpperCase() + property.slice(1))
     : property;
   return prop;
 };

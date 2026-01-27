@@ -1,6 +1,6 @@
-import KEC from '../objects/kute';
-import defaultOptions from '../objects/defaultOptions';
-import connect from '../objects/connect';
+import KEC from "../objects/kute";
+import defaultOptions from "../objects/defaultOptions";
+import connect from "../objects/connect";
 
 /**
  * The static method creates a new `Tween` object for each `HTMLElement`
@@ -8,7 +8,6 @@ import connect from '../objects/connect';
  */
 export default class TweenCollection {
   /**
-   *
    * @param {Element[] | HTMLCollection | NodeList} els target elements
    * @param {KUTE.tweenProps} vS the start values
    * @param {KUTE.tweenProps} vE the end values
@@ -29,7 +28,9 @@ export default class TweenCollection {
 
     Array.from(els).forEach((el, i) => {
       options[i] = Ops || {};
-      options[i].delay = i > 0 ? Ops.delay + (Ops.offset || defaultOptions.offset) : Ops.delay;
+      options[i].delay = i > 0
+        ? Ops.delay + (Ops.offset || defaultOptions.offset)
+        : Ops.delay;
       if (el instanceof Element) {
         this.tweens.push(new TweenConstructor(el, vS, vE, options[i]));
       } else {
@@ -93,7 +94,7 @@ export default class TweenCollection {
     } else if (args instanceof connect.tween) {
       lastTween.chain(args);
     } else {
-      throw new TypeError('KUTE.js - invalid chain value');
+      throw new TypeError("KUTE.js - invalid chain value");
     }
     return this;
   }

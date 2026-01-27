@@ -1,15 +1,15 @@
-import numbers from '../interpolation/numbers';
+import numbers from "../interpolation/numbers";
 
 import {
-  scrollContainer,
-  onStartScroll,
+  getScrollTargets,
   onCompleteScroll,
+  onStartScroll,
+  preventScroll,
+  scrollContainer,
   scrollIn,
   scrollOut,
-  getScrollTargets,
-  preventScroll,
   toggleScrollEvents,
-} from './scrollPropertyBase';
+} from "./scrollPropertyBase";
 
 // Component Functions
 /**
@@ -17,11 +17,13 @@ import {
  * @returns {number} computed style for property
  */
 function getScroll() {
-  this.element = ('scroll' in this.valuesEnd) && (!this.element || this.element === window)
-    ? scrollContainer : this.element;
+  this.element =
+    ("scroll" in this.valuesEnd) && (!this.element || this.element === window)
+      ? scrollContainer
+      : this.element;
 
   return this.element === scrollContainer
-    ? (window.pageYOffset || scrollContainer.scrollTop)
+    ? (globalThis.pageYOffset || scrollContainer.scrollTop)
     : this.element.scrollTop;
 }
 
@@ -31,7 +33,7 @@ function getScroll() {
  * @param {string} value the property value
  * @returns {number} the property tween object
  */
-function prepareScroll(/* prop, */_, value) {
+function prepareScroll(/* prop, */ _, value) {
   return parseInt(value, 10);
 }
 
@@ -45,14 +47,18 @@ const scrollFunctions = {
 
 // Full Component
 const ScrollProperty = {
-  component: 'scrollProperty',
-  property: 'scroll',
+  component: "scrollProperty",
+  property: "scroll",
   defaultValue: 0,
   Interpolate: { numbers },
   functions: scrollFunctions,
   // export stuff to global
   Util: {
-    preventScroll, scrollIn, scrollOut, getScrollTargets, toggleScrollEvents,
+    preventScroll,
+    scrollIn,
+    scrollOut,
+    getScrollTargets,
+    toggleScrollEvents,
   },
 };
 

@@ -1,14 +1,14 @@
-import KEC from '../objects/kute';
-import TweenBase from './tweenBase';
-import connect from '../objects/connect';
-import add from '../core/add';
-import remove from '../core/remove';
-import defaultOptions from '../objects/defaultOptions';
-import crossCheck from '../objects/crossCheck';
-import prepareObject from '../process/prepareObject';
-import getStartValues from '../process/getStartValues';
-import { Tick, Ticker } from '../core/render';
-import queueStart from '../core/queueStart';
+import KEC from "../objects/kute";
+import TweenBase from "./tweenBase";
+import connect from "../objects/connect";
+import add from "../core/add";
+import remove from "../core/remove";
+import defaultOptions from "../objects/defaultOptions";
+import crossCheck from "../objects/crossCheck";
+import prepareObject from "../process/prepareObject";
+import getStartValues from "../process/getStartValues";
+import { Tick, Ticker } from "../core/render";
+import queueStart from "../core/queueStart";
 
 /**
  * The `KUTE.Tween()` constructor creates a new `Tween` object
@@ -34,13 +34,13 @@ export default class Tween extends TweenBase {
     const [startObject, endObject, options] = args.slice(1);
 
     // set valuesEnd
-    prepareObject.call(this, endObject, 'end');
+    prepareObject.call(this, endObject, "end");
 
     // set valuesStart
     if (this._resetStart) {
       this.valuesStart = startObject;
     } else {
-      prepareObject.call(this, startObject, 'start');
+      prepareObject.call(this, startObject, "start");
     }
 
     // ready for crossCheck
@@ -206,7 +206,7 @@ export default class Tween extends TweenBase {
 
     let elapsed;
 
-    if (T < this._startTime && this.playing) { return true; }
+    if (T < this._startTime && this.playing) return true;
 
     elapsed = (T - this._startTime) / this._duration;
     elapsed = (this._duration === 0 || elapsed > 1) ? 1 : elapsed;
@@ -216,10 +216,12 @@ export default class Tween extends TweenBase {
 
     // render the update
     Object.keys(this.valuesEnd).forEach((tweenProp) => {
-      KEC[tweenProp](this.element,
+      KEC[tweenProp](
+        this.element,
         this.valuesStart[tweenProp],
         this.valuesEnd[tweenProp],
-        progress);
+        progress,
+      );
     });
 
     // fire the updateCallback

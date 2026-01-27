@@ -1,7 +1,7 @@
 const defaultOptions = {
   duration: 700,
   delay: 0,
-  easing: 'linear',
+  easing: "linear",
   repeat: 0,
   repeatDelay: 0,
   yoyo: false,

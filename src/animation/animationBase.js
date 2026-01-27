@@ -1,10 +1,10 @@
-import supportedProperties from '../objects/supportedProperties';
-import defaultOptions from '../objects/defaultOptions';
-import onStart from '../objects/onStart';
-import onComplete from '../objects/onComplete';
-import linkProperty from '../objects/linkProperty';
-import Util from '../objects/util';
-import Interpolate from '../objects/interpolate';
+import supportedProperties from "../objects/supportedProperties";
+import defaultOptions from "../objects/defaultOptions";
+import onStart from "../objects/onStart";
+import onComplete from "../objects/onComplete";
+import linkProperty from "../objects/linkProperty";
+import Util from "../objects/util";
+import Interpolate from "../objects/interpolate";
 
 /**
  * Animation Base Class
@@ -31,8 +31,8 @@ export default class AnimationBase {
     this._ = 0;
 
     // set supported category/property
-    supportedProperties[ComponentName] = Component.properties
-      || Component.subProperties || Component.property;
+    supportedProperties[ComponentName] = Component.properties ||
+      Component.subProperties || Component.property;
 
     // set additional options
     if (Component.defaultOptions) {
@@ -46,20 +46,26 @@ export default class AnimationBase {
     if (Component.functions) {
       Object.keys(Functions).forEach((fn) => {
         if (fn in Component.functions) {
-          if (typeof (Component.functions[fn]) === 'function') {
+          if (typeof (Component.functions[fn]) === "function") {
             // if (!Functions[fn][ Category||Property ]) {
             //   Functions[fn][ Category||Property ] = Component.functions[fn];
             // }
-            if (!Functions[fn][ComponentName]) Functions[fn][ComponentName] = {};
+            if (!Functions[fn][ComponentName]) {
+              Functions[fn][ComponentName] = {};
+            }
             if (!Functions[fn][ComponentName][Category || Property]) {
-              Functions[fn][ComponentName][Category || Property] = Component.functions[fn];
+              Functions[fn][ComponentName][Category || Property] =
+                Component.functions[fn];
             }
           } else {
             Object.keys(Component.functions[fn]).forEach((ofn) => {
               // if (!Functions[fn][ofn]) Functions[fn][ofn] = Component.functions[fn][ofn];
-              if (!Functions[fn][ComponentName]) Functions[fn][ComponentName] = {};
+              if (!Functions[fn][ComponentName]) {
+                Functions[fn][ComponentName] = {};
+              }
               if (!Functions[fn][ComponentName][ofn]) {
-                Functions[fn][ComponentName][ofn] = Component.functions[fn][ofn];
+                Functions[fn][ComponentName][ofn] =
+                  Component.functions[fn][ofn];
               }
             });
           }
@@ -71,11 +77,11 @@ export default class AnimationBase {
     if (Component.Interpolate) {
       Object.keys(Component.Interpolate).forEach((fni) => {
         const compIntObj = Component.Interpolate[fni];
-        if (typeof (compIntObj) === 'function' && !Interpolate[fni]) {
+        if (typeof compIntObj === "function" && !Interpolate[fni]) {
           Interpolate[fni] = compIntObj;
         } else {
           Object.keys(compIntObj).forEach((sfn) => {
-            if (typeof (compIntObj[sfn]) === 'function' && !Interpolate[fni]) {
+            if (typeof (compIntObj[sfn]) === "function" && !Interpolate[fni]) {
               Interpolate[fni] = compIntObj[sfn];
             }
           });

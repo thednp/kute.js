@@ -1,33 +1,33 @@
-import Render from './core/render';
-import Interpolate from './objects/interpolate';
-import Objects from './objects/objects';
-import Util from './objects/util';
-import Internals from './core/internals';
-import Process from './process/process';
-import Easing from './easing/easing';
-import Selector from './util/selector';
+import Render from "./core/render";
+import Interpolate from "./objects/interpolate";
+import Objects from "./objects/objects";
+import Util from "./objects/util";
+import Internals from "./core/internals";
+import Process from "./process/process";
+import Easing from "./easing/easing";
+import Selector from "./util/selector";
 
 // TweenConstructor
-import Tween from './tween/tween';
-import TweenCollection from './tween/tweenCollection';
+import Tween from "./tween/tween";
+import TweenCollection from "./tween/tweenCollection";
 // interface
-import to from './interface/to';
-import fromTo from './interface/fromTo';
-import allTo from './interface/allTo';
-import allFromTo from './interface/allFromTo';
-import Animation from './animation/animation';
+import to from "./interface/to";
+import fromTo from "./interface/fromTo";
+import allTo from "./interface/allTo";
+import allFromTo from "./interface/allFromTo";
+import Animation from "./animation/animation";
 
 // components
-import BoxModel from './components/boxModelEssential';
-import ColorProperties from './components/colorProperties';
-import HTMLAttributes from './components/htmlAttributes';
-import OpacityProperty from './components/opacityProperty';
-import TextWriteProp from './components/textWrite';
-import TransformLegacy from './components/transformLegacy';
-import SVGDraw from './components/svgDraw';
-import SVGMorph from './components/svgMorph';
+import BoxModel from "./components/boxModelEssential";
+import ColorProperties from "./components/colorProperties";
+import HTMLAttributes from "./components/htmlAttributes";
+import OpacityProperty from "./components/opacityProperty";
+import TextWriteProp from "./components/textWrite";
+import TransformLegacy from "./components/transformLegacy";
+import SVGDraw from "./components/svgDraw";
+import SVGMorph from "./components/svgMorph";
 
-import Version from './util/version';
+import Version from "./util/version";
 
 const Components = {
   BoxModel,

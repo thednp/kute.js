@@ -1,8 +1,8 @@
-import getInlineStyle from './getInlineStyle';
-import prepareObject from './prepareObject';
-import defaultValues from '../objects/defaultValues';
-import prepareStart from '../objects/prepareStart';
-import supportedProperties from '../objects/supportedProperties';
+import getInlineStyle from "./getInlineStyle";
+import prepareObject from "./prepareObject";
+import defaultValues from "../objects/defaultValues";
+import prepareStart from "../objects/prepareStart";
+import supportedProperties from "../objects/supportedProperties";
 
 /**
  * getStartValues
@@ -25,9 +25,11 @@ export default function getStartValues() {
         if (tweenCategory === tweenProp && componentStart[tweenProp]) {
           startValues[tweenProp] = componentStart[tweenCategory]
             .call(this, tweenProp, this.valuesStart[tweenProp]);
-        // find in an array of properties
-        } else if (supportedProperties[component]
-          && supportedProperties[component].includes(tweenProp)) {
+          // find in an array of properties
+        } else if (
+          supportedProperties[component] &&
+          supportedProperties[component].includes(tweenProp)
+        ) {
           startValues[tweenProp] = componentStart[tweenCategory]
             .call(this, tweenProp, this.valuesStart[tweenProp]);
         }
@@ -44,5 +46,5 @@ export default function getStartValues() {
   });
 
   this.valuesStart = {};
-  prepareObject.call(this, startValues, 'start');
+  prepareObject.call(this, startValues, "start");
 }

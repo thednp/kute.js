@@ -1,8 +1,8 @@
-import defaultValues from '../objects/defaultValues';
-import getStyleForProperty from '../process/getStyleForProperty';
-import numbers from '../interpolation/numbers';
-import trueDimension from '../util/trueDimension';
-import { onStartBgPos } from './backgroundPositionBase';
+import defaultValues from "../objects/defaultValues";
+import getStyleForProperty from "../process/getStyleForProperty";
+import numbers from "../interpolation/numbers";
+import trueDimension from "../util/trueDimension";
+import { onStartBgPos } from "./backgroundPositionBase";
 
 // Component Functions
 
@@ -11,7 +11,7 @@ import { onStartBgPos } from './backgroundPositionBase';
  * @param {string} prop the property
  * @returns {string} the property computed style
  */
-function getBgPos(prop/* , value */) {
+function getBgPos(prop /* , value */) {
   return getStyleForProperty(this.element, prop) || defaultValues[prop];
 }
 
@@ -21,7 +21,7 @@ function getBgPos(prop/* , value */) {
  * @param {string} value the property value
  * @returns {number[]} the property tween object
  */
-function prepareBgPos(/* prop, */_, value) {
+function prepareBgPos(/* prop, */ _, value) {
   if (value instanceof Array) {
     const x = trueDimension(value[0]).v;
     const y = trueDimension(value[1]).v;
@@ -46,8 +46,8 @@ const bgPositionFunctions = {
 
 // Component Full Object
 const BackgroundPosition = {
-  component: 'backgroundPositionProp',
-  property: 'backgroundPosition',
+  component: "backgroundPositionProp",
+  property: "backgroundPosition",
   defaultValue: [50, 50],
   Interpolate: { numbers },
   functions: bgPositionFunctions,

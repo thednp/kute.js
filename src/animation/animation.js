@@ -1,14 +1,14 @@
-import supportedProperties from '../objects/supportedProperties';
-import defaultValues from '../objects/defaultValues';
-import defaultOptions from '../objects/defaultOptions';
-import prepareProperty from '../objects/prepareProperty';
-import prepareStart from '../objects/prepareStart';
-import onStart from '../objects/onStart';
-import onComplete from '../objects/onComplete';
-import crossCheck from '../objects/crossCheck';
-import linkProperty from '../objects/linkProperty';
-import Util from '../objects/util';
-import Interpolate from '../objects/interpolate';
+import supportedProperties from "../objects/supportedProperties";
+import defaultValues from "../objects/defaultValues";
+import defaultOptions from "../objects/defaultOptions";
+import prepareProperty from "../objects/prepareProperty";
+import prepareStart from "../objects/prepareStart";
+import onStart from "../objects/onStart";
+import onComplete from "../objects/onComplete";
+import crossCheck from "../objects/crossCheck";
+import linkProperty from "../objects/linkProperty";
+import Util from "../objects/util";
+import Interpolate from "../objects/interpolate";
 
 /**
  * Animation Class
@@ -32,16 +32,19 @@ export default class Animation {
       throw Error(e);
     }
 
-    const propertyInfo = this;
     const ComponentName = Component.component;
     // const Objects = { defaultValues, defaultOptions, Interpolate, linkProperty, Util }
     const Functions = {
-      prepareProperty, prepareStart, onStart, onComplete, crossCheck,
+      prepareProperty,
+      prepareStart,
+      onStart,
+      onComplete,
+      crossCheck,
     };
     const Category = Component.category;
     const Property = Component.property;
-    const Length = (Component.properties && Component.properties.length)
-      || (Component.subProperties && Component.subProperties.length);
+    const Length = (Component.properties && Component.properties.length) ||
+      (Component.subProperties && Component.subProperties.length);
 
     // single property
     // {property,defaultvalue,defaultOptions,Interpolate,functions}
@@ -56,22 +59,24 @@ export default class Animation {
     // {category,subProperties,defaultvalues,defaultOptions,Interpolate,functions}
 
     // set supported category/property
-    supportedProperties[ComponentName] = Component.properties
-      || Component.subProperties || Component.property;
+    supportedProperties[ComponentName] = Component.properties ||
+      Component.subProperties || Component.property;
 
     // set defaultValues
-    if ('defaultValue' in Component) { // value 0 will invalidate
+    if ("defaultValue" in Component) { // value 0 will invalidate
       defaultValues[Property] = Component.defaultValue;
 
       // minimal info
-      propertyInfo.supports = `${Property} property`;
+      this.supports = `${Property} property`;
     } else if (Component.defaultValues) {
       Object.keys(Component.defaultValues).forEach((dv) => {
         defaultValues[dv] = Component.defaultValues[dv];
       });
 
       // minimal info
-      propertyInfo.supports = `${Length || Property} ${Property || Category} properties`;
+      this.supports = `${Length || Property} ${
+        Property || Category
+      } properties`;
     }
 
     // set additional options
@@ -86,20 +91,26 @@ export default class Animation {
     if (Component.functions) {
       Object.keys(Functions).forEach((fn) => {
         if (fn in Component.functions) {
-          if (typeof (Component.functions[fn]) === 'function') {
+          if (typeof (Component.functions[fn]) === "function") {
             // if (!Functions[fn][ Category||Property ]) {
             //   Functions[fn][ Category||Property ] = Component.functions[fn];
             // }
-            if (!Functions[fn][ComponentName]) Functions[fn][ComponentName] = {};
+            if (!Functions[fn][ComponentName]) {
+              Functions[fn][ComponentName] = {};
+            }
             if (!Functions[fn][ComponentName][Category || Property]) {
-              Functions[fn][ComponentName][Category || Property] = Component.functions[fn];
+              Functions[fn][ComponentName][Category || Property] =
+                Component.functions[fn];
             }
           } else {
             Object.keys(Component.functions[fn]).forEach((ofn) => {
               // !Functions[fn][ofn] && (Functions[fn][ofn] = Component.functions[fn][ofn])
-              if (!Functions[fn][ComponentName]) Functions[fn][ComponentName] = {};
+              if (!Functions[fn][ComponentName]) {
+                Functions[fn][ComponentName] = {};
+              }
               if (!Functions[fn][ComponentName][ofn]) {
-                Functions[fn][ComponentName][ofn] = Component.functions[fn][ofn];
+                Functions[fn][ComponentName][ofn] =
+                  Component.functions[fn][ofn];
               }
             });
           }
@@ -111,11 +122,11 @@ export default class Animation {
     if (Component.Interpolate) {
       Object.keys(Component.Interpolate).forEach((fni) => {
         const compIntObj = Component.Interpolate[fni];
-        if (typeof (compIntObj) === 'function' && !Interpolate[fni]) {
+        if (typeof compIntObj === "function" && !Interpolate[fni]) {
           Interpolate[fni] = compIntObj;
         } else {
           Object.keys(compIntObj).forEach((sfn) => {
-            if (typeof (compIntObj[sfn]) === 'function' && !Interpolate[fni]) {
+            if (typeof (compIntObj[sfn]) === "function" && !Interpolate[fni]) {
               Interpolate[fni] = compIntObj[sfn];
             }
           });
@@ -132,6 +143,6 @@ export default class Animation {
       });
     }
 
-    return propertyInfo;
+    return this;
   }
 }

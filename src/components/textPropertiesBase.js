@@ -1,8 +1,13 @@
-import KEC from '../objects/kute';
-import units from '../interpolation/units';
+import KEC from "../objects/kute";
+import units from "../interpolation/units";
 
 // Component Properties
-const textProperties = ['fontSize', 'lineHeight', 'letterSpacing', 'wordSpacing'];
+const textProperties = [
+  "fontSize",
+  "lineHeight",
+  "letterSpacing",
+  "wordSpacing",
+];
 const textOnStart = {};
 
 /**
@@ -24,8 +29,8 @@ textProperties.forEach((tweenProp) => {
 
 // Component Base
 const TextPropertiesBase = {
-  component: 'baseTextProperties',
-  category: 'textProps',
+  component: "baseTextProperties",
+  category: "textProps",
   // properties: textProperties,
   // defaultValues: {fontSize:0,lineHeight:0,letterSpacing:0,wordSpacing:0},
   Interpolate: { units },
