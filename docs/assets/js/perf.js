@@ -46,14 +46,16 @@ function random(min, max) {
 }
 
 // the variables
-var container = document.getElementById("container");
-var tws = [];
-const group = new TWEEN.Group();
+const container = document.getElementById("container");
+const ktws = [];
+const dnptws = [];
+const group = new TWEENJS.Group();
 
 function complete() {
   document.getElementById("info").style.display = "block";
   container.innerHTML = "";
-  tws.length = 0;
+  ktws.length = 0;
+  dnptws.length = 0;
   // if (engine === "tween") {
   stop();
   group.removeAll();
@@ -67,16 +69,19 @@ function buildObjects() {
     p = document.querySelector("[data-property]"),
     ct = c && document.querySelector("[data-count]").getAttribute("data-count"),
     count = ct ? parseInt(ct) : null,
-    engine = (e &&
-      document.querySelector("[data-engine]").getAttribute("data-engine")) ||
+    engine =
+      (e &&
+        document.querySelector("[data-engine]").getAttribute("data-engine")) ||
       null,
-    repeat = (r &&
-      document.querySelector("[data-repeat]").getAttribute("data-repeat")) ||
+    repeat =
+      (r &&
+        document.querySelector("[data-repeat]").getAttribute("data-repeat")) ||
       null,
-    property = (p &&
-      document
-        .querySelector("[data-property]")
-        .getAttribute("data-property")) ||
+    property =
+      (p &&
+        document
+          .querySelector("[data-property]")
+          .getAttribute("data-property")) ||
       null,
     warning = document.createElement("DIV");
 
@@ -85,6 +90,7 @@ function buildObjects() {
   if (count && engine && property && repeat) {
     if (engine === "gsap") {
       document.getElementById("info").style.display = "none";
+      console.log("Starting gsap", "version:", gsap.version);
     }
 
     createTest(count, property, engine, repeat);
@@ -128,9 +134,11 @@ function stop() {
 
 function startKUTE() {
   var now = window.performance.now(),
-    count = tws.length;
+    count = ktws.length;
+  console.log("Starting KUTE.js", "version:", KUTE.Version);
+
   for (var t = 0; t < count; t++) {
-    tws[t].start(now + count / 16);
+    ktws[t].start(now + count / 16);
   }
 }
 function startTWEEN() {
@@ -138,6 +146,7 @@ function startTWEEN() {
   const gtws = group.getAll();
   const count = gtws.length;
   let t = 0;
+  console.log("Starting @tween/tween.js", "version:", TWEENJS.VERSION);
   while (t < count) {
     gtws[t++].start(now + count / 16);
   }
@@ -146,14 +155,13 @@ function startTWEEN() {
 }
 
 function startDNPTWEEN() {
-  requestAnimationFrame(() => {
-    const now = performance.now();
-    const count = tws.length;
-
-    for (let i = 0; i < count; i++) {
-      tws[i].start(now + count / 16);
-    }
-  });
+  const now = performance.now();
+  const count = dnptws.length;
+  console.log("Starting @thednp/tween", "version:", TWEEN.version);
+  let i = 0;
+  while (i < count) {
+    dnptws[i++].start(now + count / 16);
+  }
 }
 
 function createTest(count, property, engine, repeat) {
@@ -164,7 +172,8 @@ function createTest(count, property, engine, repeat) {
       left = random(-200, 200),
       toLeft = random(-200, 200),
       top = Math.round(Math.random() * parseInt(windowHeight)),
-      background = "rgb(" +
+      background =
+        "rgb(" +
         parseInt(random(0, 255)) +
         "," +
         parseInt(random(0, 255)) +
@@ -185,8 +194,8 @@ function createTest(count, property, engine, repeat) {
       fromValues = { left };
       toValues = { left: toLeft };
     } else {
-      div.style.transform = "translate3d(" + (((left * 10) / 10) >> 0) +
-        "px,0px,0px)";
+      div.style.transform =
+        "translate3d(" + (((left * 10) / 10) >> 0) + "px,0px,0px)";
 
       if (engine === "kute") {
         // fromValues = { translateX: left }
@@ -211,7 +220,7 @@ function createTest(count, property, engine, repeat) {
 
     // perf test
     if (engine === "kute") {
-      tws.push(
+      ktws.push(
         KUTE.fromTo(div, fromValues, toValues, {
           easing: KUTE.Easing.easingQuadraticInOut,
           repeat: repeat,
@@ -253,6 +262,10 @@ function createTest(count, property, engine, repeat) {
         update = (obj) => {
           // target.style.transform =
           //   "translate3d(" + (((obj.x * 1000) / 1000) >> 0) + "px,0px,0px)";
+          // target.style.setProperty(
+          //   "translate",
+          //   (((obj.x * 1000) / 1000) >> 0) + "px",
+          // );
           target.style.setProperty(
             "transform",
             "translate3d(" + (((obj.x * 1000) / 1000) >> 0) + "px,0px,0px)",
@@ -261,10 +274,10 @@ function createTest(count, property, engine, repeat) {
       }
 
       group.add(
-        new TWEEN.Tween(fromValues)
+        new TWEENJS.Tween(fromValues)
           .to(toValues, 2000)
           // .group(group)
-          .easing(TWEEN.Easing.Quadratic.InOut)
+          .easing(TWEENJS.Easing.Quadratic.InOut)
           .onComplete(fn)
           .onUpdate(update)
           .repeat(repeat)
@@ -282,22 +295,26 @@ function createTest(count, property, engine, repeat) {
         };
       } else if (property === "translateX") {
         update = (obj) => {
+          // target.style.transform =
+          //   "translate3d(" + (((obj.x * 1000) / 1000) >> 0) + "px,0px,0px)";
+          // target.style.setProperty(
+          //   "translate",
+          //   (((obj.x * 1000) / 1000) >> 0) + "px",
+          // );
           target.style.setProperty(
             "transform",
             "translate3d(" + (((obj.x * 1000) / 1000) >> 0) + "px,0px,0px)",
           );
-          // target.style.transform =
-          //   "translate3d(" + (((obj.x * 1000) / 1000) >> 0) + "px,0px,0px)";
         };
       }
 
-      tws.push(
-        new DNPTWEEN.Tween(fromValues)
+      dnptws.push(
+        new TWEEN.Tween(fromValues)
           // .use(property === "translateX" ? "x" : "left", {
           //   interpolate: (start, end, val) => start + (end - start) * val,
           // })
           .to(toValues)
-          .easing(DNPTWEEN.Easing.Quadratic.InOut)
+          .easing(TWEEN.Easing.Quadratic.InOut)
           .onComplete(fn)
           .repeat(repeat)
           .onUpdate(update)
